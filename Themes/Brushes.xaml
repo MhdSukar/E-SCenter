@@ -1,0 +1,83 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ========================= -->
+    <!-- Core / Base Brushes      -->
+    <!-- ========================= -->
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="{StaticResource AppBackgroundColor}"/>
+    <SolidColorBrush x:Key="AppBackgroundBrushNew" Color="{StaticResource TextLogo}"/>
+    <SolidColorBrush x:Key="PanelBackgroundBrush" Color="{StaticResource PanelBackgroundColor}"/>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
+    <SolidColorBrush x:Key="BorderDarkBrush" Color="{StaticResource BorderDarkColor}"/>
+
+    <!-- Dark theme-specific brushes -->
+    <SolidColorBrush x:Key="DarkBackgroundBrush" Color="{StaticResource DarkBackground}"/>
+    <SolidColorBrush x:Key="DarkCardBrush" Color="{StaticResource DarkCard}"/>
+    <SolidColorBrush x:Key="DarkBorderBrush" Color="{StaticResource DarkBorder}"/>
+
+    <!-- ========================= -->
+    <!-- Text Brushes             -->
+    <!-- ========================= -->
+    <SolidColorBrush x:Key="TextLogoBrush" Color="{StaticResource TextLogo}"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}"/>
+    <SolidColorBrush x:Key="TextTertiaryBrush" Color="{StaticResource TextTertiaryColor}"/>
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="{StaticResource TextDisabledColor}"/>
+
+    <!-- ========================= -->
+    <!-- Accent / Neon Brushes    -->
+    <!-- ========================= -->
+    <SolidColorBrush x:Key="NeonRedBrush" Color="{StaticResource NeonRedColor}"/>
+    <SolidColorBrush x:Key="NeonRedSoftBrush" Color="{StaticResource NeonRedSoftColor}"/>
+    <SolidColorBrush x:Key="NeonRedDarkBrush" Color="{StaticResource NeonRedDarkColor}"/>
+
+    <SolidColorBrush x:Key="NeonCyanBrush" Color="{StaticResource NeonCyanColor}"/>
+    <SolidColorBrush x:Key="NeonCyanSoftBrush" Color="{StaticResource NeonCyanSoftColor}"/>
+    <SolidColorBrush x:Key="NeonCyanDarkBrush" Color="{StaticResource NeonCyanDarkColor}"/>
+
+    <!-- Additional neon palette -->
+    <SolidColorBrush x:Key="NeonGreenBrush" Color="#FF2EFF2E"/>
+    <SolidColorBrush x:Key="NeonPurpleBrush" Color="#FFB200FF"/>
+    <SolidColorBrush x:Key="NeonOrangeBrush" Color="#FFFFAA00"/>
+    <SolidColorBrush x:Key="NeonYellowBrush" Color="#FFFFDD00"/>
+    <SolidColorBrush x:Key="NeonPinkBrush" Color="#FFFF00FF"/>
+    <SolidColorBrush x:Key="NeonBlueBrush" Color="#FF0066FF"/>
+    <SolidColorBrush x:Key="NeonWhiteBrush" Color="#FFFFFFFF"/>
+
+    <!-- ========================= -->
+    <!-- Semantic / Status Brushes-->
+    <!-- ========================= -->
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+
+    <!-- ========================= -->
+    <!-- Brand / Primary Brushes  -->
+    <!-- ========================= -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLight}"/>
+    <SolidColorBrush x:Key="PrimaryGreenBrush" Color="{StaticResource PrimaryGreen}"/>
+    <SolidColorBrush x:Key="PrimaryBlueBrush" Color="{StaticResource PrimaryBlue}"/>
+    <SolidColorBrush x:Key="AccentRedBrush" Color="{StaticResource AccentRed}"/>
+
+    <!-- ========================= -->
+    <!-- DataGrid / UI element brushes -->
+    <!-- ========================= -->
+    <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource DividerColor}"/>
+    <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1F1F26"/>
+    <SolidColorBrush x:Key="DataGridRowAltBackgroundBrush" Color="#242430"/>
+    <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#2E2E3A"/>
+    <SolidColorBrush x:Key="DataGridRowSelectedBrush" Color="#3A1E1E"/>
+    <SolidColorBrush x:Key="DataGridRowSelectedInactiveBrush" Color="#1A4A6E"/>
+    <SolidColorBrush x:Key="DataGridRowBorderBrush" Color="#33000000"/>
+
+
+    <SolidColorBrush x:Key="NewPrimaryBlueBrush" Color="{StaticResource PrimaryBlue}" />
+    <SolidColorBrush x:Key="NewDarkBackgroundBrush" Color="{StaticResource DarkBackground}" />
+    <SolidColorBrush x:Key="NewCardBackgroundBrush" Color="{StaticResource CardBackground}" />
+    <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryText}" />
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryText}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHover}" />
+
+</ResourceDictionary>

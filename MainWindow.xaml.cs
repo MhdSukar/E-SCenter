@@ -1,0 +1,192 @@
+﻿using System;
+using System.IO;
+using System.Text.Json;
+using System.Windows;
+using ESCenter.Core;
+using System.Windows.Input;
+using System.Windows.Controls;
+
+namespace ESCenter
+{
+    public partial class MainWindow : Window
+    {
+        private readonly string _settingsPath;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            Loaded += (_, __) =>
+            {
+                if (DataContext is ESCenter.ViewModels.MainViewModel vm)
+                    vm.Dashboard.Refresh();
+            };
+
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var dir = Path.Combine(appData, "ESCenter");
+            _settingsPath = Path.Combine(dir, "windowsettings.json");
+
+            this.SourceInitialized += MainWindow_SourceInitialized;
+            this.Closing += MainWindow_Closing;
+        }
+
+        private void MainWindow_SourceInitialized(object? sender, EventArgs e)
+        {
+            // If a saved settings file exists, restore bounds/state; otherwise center on the primary work area.
+            if (File.Exists(_settingsPath))
+            {
+                try
+                {
+                    var json = File.ReadAllText(_settingsPath);
+                    var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var saved = JsonSerializer.Deserialize<WindowSettings>(json, opts);
+
+                    if (saved != null &&
+                        !double.IsNaN(saved.Width) && !double.IsNaN(saved.Height))
+                    {
+                        // Ensure we use Manual startup so we can set Left/Top explicitly
+                        this.WindowStartupLocation = WindowStartupLocation.Manual;
+
+                        // Clamp values so window is visible (handles monitor changes)
+                        var left = Clamp(saved.Left, SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Math.Max(100, saved.Width));
+                        var top = Clamp(saved.Top, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Math.Max(100, saved.Height));
+
+                        //this.Width = Math.Max(100, saved.Width);
+                        this.Height = Math.Max(100, saved.Height);
+                        this.Left = left;
+                        this.Top = top;
+
+                        // Apply state after bounds set
+                        this.WindowState = saved.State;
+                    }
+                    else
+                    {
+                        CenterOnScreen();
+                    }
+                }
+                catch
+                {
+                    // If any error reading/deserialize, fallback to center
+                    CenterOnScreen();
+                }
+            }
+            else
+            {
+                CenterOnScreen();
+            }
+        }
+
+        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            try
+            {
+                // When maximized, use RestoreBounds to get the normal window size and position.
+                double left, top, width, height;
+                var stateToSave = this.WindowState;
+
+                if (this.WindowState == WindowState.Normal)
+                {
+                    left = this.Left;
+                    top = this.Top;
+                    width = this.Width;
+                    height = this.Height;
+                }
+                else
+                {
+                    // If Window is Maximized or Minimized, use RestoreBounds so normal position/size are preserved.
+                    var rb = this.RestoreBounds;
+                    left = rb.Left;
+                    top = rb.Top;
+                    width = rb.Width;
+                    height = rb.Height;
+                }
+
+                var settings = new WindowSettings
+                {
+                    Left = left,
+                    Top = top,
+                    Width = width,
+                    Height = height,
+                    State = stateToSave
+                };
+
+                var dir = Path.GetDirectoryName(_settingsPath);
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+
+                var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(_settingsPath, json);
+            }
+            catch
+            {
+                // swallow exceptions on save to avoid blocking app close
+                System.Windows.MessageBox.Show("Failed to save window settings.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CenterOnScreen()
+        {
+            this.WindowStartupLocation = WindowStartupLocation.Manual;
+            var workArea = SystemParameters.WorkArea;
+            // Use current Width/Height from XAML defaults (already set)
+            this.Left = workArea.Left + (workArea.Width - this.Width) / 2;
+            this.Top = workArea.Top + (workArea.Height - this.Height) / 2;
+            this.WindowState = WindowState.Normal;
+        }
+        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void btnMaximize_Click(object sender, RoutedEventArgs e)
+        {
+            AdjustWindowSize();
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void AdjustWindowSize()
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+                btnMaximize.Content = "□";
+            }
+            else
+            {
+                this.WindowState = WindowState.Maximized;
+                btnMaximize.Content = "❐";
+            }
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+                AdjustWindowSize();
+            else
+                DragMove();
+        }
+        private static double Clamp(double value, double min, double max)
+            => Math.Max(min, Math.Min(max, value));
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
+        }
+
+    }
+
+
+    // Small DTO persisted to disk
+    internal class WindowSettings
+    {
+        public double Left { get; set; }
+        public double Top { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
+        public WindowState State { get; set; } = WindowState.Normal;
+    }
+
+}

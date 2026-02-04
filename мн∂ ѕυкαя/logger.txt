@@ -1,0 +1,19 @@
+﻿AppLogger.Error("Connection lost");
+AppLogger.Warning("Low inventory");
+AppLogger.Success("Saved successfully");
+AppLogger.Info("System ready");
+
+
+<xctk:ImageSourceViewer Source="/Assets/ticket-icon.svg" Width="16" Height="16"/>
+
+<RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
+             GroupName="MainTabs"
+             Command="{Binding ShowRepairTicketsCommand}">
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <!-- SVG file works like Image -->
+        <svgc:SvgViewbox Source="/Assets/Icons/ticket.svg"
+                         Width="16" Height="16"
+                         Margin="0,0,5,0"/>
+        <TextBlock Text="Tickets" VerticalAlignment="Center"/>
+    </StackPanel>
+</RadioButton>

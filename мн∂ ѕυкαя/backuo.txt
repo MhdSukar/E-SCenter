@@ -1,0 +1,190 @@
+﻿<UserControl x:Class="ESCenter.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ESCenter.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="Transparent"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             Height="Auto" Width="Auto">
+    <!--:DataContext="{d:DesignInstance vm:DashboardViewModel, IsDesignTimeCreatable=True}"-->
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== HEADER ===== -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,12">
+            <TextBlock Text="Operations Dashboard"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource NewPrimaryBlueBrush}"
+                       DockPanel.Dock="Left"/>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Content="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        Style="{StaticResource NeonCyanButtonStyle}"
+                        Width="100" Margin="10,0"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ===== LEFT COLUMN ===== -->
+            <StackPanel Grid.Column="0">
+
+                <!-- ===== STATUS CARDS ===== -->
+                <Grid HorizontalAlignment="Stretch" Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="6,0,6,0" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="Total Tickets" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding TotalTickets}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource NeonPurpleBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="6,0" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="Open Tickets" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding OpenTickets}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource NeonGreenBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}" Margin="6,0" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="Closed Tickets" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding ClosedTickets}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource NeonBlueBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="3" Style="{StaticResource CardBorderStyle}" Margin="6,0" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="Critical Open" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding CriticalOpenTickets}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource NeonOrangeBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="4" Style="{StaticResource CardBorderStyle}" Margin="6,0,6,0" Padding="12">
+                        <StackPanel>
+                            <TextBlock Text="Overdue (>2 days)" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding OverdueTickets}" FontSize="32" FontWeight="Bold" Foreground="{StaticResource NeonRedBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- ===== RECENT TICKETS TABLE ===== -->
+                <DockPanel Margin="0,0,2,0">
+                    <TextBlock Text="Recent Open Tickets" FontSize="16" FontWeight="SemiBold" DockPanel.Dock="Top" Margin="0,0,0,8"/>
+                    <DataGrid ItemsSource="{Binding RecentTickets}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Style="{StaticResource DarkDataGridStyle}"
+                              RowStyle="{StaticResource TicketRowStyle}"
+                              ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
+                              SelectionUnit="FullRow"
+                              CanUserResizeRows="False"
+                              CanUserResizeColumns="True"
+                              GridLinesVisibility="None"
+                              Height="247">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding TicketId}" Width="60"/>
+                            <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="*"/>
+                            <DataGridTextColumn Header="Device" Binding="{Binding DeviceCategory}" Width="120"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding RepairStatus}" Width="120"/>
+                            <DataGridTextColumn Header="Priority" Binding="{Binding PriorityLevel}" Width="90" CellStyle="{StaticResource PriorityCellStyle}"/>
+                            <DataGridTextColumn Header="Received" Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd'}" Width="120"/>
+                            <DataGridTextColumn Header="Delivery" Binding="{Binding DeliveryDate, StringFormat='yyyy-MM-dd'}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </StackPanel>
+
+            <!-- ===== RIGHT COLUMN ===== -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Stretch">
+
+                <!-- ===== PRIORITY DISTRIBUTION ===== -->
+                <Border Style="{StaticResource CardBorderStyle}" Padding="12" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="Priority Distribution (Open)" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Height="240">
+                            <ItemsControl ItemsSource="{Binding PriorityStats}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="90"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="40"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Priority}" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <ProgressBar Grid.Column="1" Height="16"
+                                                         Minimum="0"
+                                                         Maximum="{Binding OpenTickets, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                         Value="{Binding Count}"
+                                                         Style="{StaticResource ModernProgressBarStyle}">
+                                                <ProgressBar.ToolTip>
+                                                    <TextBlock FontWeight="SemiBold">
+                                                        <TextBlock.Text>
+                                                            <Binding Path="Count" StringFormat="{}{0} tickets"/>
+                                                        </TextBlock.Text>
+                                                    </TextBlock>
+                                                </ProgressBar.ToolTip>
+                                            </ProgressBar>
+                                            <TextBlock Text="{Binding Count}" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="SemiBold"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+
+                <!-- ===== QUICK ACTIONS ===== -->
+                <Border Style="{StaticResource CardBorderStyle}" Padding="12">
+                    <StackPanel>
+                        <TextBlock Text="Quick actions" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                        <UniformGrid Columns="2" Rows="1"  Margin="0,0,0,0">
+                            <Border>
+                                <Button Style="{StaticResource NeonPurpleButtonStyle}" Width="110" Command="{Binding OpenTicketsCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="0,3,6,0"/>
+                                        <TextBlock Text="New Ticket"/>
+                                    </StackPanel>
+                                </Button>
+                            </Border>
+                            <Border>
+                                <Button Style="{StaticResource NeonBlueButtonStyle}" 
+                                        Width="110" 
+                                        Command="{Binding ClosedTicketsCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="0,3,4,0"/>
+                                        <TextBlock Text="Closed Tickets"/>
+                                    </StackPanel>
+                                </Button>
+                            </Border>
+                        </UniformGrid>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

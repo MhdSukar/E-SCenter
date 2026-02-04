@@ -1,0 +1,344 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>ESCenter</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+	  <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>Themes\E-SCenter1.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Converters\BooleanToVisibilityConverter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Icons\add_task.png" />
+    <None Remove="Assets\Icons\amend.png" />
+    <None Remove="Assets\Icons\aod_watch.png" />
+    <None Remove="Assets\Icons\area_chart.png" />
+    <None Remove="Assets\Icons\arming_countdown.png" />
+    <None Remove="Assets\Icons\azm.png" />
+    <None Remove="Assets\Icons\Battery_android_frame_shield.png" />
+    <None Remove="Assets\Icons\battery_android_shield.png" />
+    <None Remove="Assets\Icons\Brand.png" />
+    <None Remove="Assets\Icons\cadence.png" />
+    <None Remove="Assets\Icons\cancel.png" />
+    <None Remove="Assets\Icons\clear_all.png" />
+    <None Remove="Assets\Icons\ClientName.png" />
+    <None Remove="Assets\Icons\clock_arrow_down.png" />
+    <None Remove="Assets\Icons\component.png" />
+    <None Remove="Assets\Icons\ContactMethod.png" />
+    <None Remove="Assets\Icons\counter0.png" />
+    <None Remove="Assets\Icons\cruelty_free_35dp.png" />
+    <None Remove="Assets\Icons\database.png" />
+    <None Remove="Assets\Icons\database_upload.png" />
+    <None Remove="Assets\Icons\data_array.png" />
+    <None Remove="Assets\Icons\deployed_code_alert - Copy.png" />
+    <None Remove="Assets\Icons\deployed_code_alert.png" />
+    <None Remove="Assets\Icons\DeviceModel.png" />
+    <None Remove="Assets\Icons\devicesType.png" />
+    <None Remove="Assets\Icons\devices_wearables - Copy.png" />
+    <None Remove="Assets\Icons\devices_wearables.png" />
+    <None Remove="Assets\Icons\devices_wearables_35dp - Copy.png" />
+    <None Remove="Assets\Icons\devices_wearables_35dp.png" />
+    <None Remove="Assets\Icons\do_not_disturb.png" />
+    <None Remove="Assets\Icons\edit_audio.png" />
+    <None Remove="Assets\Icons\edit_document.png" />
+    <None Remove="Assets\Icons\EstimatedCost.png" />
+    <None Remove="Assets\Icons\expand_circle_up - Copy.png" />
+    <None Remove="Assets\Icons\expand_circle_up.png" />
+    <None Remove="Assets\Icons\filter_vintage.png" />
+    <None Remove="Assets\Icons\FinalCost1.png" />
+    <None Remove="Assets\Icons\flutter - Copy.png" />
+    <None Remove="Assets\Icons\flutter.png" />
+    <None Remove="Assets\Icons\foot_bones.png" />
+    <None Remove="Assets\Icons\frame_reload.png" />
+    <None Remove="Assets\Icons\identity.png" />
+    <None Remove="Assets\Icons\id_card - Copy.png" />
+    <None Remove="Assets\Icons\id_card.png" />
+    <None Remove="Assets\Icons\inventory.png" />
+    <None Remove="Assets\Icons\join.png" />
+    <None Remove="Assets\Icons\list_alt_add - Copy.png" />
+    <None Remove="Assets\Icons\list_alt_add.png" />
+    <None Remove="Assets\Icons\local_activity.png" />
+    <None Remove="Assets\Icons\low_priority.png" />
+    <None Remove="Assets\Icons\mobile_3_35dp - Copy.png" />
+    <None Remove="Assets\Icons\mobile_3_35dp.png" />
+    <None Remove="Assets\Icons\mobile_code_35dp.png" />
+    <None Remove="Assets\Icons\mobile_wrench_24dp.png" />
+    <None Remove="Assets\Icons\mobile_wrench_35dp.png" />
+    <None Remove="Assets\Icons\Notes.png" />
+    <None Remove="Assets\Icons\offline_pin_30dp.png" />
+    <None Remove="Assets\Icons\power_settings_circle_30dp.png" />
+    <None Remove="Assets\Icons\preliminary.png" />
+    <None Remove="Assets\Icons\price_check_24dp.png" />
+    <None Remove="Assets\Icons\priority_30dp.png" />
+    <None Remove="Assets\Icons\priority_high_24dp.png" />
+    <None Remove="Assets\Icons\process_chart_30dp.png" />
+    <None Remove="Assets\Icons\QR.png" />
+    <None Remove="Assets\Icons\ReadyToPick.png" />
+    <None Remove="Assets\Icons\recycling.png" />
+    <None Remove="Assets\Icons\regular_expression.png" />
+    <None Remove="Assets\Icons\safety_check.png" />
+    <None Remove="Assets\Icons\save.png" />
+    <None Remove="Assets\Icons\saved_search.png" />
+    <None Remove="Assets\Icons\search_insights.png" />
+    <None Remove="Assets\Icons\segment.png" />
+    <None Remove="Assets\Icons\Serial.png" />
+    <None Remove="Assets\Icons\settings1.png" />
+    <None Remove="Assets\Icons\stacks_35dp.png" />
+    <None Remove="Assets\Icons\token.png" />
+    <None Remove="Assets\Icons\Unassigned.png" />
+    <None Remove="Assets\Icons\verified.png" />
+    <None Remove="Assets\Icons\warning_24d.png" />
+    <None Remove="Assets\Icons\watch_lock_24dp.png" />
+    <None Remove="Assets\Icons\watch_screentime_35dp.png" />
+    <None Remove="Themes\Statistics Resurces.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Themes\E-SCenter1.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".github\copilot-instructions.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OxyPlot.Core" Version="2.1.0" />
+    <PackageReference Include="OxyPlot.Wpf" Version="2.1.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
+	  
+  </ItemGroup>
+	
+    <ItemGroup>
+	<PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
+	</ItemGroup>
+	
+  <ItemGroup>
+    <Resource Include="Assets\Icons\add_task.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\amend.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\aod_watch.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\area_chart.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\arming_countdown.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\azm.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Battery_android_frame_shield.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\battery_android_shield.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Brand.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\cadence.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\cancel.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\clear_all.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\ClientName.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\clock_arrow_down.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\component.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\ContactMethod.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\counter0.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\cruelty_free_35dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\database.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\database_upload.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\data_array.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\deployed_code_alert.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\DeviceModel.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\devicesType.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\devices_wearables.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\devices_wearables_35dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\do_not_disturb.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\edit_audio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\edit_document.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\EstimatedCost.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\expand_circle_up.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\filter_vintage.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\FinalCost1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\flutter.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\foot_bones.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\frame_reload.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\identity.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\id_card.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\inventory.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\join.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\list_alt_add.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\local_activity.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\low_priority.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\mobile_3_35dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\mobile_code_35dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\mobile_wrench_24dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\mobile_wrench_35dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Notes.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\offline_pin_30dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\power_settings_circle_30dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\preliminary.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\price_check_24dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\priority_30dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\priority_high_24dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\process_chart_30dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\QR.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\ReadyToPick.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\recycling.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\regular_expression.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\safety_check.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\save.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\saved_search.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\search_insights.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\segment.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Serial.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\settings1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\stacks_35dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\token.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Unassigned.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\verified.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\warning_24d.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\watch_lock_24dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\watch_screentime_35dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>

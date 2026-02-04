@@ -1,0 +1,161 @@
+﻿<UserControl x:Class="ESCenter.Views.InventoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:ESCenter.ViewModels"
+             Height="Auto"
+             Width="Auto">
+
+    <UserControl.DataContext>
+        <vm:InventoryViewModel/>
+    </UserControl.DataContext>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===================== TOOLBAR ===================== -->
+        <Border Grid.Row="0"
+                Padding="10"
+                CornerRadius="8"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource BorderDarkBrush}"
+                BorderThickness="1"
+                Margin="0,0,0,10">
+
+            <DockPanel LastChildFill="False">
+
+                <!-- Left -->
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Left"
+                            VerticalAlignment="Center">
+
+                    <!-- Search with icon -->
+                    <Grid Width="260" Margin="0,0,12,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Source="{StaticResource search_insights}"
+                               Width="16"
+                               Height="16"
+                               Margin="8,0,6,0"
+                               VerticalAlignment="Center"/>
+
+                        <TextBox Grid.Column="1"
+                                 Padding="6,4"
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+
+                    <TextBlock Text="Type:"
+                               VerticalAlignment="Center"
+                               Margin="6,0,0,0"
+                               Foreground="{StaticResource TextSecondaryBrush}"/>
+
+                    <ComboBox Width="170"
+                              Margin="10,0,0,0"
+                              Style="{StaticResource NeonComboBoxStyle}"
+                              ItemsSource="{Binding PartTypes}"
+                              SelectedItem="{Binding SelectedTypeFilter}" />
+                </StackPanel>
+
+                <!-- Right -->
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Right"
+                            HorizontalAlignment="Right">
+
+                    <!-- Add -->
+                    <Button Width="90"
+                            Margin="0,0,8,0"
+                            Style="{StaticResource NeonGreenButtonStyle}"
+                            Command="{Binding AddCommand}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="{StaticResource AddTask}" Width="16" Height="16" Margin="0,0,6,0"/>
+                            <TextBlock Text="Add"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Edit -->
+                    <Button Width="90"
+                            Margin="0,0,8,0"
+                            Style="{StaticResource NeonCyanButtonStyle}"
+                            Command="{Binding EditCommand}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="{StaticResource edit_document}" Width="16" Height="16" Margin="0,0,6,0"/>
+                            <TextBlock Text="Edit"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Remove -->
+                    <Button Width="90"
+                            Style="{StaticResource NeonRedButtonStyle}"
+                            Command="{Binding RemoveCommand}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="{StaticResource Delete}" Width="16" Height="16" Margin="0,0,6,0"/>
+                            <TextBlock Text="Remove"/>
+                        </StackPanel>
+                    </Button>
+
+                </StackPanel>
+
+            </DockPanel>
+        </Border>
+
+        <!-- ===================== GRID ===================== -->
+        <Border Grid.Row="1"
+                CornerRadius="8"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource BorderDarkBrush}"
+                BorderThickness="1">
+
+            <DataGrid ItemsSource="{Binding InventoryView}"
+                      AutoGenerateColumns="False"
+                      SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                      Style="{StaticResource DarkDataGridStyle}"
+                      RowStyle="{StaticResource CompactDataGridRowStyle}"
+                      CellStyle="{StaticResource CompactDataGridCellStyle}"
+                      ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}">
+
+                <DataGrid.Columns>
+
+                    <DataGridTextColumn Header="Type" Binding="{Binding ItemType}" Width="130"/>
+                    <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="130"/>
+                    <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="160"/>
+                    <DataGridTextColumn Header="Variant" Binding="{Binding Variant}" Width="120"/>
+                    <DataGridTextColumn Header="Compatibility" Binding="{Binding Compatibility}" Width="200"/>
+                    <DataGridTextColumn Header="Specs" Binding="{Binding Specs}" Width="120"/>
+                    <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="100"/>
+                    <DataGridTextColumn Header="Qty"
+                                        Binding="{Binding QuantityOnHand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Width="70"/>
+                    <DataGridTextColumn Header="Condition" Binding="{Binding Condition}" Width="100"/>
+                    <DataGridTextColumn Header="Quality" Binding="{Binding QualityGrade}" Width="80"/>
+                    <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="130"/>
+                    <DataGridTextColumn Header="Box" Binding="{Binding LocationBox}" Width="100"/>
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="220"/>
+                    <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="220"/>
+                    <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" Width="150"/>
+
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </Border>
+
+        <!-- ===================== STATUS BAR ===================== -->
+        <DockPanel Grid.Row="2"
+                   Margin="4,8,4,0">
+
+            <TextBlock Text="{Binding Items.Count, StringFormat=Items: {0}}"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       DockPanel.Dock="Left"/>
+
+            <TextBlock Text=""
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       HorizontalAlignment="Right"/>
+        </DockPanel>
+    </Grid>
+</UserControl>
