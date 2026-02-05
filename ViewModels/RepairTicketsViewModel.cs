@@ -536,11 +536,19 @@ namespace ESCenter.ViewModels
 
             try
             {
-                var repo = new PartsRepository();
-                var skus = repo.GetSkus()
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .OrderBy(sku => sku);
-                _partsCatalog.AddRange(skus);
+                var partsRepo = new PartsRepository();
+                var skus = partsRepo.GetSkus()
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
+
+                var inventoryRepo = new InventoryRepository(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql"));
+                var inventoryNames = inventoryRepo.GetNames()
+                    .Distinct(StringComparer.OrdinalIgnoreCase);
+
+                var combined = skus
+                    .Concat(inventoryNames)
+                    .OrderBy(name => name);
+
+                _partsCatalog.AddRange(combined);
             }
             catch (Exception ex)
             {
@@ -571,8 +579,25 @@ namespace ESCenter.ViewModels
             }
 
             SelectedPartsUsed.Add(normalized);
+            DeductPartFromStock(normalized);
             PartsUsedInput = string.Empty;
             IsPartsSuggestionOpen = false;
+        }
+
+        private void DeductPartFromStock(string partName)
+        {
+            try
+            {
+                var partsRepo = new PartsRepository();
+                partsRepo.DecrementQuantityBySku(partName, 1);
+
+                var inventoryRepo = new InventoryRepository(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql"));
+                inventoryRepo.DecrementQuantityByName(partName, 1);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to deduct stock for part '{partName}': {ex.Message}");
+            }
         }
 
         private void RemovePart(string part)

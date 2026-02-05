@@ -31,6 +31,7 @@ namespace ESCenter.ViewModels
             Item = new InventoryItemModel
             {
                 QuantityOnHand = 1,
+                Price = 0,
                 QualityGrade = 3,
                 Condition = "New"
             };
@@ -53,6 +54,7 @@ namespace ESCenter.ViewModels
                 Specs = existing.Specs,
                 Size = existing.Size,
                 QuantityOnHand = existing.QuantityOnHand,
+                Price = existing.Price,
                 Condition = existing.Condition,
                 QualityGrade = existing.QualityGrade,
                 Source = existing.Source,

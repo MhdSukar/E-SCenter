@@ -63,6 +63,28 @@ namespace ESCenter.Data
             return result;
         }
 
+        public void DecrementQuantityBySku(string sku, int amount)
+        {
+            if (string.IsNullOrWhiteSpace(sku) || amount <= 0)
+            {
+                return;
+            }
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(@"
+                UPDATE Parts
+                SET QuantityOnHand = CASE
+                    WHEN QuantityOnHand - @amount < 0 THEN 0
+                    ELSE QuantityOnHand - @amount
+                END
+                WHERE SKU = @sku;", conn);
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@sku", sku.Trim());
+            cmd.ExecuteNonQuery();
+        }
+
         // -------------------------
         // INSERT
         // -------------------------
@@ -73,10 +95,10 @@ namespace ESCenter.Data
 
             using var cmd = new SQLiteCommand(@"
                             INSERT INTO Parts
-                            (SKU, PartCode, PartType, QuantityOnHand, QualityGrade, LocationShelf, LocationBin,
+                            (SKU, PartCode, PartType, QuantityOnHand, Price, QualityGrade, LocationShelf, LocationBin,
                              UnitValue1, UnitCode1, UnitValue2, UnitCode2, ChipPartNumber, Category, Description)
                             VALUES
-                            (@SKU, @PartCode, @PartType, @Qty, @Quality, @Shelf, @Bin,
+                            (@SKU, @PartCode, @PartType, @Qty, @Price, @Quality, @Shelf, @Bin,
                              @UnitValue1, @UnitCode1, @UnitValue2, @UnitCode2, @ChipPN, @Category, @Desc);
                             SELECT last_insert_rowid();", conn);
 
@@ -98,6 +120,7 @@ namespace ESCenter.Data
                             PartCode=@PartCode,
                             PartType=@PartType,
                             QuantityOnHand=@Qty,
+                            Price=@Price,
                             QualityGrade=@Quality,
                             LocationShelf=@Shelf,
                             LocationBin=@Bin,
@@ -137,6 +160,7 @@ namespace ESCenter.Data
             cmd.Parameters.AddWithValue("@PartCode", p.PartCode);
             cmd.Parameters.AddWithValue("@PartType", p.PartType);
             cmd.Parameters.AddWithValue("@Qty", p.QuantityOnHand);
+            cmd.Parameters.AddWithValue("@Price", p.Price);
             cmd.Parameters.AddWithValue("@Quality", p.QualityGrade);
             cmd.Parameters.AddWithValue("@Shelf", p.LocationShelf);
             cmd.Parameters.AddWithValue("@Bin", p.LocationBin);
@@ -158,6 +182,7 @@ namespace ESCenter.Data
                 PartCode = r["PartCode"]?.ToString(),
                 PartType = r["PartType"]?.ToString(),
                 QuantityOnHand = Convert.ToInt32(r["QuantityOnHand"]),
+                Price = Convert.ToDouble(r["Price"]),
                 QualityGrade = Convert.ToInt32(r["QualityGrade"]),
                 LocationShelf = r["LocationShelf"]?.ToString(),
                 LocationBin = r["LocationBin"]?.ToString(),

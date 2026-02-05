@@ -1,35 +1,34 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using ESCenter.Core;
 using ESCenter.Data;
 using ESCenter.Models;
+using ESCenter.Views;
 
 namespace ESCenter.ViewModels
 {
     public class InventoryViewModel : ObservableObject
     {
         private readonly InventoryRepository _repository;
+        private readonly ICollectionView _inventoryView;
 
         public ObservableCollection<InventoryItemModel> Items { get; } = new();
-
-        private ICollectionView _inventoryView;
         public ICollectionView InventoryView => _inventoryView;
 
         private InventoryItemModel _selectedItem;
         public InventoryItemModel SelectedItem
         {
             get => _selectedItem;
-            set => SetProperty(ref _selectedItem, value);
+            set
+            {
+                SetProperty(ref _selectedItem, value);
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
-
-        public RelayCommand AddCommand { get; }
-        public RelayCommand EditCommand { get; }
-        public RelayCommand RemoveCommand { get; }
-        public RelayCommand RefreshCommand { get; }
 
         private string _searchText;
         public string SearchText
@@ -38,35 +37,27 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _searchText, value))
+                {
                     _inventoryView.Refresh();
+                }
             }
         }
 
-        private string _selectedTypeFilter;
-        public string SelectedTypeFilter
-        {
-            get => _selectedTypeFilter;
-            set
-            {
-                if (SetProperty(ref _selectedTypeFilter, value))
-                    _inventoryView.Refresh();
-            }
-        }
-
-        public ObservableCollection<string> PartTypes { get; } = new();
+        public ICommand AddCommand { get; }
+        public ICommand EditCommand { get; }
+        public ICommand DeleteCommand { get; }
 
         public InventoryViewModel()
         {
-            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql");
+            var dbPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql");
             _repository = new InventoryRepository(dbPath);
-
-            AddCommand = new RelayCommand(_ => Add());
-            EditCommand = new RelayCommand(_ => Edit(), _ => SelectedItem != null);
-            RemoveCommand = new RelayCommand(_ => Remove(), _ => SelectedItem != null);
-            RefreshCommand = new RelayCommand(_ => Load());
 
             _inventoryView = CollectionViewSource.GetDefaultView(Items);
             _inventoryView.Filter = FilterInventory;
+
+            AddCommand = new RelayCommand(_ => Add());
+            EditCommand = new RelayCommand(_ => Edit(), _ => SelectedItem != null);
+            DeleteCommand = new RelayCommand(_ => Delete(), _ => SelectedItem != null);
 
             Load();
         }
@@ -74,18 +65,10 @@ namespace ESCenter.ViewModels
         private void Load()
         {
             Items.Clear();
-
-            var items = _repository.GetAll().ToList();
-            foreach (var item in items)
+            foreach (var item in _repository.GetAll())
+            {
                 Items.Add(item);
-
-            // Build filter list
-            PartTypes.Clear();
-            PartTypes.Add("All");
-            foreach (var t in items.Select(i => i.ItemType).Distinct().OrderBy(x => x))
-                PartTypes.Add(t);
-
-            SelectedTypeFilter = "All";
+            }
             _inventoryView.Refresh();
         }
 
@@ -94,26 +77,13 @@ namespace ESCenter.ViewModels
             if (obj is not InventoryItemModel item)
                 return false;
 
-            // Type filter
-            if (!string.IsNullOrWhiteSpace(SelectedTypeFilter) &&
-                SelectedTypeFilter != "All" &&
-                !string.Equals(item.ItemType, SelectedTypeFilter, StringComparison.OrdinalIgnoreCase))
-                return false;
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return true;
 
-            // Search filter
-            if (!string.IsNullOrWhiteSpace(SearchText))
-            {
-                var s = SearchText.ToLowerInvariant();
-                return
-                    (item.Brand?.ToLower().Contains(s) ?? false) ||
-                    (item.Model?.ToLower().Contains(s) ?? false) ||
-                    (item.Variant?.ToLower().Contains(s) ?? false) ||
-                    (item.Compatibility?.ToLower().Contains(s) ?? false) ||
-                    (item.Description?.ToLower().Contains(s) ?? false) ||
-                    (item.Tags?.ToLower().Contains(s) ?? false);
-            }
-
-            return true;
+            return (item.ItemType?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (item.Brand?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (item.Model?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (item.Description?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false);
         }
 
         private void Add()
@@ -121,8 +91,7 @@ namespace ESCenter.ViewModels
             var vm = new AddEditInventoryViewModel(new InventoryItemModel());
             var win = new ESCenter.Views.AddEditInventoryWindow
             {
-                DataContext = vm,
-                Owner = System.Windows.Application.Current.MainWindow
+                DataContext = vm
             };
 
             if (win.ShowDialog() == true)
@@ -140,8 +109,7 @@ namespace ESCenter.ViewModels
             var vm = new AddEditInventoryViewModel(clone);
             var win = new ESCenter.Views.AddEditInventoryWindow
             {
-                DataContext = vm,
-                Owner = System.Windows.Application.Current.MainWindow
+                DataContext = vm
             };
 
             if (win.ShowDialog() == true)
@@ -151,12 +119,12 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private void Remove()
+        private void Delete()
         {
             if (SelectedItem == null) return;
 
             var result = System.Windows.MessageBox.Show(
-                $"Are you sure you want to remove '{SelectedItem.Model}'?",
+                $"Delete '{SelectedItem.ItemType}'?",
                 "Confirm Removal",
                 System.Windows.MessageBoxButton.YesNo,
                 System.Windows.MessageBoxImage.Warning);
@@ -181,6 +149,7 @@ namespace ESCenter.ViewModels
                 Specs = src.Specs,
                 Size = src.Size,
                 QuantityOnHand = src.QuantityOnHand,
+                Price = src.Price,
                 Condition = src.Condition,
                 QualityGrade = src.QualityGrade,
                 Source = src.Source,

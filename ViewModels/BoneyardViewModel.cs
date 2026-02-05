@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 using ESCenter.Core;
 using ESCenter.Data;
@@ -12,10 +14,8 @@ namespace ESCenter.ViewModels
     public class BoneyardViewModel : ObservableObject
     {
         private readonly BoneyardRepository _repo = new();
+        private readonly ICollectionView _devicesView;
 
-        // =====================
-        // Collections & Selection
-        // =====================
         public ObservableCollection<BoneyardModel> Devices { get; } = new();
 
         private BoneyardModel _selectedDevice;
@@ -25,21 +25,10 @@ namespace ESCenter.ViewModels
             set
             {
                 SetProperty(ref _selectedDevice, value);
-                CommandManager.InvalidateRequerySuggested(); // update command states
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
-        // =====================
-        // Commands
-        // =====================
-        public ICommand RefreshCommand { get; }
-        public ICommand AddDeviceCommand { get; }
-        public ICommand EditDeviceCommand { get; }
-        public ICommand DeleteDeviceCommand { get; }
-
-        // =====================
-        // Search
-        // =====================
         private string _searchText;
         public string SearchText
         {
@@ -47,26 +36,42 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _searchText, value))
-                    ApplySearchFilter();
+                {
+                    _devicesView.Refresh();
+                }
             }
         }
 
-        // =====================
-        // Constructor
-        // =====================
+        public ICommand AddCommand { get; }
+        public ICommand EditCommand { get; }
+        public ICommand DeleteCommand { get; }
+
         public BoneyardViewModel()
         {
-            RefreshCommand = new RelayCommand(_ => LoadDevices());
-            AddDeviceCommand = new RelayCommand(_ => AddDevice());
-            EditDeviceCommand = new RelayCommand(_ => EditDevice(), _ => SelectedDevice != null);
-            DeleteDeviceCommand = new RelayCommand(_ => DeleteDevice(), _ => SelectedDevice != null);
+            _devicesView = CollectionViewSource.GetDefaultView(Devices);
+            _devicesView.Filter = FilterDevices;
+
+            AddCommand = new RelayCommand(_ => AddDevice());
+            EditCommand = new RelayCommand(_ => EditDevice(), _ => SelectedDevice != null);
+            DeleteCommand = new RelayCommand(_ => DeleteDevice(), _ => SelectedDevice != null);
 
             LoadDevices();
         }
 
-        // =====================
-        // Load & Refresh
-        // =====================
+        private bool FilterDevices(object obj)
+        {
+            if (obj is not BoneyardModel device)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return true;
+
+            return (device.Brand?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (device.Model?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (device.Condition?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (device.HolderID?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false);
+        }
+
         private void LoadDevices()
         {
             Devices.Clear();
@@ -110,6 +115,7 @@ namespace ESCenter.ViewModels
                 Condition = SelectedDevice.Condition,
                 HolderID = SelectedDevice.HolderID,
                 Notes = SelectedDevice.Notes,
+                Price = SelectedDevice.Price,
                 AddedAt = SelectedDevice.AddedAt
             };
 
@@ -125,6 +131,7 @@ namespace ESCenter.ViewModels
                 SelectedDevice.Condition = clone.Condition;
                 SelectedDevice.HolderID = clone.HolderID;
                 SelectedDevice.Notes = clone.Notes;
+                SelectedDevice.Price = clone.Price;
                 SelectedDevice.AddedAt = clone.AddedAt;
 
                 _repo.Update(SelectedDevice);
@@ -158,9 +165,7 @@ namespace ESCenter.ViewModels
                     (d.Brand?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (d.Model?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (d.Condition?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (d.HolderID?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (d.Notes?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false)
-                );
+                    (d.HolderID?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false));
 
             foreach (var d in filtered)
                 Devices.Add(d);

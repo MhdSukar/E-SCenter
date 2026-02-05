@@ -44,6 +44,13 @@ namespace ESCenter.Models
             }
         }
 
+        private double _price;
+        public double Price
+        {
+            get => _price;
+            set => SetProperty(ref _price, value);
+        }
+
         private int _qualityGrade;
         public int QualityGrade
         {
@@ -147,11 +154,11 @@ namespace ESCenter.Models
 
         public string QualityDisplay => QualityGrade switch
         {
-                        1 => "Low",
-                        2 => "Mid",
-                        3 => "High",
-                        4 => "Original",
-                        _ => "Mid"
+            1 => "Low",
+            2 => "Mid",
+            3 => "High",
+            4 => "Original",
+            _ => "Mid"
         };
 
         public void SetQualityFromDisplay(string value)

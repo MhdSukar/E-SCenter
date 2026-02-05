@@ -67,6 +67,13 @@ namespace ESCenter.Models
             set => SetProperty(ref _quantityOnHand, value);
         }
 
+        private double _price;
+        public double Price
+        {
+            get => _price;
+            set => SetProperty(ref _price, value);
+        }
+
         private string _condition;
         public string Condition
         {

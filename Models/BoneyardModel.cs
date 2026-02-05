@@ -9,6 +9,7 @@
         public string Condition { get; set; }
         public string HolderID { get; set; }
         public string Notes { get; set; }
+        public double Price { get; set; }
         public string AddedAt { get; set; }
     }
 }

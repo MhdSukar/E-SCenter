@@ -202,6 +202,7 @@ namespace ESCenter.ViewModels
                 switch (e.PropertyName)
                 {
                     case nameof(PartModel.QuantityOnHand):
+                    case nameof(PartModel.Price):
                     case nameof(PartModel.LocationShelf):
                     case nameof(PartModel.LocationBin):
                     case nameof(PartModel.QualityGrade):

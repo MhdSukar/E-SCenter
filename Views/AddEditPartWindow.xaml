@@ -165,6 +165,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <!-- Part Code -->
@@ -182,44 +183,48 @@
                         <TextBlock Text="Quantity" Grid.Row="2" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
                         <TextBox Text="{Binding Part.QuantityOnHand}" Grid.Row="2" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
 
+                        <!-- Price -->
+                        <TextBlock Text="Price" Grid.Row="3" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBox Text="{Binding Part.Price}" Grid.Row="3" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+
                         <!-- Quality -->
-                        <TextBlock Text="Quality" Grid.Row="3" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBlock Text="Quality" Grid.Row="4" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
                         <ComboBox ItemsSource="{Binding QualityOptions}"
                                   SelectedItem="{Binding SelectedQuality}"
-                                  Grid.Row="3" Grid.Column="1"
+                                  Grid.Row="4" Grid.Column="1"
                                   Style="{StaticResource NeonComboBoxStyle}" Margin="0,4"/>
 
                         <!-- Shelf -->
-                        <TextBlock Text="Shelf" Grid.Row="4" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Part.LocationShelf}" Grid.Row="4" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+                        <TextBlock Text="Shelf" Grid.Row="5" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBox Text="{Binding Part.LocationShelf}" Grid.Row="5" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
 
                         <!-- Bin -->
-                        <TextBlock Text="Bin" Grid.Row="5" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Part.LocationBin}" Grid.Row="5" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+                        <TextBlock Text="Bin" Grid.Row="6" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBox Text="{Binding Part.LocationBin}" Grid.Row="6" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
 
                         <!-- Unit 1 -->
-                        <TextBlock Text="Unit 1 Value" Grid.Row="6" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="1">
+                        <TextBlock Text="Unit 1 Value" Grid.Row="7" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.Column="1">
                             <TextBox Width="80" Text="{Binding Part.UnitValue1}" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
                             <ComboBox Width="80" Margin="10,0,0,0" ItemsSource="{Binding Unit1Options}" SelectedItem="{Binding Part.UnitCode1}" Style="{StaticResource NeonComboBoxStyle}"/>
                         </StackPanel>
 
                         <!-- Unit 2 -->
-                        <TextBlock Text="Unit 2 Value" Grid.Row="7" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.Column="1">
+                        <TextBlock Text="Unit 2 Value" Grid.Row="8" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <StackPanel Orientation="Horizontal" Grid.Row="8" Grid.Column="1">
                             <TextBox Width="80" Text="{Binding Part.UnitValue2}" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
                             <ComboBox Width="80" Margin="10,0,0,0" ItemsSource="{Binding Unit2Options}" SelectedItem="{Binding Part.UnitCode2}" Style="{StaticResource NeonComboBoxStyle}"/>
                         </StackPanel>
 
                         <!-- Chip PN -->
-                        <TextBlock Text="Chip PN" Grid.Row="8" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Part.ChipPartNumber}" Grid.Row="8" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+                        <TextBlock Text="Chip PN" Grid.Row="9" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBox Text="{Binding Part.ChipPartNumber}" Grid.Row="9" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
 
                         <!-- Category -->
-                        <TextBlock Text="Category" Grid.Row="9" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBlock Text="Category" Grid.Row="10" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
                         <ComboBox ItemsSource="{Binding CategoryOptions}"
                                   SelectedItem="{Binding Part.Category}"
-                                  Grid.Row="9" Grid.Column="1"
+                                  Grid.Row="10" Grid.Column="1"
                                   Style="{StaticResource NeonComboBoxStyle}" Margin="0,4"/>
                     </Grid>
 

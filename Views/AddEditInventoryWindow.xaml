@@ -175,6 +175,7 @@
                                 <RowDefinition Height="36"/>
                                 <RowDefinition Height="36"/>
                                 <RowDefinition Height="36"/>
+                                <RowDefinition Height="36"/>
                                 <RowDefinition Height="72"/>
                                 <RowDefinition Height="90"/>
                                 <RowDefinition Height="36"/>
@@ -265,47 +266,58 @@
                                      Style="{StaticResource NeonTextBoxStyle}"
                                      Text="{Binding Item.QuantityOnHand}"/>
 
-                            <!-- ================= CONDITION ================= -->
+                            <!-- ================= PRICE ================= -->
                             <TextBlock Grid.Row="4" Grid.Column="2"
-                                       Text="Condition"
+                                       Text="Price"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
-                            <ComboBox Grid.Row="4" Grid.Column="3"
-                                      Style="{StaticResource NeonComboBoxStyle}"
-                                      ItemsSource="{Binding Conditions}"
-                                      SelectedItem="{Binding Item.Condition}"/>
+                            <TextBox Grid.Row="4" Grid.Column="3"
+                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Text="{Binding Item.Price}"/>
 
-                            <!-- ================= QUALITY ================= -->
+                            <!-- ================= CONDITION ================= -->
                             <TextBlock Grid.Row="5" Grid.Column="0"
-                                       Text="Quality"
+                                       Text="Condition"
                                        VerticalAlignment="Center"
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <ComboBox Grid.Row="5" Grid.Column="1"
                                       Style="{StaticResource NeonComboBoxStyle}"
-                                      ItemsSource="{Binding QualityGrades}"
-                                      SelectedItem="{Binding Item.QualityGrade}"/>
+                                      ItemsSource="{Binding Conditions}"
+                                      SelectedItem="{Binding Item.Condition}"/>
 
-                            <!-- ================= SOURCE ================= -->
+                            <!-- ================= QUALITY ================= -->
                             <TextBlock Grid.Row="5" Grid.Column="2"
-                                       Text="Source"
+                                       Text="Quality"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
-                            <TextBox Grid.Row="5" Grid.Column="3"
-                                     Style="{StaticResource NeonTextBoxStyle}"
-                                     Text="{Binding Item.Source}"/>
+                            <ComboBox Grid.Row="5" Grid.Column="3"
+                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      ItemsSource="{Binding QualityGrades}"
+                                      SelectedItem="{Binding Item.QualityGrade}"/>
 
-                            <!-- ================= LOCATION BOX ================= -->
+                            <!-- ================= SOURCE ================= -->
                             <TextBlock Grid.Row="6" Grid.Column="0"
-                                       Text="Box"
+                                       Text="Source"
                                        VerticalAlignment="Center"
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="6" Grid.Column="1"
+                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Text="{Binding Item.Source}"/>
+
+                            <!-- ================= LOCATION BOX ================= -->
+                            <TextBlock Grid.Row="6" Grid.Column="2"
+                                       Text="Box"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource TextSecondaryBrush}"/>
+
+                            <TextBox Grid.Row="6" Grid.Column="3"
                                      Style="{StaticResource NeonTextBoxStyle}"
                                      Text="{Binding Item.LocationBox}"/>
 
