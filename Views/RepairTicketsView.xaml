@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ESCenter.Views.RepairTicketsView"
+﻿ ﻿<UserControl x:Class="ESCenter.Views.RepairTicketsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:ESCenter.ViewModels"
@@ -534,11 +534,77 @@
                         <!-- ================= PARTS USED ================= -->
                         <StackPanel Orientation="Horizontal" Grid.Row="21" Grid.Column="0" Margin="0,6" VerticalAlignment="Top">
                             <Image Source="{StaticResource filter_vintage}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Parts Used (JSON):" VerticalAlignment="Top"/>
+                            <TextBlock Text="Parts Used:" VerticalAlignment="Top"/>
                         </StackPanel>
-                        <TextBox Text="{Binding PartsUsed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="21" Grid.Column="1" Margin="4" Height="60" TextWrapping="Wrap" AcceptsReturn="True"
-                                 Style="{StaticResource NeonTextBoxStyle}"/>
+                        <StackPanel Grid.Row="21" Grid.Column="1" Margin="4">
+                            <ItemsControl ItemsSource="{Binding SelectedPartsUsed}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource CardBackgroundBrush}"
+                                                BorderBrush="{StaticResource BorderDarkBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="12"
+                                                Margin="0,0,6,6"
+                                                Padding="8,4">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding}" Margin="0,0,6,0"/>
+                                                <Button Content="✕"
+                                                        Width="18"
+                                                        Height="18"
+                                                        Padding="0"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Foreground="{StaticResource TextPrimaryBrush}"
+                                                        Command="{Binding DataContext.RemovePartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBox x:Name="PartsUsedInputBox"
+                                     Text="{Binding PartsUsedInput, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource NeonTextBoxStyle}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding AddPartFromInputCommand}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+
+                            <Popup IsOpen="{Binding IsPartsSuggestionOpen}"
+                                   PlacementTarget="{Binding ElementName=PartsUsedInputBox}"
+                                   Placement="Bottom"
+                                   StaysOpen="False"
+                                   AllowsTransparency="True">
+                                <Border Background="{StaticResource CardBackgroundBrush}"
+                                        BorderBrush="{StaticResource BorderDarkBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        Padding="4">
+                                    <ListBox ItemsSource="{Binding PartsSuggestions}"
+                                             MaxHeight="150"
+                                             Background="Transparent"
+                                             BorderThickness="0">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{Binding}"
+                                                        Command="{Binding DataContext.AddPartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Padding="6,4"
+                                                        HorizontalContentAlignment="Left"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Border>
+                            </Popup>
+                        </StackPanel>
 
                         <!-- ================= DEVICE CHECK LIST ================= -->
                         <GroupBox Header="Device Check List"
@@ -551,150 +617,150 @@
 
                                 <!-- ===== Power & System ===== -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Powers On:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPowerOn}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Boots to OS:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBoots}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Battery Charging:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBatteryCharging}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Battery Health:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBatteryHealth}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Overheating:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckOverheating}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <!-- ===== Display & Input ===== -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                   
+
                                     <TextBlock Text="Screen / Display:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckScreen}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Touch Response:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckTouch}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Dead Pixels / Lines:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckDeadPixels}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Buttons:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckButtons}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <!-- ===== Audio & Camera ===== -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                   
+
                                     <TextBlock Text="Speaker:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckSpeaker}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Microphone:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckMicrophone}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                   
+
                                     <TextBlock Text="Front Camera:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckFrontCamera}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Rear Camera:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckRearCamera}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <!-- ===== Connectivity ===== -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="WiFi:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckWiFi}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                   
+
                                     <TextBlock Text="Bluetooth:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBluetooth}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Cellular / Signal:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckCellular}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="USB / Ports:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPorts}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <!-- ===== Security & Software ===== -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Face ID / Fingerprint:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBiometrics}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Activation / Account Lock:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckActivationLock}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Storage Detected:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckStorage}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <!-- ===== Physical Condition ===== -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Frame / Chassis:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckFrame}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Back Cover:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckCover}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Liquid Damage Indicators:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckLiquidDamage}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Signs of Previous Repair:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPreviousRepair}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
@@ -712,73 +778,73 @@
                             <UniformGrid Columns="2" Margin="8">
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Software:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessorySoftware}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="USB Stick:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryUSBStick}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Case:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryCase}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Charger:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryCharger}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Battery:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryBattery}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Monitor:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryMonitor}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Power Cord:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryPowerCord}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Original Package:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryOriginalPackage}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Memory Card:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryMemoryCard}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Cables:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryCables}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Mouse:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryMouse}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Keyboard:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryKeyboard}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
@@ -786,37 +852,37 @@
                                 <!-- ===== Added Professional Intake Items ===== -->
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="SIM Card:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessorySIMCard}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="SD Adapter:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessorySDAdapter}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Stylus / Pen:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryStylus}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Docking Station:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryDock}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="External Drive:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryExternalDrive}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-                                    
+
                                     <TextBlock Text="Headphones / Earbuds:" VerticalAlignment="Center"/>
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryHeadphones}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
                                 </StackPanel>

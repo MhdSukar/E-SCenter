@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -175,7 +177,67 @@ namespace ESCenter.ViewModels
         public TimeSpan? DeliveryTime { get => _deliveryTime; set => SetProperty(ref _deliveryTime, value); }
 
         private string _partsUsed = string.Empty;
-        public string PartsUsed { get => _partsUsed; set => SetProperty(ref _partsUsed, value); }
+        public string PartsUsed
+        {
+            get => _partsUsed;
+            set
+            {
+                if (SetProperty(ref _partsUsed, value) && !_suppressPartsUsedSync)
+                {
+                    SyncPartsCollectionFromJson();
+                }
+            }
+        }
+
+        public ObservableCollection<string> SelectedPartsUsed { get; } = new ObservableCollection<string>();
+
+        public ObservableCollection<string> PartsSuggestions { get; } = new ObservableCollection<string>();
+
+        private readonly List<string> _partsCatalog = new List<string>
+        {
+            "Screen",
+            "Battery",
+            "Charging Port",
+            "Speaker",
+            "Microphone",
+            "Camera",
+            "Rear Glass",
+            "Front Glass",
+            "Display Cable",
+            "Power Button",
+            "Volume Button",
+            "Home Button",
+            "SIM Tray",
+            "Back Cover",
+            "Motherboard",
+            "Flex Cable",
+            "Antenna",
+            "Vibrator",
+            "Proximity Sensor",
+            "Fingerprint Sensor"
+        };
+
+        private string _partsUsedInput = string.Empty;
+        public string PartsUsedInput
+        {
+            get => _partsUsedInput;
+            set
+            {
+                if (SetProperty(ref _partsUsedInput, value))
+                {
+                    UpdatePartsSuggestions();
+                }
+            }
+        }
+
+        private bool _isPartsSuggestionOpen;
+        public bool IsPartsSuggestionOpen
+        {
+            get => _isPartsSuggestionOpen;
+            set => SetProperty(ref _isPartsSuggestionOpen, value);
+        }
+
+        private bool _suppressPartsUsedSync;
 
         private string _rootCause = string.Empty;
         public string RootCause { get => _rootCause; set => SetProperty(ref _rootCause, value); }
@@ -208,6 +270,9 @@ namespace ESCenter.ViewModels
         public ICommand ClearCommand { get; }
         public ICommand CloseCommand { get; }
         public ICommand ReopenCommand { get; }
+        public ICommand AddPartCommand { get; }
+        public ICommand AddPartFromInputCommand { get; }
+        public ICommand RemovePartCommand { get; }
 
         // =========================================================
         // CONSTRUCTOR
@@ -229,8 +294,13 @@ namespace ESCenter.ViewModels
             ClearCommand = new RelayCommand(_ => ClearForm());
             CloseCommand = new RelayCommand(_ => CloseTicket(), _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
+            AddPartCommand = new RelayCommand(param => AddPart(param as string));
+            AddPartFromInputCommand = new RelayCommand(_ => AddPart(PartsUsedInput));
+            RemovePartCommand = new RelayCommand(param => RemovePart(param as string));
 
             ClearForm();
+
+            SelectedPartsUsed.CollectionChanged += (_, __) => SyncPartsUsedFromCollection();
         }
 
         // =========================================================
@@ -398,7 +468,7 @@ namespace ESCenter.ViewModels
         }
 
         private bool CanReopenTicket() =>
-            SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue; 
+            SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue;
 
         private void ReopenTicket()
         {
@@ -463,6 +533,8 @@ namespace ESCenter.ViewModels
             FinalCostCurrency = "S.P";
             RootCause = string.Empty;
             PartsUsed = string.Empty;
+            PartsUsedInput = string.Empty;
+            IsPartsSuggestionOpen = false;
             HasWarranty = false;
             WarrantyPeriod = string.Empty;
             IsWarrantyRepair = false;
@@ -475,6 +547,129 @@ namespace ESCenter.ViewModels
 
             DeviceChecklist = new DeviceChecklist();
             Accessories = new Accessories();
+        }
+
+        private void AddPart(string part)
+        {
+            var normalized = NormalizePart(part);
+            if (string.IsNullOrWhiteSpace(normalized))
+            {
+                return;
+            }
+
+            if (SelectedPartsUsed.Any(p => string.Equals(p, normalized, StringComparison.OrdinalIgnoreCase)))
+            {
+                PartsUsedInput = string.Empty;
+                IsPartsSuggestionOpen = false;
+                return;
+            }
+
+            if (_partsCatalog.All(part => !string.Equals(part, normalized, StringComparison.OrdinalIgnoreCase)))
+            {
+                _partsCatalog.Add(normalized);
+            }
+
+            SelectedPartsUsed.Add(normalized);
+            PartsUsedInput = string.Empty;
+            IsPartsSuggestionOpen = false;
+        }
+
+        private void RemovePart(string part)
+        {
+            if (string.IsNullOrWhiteSpace(part))
+            {
+                return;
+            }
+
+            var existing = SelectedPartsUsed.FirstOrDefault(p => string.Equals(p, part, StringComparison.OrdinalIgnoreCase));
+            if (existing != null)
+            {
+                SelectedPartsUsed.Remove(existing);
+            }
+        }
+
+        private void UpdatePartsSuggestions()
+        {
+            PartsSuggestions.Clear();
+
+            var query = PartsUsedInput?.Trim();
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                IsPartsSuggestionOpen = false;
+                return;
+            }
+
+            var matches = _partsCatalog
+                .Where(part => part.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                .Where(part => SelectedPartsUsed.All(selected => !string.Equals(selected, part, StringComparison.OrdinalIgnoreCase)))
+                .Take(8);
+
+            foreach (var match in matches)
+            {
+                PartsSuggestions.Add(match);
+            }
+
+            IsPartsSuggestionOpen = PartsSuggestions.Count > 0;
+        }
+
+        private void SyncPartsUsedFromCollection()
+        {
+            if (_suppressPartsUsedSync)
+            {
+                return;
+            }
+
+            _suppressPartsUsedSync = true;
+            PartsUsed = JsonSerializer.Serialize(SelectedPartsUsed);
+            _suppressPartsUsedSync = false;
+        }
+
+        private void SyncPartsCollectionFromJson()
+        {
+            if (_suppressPartsUsedSync)
+            {
+                return;
+            }
+
+            _suppressPartsUsedSync = true;
+            SelectedPartsUsed.Clear();
+            foreach (var part in ParsePartsUsedJson(PartsUsed))
+            {
+                SelectedPartsUsed.Add(part);
+            }
+            _suppressPartsUsedSync = false;
+            UpdatePartsSuggestions();
+        }
+
+        private static IEnumerable<string> ParsePartsUsedJson(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return Array.Empty<string>();
+            }
+
+            try
+            {
+                var parts = JsonSerializer.Deserialize<List<string>>(json);
+                if (parts != null)
+                {
+                    return parts
+                        .Where(part => !string.IsNullOrWhiteSpace(part))
+                        .Select(part => part.Trim());
+                }
+            }
+            catch (JsonException)
+            {
+            }
+
+            return json
+                .Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(part => part.Trim());
+        }
+
+        private static string NormalizePart(string part)
+        {
+            return string.IsNullOrWhiteSpace(part) ? string.Empty : part.Trim();
         }
 
         private void LoadFromTicket(RepairTicket ticket)
@@ -630,7 +825,7 @@ namespace ESCenter.ViewModels
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(DeviceCategory)) 
+            if (string.IsNullOrWhiteSpace(DeviceCategory))
             {
                 AppLogger.Error("Device Category is required.");
                 return false;
