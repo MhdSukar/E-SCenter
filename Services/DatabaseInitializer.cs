@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
@@ -8,22 +8,27 @@ namespace ESCenter.Services
 {
     public class DatabaseInitializer
     {
-        private const string DatabaseFileName = "E-SCenter.sql";
         private readonly string _dbPath;
 
-        public DatabaseInitializer(string baseDirectory)
+        public DatabaseInitializer(string databasePath)
         {
-            _dbPath = Path.Combine(baseDirectory, DatabaseFileName);
+            _dbPath = databasePath;
         }
 
-        public void EnsureDatabaseReady()
+        public string EnsureDatabaseReady()
         {
             EnsureDatabaseExists();
-            EnsureTablesExistAndValid();
+            return EnsureTablesExistAndValid();
         }
 
         private void EnsureDatabaseExists()
         {
+            var directory = Path.GetDirectoryName(_dbPath);
+            if (!string.IsNullOrWhiteSpace(directory) && !Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
             if (!File.Exists(_dbPath))
             {
                 SQLiteConnection.CreateFile(_dbPath);
@@ -35,18 +40,23 @@ namespace ESCenter.Services
             return new SQLiteConnection($"Data Source={_dbPath};Version=3;");
         }
 
-        private void EnsureTablesExistAndValid()
+        private string EnsureTablesExistAndValid()
         {
             using var conn = GetConnection();
             conn.Open();
 
-            EnsureTicketsTable(conn);
-            EnsurePartsTable(conn);
-            EnsureInventoryTable(conn);
-            EnsureBoneyardTable(conn);
+            var reports = new List<string>
+            {
+                EnsureTicketsTable(conn),
+                EnsurePartsTable(conn),
+                EnsureInventoryTable(conn),
+                EnsureBoneyardTable(conn)
+            };
+
+            return string.Join(Environment.NewLine, reports);
         }
 
-        private void EnsureTicketsTable(SQLiteConnection conn)
+        private string EnsureTicketsTable(SQLiteConnection conn)
         {
             const string tableName = "TicketsDB";
 
@@ -86,10 +96,10 @@ namespace ESCenter.Services
                 ["UpdatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP"
             };
 
-            EnsureTable(conn, tableName, expectedColumns);
+            return EnsureTable(conn, tableName, expectedColumns);
         }
 
-        private void EnsurePartsTable(SQLiteConnection conn)
+        private string EnsurePartsTable(SQLiteConnection conn)
         {
             const string tableName = "Parts";
             var expectedColumns = new Dictionary<string, string>
@@ -112,10 +122,10 @@ namespace ESCenter.Services
                 ["Description"] = "TEXT"
             };
 
-            EnsureTable(conn, tableName, expectedColumns);
+            return EnsureTable(conn, tableName, expectedColumns);
         }
 
-        private void EnsureInventoryTable(SQLiteConnection conn)
+        private string EnsureInventoryTable(SQLiteConnection conn)
         {
             const string tableName = "Inventory";
 
@@ -140,10 +150,10 @@ namespace ESCenter.Services
                 ["Tags"] = "TEXT"
             };
 
-            EnsureTable(conn, tableName, expectedColumns);
+            return EnsureTable(conn, tableName, expectedColumns);
         }
 
-        private void EnsureBoneyardTable(SQLiteConnection conn)
+        private string EnsureBoneyardTable(SQLiteConnection conn)
         {
             const string tableName = "Boneyard";
 
@@ -160,26 +170,32 @@ namespace ESCenter.Services
                 ["AddedAt"] = "TEXT"
             };
 
-            EnsureTable(conn, tableName, expectedColumns);
+            return EnsureTable(conn, tableName, expectedColumns);
         }
 
-        private void EnsureTable(SQLiteConnection conn, string tableName, Dictionary<string, string> expectedColumns)
+        private string EnsureTable(SQLiteConnection conn, string tableName, Dictionary<string, string> expectedColumns)
         {
             if (!TableExists(conn, tableName))
             {
                 CreateTable(conn, tableName, expectedColumns);
-                return;
+                return $"{tableName}: created ({expectedColumns.Count} columns).";
             }
 
             var existingColumns = GetExistingColumns(conn, tableName);
+            var addedColumns = new List<string>();
 
             foreach (var col in expectedColumns)
             {
                 if (!existingColumns.Contains(col.Key))
                 {
                     AddColumn(conn, tableName, col.Key, col.Value);
+                    addedColumns.Add(col.Key);
                 }
             }
+
+            return addedColumns.Count == 0
+                ? $"{tableName}: structure is valid."
+                : $"{tableName}: fixed missing columns [{string.Join(", ", addedColumns)}].";
         }
 
         private bool TableExists(SQLiteConnection conn, string tableName)
@@ -198,8 +214,9 @@ namespace ESCenter.Services
             var columns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             while (reader.Read())
             {
-                columns.Add(reader["name"].ToString());
+                columns.Add(reader["name"].ToString() ?? string.Empty);
             }
+
             return columns;
         }
 

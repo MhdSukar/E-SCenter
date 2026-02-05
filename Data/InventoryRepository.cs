@@ -2,21 +2,17 @@
 using System.Data.SQLite;
 using System.Linq;
 using ESCenter.Models;
+using ESCenter.Services;
 
 namespace ESCenter.Data
 {
     public class InventoryRepository
     {
-        private readonly string _connectionString;
-
-        public InventoryRepository(string dbPath)
-        {
-            _connectionString = $"Data Source={dbPath};Version=3;";
-        }
+        private string ConnectionString => $"Data Source={DatabasePathService.CurrentDatabasePath};Version=3;";
 
         private SQLiteConnection GetConnection()
         {
-            return new SQLiteConnection(_connectionString);
+            return new SQLiteConnection(ConnectionString);
         }
 
         public List<InventoryItemModel> GetAll()

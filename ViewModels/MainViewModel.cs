@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ESCenter.Core;
+using ESCenter.Services;
 using ESCenter.Windows;
+using Microsoft.Win32;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
@@ -14,9 +17,11 @@ namespace ESCenter.ViewModels
 {
     public class MainViewModel : ObservableObject
     {
-        // ================= Commands =================
-        private ICommand _showDatabaseMGSCommand;
-        public ICommand ShowDatabaseMGSCommand => _showDatabaseMGSCommand ??= new RelayCommand(_ => OpenDatabaseMGS());
+        private ICommand? _initializeDatabaseCommand;
+        public ICommand InitializeDatabaseCommand => _initializeDatabaseCommand ??= new RelayCommand(_ => InitializeDatabase());
+
+        private ICommand? _loadDatabaseCommand;
+        public ICommand LoadDatabaseCommand => _loadDatabaseCommand ??= new RelayCommand(_ => LoadDatabase());
 
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
@@ -25,7 +30,6 @@ namespace ESCenter.ViewModels
         public ICommand ShowInventoryCommand { get; }
         public ICommand ShowBoneyardCommand { get; }
 
-        // ================= Properties =================
         private object _currentView;
         public object CurrentView
         {
@@ -40,21 +44,21 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _statusText, value);
         }
 
-        private System.Windows.Media.Brush _statusBrush;
-        public System.Windows.Media.Brush StatusBrush
+        private Brush _statusBrush = Brushes.DeepSkyBlue;
+        public Brush StatusBrush
         {
             get => _statusBrush;
             set => SetProperty(ref _statusBrush, value);
         }
 
-        private string _statusIcon;
+        private string _statusIcon = "\uE946";
         public string StatusIcon
         {
             get => _statusIcon;
             set => SetProperty(ref _statusIcon, value);
         }
 
-        private string _clockText;
+        private string _clockText = DateTime.Now.ToString("HH:mm:ss");
         public string ClockText
         {
             get => _clockText;
@@ -62,21 +66,22 @@ namespace ESCenter.ViewModels
         }
 
         public string CurrentUser => "мн∂ ѕυкαя";
-        public System.Windows.Media.Brush UsernameBrush { get; } = System.Windows.Media.Brushes.DeepSkyBlue;
+        public Brush UsernameBrush { get; } = Brushes.DeepSkyBlue;
 
-        // ================= Dashboard =================
         public DashboardViewModel Dashboard { get; }
 
-        // ================= OxyPlot Chart =================
-        public PlotModel TicketsPlotModel { get; }
+        private PlotModel _ticketsPlotModel;
+        public PlotModel TicketsPlotModel
+        {
+            get => _ticketsPlotModel;
+            set => SetProperty(ref _ticketsPlotModel, value);
+        }
 
-        // ================= Timers =================
         private readonly DispatcherTimer _clockTimer;
         private readonly DispatcherTimer _statusResetTimer;
 
         public MainViewModel()
         {
-            // ---------------- Dashboard ----------------
             Dashboard = new DashboardViewModel();
 
             ShowDashboardCommand = new RelayCommand(_ => Navigate(Dashboard, "Dashboard loaded"));
@@ -86,37 +91,33 @@ namespace ESCenter.ViewModels
             ShowInventoryCommand = new RelayCommand(_ => Navigate(new InventoryViewModel(), "Inventory loaded"));
             ShowBoneyardCommand = new RelayCommand(_ => Navigate(new BoneyardViewModel(), "Boneyard loaded"));
 
-            // ---------------- Default View ----------------
             CurrentView = Dashboard;
             SetStatus("System Ready", StatusLevel.Info);
 
-            // ---------------- Clock ----------------
             _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            _clockTimer.Tick += (_, __) => ClockText = DateTime.Now.ToString("HH:mm:ss");
+            _clockTimer.Tick += (_, _) => ClockText = DateTime.Now.ToString("HH:mm:ss");
             _clockTimer.Start();
 
-            // ---------------- Status Reset ----------------
             _statusResetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
-            _statusResetTimer.Tick += (_, __) =>
+            _statusResetTimer.Tick += (_, _) =>
             {
                 _statusResetTimer.Stop();
                 SetStatus("System Ready", StatusLevel.Info);
             };
 
             AppLogger.StatusRaised += OnStatusRaised;
+            TicketEvents.TicketsChanged += (_, _) => RefreshTicketsChart();
+            DatabasePathService.DatabasePathChanged += (_, _) => RefreshTicketsChart();
 
-            // ---------------- Initialize Chart ----------------
-            TicketsPlotModel = CreateTicketsScatterPlotModel();
+            _ticketsPlotModel = CreateTicketsActivityPlotModel();
         }
 
-        // ================= Navigation =================
         private void Navigate(object viewModel, string successMessage)
         {
             CurrentView = viewModel;
             AppLogger.Success(successMessage);
         }
 
-        // ================= Status =================
         private void OnStatusRaised(string message, StatusLevel level)
         {
             SetStatus(message, level);
@@ -131,124 +132,187 @@ namespace ESCenter.ViewModels
             switch (level)
             {
                 case StatusLevel.Success:
-                    StatusBrush = System.Windows.Media.Brushes.LimeGreen;
+                    StatusBrush = Brushes.LimeGreen;
                     StatusIcon = "\uE73E";
                     break;
                 case StatusLevel.Warning:
-                    StatusBrush = System.Windows.Media.Brushes.Orange;
+                    StatusBrush = Brushes.Orange;
                     StatusIcon = "\uE7BA";
                     break;
                 case StatusLevel.Error:
-                    StatusBrush = System.Windows.Media.Brushes.IndianRed;
+                    StatusBrush = Brushes.IndianRed;
                     StatusIcon = "\uEA39";
                     break;
                 default:
-                    StatusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
+                    StatusBrush = Brushes.DeepSkyBlue;
                     StatusIcon = "\uE946";
                     break;
             }
         }
 
-        private void OpenDatabaseMGS()
+        private void InitializeDatabase()
         {
-            var login = new AdminLoginWindow();
-            login.Owner = System.Windows.Application.Current.MainWindow;
-            if (login.ShowDialog() == true && login.IsAuthenticated)
+            try
             {
-                var dbWindow = new DatabaseManagementWindow();
-                dbWindow.Owner = System.Windows.Application.Current.MainWindow;
-                dbWindow.ShowDialog();
+                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
+                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                {
+                    return;
+                }
+
+                var initializer = new DatabaseInitializer(DatabasePathService.CurrentDatabasePath);
+                var report = initializer.EnsureDatabaseReady();
+
+                System.Windows.MessageBox.Show(
+                    $"Database structure check completed for:\n{DatabasePathService.CurrentDatabasePath}\n\n{report}",
+                    "Initialize Database",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+
+                Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
+                AppLogger.Success("Database structure validated.");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Database initialization failed: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Database initialization failed:\n{ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
             }
         }
 
-        // ================= Create Tickets Chart =================
-        private PlotModel CreateTicketsScatterPlotModel()
+        private void LoadDatabase()
+        {
+            try
+            {
+                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
+                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                {
+                    return;
+                }
+
+                var dialog = new OpenFileDialog
+                {
+                    Title = "Select Database",
+                    Filter = "SQLite Database (*.sql;*.db;*.sqlite)|*.sql;*.db;*.sqlite|All files (*.*)|*.*",
+                    CheckFileExists = true
+                };
+
+                if (dialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
+                DatabasePathService.SetDatabasePath(dialog.FileName);
+
+                var initializer = new DatabaseInitializer(dialog.FileName);
+                initializer.EnsureDatabaseReady();
+
+                Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
+
+                System.Windows.MessageBox.Show(
+                    $"Database loaded successfully and saved as default:\n{dialog.FileName}",
+                    "Load Database",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+
+                AppLogger.Success($"Database switched to: {dialog.FileName}");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to load database: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Failed to load database:\n{ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+
+        private void RefreshTicketsChart()
+        {
+            TicketsPlotModel = CreateTicketsActivityPlotModel();
+        }
+
+        private PlotModel CreateTicketsActivityPlotModel()
         {
             var model = new PlotModel
             {
                 Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColors.White,
-                TextColor = OxyColors.White   // ← global fallback
+                PlotAreaBorderColor = OxyColor.FromAColor(80, OxyColors.White),
+                TextColor = OxyColors.White,
+                Padding = new OxyThickness(10, 8, 10, 0)
             };
 
-            // -------- Legend --------
-            var legend = new Legend
+            model.Legends.Add(new Legend
             {
-                LegendPosition = LegendPosition.TopLeft,
+                LegendPosition = LegendPosition.TopRight,
                 LegendPlacement = LegendPlacement.Outside,
                 LegendOrientation = LegendOrientation.Horizontal,
-                LegendFontSize = 8,
                 TextColor = OxyColors.White,
-                LegendTitleColor = OxyColors.White
-                //LegendBackground = OxyColors.Transparent,
-                //LegendBorder = OxyColors.Transparent
+                LegendTitleColor = OxyColors.White,
+                LegendFontSize = 10
+            });
+
+            var dataService = new TicketsDataService();
+            var tickets = dataService.GetAll();
+
+            var days = Enumerable.Range(0, 7)
+                .Select(offset => DateTime.Today.AddDays(-6 + offset))
+                .ToList();
+
+            var openedSeries = new LineSeries
+            {
+                Title = "Opened",
+                Color = OxyColor.Parse("#37E2D5"),
+                StrokeThickness = 3,
+                MarkerType = MarkerType.Circle,
+                MarkerSize = 3,
+                MarkerFill = OxyColor.Parse("#37E2D5"),
+                CanTrackerInterpolatePoints = false,
+                TrackerFormatString = "{2}: {4:0} opened"
             };
-            model.Legends.Add(legend);
 
-            // -------- Tickets --------
-            var ticketsVM = new RepairTicketsViewModel();
-            var tickets = ticketsVM.Tickets;
-
-            var days = new[] { "Sun", "Mon", "Tue", "Wed", "Thu" };
-            var dayIndex = days.Select((d, i) => new { d, i })
-                               .ToDictionary(x => x.d, x => (double)x.i);
-
-            var priorityColors = new Dictionary<string, OxyColor>
-                {
-                    { "Normal", OxyColors.SkyBlue },
-                    { "Minor", OxyColors.Turquoise},
-                    { "Major", OxyColors.Orange },
-                    { "Critical", OxyColors.Red }
-                };
-
-            var seriesByPriority = new Dictionary<string, ScatterSeries>();
-
-            foreach (var p in priorityColors)
+            var finishedSeries = new AreaSeries
             {
-                var s = new ScatterSeries
-                {
-                    Title = p.Key,
-                    MarkerType = MarkerType.Star,
-                    MarkerFill = p.Value,
-                    MarkerStroke = p.Value,
-                    MarkerSize = 4
-                };
-                seriesByPriority[p.Key] = s;
-                model.Series.Add(s);
+                Title = "Finished",
+                Color = OxyColor.Parse("#5AA7FF"),
+                Fill = OxyColor.FromAColor(90, OxyColor.Parse("#5AA7FF")),
+                StrokeThickness = 2,
+                TrackerFormatString = "{2}: {4:0} finished"
+            };
+
+            for (var i = 0; i < days.Count; i++)
+            {
+                var day = days[i];
+                var dayEnd = day.AddDays(1);
+
+                var opened = tickets.Count(t => t.ReceiveDate >= day && t.ReceiveDate < dayEnd);
+                var finished = tickets.Count(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value >= day && t.DeliveryDate.Value < dayEnd);
+
+                openedSeries.Points.Add(new DataPoint(i, opened));
+                finishedSeries.Points.Add(new DataPoint(i, finished));
+                finishedSeries.Points2.Add(new DataPoint(i, 0));
             }
 
-            var dayCounters = days.ToDictionary(d => d, d => 0);
+            model.Series.Add(finishedSeries);
+            model.Series.Add(openedSeries);
 
-            foreach (var ticket in tickets)
-            {
-                var day = ticket.ReceiveDate.DayOfWeek.ToString().Substring(0, 3);
-                if (!dayIndex.ContainsKey(day))
-                    continue;
-
-                var priority = ticket.PriorityLevel ?? "Normal";
-                if (!seriesByPriority.ContainsKey(priority))
-                    priority = "Normal";
-
-                dayCounters[day]++;
-                seriesByPriority[priority].Points.Add(
-                    new ScatterPoint(dayIndex[day], dayCounters[day])
-                );
-            }
-
-            // -------- X Axis --------
-            var xAxis = new CategoryAxis
+            model.Axes.Add(new CategoryAxis
             {
                 Position = AxisPosition.Bottom,
                 TextColor = OxyColors.White,
                 AxislineColor = OxyColors.White,
                 TicklineColor = OxyColors.White,
                 MajorGridlineStyle = LineStyle.None,
-                MinorGridlineStyle = LineStyle.None
-            };
-            xAxis.Labels.AddRange(days);
-            model.Axes.Add(xAxis);
+                MinorGridlineStyle = LineStyle.None,
+                Labels = days.Select(d => d.ToString("ddd")).ToList()
+            });
 
-            // -------- Y Axis --------
             model.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
@@ -256,7 +320,8 @@ namespace ESCenter.ViewModels
                 TextColor = OxyColors.White,
                 AxislineColor = OxyColors.White,
                 TicklineColor = OxyColors.White,
-                MajorGridlineStyle = LineStyle.None,
+                MajorGridlineStyle = LineStyle.Solid,
+                MajorGridlineColor = OxyColor.FromAColor(30, OxyColors.White),
                 MinorGridlineStyle = LineStyle.None,
                 Title = "Tickets",
                 TitleColor = OxyColors.White
@@ -264,6 +329,5 @@ namespace ESCenter.ViewModels
 
             return model;
         }
-
     }
 }

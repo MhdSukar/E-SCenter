@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
@@ -259,8 +258,8 @@ namespace ESCenter.ViewModels
 
         public RepairTicketsViewModel()
         {
-            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql");
-            _service = new TicketsDataService(dbPath);
+            _service = new TicketsDataService();
+            DatabasePathService.DatabasePathChanged += (_, __) => ReloadTicketsForSelectedDatabase();
 
             Tickets = new ObservableCollection<RepairTicket>(_service.GetAll());
 
@@ -326,6 +325,18 @@ namespace ESCenter.ViewModels
         // COMMAND ACTIONS
         // =========================================================
 
+        private void ReloadTicketsForSelectedDatabase()
+        {
+            Tickets.Clear();
+            foreach (var ticket in _service.GetAll())
+            {
+                Tickets.Add(ticket);
+            }
+
+            ClearForm();
+            _ticketsView.Refresh();
+        }
+
         private void AddTicket()
         {
             try
@@ -342,6 +353,7 @@ namespace ESCenter.ViewModels
                 SelectedTicket = ticket;
                 AppLogger.Success("Ticket added successfully!");
                 ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex)
             {
@@ -367,6 +379,7 @@ namespace ESCenter.ViewModels
 
                 AppLogger.Success("Ticket updated successfully!");
                 ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex)
             {
@@ -398,6 +411,7 @@ namespace ESCenter.ViewModels
 
                 AppLogger.Success("Ticket deleted successfully!");
                 ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex)
             {
@@ -441,6 +455,7 @@ namespace ESCenter.ViewModels
 
                 AppLogger.Success("Ticket closed successfully!");
                 ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex)
             {
@@ -478,6 +493,7 @@ namespace ESCenter.ViewModels
 
                 AppLogger.Success("Ticket reopened successfully!");
                 ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex)
             {
@@ -540,7 +556,7 @@ namespace ESCenter.ViewModels
                 var skus = partsRepo.GetSkus()
                     .Distinct(StringComparer.OrdinalIgnoreCase);
 
-                var inventoryRepo = new InventoryRepository(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql"));
+                var inventoryRepo = new InventoryRepository();
                 var inventoryNames = inventoryRepo.GetNames()
                     .Distinct(StringComparer.OrdinalIgnoreCase);
 
@@ -591,7 +607,7 @@ namespace ESCenter.ViewModels
                 var partsRepo = new PartsRepository();
                 partsRepo.DecrementQuantityBySku(partName, 1);
 
-                var inventoryRepo = new InventoryRepository(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql"));
+                var inventoryRepo = new InventoryRepository();
                 inventoryRepo.DecrementQuantityByName(partName, 1);
             }
             catch (Exception ex)

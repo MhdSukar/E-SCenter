@@ -8,6 +8,7 @@ using ESCenter.Core;
 using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Views;
+using ESCenter.Services;
 
 namespace ESCenter.ViewModels
 {
@@ -55,6 +56,7 @@ namespace ESCenter.ViewModels
             EditCommand = new RelayCommand(_ => EditDevice(), _ => SelectedDevice != null);
             DeleteCommand = new RelayCommand(_ => DeleteDevice(), _ => SelectedDevice != null);
 
+            DatabasePathService.DatabasePathChanged += (_, __) => LoadDevices();
             LoadDevices();
         }
 

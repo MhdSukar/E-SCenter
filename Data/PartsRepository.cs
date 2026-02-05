@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.IO;
 using ESCenter.Models;
+using ESCenter.Services;
 
 namespace ESCenter.Data
 {
     public class PartsRepository
     {
-        private readonly string _dbPath;
-
-        public PartsRepository()
-        {
-            _dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql");
-        }
-
         private SQLiteConnection GetConnection()
         {
-            return new SQLiteConnection($"Data Source={_dbPath};Version=3;");
+            return new SQLiteConnection($"Data Source={DatabasePathService.CurrentDatabasePath};Version=3;");
         }
 
         // -------------------------

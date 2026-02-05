@@ -173,6 +173,7 @@
                     <DataGridTextColumn Header="Qty"
                                         Binding="{Binding QuantityOnHand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Width="70"/>
+                    <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}{0:F2}}" Width="90"/>
                     <DataGridTextColumn Header="Quality" Binding="{Binding QualityGrade}" Width="70"/>
                     <DataGridTextColumn Header="Shelf" Binding="{Binding LocationShelf}" Width="80"/>
                     <DataGridTextColumn Header="Bin" Binding="{Binding LocationBin}" Width="80"/>

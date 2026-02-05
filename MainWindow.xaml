@@ -311,7 +311,7 @@
                                           Height="140"
                                           Background="Transparent"
                                           Grid.Row="1"
-                                          Margin="0,-20,0,0"/>
+                                          Margin="0,-8,0,0"/>
                         </GroupBox>
 
                         <!-- ========= Statistics Group ========= -->
@@ -411,10 +411,18 @@
                                          VerticalAlignment="Center">
 
                                 <Button Style="{StaticResource NeonBorderButtonStyle}" Width="145" FontSize="15" Margin="0,2,6,0"
-                                        Command="{Binding ShowDatabaseMGSCommand}">
+                                        Command="{Binding InitializeDatabaseCommand}">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Image Source="{StaticResource DatabaseUpload}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                        <TextBlock Text="Database MGS"/>
+                                        <Image Source="{StaticResource verified}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Initialize DB"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Style="{StaticResource NeonCyanButtonStyle}" Width="145" FontSize="15" Margin="0,2,6,0"
+                                        Command="{Binding LoadDatabaseCommand}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Image Source="{StaticResource Database}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Load DB"/>
                                     </StackPanel>
                                 </Button>
 
@@ -425,7 +433,6 @@
                                         <TextBlock Text="Reports"/>
                                     </StackPanel>
                                 </Button>
-
 
                             </UniformGrid>
                         </GroupBox>

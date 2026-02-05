@@ -149,6 +149,10 @@
                                         Binding="{Binding AddedAt}"
                                         Width="150"/>
 
+                    <DataGridTextColumn Header="Price"
+                                        Binding="{Binding Price, StringFormat={}{0:F2}}"
+                                        Width="90"/>
+
                     <DataGridTextColumn Header="Notes"
                                         Binding="{Binding Notes}"
                                         Width="260"/>
