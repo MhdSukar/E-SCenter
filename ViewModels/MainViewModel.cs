@@ -46,8 +46,8 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _statusText, value);
         }
 
-        private Brush _statusBrush = Brushes.DeepSkyBlue;
-        public Brush StatusBrush
+        private System.Windows.Media.Brush _statusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
+        public System.Windows.Media.Brush StatusBrush
         {
             get => _statusBrush;
             set => SetProperty(ref _statusBrush, value);
@@ -68,7 +68,7 @@ namespace ESCenter.ViewModels
         }
 
         public string CurrentUser => "мн∂ ѕυкαя";
-        public Brush UsernameBrush { get; } = Brushes.DeepSkyBlue;
+        public System.Windows.Media.Brush UsernameBrush { get; } = System.Windows.Media.Brushes.DeepSkyBlue;
 
         public DashboardViewModel Dashboard { get; }
 
@@ -134,19 +134,19 @@ namespace ESCenter.ViewModels
             switch (level)
             {
                 case StatusLevel.Success:
-                    StatusBrush = Brushes.LimeGreen;
+                    StatusBrush = System.Windows.Media.Brushes.LimeGreen;
                     StatusIcon = "\uE73E";
                     break;
                 case StatusLevel.Warning:
-                    StatusBrush = Brushes.Orange;
+                    StatusBrush = System.Windows.Media.Brushes.Orange;
                     StatusIcon = "\uE7BA";
                     break;
                 case StatusLevel.Error:
-                    StatusBrush = Brushes.IndianRed;
+                    StatusBrush = System.Windows.Media.Brushes.IndianRed;
                     StatusIcon = "\uEA39";
                     break;
                 default:
-                    StatusBrush = Brushes.DeepSkyBlue;
+                    StatusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
                     StatusIcon = "\uE946";
                     break;
             }
