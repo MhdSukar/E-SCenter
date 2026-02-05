@@ -16,19 +16,19 @@ namespace ESCenter.Windows
         {
             if (string.IsNullOrWhiteSpace(NewPasswordBox.Password))
             {
-                MessageBox.Show("New password cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("New password cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (!string.Equals(NewPasswordBox.Password, ConfirmPasswordBox.Password))
             {
-                MessageBox.Show("New password and confirm password do not match.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("New password and confirm password do not match.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (!UserPreferencesService.ChangeAdminPassword(CurrentPasswordBox.Password, NewPasswordBox.Password))
             {
-                MessageBox.Show("Current password is incorrect.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Current password is incorrect.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
