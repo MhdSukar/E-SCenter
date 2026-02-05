@@ -1,12 +1,12 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+using System.Windows;
 using ESCenter.Core;
+using ESCenter.Services;
 
 namespace ESCenter.Windows
 {
     public partial class AdminLoginWindow : Window
     {
-        public bool IsAuthenticated { get; private set; } = false;
+        public bool IsAuthenticated { get; private set; }
 
         public AdminLoginWindow()
         {
@@ -15,25 +15,24 @@ namespace ESCenter.Windows
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (UsernameBox.Text == "Admin" && PasswordBox.Password == "Admin")
+            if (UserPreferencesService.ValidateAdminCredentials(UsernameBox.Text, PasswordBox.Password))
             {
                 IsAuthenticated = true;
-                this.DialogResult = true;
-                this.Close();
+                DialogResult = true;
+                Close();
                 AppLogger.Success("Welcome Back мн∂ ѕυкαя");
+                return;
             }
-            else
-            {
-                this.Close();
-                AppLogger.Error("invalid Credentials");
-                //MessageBox.Show("Invalid credentials", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+
+            DialogResult = false;
+            Close();
+            AppLogger.Error("invalid Credentials");
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
-            this.Close();
+            DialogResult = false;
+            Close();
         }
     }
 }

@@ -7,7 +7,6 @@ using System.Windows.Threading;
 using ESCenter.Core;
 using ESCenter.Services;
 using ESCenter.Windows;
-using Microsoft.Win32;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
@@ -22,6 +21,9 @@ namespace ESCenter.ViewModels
 
         private ICommand? _loadDatabaseCommand;
         public ICommand LoadDatabaseCommand => _loadDatabaseCommand ??= new RelayCommand(_ => LoadDatabase());
+
+        private ICommand? _changeAdminPasswordCommand;
+        public ICommand ChangeAdminPasswordCommand => _changeAdminPasswordCommand ??= new RelayCommand(_ => ChangeAdminPassword());
 
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
@@ -44,8 +46,8 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _statusText, value);
         }
 
-        private System.Windows.Media.Brush _statusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
-        public System.Windows.Media.Brush StatusBrush
+        private Brush _statusBrush = Brushes.DeepSkyBlue;
+        public Brush StatusBrush
         {
             get => _statusBrush;
             set => SetProperty(ref _statusBrush, value);
@@ -66,7 +68,7 @@ namespace ESCenter.ViewModels
         }
 
         public string CurrentUser => "мн∂ ѕυкαя";
-        public System.Windows.Media.Brush UsernameBrush { get; } = System.Windows.Media.Brushes.DeepSkyBlue;
+        public Brush UsernameBrush { get; } = Brushes.DeepSkyBlue;
 
         public DashboardViewModel Dashboard { get; }
 
@@ -132,19 +134,19 @@ namespace ESCenter.ViewModels
             switch (level)
             {
                 case StatusLevel.Success:
-                    StatusBrush = System.Windows.Media.Brushes.LimeGreen;
+                    StatusBrush = Brushes.LimeGreen;
                     StatusIcon = "\uE73E";
                     break;
                 case StatusLevel.Warning:
-                    StatusBrush = System.Windows.Media.Brushes.Orange;
+                    StatusBrush = Brushes.Orange;
                     StatusIcon = "\uE7BA";
                     break;
                 case StatusLevel.Error:
-                    StatusBrush = System.Windows.Media.Brushes.IndianRed;
+                    StatusBrush = Brushes.IndianRed;
                     StatusIcon = "\uEA39";
                     break;
                 default:
-                    StatusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
+                    StatusBrush = Brushes.DeepSkyBlue;
                     StatusIcon = "\uE946";
                     break;
             }
@@ -233,6 +235,36 @@ namespace ESCenter.ViewModels
             }
         }
 
+        private void ChangeAdminPassword()
+        {
+            try
+            {
+                var dialog = new ChangeAdminPasswordWindow
+                {
+                    Owner = System.Windows.Application.Current.MainWindow
+                };
+
+                if (dialog.ShowDialog() == true && dialog.PasswordChanged)
+                {
+                    AppLogger.Success("Admin password changed successfully.");
+                    System.Windows.MessageBox.Show(
+                        "Admin password changed successfully.",
+                        "Success",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to change admin password: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Failed to change admin password:\n{ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+
         private void RefreshTicketsChart()
         {
             TicketsPlotModel = CreateTicketsActivityPlotModel();
@@ -293,8 +325,8 @@ namespace ESCenter.ViewModels
 
                 var opened = tickets.Count(t => t.ReceiveDate >= day && t.ReceiveDate < dayEnd);
                 var finished = tickets.Count(t => t.DeliveryDate.HasValue &&
-                                                   t.DeliveryDate.Value >= day &&
-                                                   t.DeliveryDate.Value < dayEnd);
+                                                  t.DeliveryDate.Value >= day &&
+                                                  t.DeliveryDate.Value < dayEnd);
 
                 openedSeries.Points.Add(new DataPoint(i, opened));
                 finishedSeries.Points.Add(new DataPoint(i, finished));
@@ -315,7 +347,9 @@ namespace ESCenter.ViewModels
             };
 
             foreach (var d in days)
+            {
                 xAxis.Labels.Add(d.ToString("ddd"));
+            }
 
             model.Axes.Add(xAxis);
 
@@ -335,6 +369,5 @@ namespace ESCenter.ViewModels
 
             return model;
         }
-
     }
 }
