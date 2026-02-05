@@ -1,4 +1,4 @@
-﻿ ﻿<UserControl x:Class="ESCenter.Views.RepairTicketsView"
+﻿<UserControl x:Class="ESCenter.Views.RepairTicketsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:ESCenter.ViewModels"
@@ -7,36 +7,46 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance vm:RepairTicketsViewModel, IsDesignTimeCreatable=True}"
              Background="Transparent"
-             Height="Auto" Width="Auto">
+             Height="Auto"
+             Width="Auto">
 
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2.2*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2.2*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <!-- ================= LEFT: TICKETS GRID ================= -->
-        <Border Style="{StaticResource CardBorderStyle}" Padding="8" Margin="0,0,10,0">
+        <Border Style="{StaticResource CardBorderStyle}"
+                Padding="8"
+                Margin="0,0,10,0">
             <DockPanel>
 
                 <!-- ================= HEADER ================= -->
-                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <DockPanel DockPanel.Dock="Top"
+                           Margin="0,0,0,8">
                     <TextBlock Text="Repair Tickets"
                                FontSize="20"
                                FontWeight="Bold"
                                Foreground="{StaticResource NewPrimaryBlueBrush}"
-                               DockPanel.Dock="Left"/>
+                               DockPanel.Dock="Left" />
 
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal"
+                                DockPanel.Dock="Right"
+                                VerticalAlignment="Center">
 
                         <Button Command="{Binding CloseCommand}"
                                 Style="{StaticResource NeonGreenButtonStyle}"
                                 Width="80"
                                 Margin="4,0"
                                 IsEnabled="{Binding SelectedTicket}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Completed}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="Close"/>
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <Image Source="{StaticResource Completed}"
+                                       Width="16"
+                                       Height="16"
+                                       Margin="0,0,6,0" />
+                                <TextBlock Text="Close" />
                             </StackPanel>
                         </Button>
 
@@ -45,9 +55,13 @@
                                 Width="80"
                                 Margin="4,0"
                                 IsEnabled="{Binding SelectedTicket}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Reopen}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="Reopen"/>
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <Image Source="{StaticResource Reopen}"
+                                       Width="16"
+                                       Height="16"
+                                       Margin="0,0,6,0" />
+                                <TextBlock Text="Reopen" />
                             </StackPanel>
                         </Button>
 
@@ -56,9 +70,13 @@
                                 Width="80"
                                 Margin="4,0"
                                 IsEnabled="{Binding SelectedTicket}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Delete}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="Delete"/>
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <Image Source="{StaticResource Delete}"
+                                       Width="16"
+                                       Height="16"
+                                       Margin="0,0,6,0" />
+                                <TextBlock Text="Delete" />
                             </StackPanel>
                         </Button>
 
@@ -94,7 +112,7 @@
                                        Width="16"
                                        Height="16"
                                        VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"/>
+                                       HorizontalAlignment="Center" />
                             </Border>
 
                             <!-- Search box -->
@@ -135,16 +153,37 @@
                           AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}"
                           SelectionUnit="FullRow">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ESC-ID" Binding="{Binding EscTicketId}" Width="70"/>
-                        <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="120"/>
-                        <DataGridTextColumn Header="Phone" Binding="{Binding PhoneNumber}" Width="100"/>
-                        <DataGridTextColumn Header="Device" Binding="{Binding DeviceCategory}" Width="80"/>
-                        <DataGridTextColumn Header="Model" Binding="{Binding DeviceModel}" Width="100"/>
-                        <DataGridTextColumn Header="Status" Binding="{Binding RepairStatus}" Width="90"/>
-                        <DataGridTextColumn Header="Priority" Binding="{Binding PriorityLevel}" Width="75" CellStyle="{StaticResource PriorityCellStyle}"/>
-                        <DataGridTextColumn Header="Received" Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}" Width="95"/>
-                        <DataGridTextColumn Header="Delivery" Binding="{Binding DeliveryDate, StringFormat='yyyy-MM-dd HH:mm'}" Width="95"/>
-                        <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="*"/>
+                        <DataGridTextColumn Header="ESC-ID"
+                                            Binding="{Binding EscTicketId}"
+                                            Width="70" />
+                        <DataGridTextColumn Header="Customer Name"
+                                            Binding="{Binding CustomerName}"
+                                            Width="120" />
+                        <DataGridTextColumn Header="Phone"
+                                            Binding="{Binding PhoneNumber}"
+                                            Width="100" />
+                        <DataGridTextColumn Header="Device"
+                                            Binding="{Binding DeviceCategory}"
+                                            Width="80" />
+                        <DataGridTextColumn Header="Model"
+                                            Binding="{Binding DeviceModel}"
+                                            Width="100" />
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding RepairStatus}"
+                                            Width="90" />
+                        <DataGridTextColumn Header="Priority"
+                                            Binding="{Binding PriorityLevel}"
+                                            Width="75"
+                                            CellStyle="{StaticResource PriorityCellStyle}" />
+                        <DataGridTextColumn Header="Received"
+                                            Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}"
+                                            Width="95" />
+                        <DataGridTextColumn Header="Delivery"
+                                            Binding="{Binding DeliveryDate, StringFormat='yyyy-MM-dd HH:mm'}"
+                                            Width="95" />
+                        <DataGridTextColumn Header="Notes"
+                                            Binding="{Binding Notes}"
+                                            Width="*" />
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -157,17 +196,18 @@
                 Padding="12">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <!-- Header -->
-                <DockPanel Grid.Row="0" Margin="0,0,0,12">
+                <DockPanel Grid.Row="0"
+                           Margin="0,0,0,12">
                     <TextBlock Text="Ticket Details"
                                FontSize="18"
                                FontWeight="Bold"
-                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                               Foreground="{StaticResource TextPrimaryBrush}" />
                 </DockPanel>
 
                 <!-- Footer -->
@@ -180,9 +220,13 @@
                             Style="{StaticResource NeonGreenButtonStyle}"
                             Width="80"
                             Margin="4,0">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Image Source="{StaticResource AddTask}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Add"/>
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource AddTask}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Add" />
                         </StackPanel>
                     </Button>
 
@@ -190,9 +234,13 @@
                             Style="{StaticResource NeonCyanButtonStyle}"
                             Width="100"
                             Margin="4,0">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Image Source="{StaticResource save}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Save"/>
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource save}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Save" />
                         </StackPanel>
                     </Button>
 
@@ -200,119 +248,192 @@
                             Style="{StaticResource NeonOrangeButtonStyle}"
                             Width="80"
                             Margin="4,0">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Image Source="{StaticResource ClearAll}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Clear"/>
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource ClearAll}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Clear" />
                         </StackPanel>
                     </Button>
 
                 </StackPanel>
 
                 <!-- Form -->
-                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden">
+                <ScrollViewer Grid.Row="2"
+                              VerticalScrollBarVisibility="Hidden">
                     <Grid Margin="0,4">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="140"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="140" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 0 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 1 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 2 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 3 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 4 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 5 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 6 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 7 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 8 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 9 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 10 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 11 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 12 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 13 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 14 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 15 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 16 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 17 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 18 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 19 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 20 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 21 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 22 -->
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
                             <!-- 23 -->
                         </Grid.RowDefinitions>
 
                         <!-- ================= CUSTOMER INFO ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource verified}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Ready for Pickup:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource verified}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Ready for Pickup:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
-                        <CheckBox IsChecked="{Binding IsReadyForPickup, Mode=TwoWay}" Grid.Row="0" Grid.Column="1" Margin="4" Style="{StaticResource NeonCheckBoxStyle}"/>
+                        <CheckBox IsChecked="{Binding IsReadyForPickup, Mode=TwoWay}"
+                                  Grid.Row="0"
+                                  Grid.Column="1"
+                                  Margin="4"
+                                  Style="{StaticResource NeonCheckBoxStyle}" />
 
                         <!-- ================= UNIQUE ESC ID ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource edit_audio}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Ticket Code:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource edit_audio}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Ticket Code:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding EscTicketId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="1" Grid.Column="1" Margin="4" Style="{StaticResource NeonTextBoxStyle}"
+                                 Grid.Row="1"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Style="{StaticResource NeonTextBoxStyle}"
                                  ToolTip="Format: ESC-000001"
-                                 Focusable="False"/>
+                                 Focusable="False" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource IDCARD}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Customer ID:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource IDCARD}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Customer ID:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding CustomerIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="2" Grid.Column="1" Margin="4" Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="2"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource identity}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Customer Name:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource identity}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Customer Name:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="3" Grid.Column="1" Margin="4" Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="3"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource ContactMethod}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Phone:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource ContactMethod}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Phone:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="4" Grid.Column="1" Margin="4" Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="4"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource ContactMethod}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Contact Method:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource ContactMethod}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Contact Method:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <ComboBox SelectedItem="{Binding ContactMethod, Mode=TwoWay}"
-                                  Grid.Row="5" Grid.Column="1" Margin="4" Style="{StaticResource NeonComboBoxStyle}">
+                                  Grid.Row="5"
+                                  Grid.Column="1"
+                                  Margin="4"
+                                  Style="{StaticResource NeonComboBoxStyle}">
                             <ComboBox.ItemsSource>
-                                <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <x:Array Type="{x:Type sys:String}"
+                                         xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                     <sys:String>Call</sys:String>
                                     <sys:String>WhatsApp</sys:String>
                                     <sys:String>SMS</sys:String>
@@ -323,82 +444,189 @@
                         </ComboBox>
 
                         <!-- ================= DEVICE INFO ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource segment}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Device Category:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="6"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource segment}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Device Category:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding DeviceCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="6" Grid.Column="1" Margin="4" Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="6"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource Brand}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Brand:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="7"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource Brand}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Brand:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding DeviceBrand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="7" Grid.Column="1" Margin="4" Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="7"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="8" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource DeviceModel}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Model:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="8"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource DeviceModel}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Model:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding DeviceModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="8" Grid.Column="1" Margin="4" Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="8"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
                         <!-- ================= DAMAGE HISTORY ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="9" Grid.Column="0" Margin="0,6" VerticalAlignment="Top">
-                            <Image Source="{StaticResource Warning}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Damage History:" VerticalAlignment="Top"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="9"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Top">
+                            <Image Source="{StaticResource Warning}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Damage History:"
+                                       VerticalAlignment="Top" />
                         </StackPanel>
                         <TextBox Text="{Binding DamageHistory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="9" Grid.Column="1" Margin="4" Height="60" TextWrapping="Wrap" AcceptsReturn="True"
-                                 Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="9"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Height="60"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource Serial}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Serial / IMEI:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="10"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource Serial}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Serial / IMEI:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding SerialIMEI, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="10" Grid.Column="1" Margin="4" Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="10"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
                         <!-- ================= DESCRIPTION & NOTES ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="11" Grid.Column="0" Margin="0,6" VerticalAlignment="Top">
-                            <Image Source="{StaticResource Warning}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Problem Description:" VerticalAlignment="Top"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="11"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Top">
+                            <Image Source="{StaticResource Warning}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Problem Description:"
+                                       VerticalAlignment="Top" />
                         </StackPanel>
                         <TextBox Text="{Binding ProblemDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="11" Grid.Column="1" Margin="4" Height="60" TextWrapping="Wrap" AcceptsReturn="True"
-                                 Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="11"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Height="60"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="12" Grid.Column="0" Margin="0,6" VerticalAlignment="Top">
-                            <Image Source="{StaticResource Notes}" Width="16" Height="16" Margin="0,0,6,0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="12"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Top">
+                            <Image Source="{StaticResource Notes}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
                             <TextBlock Text="Notes: ( Device Passwords, Device Diagnoses, Email )"
                                        TextWrapping="Wrap"
                                        VerticalAlignment="Top"
                                        Width="110"
-                                       Height="60"/>
+                                       Height="60" />
                         </StackPanel>
                         <TextBox Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="12" Grid.Column="1" Margin="4" Height="60" TextWrapping="Wrap" AcceptsReturn="True"
-                                 Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="12"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Height="60"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
                         <!-- ================= BOARD MODIFICATIONS ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="13" Grid.Column="0" Margin="0,6" VerticalAlignment="Top">
-                            <Image Source="{StaticResource Unassigned}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Board Modifications:" VerticalAlignment="Top"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="13"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Top">
+                            <Image Source="{StaticResource Unassigned}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Board Modifications:"
+                                       VerticalAlignment="Top" />
                         </StackPanel>
                         <TextBox Text="{Binding BoardModifications, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Grid.Row="13" Grid.Column="1" Margin="4" Height="60" TextWrapping="Wrap" AcceptsReturn="True"
-                                 Style="{StaticResource NeonTextBoxStyle}"/>
+                                 Grid.Row="13"
+                                 Grid.Column="1"
+                                 Margin="4"
+                                 Height="60"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Style="{StaticResource NeonTextBoxStyle}" />
 
                         <!-- ================= STATUS & PRIORITY ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="14" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource mobilewrench35}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Repair Status:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="14"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource mobilewrench35}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Repair Status:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <ComboBox SelectedItem="{Binding RepairStatus, Mode=TwoWay}"
-                                  Grid.Row="14" Grid.Column="1" Margin="4" Style="{StaticResource NeonComboBoxStyle}">
+                                  Grid.Row="14"
+                                  Grid.Column="1"
+                                  Margin="4"
+                                  Style="{StaticResource NeonComboBoxStyle}">
                             <ComboBox.ItemsSource>
-                                <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <x:Array Type="{x:Type sys:String}"
+                                         xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                     <sys:String>Received</sys:String>
                                     <sys:String>Diagnosing</sys:String>
                                     <sys:String>Waiting for Parts</sys:String>
@@ -412,14 +640,26 @@
                             </ComboBox.ItemsSource>
                         </ComboBox>
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="15" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource Warning}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Priority:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="15"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource Warning}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Priority:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <ComboBox SelectedItem="{Binding PriorityLevel, Mode=TwoWay}"
-                                  Grid.Row="15" Grid.Column="1" Margin="4" Style="{StaticResource NeonComboBoxStyle}">
+                                  Grid.Row="15"
+                                  Grid.Column="1"
+                                  Margin="4"
+                                  Style="{StaticResource NeonComboBoxStyle}">
                             <ComboBox.ItemsSource>
-                                <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <x:Array Type="{x:Type sys:String}"
+                                         xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                     <sys:String>Minor</sys:String>
                                     <sys:String>Normal</sys:String>
                                     <sys:String>Major</sys:String>
@@ -429,23 +669,34 @@
                         </ComboBox>
 
                         <!-- ================= COST ================= -->
-                        <!-- ================= COST ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="16" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource EstimatedCost}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Estimated Cost:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="16"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource EstimatedCost}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Estimated Cost:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
 
-                        <StackPanel Grid.Row="16" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                        <StackPanel Grid.Row="16"
+                                    Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Margin="4">
                             <TextBox Text="{Binding EstimatedCost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
                                      Width="120"
                                      Margin="0,0,6,0"
-                                     Style="{StaticResource NeonTextBoxStyle}"/>
+                                     Style="{StaticResource NeonTextBoxStyle}" />
 
                             <ComboBox Width="80"
                                       SelectedItem="{Binding EstimatedCostCurrency, Mode=TwoWay}"
                                       Style="{StaticResource NeonComboBoxStyle}">
                                 <ComboBox.ItemsSource>
-                                    <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                    <x:Array Type="{x:Type sys:String}"
+                                             xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                         <sys:String>S.P</sys:String>
                                         <sys:String>USD</sys:String>
                                         <sys:String>EUR</sys:String>
@@ -456,22 +707,34 @@
                             </ComboBox>
                         </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="17" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource FinalCost}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Final Cost:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="17"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource FinalCost}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Final Cost:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
 
-                        <StackPanel Grid.Row="17" Grid.Column="1" Orientation="Horizontal" Margin="4">
+                        <StackPanel Grid.Row="17"
+                                    Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Margin="4">
                             <TextBox Text="{Binding FinalCost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
                                      Width="120"
                                      Margin="0,0,6,0"
-                                     Style="{StaticResource NeonTextBoxStyle}"/>
+                                     Style="{StaticResource NeonTextBoxStyle}" />
 
                             <ComboBox Width="80"
                                       SelectedItem="{Binding FinalCostCurrency, Mode=TwoWay}"
                                       Style="{StaticResource NeonComboBoxStyle}">
                                 <ComboBox.ItemsSource>
-                                    <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                    <x:Array Type="{x:Type sys:String}"
+                                             xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                         <sys:String>S.P</sys:String>
                                         <sys:String>USD</sys:String>
                                         <sys:String>EUR</sys:String>
@@ -483,18 +746,32 @@
                         </StackPanel>
 
                         <!-- ================= WARRANTY ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="18" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource ReadyToPick}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Warranty:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="18"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource ReadyToPick}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Warranty:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="18" Grid.Column="1" Margin="4">
-                            <CheckBox IsChecked="{Binding HasWarranty}" Style="{StaticResource NeonCheckBoxStyle}" Margin="0,0,8,0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="18"
+                                    Grid.Column="1"
+                                    Margin="4">
+                            <CheckBox IsChecked="{Binding HasWarranty}"
+                                      Style="{StaticResource NeonCheckBoxStyle}"
+                                      Margin="0,0,8,0" />
                             <ComboBox Width="160"
                                       IsEnabled="{Binding HasWarranty}"
                                       SelectedItem="{Binding WarrantyPeriod, Mode=TwoWay}"
                                       Style="{StaticResource NeonComboBoxStyle}">
                                 <ComboBox.ItemsSource>
-                                    <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                    <x:Array Type="{x:Type sys:String}"
+                                             xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                         <sys:String>7 Days</sys:String>
                                         <sys:String>14 Days</sys:String>
                                         <sys:String>30 Days</sys:String>
@@ -507,22 +784,45 @@
                         </StackPanel>
 
                         <!-- ================= REPAIR ON WARRANTY ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="19" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource safety_check}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Repair on Warranty:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="19"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource safety_check}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Repair on Warranty:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
-                        <CheckBox IsChecked="{Binding IsWarrantyRepair}" Grid.Row="19" Grid.Column="1" Margin="4"
-                                  Style="{StaticResource NeonCheckBoxStyle}"/>
+                        <CheckBox IsChecked="{Binding IsWarrantyRepair}"
+                                  Grid.Row="19"
+                                  Grid.Column="1"
+                                  Margin="4"
+                                  Style="{StaticResource NeonCheckBoxStyle}" />
 
                         <!-- ================= ROOT CAUSE ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="20" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
-                            <Image Source="{StaticResource token}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Root Cause:" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="20"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Center">
+                            <Image Source="{StaticResource token}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Root Cause:"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                         <ComboBox SelectedItem="{Binding RootCause, Mode=TwoWay}"
-                                  Grid.Row="20" Grid.Column="1" Margin="4" Style="{StaticResource NeonComboBoxStyle}">
+                                  Grid.Row="20"
+                                  Grid.Column="1"
+                                  Margin="4"
+                                  Style="{StaticResource NeonComboBoxStyle}">
                             <ComboBox.ItemsSource>
-                                <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <x:Array Type="{x:Type sys:String}"
+                                         xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                     <sys:String>Electrical Cause</sys:String>
                                     <sys:String>Mechanical Cause</sys:String>
                                     <sys:String>Environmental Cause</sys:String>
@@ -532,11 +832,21 @@
                         </ComboBox>
 
                         <!-- ================= PARTS USED ================= -->
-                        <StackPanel Orientation="Horizontal" Grid.Row="21" Grid.Column="0" Margin="0,6" VerticalAlignment="Top">
-                            <Image Source="{StaticResource filter_vintage}" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Parts Used:" VerticalAlignment="Top"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="21"
+                                    Grid.Column="0"
+                                    Margin="0,6"
+                                    VerticalAlignment="Top">
+                            <Image Source="{StaticResource filter_vintage}"
+                                   Width="16"
+                                   Height="16"
+                                   Margin="0,0,6,0" />
+                            <TextBlock Text="Parts Used:"
+                                       VerticalAlignment="Top" />
                         </StackPanel>
-                        <StackPanel Grid.Row="21" Grid.Column="1" Margin="4">
+                        <StackPanel Grid.Row="21"
+                                    Grid.Column="1"
+                                    Margin="4">
                             <ItemsControl ItemsSource="{Binding SelectedPartsUsed}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -552,7 +862,8 @@
                                                 Margin="0,0,6,6"
                                                 Padding="8,4">
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding}" Margin="0,0,6,0"/>
+                                                <TextBlock Text="{Binding}"
+                                                           Margin="0,0,6,0" />
                                                 <Button Content="✕"
                                                         Width="18"
                                                         Height="18"
@@ -561,7 +872,7 @@
                                                         BorderThickness="0"
                                                         Foreground="{StaticResource TextPrimaryBrush}"
                                                         Command="{Binding DataContext.RemovePartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        CommandParameter="{Binding}"/>
+                                                        CommandParameter="{Binding}" />
                                             </StackPanel>
                                         </Border>
                                     </DataTemplate>
@@ -572,7 +883,8 @@
                                      Text="{Binding PartsUsedInput, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource NeonTextBoxStyle}">
                                 <TextBox.InputBindings>
-                                    <KeyBinding Key="Enter" Command="{Binding AddPartFromInputCommand}"/>
+                                    <KeyBinding Key="Enter"
+                                                Command="{Binding AddPartFromInputCommand}" />
                                 </TextBox.InputBindings>
                             </TextBox>
 
@@ -598,7 +910,7 @@
                                                         Background="Transparent"
                                                         BorderThickness="0"
                                                         Padding="6,4"
-                                                        HorizontalContentAlignment="Left"/>
+                                                        HorizontalContentAlignment="Left" />
                                             </DataTemplate>
                                         </ListBox.ItemTemplate>
                                     </ListBox>
@@ -613,156 +925,229 @@
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
                                   Style="{StaticResource DarkBlueGroupBoxStyle}">
-                            <UniformGrid Columns="2" Margin="8">
+                            <UniformGrid Columns="2"
+                                         Margin="8">
 
                                 <!-- ===== Power & System ===== -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Powers On:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPowerOn}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Powers On:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPowerOn}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Boots to OS:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBoots}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Boots to OS:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBoots}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Battery Charging:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBatteryCharging}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Battery Charging:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBatteryCharging}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Battery Health:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBatteryHealth}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Battery Health:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBatteryHealth}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Overheating:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckOverheating}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Overheating:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckOverheating}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
                                 <!-- ===== Display & Input ===== -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Screen / Display:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckScreen}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Screen / Display:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckScreen}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Touch Response:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckTouch}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Touch Response:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckTouch}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Dead Pixels / Lines:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckDeadPixels}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Dead Pixels / Lines:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckDeadPixels}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Buttons:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckButtons}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Buttons:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckButtons}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
                                 <!-- ===== Audio & Camera ===== -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Speaker:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckSpeaker}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Speaker:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckSpeaker}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Microphone:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckMicrophone}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Microphone:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckMicrophone}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Front Camera:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckFrontCamera}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Front Camera:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckFrontCamera}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Rear Camera:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckRearCamera}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Rear Camera:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckRearCamera}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
                                 <!-- ===== Connectivity ===== -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="WiFi:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckWiFi}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="WiFi:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckWiFi}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Bluetooth:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBluetooth}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Bluetooth:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBluetooth}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Cellular / Signal:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckCellular}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Cellular / Signal:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckCellular}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="USB / Ports:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPorts}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="USB / Ports:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPorts}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
                                 <!-- ===== Security & Software ===== -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Face ID / Fingerprint:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBiometrics}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Face ID / Fingerprint:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBiometrics}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Activation / Account Lock:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckActivationLock}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Activation / Account Lock:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckActivationLock}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Storage Detected:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckStorage}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Storage Detected:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckStorage}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
                                 <!-- ===== Physical Condition ===== -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Frame / Chassis:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckFrame}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Frame / Chassis:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckFrame}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Back Cover:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckCover}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Back Cover:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckCover}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Liquid Damage Indicators:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckLiquidDamage}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Liquid Damage Indicators:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckLiquidDamage}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Signs of Previous Repair:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPreviousRepair}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Signs of Previous Repair:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPreviousRepair}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
                             </UniformGrid>
@@ -775,116 +1160,171 @@
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
                                   Style="{StaticResource DarkYellowGroupBoxStyle}">
-                            <UniformGrid Columns="2" Margin="8">
+                            <UniformGrid Columns="2"
+                                         Margin="8">
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Software:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessorySoftware}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Software:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessorySoftware}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="USB Stick:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryUSBStick}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="USB Stick:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryUSBStick}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Case:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCase}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Case:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCase}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Charger:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCharger}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Charger:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCharger}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Battery:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryBattery}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Battery:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryBattery}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Monitor:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMonitor}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Monitor:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMonitor}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Power Cord:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryPowerCord}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Power Cord:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryPowerCord}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Original Package:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryOriginalPackage}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Original Package:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryOriginalPackage}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Memory Card:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMemoryCard}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Memory Card:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMemoryCard}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Cables:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCables}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Cables:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCables}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Mouse:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMouse}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Mouse:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMouse}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Keyboard:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryKeyboard}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Keyboard:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryKeyboard}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
                                 <!-- ===== Added Professional Intake Items ===== -->
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="SIM Card:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessorySIMCard}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="SIM Card:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessorySIMCard}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="SD Adapter:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessorySDAdapter}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="SD Adapter:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessorySDAdapter}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Stylus / Pen:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryStylus}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Stylus / Pen:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryStylus}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Docking Station:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryDock}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Docking Station:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryDock}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="External Drive:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryExternalDrive}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="External Drive:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryExternalDrive}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
-                                <StackPanel Orientation="Horizontal" Margin="0,0,12,6">
-
-                                    <TextBlock Text="Headphones / Earbuds:" VerticalAlignment="Center"/>
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryHeadphones}" Style="{StaticResource NeonCheckBoxStyle}" Margin="6,0,0,0"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Headphones / Earbuds:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryHeadphones}"
+                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Margin="6,0,0,0" />
                                 </StackPanel>
 
                             </UniformGrid>
