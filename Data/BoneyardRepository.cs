@@ -24,7 +24,7 @@ namespace ESCenter.Data
             conn.Open();
 
             const string sql = """
-                SELECT DeviceId, DeviceType, Brand, Model, Condition, HolderID, Notes, AddedAt
+                SELECT DeviceId, DeviceType, Brand, Model, Condition, HolderID, Notes, Price, AddedAt
                 FROM Boneyard
                 ORDER BY DeviceId DESC;
             """;
@@ -43,6 +43,7 @@ namespace ESCenter.Data
                     Condition = r["Condition"]?.ToString(),
                     HolderID = r["HolderID"]?.ToString(),
                     Notes = r["Notes"]?.ToString(),
+                    Price = Convert.ToDouble(r["Price"]),
                     AddedAt = r["AddedAt"]?.ToString()
                 });
             }
@@ -57,9 +58,9 @@ namespace ESCenter.Data
 
             const string sql = """
                 INSERT INTO Boneyard
-                (DeviceType, Brand, Model, Condition, HolderID, Notes, AddedAt)
+                (DeviceType, Brand, Model, Condition, HolderID, Notes, Price, AddedAt)
                 VALUES
-                (@DeviceType, @Brand, @Model, @Condition, @HolderID, @Notes, @AddedAt);
+                (@DeviceType, @Brand, @Model, @Condition, @HolderID, @Notes, @Price, @AddedAt);
                 SELECT last_insert_rowid();
             """;
 
@@ -70,6 +71,7 @@ namespace ESCenter.Data
             cmd.Parameters.AddWithValue("@Condition", d.Condition);
             cmd.Parameters.AddWithValue("@HolderID", d.HolderID);
             cmd.Parameters.AddWithValue("@Notes", d.Notes);
+            cmd.Parameters.AddWithValue("@Price", d.Price);
             cmd.Parameters.AddWithValue("@AddedAt", d.AddedAt);
 
             return Convert.ToInt32(cmd.ExecuteScalar());
@@ -88,6 +90,7 @@ namespace ESCenter.Data
                     Condition = @Condition,
                     HolderID = @HolderID,
                     Notes = @Notes,
+                    Price = @Price,
                     AddedAt = @AddedAt
                 WHERE DeviceId = @DeviceId;
             """;
@@ -99,6 +102,7 @@ namespace ESCenter.Data
             cmd.Parameters.AddWithValue("@Condition", d.Condition);
             cmd.Parameters.AddWithValue("@HolderID", d.HolderID);
             cmd.Parameters.AddWithValue("@Notes", d.Notes);
+            cmd.Parameters.AddWithValue("@Price", d.Price);
             cmd.Parameters.AddWithValue("@AddedAt", d.AddedAt);
             cmd.Parameters.AddWithValue("@DeviceId", d.DeviceId);
 

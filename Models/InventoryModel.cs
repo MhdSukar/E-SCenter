@@ -36,6 +36,7 @@ namespace ESCenter.Data
                     Specs = reader["Specs"]?.ToString(),
                     Size = reader["Size"]?.ToString(),
                     QuantityOnHand = reader["QuantityOnHand"] != DBNull.Value ? int.Parse(reader["QuantityOnHand"].ToString()) : 0,
+                    Price = reader["Price"] != DBNull.Value ? double.Parse(reader["Price"].ToString()) : 0,
                     Condition = reader["Condition"]?.ToString(),
                     QualityGrade = reader["QualityGrade"] != DBNull.Value ? int.Parse(reader["QualityGrade"].ToString()) : 3,
                     Source = reader["Source"]?.ToString(),
@@ -56,9 +57,9 @@ namespace ESCenter.Data
 
             using var cmd = new SQLiteCommand(@"
             INSERT INTO Inventory
-            (ItemType, Brand, Model, Variant, Compatibility, Specs, Size, QuantityOnHand, Condition, QualityGrade, Source, LocationBox, Description, Notes, Tags)
+            (ItemType, Brand, Model, Variant, Compatibility, Specs, Size, QuantityOnHand, Price, Condition, QualityGrade, Source, LocationBox, Description, Notes, Tags)
             VALUES
-            (@ItemType, @Brand, @Model, @Variant, @Compatibility, @Specs, @Size, @QuantityOnHand, @Condition, @QualityGrade, @Source, @LocationBox, @Description, @Notes, @Tags)", conn);
+            (@ItemType, @Brand, @Model, @Variant, @Compatibility, @Specs, @Size, @QuantityOnHand, @Price, @Condition, @QualityGrade, @Source, @LocationBox, @Description, @Notes, @Tags)", conn);
 
             BindParams(cmd, item);
             cmd.ExecuteNonQuery();
@@ -79,6 +80,7 @@ namespace ESCenter.Data
             Specs=@Specs,
             Size=@Size,
             QuantityOnHand=@QuantityOnHand,
+            Price=@Price,
             Condition=@Condition,
             QualityGrade=@QualityGrade,
             Source=@Source,
@@ -113,6 +115,7 @@ namespace ESCenter.Data
             cmd.Parameters.AddWithValue("@Specs", item.Specs);
             cmd.Parameters.AddWithValue("@Size", item.Size);
             cmd.Parameters.AddWithValue("@QuantityOnHand", item.QuantityOnHand);
+            cmd.Parameters.AddWithValue("@Price", item.Price);
             cmd.Parameters.AddWithValue("@Condition", item.Condition);
             cmd.Parameters.AddWithValue("@QualityGrade", item.QualityGrade);
             cmd.Parameters.AddWithValue("@Source", item.Source);

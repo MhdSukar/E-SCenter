@@ -110,6 +110,7 @@ namespace ESCenter.ViewModels
                 Condition = SelectedDevice.Condition,
                 HolderID = SelectedDevice.HolderID,
                 Notes = SelectedDevice.Notes,
+                Price = SelectedDevice.Price,
                 AddedAt = SelectedDevice.AddedAt
             };
 
@@ -125,6 +126,7 @@ namespace ESCenter.ViewModels
                 SelectedDevice.Condition = clone.Condition;
                 SelectedDevice.HolderID = clone.HolderID;
                 SelectedDevice.Notes = clone.Notes;
+                SelectedDevice.Price = clone.Price;
                 SelectedDevice.AddedAt = clone.AddedAt;
 
                 _repo.Update(SelectedDevice);

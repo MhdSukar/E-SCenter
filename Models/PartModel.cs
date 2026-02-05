@@ -44,6 +44,13 @@ namespace ESCenter.Models
             }
         }
 
+        private double _price;
+        public double Price
+        {
+            get => _price;
+            set => SetProperty(ref _price, value);
+        }
+
         private int _qualityGrade;
         public int QualityGrade
         {

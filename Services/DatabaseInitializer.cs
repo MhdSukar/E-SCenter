@@ -99,6 +99,7 @@ namespace ESCenter.Services
                 ["PartCode"] = "TEXT",
                 ["PartType"] = "TEXT NOT NULL",
                 ["QuantityOnHand"] = "INTEGER DEFAULT 0",
+                ["Price"] = "REAL DEFAULT 0",
                 ["QualityGrade"] = "INTEGER DEFAULT 3",
                 ["LocationShelf"] = "TEXT",
                 ["LocationBin"] = "TEXT",
@@ -129,6 +130,7 @@ namespace ESCenter.Services
                 ["Specs"] = "TEXT",
                 ["Size"] = "TEXT",
                 ["QuantityOnHand"] = "INTEGER DEFAULT 0",
+                ["Price"] = "REAL DEFAULT 0",
                 ["Condition"] = "TEXT",
                 ["QualityGrade"] = "INTEGER DEFAULT 3",
                 ["Source"] = "TEXT",
@@ -154,6 +156,7 @@ namespace ESCenter.Services
                 ["Condition"] = "TEXT",
                 ["HolderID"] = "TEXT",
                 ["Notes"] = "TEXT",
+                ["Price"] = "REAL DEFAULT 0",
                 ["AddedAt"] = "TEXT"
             };
 

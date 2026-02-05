@@ -181,6 +181,7 @@ namespace ESCenter.ViewModels
                 Specs = src.Specs,
                 Size = src.Size,
                 QuantityOnHand = src.QuantityOnHand,
+                Price = src.Price,
                 Condition = src.Condition,
                 QualityGrade = src.QualityGrade,
                 Source = src.Source,

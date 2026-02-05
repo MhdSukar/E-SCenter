@@ -156,6 +156,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <Grid.ColumnDefinitions>
@@ -189,13 +190,17 @@
                         <TextBlock Text="Holder ID" Grid.Row="4" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
                         <TextBox Text="{Binding Device.HolderID}" Grid.Row="4" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
 
+                        <!-- Price -->
+                        <TextBlock Text="Price" Grid.Row="5" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBox Text="{Binding Device.Price}" Grid.Row="5" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+
                         <!-- Notes -->
-                        <TextBlock Text="Notes" Grid.Row="5" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.Notes}" Grid.Row="5" Grid.Column="1" AcceptsReturn="True" Height="80" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+                        <TextBlock Text="Notes" Grid.Row="6" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBox Text="{Binding Device.Notes}" Grid.Row="6" Grid.Column="1" AcceptsReturn="True" Height="80" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
 
                         <!-- Added At -->
-                        <TextBlock Text="Added At" Grid.Row="6" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.AddedAt}" Grid.Row="6" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" IsReadOnly="True" Margin="0,4"/>
+                        <TextBlock Text="Added At" Grid.Row="7" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
+                        <TextBox Text="{Binding Device.AddedAt}" Grid.Row="7" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" IsReadOnly="True" Margin="0,4"/>
                     </Grid>
 
                     <!-- ===================== BUTTON BAR ===================== -->
