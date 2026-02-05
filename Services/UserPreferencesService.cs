@@ -8,9 +8,9 @@ namespace ESCenter.Services
 {
     public static class UserPreferencesService
     {
-        private const string SettingsFileName = "user-preferences.json";
+        private const string SettingsFileName = "E-SCenter-settings.json";
         private const string LegacyDatabaseSettingsFileName = "E-SCenter-settings.json";
-        private const string DefaultAdminUsername = "Admin";
+        private const string DefaultAdminUsername = "Mhdsukar";
         private static readonly string DefaultAdminPasswordHash = ComputeHash("Admin");
 
         private static readonly string SettingsDirectory =
