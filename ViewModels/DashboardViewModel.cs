@@ -4,14 +4,17 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using ESCenter.Core;
+using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Services;
-//hello there
+
 namespace ESCenter.ViewModels
 {
     public class DashboardViewModel : ObservableObject
     {
         private readonly TicketsDataService _service;
+        private readonly PartsRepository _partsRepository;
+        private readonly InventoryRepository _inventoryRepository;
 
         private int _totalTickets;
         public int TotalTickets { get => _totalTickets; set => SetProperty(ref _totalTickets, value); }
@@ -43,8 +46,35 @@ namespace ESCenter.ViewModels
         private double _weeklyCompletionPercent;
         public double WeeklyCompletionPercent { get => _weeklyCompletionPercent; set => SetProperty(ref _weeklyCompletionPercent, value); }
 
+        private string _partsLowStockThreshold = "3";
+        public string PartsLowStockThreshold
+        {
+            get => _partsLowStockThreshold;
+            set
+            {
+                if (SetProperty(ref _partsLowStockThreshold, value))
+                {
+                    UpdateLowStockCounter();
+                }
+            }
+        }
+
+        private string _inventoryLowStockThreshold = "3";
+        public string InventoryLowStockThreshold
+        {
+            get => _inventoryLowStockThreshold;
+            set
+            {
+                if (SetProperty(ref _inventoryLowStockThreshold, value))
+                {
+                    UpdateLowStockCounter();
+                }
+            }
+        }
+
         public ObservableCollection<RepairTicket> RecentTickets { get; } = new();
         public ObservableCollection<PriorityStat> PriorityStats { get; } = new();
+        public ObservableCollection<LowStockCounterItem> LowStockItems { get; } = new();
 
         public ICommand RefreshCommand { get; }
         public ICommand OpenTicketsCommand { get; }
@@ -53,6 +83,8 @@ namespace ESCenter.ViewModels
         public DashboardViewModel()
         {
             _service = new TicketsDataService();
+            _partsRepository = new PartsRepository();
+            _inventoryRepository = new InventoryRepository();
 
             RefreshCommand = new RelayCommand(_ => Refresh());
             OpenTicketsCommand = new RelayCommand(param => ExecuteShowRepairTickets(param));
@@ -104,12 +136,71 @@ namespace ESCenter.ViewModels
                     ? 0
                     : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
 
+                UpdateLowStockCounter();
                 AppLogger.Info("Dashboard refreshed.");
             }
             catch (Exception ex)
             {
                 AppLogger.Error($"Failed to refresh dashboard: {ex.Message}");
             }
+        }
+
+        private void UpdateLowStockCounter()
+        {
+            try
+            {
+                var partsThreshold = ParseThreshold(PartsLowStockThreshold);
+                var inventoryThreshold = ParseThreshold(InventoryLowStockThreshold);
+
+                var partItems = _partsRepository.GetAll()
+                    .Where(p => p.QuantityOnHand <= partsThreshold)
+                    .Select(p => new LowStockCounterItem
+                    {
+                        Source = "Parts",
+                        Name = string.IsNullOrWhiteSpace(p.PartCode)
+                            ? string.IsNullOrWhiteSpace(p.SKU) ? "Unnamed Part" : p.SKU
+                            : p.PartCode,
+                        Quantity = p.QuantityOnHand
+                    });
+
+                var inventoryItems = _inventoryRepository.GetAll()
+                    .Where(i => i.QuantityOnHand <= inventoryThreshold)
+                    .Select(i => new LowStockCounterItem
+                    {
+                        Source = "Inventory",
+                        Name = string.IsNullOrWhiteSpace(i.ItemType)
+                            ? string.IsNullOrWhiteSpace(i.Model) ? "Unnamed Inventory Item" : i.Model
+                            : i.ItemType,
+                        Quantity = i.QuantityOnHand
+                    });
+
+                var allLowStockItems = partItems
+                    .Concat(inventoryItems)
+                    .OrderBy(item => item.Quantity)
+                    .ThenBy(item => item.Source)
+                    .ThenBy(item => item.Name)
+                    .ToList();
+
+                LowStockItems.Clear();
+                foreach (var lowStockItem in allLowStockItems)
+                {
+                    LowStockItems.Add(lowStockItem);
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to update low stock counter: {ex.Message}");
+            }
+        }
+
+        private static int ParseThreshold(string input)
+        {
+            if (!int.TryParse(input, out var parsedValue))
+            {
+                return 0;
+            }
+
+            return Math.Max(0, parsedValue);
         }
 
         private void ExecuteShowRepairTickets(object parameter)
@@ -139,6 +230,13 @@ namespace ESCenter.ViewModels
         {
             public string Priority { get; set; } = string.Empty;
             public int Count { get; set; }
+        }
+
+        public class LowStockCounterItem
+        {
+            public string Source { get; set; } = string.Empty;
+            public string Name { get; set; } = string.Empty;
+            public int Quantity { get; set; }
         }
     }
 }

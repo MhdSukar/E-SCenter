@@ -414,7 +414,7 @@
                                         Command="{Binding InitializeDatabaseCommand}">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <Image Source="{StaticResource verified}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                        <TextBlock Text="Initialize DB"/>
+                                        <TextBlock Text="Create DB"/>
                                     </StackPanel>
                                 </Button>
 
@@ -422,7 +422,7 @@
                                         Command="{Binding LoadDatabaseCommand}">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <Image Source="{StaticResource Database}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                        <TextBlock Text="Load DB"/>
+                                        <TextBlock Text="Connect DB"/>
                                     </StackPanel>
                                 </Button>
 
