@@ -54,6 +54,7 @@ namespace ESCenter.ViewModels
             {
                 if (SetProperty(ref _partsLowStockThreshold, value))
                 {
+                    PersistLowStockThresholds();
                     UpdateLowStockCounter();
                 }
             }
@@ -67,6 +68,7 @@ namespace ESCenter.ViewModels
             {
                 if (SetProperty(ref _inventoryLowStockThreshold, value))
                 {
+                    PersistLowStockThresholds();
                     UpdateLowStockCounter();
                 }
             }
@@ -85,6 +87,10 @@ namespace ESCenter.ViewModels
             _service = new TicketsDataService();
             _partsRepository = new PartsRepository();
             _inventoryRepository = new InventoryRepository();
+
+            var thresholds = UserPreferencesService.GetLowStockThresholds();
+            _partsLowStockThreshold = thresholds.PartsThreshold.ToString();
+            _inventoryLowStockThreshold = thresholds.InventoryThreshold.ToString();
 
             RefreshCommand = new RelayCommand(_ => Refresh());
             OpenTicketsCommand = new RelayCommand(param => ExecuteShowRepairTickets(param));
@@ -142,6 +148,20 @@ namespace ESCenter.ViewModels
             catch (Exception ex)
             {
                 AppLogger.Error($"Failed to refresh dashboard: {ex.Message}");
+            }
+        }
+
+        private void PersistLowStockThresholds()
+        {
+            try
+            {
+                var partsThreshold = ParseThreshold(PartsLowStockThreshold);
+                var inventoryThreshold = ParseThreshold(InventoryLowStockThreshold);
+                UserPreferencesService.SetLowStockThresholds(partsThreshold, inventoryThreshold);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warning($"Failed to persist low stock thresholds: {ex.Message}");
             }
         }
 
