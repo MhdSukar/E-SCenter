@@ -107,6 +107,27 @@ namespace ESCenter.Data
             cmd.ExecuteNonQuery();
         }
 
+        public void IncrementQuantityByName(string name, int amount)
+        {
+            if (string.IsNullOrWhiteSpace(name) || amount <= 0)
+            {
+                return;
+            }
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(@"
+                UPDATE Inventory
+                SET QuantityOnHand = QuantityOnHand + @amount
+                WHERE Description = @name
+                   OR (Description IS NULL AND
+                       TRIM(COALESCE(ItemType, '') || ' ' || COALESCE(Brand, '') || ' ' || COALESCE(Model, '')) = @name);", conn);
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@name", name.Trim());
+            cmd.ExecuteNonQuery();
+        }
+
         public void Insert(InventoryItemModel item)
         {
             using var conn = GetConnection();

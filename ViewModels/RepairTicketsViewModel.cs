@@ -611,6 +611,23 @@ namespace ESCenter.ViewModels
             if (existing != null)
             {
                 SelectedPartsUsed.Remove(existing);
+                ReturnPartToStock(existing);
+            }
+        }
+
+        private void ReturnPartToStock(string partName)
+        {
+            try
+            {
+                var partsRepo = new PartsRepository();
+                partsRepo.IncrementQuantityBySku(partName, 1);
+
+                var inventoryRepo = new InventoryRepository(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql"));
+                inventoryRepo.IncrementQuantityByName(partName, 1);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to return stock for part '{partName}': {ex.Message}");
             }
         }
 

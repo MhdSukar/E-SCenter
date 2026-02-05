@@ -85,6 +85,25 @@ namespace ESCenter.Data
             cmd.ExecuteNonQuery();
         }
 
+        public void IncrementQuantityBySku(string sku, int amount)
+        {
+            if (string.IsNullOrWhiteSpace(sku) || amount <= 0)
+            {
+                return;
+            }
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(@"
+                UPDATE Parts
+                SET QuantityOnHand = QuantityOnHand + @amount
+                WHERE SKU = @sku;", conn);
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@sku", sku.Trim());
+            cmd.ExecuteNonQuery();
+        }
+
         // -------------------------
         // INSERT
         // -------------------------

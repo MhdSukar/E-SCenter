@@ -3,9 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using System.IO;
-using System.Reflection;
-using System.Windows;
 using ESCenter.Core;
+using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Services;
 
@@ -38,13 +37,12 @@ namespace ESCenter.ViewModels
         // ===== Recent tickets =====
         public ObservableCollection<RepairTicket> RecentTickets { get; } = new ObservableCollection<RepairTicket>();
 
-        // ===== Priority distribution =====
-        public ObservableCollection<PriorityStat> PriorityStats { get; } = new ObservableCollection<PriorityStat>();
+        // ===== Parts risk counter =====
+        public ObservableCollection<PartsRiskItem> LowPartSkus { get; } = new ObservableCollection<PartsRiskItem>();
+        public ObservableCollection<PartsRiskItem> LowInventoryItems { get; } = new ObservableCollection<PartsRiskItem>();
 
         // ===== Commands =====
         public ICommand RefreshCommand { get; }
-        public ICommand OpenTicketsCommand { get; }
-        public ICommand ClosedTicketsCommand { get; }
 
         public DashboardViewModel()
         {
@@ -52,10 +50,6 @@ namespace ESCenter.ViewModels
             _service = new TicketsDataService(dbPath);
 
             RefreshCommand = new RelayCommand(_ => Refresh());
-            OpenTicketsCommand = new RelayCommand(param => ExecuteShowRepairTickets(param));
-            ClosedTicketsCommand = new RelayCommand(param => ExecuteShowRepairTickets(param));
-
-
 
             Refresh();
         }
@@ -88,14 +82,7 @@ namespace ESCenter.ViewModels
                 foreach (var t in all.Where(t => !t.DeliveryDate.HasValue).OrderByDescending(t => t.ReceiveDate).Take(10))
                     RecentTickets.Add(t);
 
-                // Priority distribution (open tickets only)
-                PriorityStats.Clear();
-                var priorities = new[] { "Critical", "Major", "Normal", "Minor" };
-                foreach (var p in priorities)
-                {
-                    var count = all.Count(t => string.Equals(t.PriorityLevel, p, StringComparison.OrdinalIgnoreCase) && !t.DeliveryDate.HasValue);
-                    PriorityStats.Add(new PriorityStat { Priority = p, Count = count });
-                }
+                PartsRiskCounter();
 
                 // Alerts
                 CriticalOpenTickets = all.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase) && !t.DeliveryDate.HasValue);
@@ -109,29 +96,49 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private void ExecuteShowRepairTickets(object parameter)
+        private void PartsRiskCounter()
         {
-            try
-            {
-                var mainVm = System.Windows.Application.Current?.MainWindow?.DataContext;
-                if (mainVm == null) return;
+            LowPartSkus.Clear();
+            LowInventoryItems.Clear();
 
-                var prop = mainVm.GetType().GetProperty("ShowRepairTicketsCommand", BindingFlags.Public | BindingFlags.Instance);
-                var cmd = prop?.GetValue(mainVm) as ICommand;
-                if (cmd != null && cmd.CanExecute(parameter))
-                    cmd.Execute(parameter);
-            }
-            catch (Exception ex)
+            var partsRepo = new PartsRepository();
+            var inventoryRepo = new InventoryRepository(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql"));
+
+            var lowParts = partsRepo.GetAll()
+                .Where(p => p.QuantityOnHand < 5 && !string.IsNullOrWhiteSpace(p.SKU))
+                .OrderBy(p => p.QuantityOnHand);
+            foreach (var part in lowParts)
             {
-                AppLogger.Warning($"Failed to forward navigation command: {ex.Message}");
+                LowPartSkus.Add(new PartsRiskItem
+                {
+                    Label = part.SKU.Trim(),
+                    Quantity = part.QuantityOnHand
+                });
+            }
+
+            var lowInventory = inventoryRepo.GetAll()
+                .Where(i => i.QuantityOnHand < 2)
+                .OrderBy(i => i.QuantityOnHand);
+            foreach (var item in lowInventory)
+            {
+                LowInventoryItems.Add(new PartsRiskItem
+                {
+                    Label = BuildInventoryLabel(item),
+                    Quantity = item.QuantityOnHand
+                });
             }
         }
 
-
-        public class PriorityStat
+        private static string BuildInventoryLabel(InventoryItemModel item)
         {
-            public string Priority { get; set; }
-            public int Count { get; set; }
+            var label = $"{item.ItemType} {item.Brand} {item.Model}".Trim();
+            return string.IsNullOrWhiteSpace(label) ? "Inventory item" : label;
+        }
+
+        public class PartsRiskItem
+        {
+            public string Label { get; set; }
+            public int Quantity { get; set; }
         }
     }
 }
