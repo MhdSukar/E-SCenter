@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using ESCenter.Windows;
+using ESCenter.Services;
 
 namespace ESCenter
 {
@@ -28,8 +29,27 @@ namespace ESCenter
 
             base.OnStartup(e);
 
+            InitializeDatabase();
+
             SetupTrayIcon();
             ShowMainWindow(); // remove if you want startup hidden
+        }
+
+        private void InitializeDatabase()
+        {
+            try
+            {
+                var initializer = new DatabaseInitializer(AppDomain.CurrentDomain.BaseDirectory);
+                initializer.EnsureDatabaseReady();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(
+                    $"Database initialization failed:\n{ex.Message}",
+                    "Database Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         // ----------------------------
