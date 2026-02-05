@@ -1,22 +1,23 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
-using ESCenter.Windows;
 using ESCenter.Services;
+using ESCenter.Windows;
 
 namespace ESCenter
 {
     public partial class App : System.Windows.Application
     {
-        private static Mutex _mutex;
-        private NotifyIcon _trayIcon;
-        private TrayPopupWindow _trayPopup;
+        private static Mutex? _mutex;
+        private NotifyIcon? _trayIcon;
+        private TrayPopupWindow? _trayPopup;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             const string appName = "ESCenterUniqueAppName";
-            bool createdNew;
+            var createdNew = false;
 
             _mutex = new Mutex(true, appName, out createdNew);
 
@@ -30,21 +31,20 @@ namespace ESCenter
             base.OnStartup(e);
 
             InitializeDatabase();
-
             SetupTrayIcon();
-            ShowMainWindow(); // remove if you want startup hidden
+            ShowMainWindow();
         }
 
         private void InitializeDatabase()
         {
             try
             {
-                var initializer = new DatabaseInitializer(AppDomain.CurrentDomain.BaseDirectory);
+                var initializer = new DatabaseInitializer(DatabasePathService.CurrentDatabasePath);
                 initializer.EnsureDatabaseReady();
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(
+                MessageBox.Show(
                     $"Database initialization failed:\n{ex.Message}",
                     "Database Error",
                     MessageBoxButton.OK,
@@ -52,9 +52,6 @@ namespace ESCenter
             }
         }
 
-        // ----------------------------
-        // Single-instance handling
-        // ----------------------------
         private void BringExistingInstanceToFront()
         {
             foreach (Window window in Current.Windows)
@@ -69,13 +66,12 @@ namespace ESCenter
             }
         }
 
-        // ----------------------------
-        // Main window handling
-        // ----------------------------
         public void ShowMainWindow()
         {
             if (MainWindow == null)
+            {
                 MainWindow = new MainWindow();
+            }
 
             MainWindow.Show();
             MainWindow.WindowState = WindowState.Normal;
@@ -84,28 +80,30 @@ namespace ESCenter
 
         public void ExitApp()
         {
-            _trayIcon.Visible = false;
-            _trayIcon.Dispose();
+            if (_trayIcon != null)
+            {
+                _trayIcon.Visible = false;
+                _trayIcon.Dispose();
+            }
+
             Shutdown();
         }
 
-        // ----------------------------
-        // Tray icon setup
-        // ----------------------------
         private void SetupTrayIcon()
         {
+            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Themes", "E-SCenter1.ico");
+
             _trayIcon = new NotifyIcon
             {
-                Icon = new System.Drawing.Icon("Assets/app.ico"),
+                Icon = File.Exists(iconPath) ? new System.Drawing.Icon(iconPath) : System.Drawing.SystemIcons.Application,
                 Visible = true,
                 Text = "E-SCenter"
             };
 
-            _trayIcon.DoubleClick += (_, __) => ShowMainWindow();
-
-            _trayIcon.MouseUp += (s, e) =>
+            _trayIcon.DoubleClick += (_, _) => ShowMainWindow();
+            _trayIcon.MouseUp += (_, args) =>
             {
-                if (e.Button == MouseButtons.Right)
+                if (args.Button == MouseButtons.Right)
                 {
                     var cursorPos = Control.MousePosition;
                     ShowTrayPopupAt(cursorPos.X, cursorPos.Y);
@@ -116,7 +114,9 @@ namespace ESCenter
         private void ShowTrayPopupAt(int x, int y)
         {
             if (_trayPopup == null)
+            {
                 _trayPopup = new TrayPopupWindow();
+            }
 
             if (_trayPopup.IsVisible)
             {
@@ -129,17 +129,39 @@ namespace ESCenter
             _trayPopup.UpdateLayout();
             _trayPopup.Opacity = 1;
 
-            double left = x - _trayPopup.ActualWidth + 20;
-            double top = y - _trayPopup.ActualHeight - 5;
+            var left = x - _trayPopup.ActualWidth + 20;
+            var top = y - _trayPopup.ActualHeight - 5;
 
             var screen = Screen.FromPoint(new System.Drawing.Point(x, y)).WorkingArea;
-            if (left < screen.Left) left = screen.Left + 5;
-            if (top < screen.Top) top = screen.Top + 5;
+            if (left < screen.Left)
+            {
+                left = screen.Left + 5;
+            }
+
+            if (top < screen.Top)
+            {
+                top = screen.Top + 5;
+            }
 
             _trayPopup.Left = left;
             _trayPopup.Top = top;
+        }
 
-            _trayPopup.Activate();
+        protected override void OnExit(ExitEventArgs e)
+        {
+            if (_trayIcon != null)
+            {
+                _trayIcon.Visible = false;
+                _trayIcon.Dispose();
+            }
+
+            if (_mutex != null)
+            {
+                _mutex.ReleaseMutex();
+                _mutex.Dispose();
+            }
+
+            base.OnExit(e);
         }
     }
 }

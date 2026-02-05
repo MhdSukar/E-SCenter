@@ -168,6 +168,62 @@
     <!-- Neon Red Button (keeps original duplicate-style definitions intact) -->
     <Style x:Key="NeonRedButtonStyle" TargetType="Button" BasedOn="{StaticResource NeonBorderButtonStyle}"/>
 
+    <!-- Circular remove (X) button for parts chips -->
+    <Style x:Key="PartsRemoveIconButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="18"/>
+        <Setter Property="Height" Value="18"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource NeonRedBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1.4"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="Glow"
+                                BorderBrush="{StaticResource NeonRedBrush}"
+                                BorderThickness="2"
+                                CornerRadius="999"
+                                Opacity="0"
+                                Effect="{StaticResource NeonRedGlowEffect}"/>
+
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="999">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NeonRedBrush}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="#14FF2E2E"/>
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NeonRedBrush}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="#28FF2E2E"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <!-- Neon Cyan Button -->
     <Style x:Key="NeonCyanButtonStyle" TargetType="Button">
         <Setter Property="Height" Value="26"/>
