@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ESCenter.Core;
+using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Services;
 
@@ -193,29 +194,7 @@ namespace ESCenter.ViewModels
 
         public ObservableCollection<string> PartsSuggestions { get; } = new ObservableCollection<string>();
 
-        private readonly List<string> _partsCatalog = new List<string>
-        {
-            "Screen",
-            "Battery",
-            "Charging Port",
-            "Speaker",
-            "Microphone",
-            "Camera",
-            "Rear Glass",
-            "Front Glass",
-            "Display Cable",
-            "Power Button",
-            "Volume Button",
-            "Home Button",
-            "SIM Tray",
-            "Back Cover",
-            "Motherboard",
-            "Flex Cable",
-            "Antenna",
-            "Vibrator",
-            "Proximity Sensor",
-            "Fingerprint Sensor"
-        };
+        private readonly List<string> _partsCatalog = new List<string>();
 
         private string _partsUsedInput = string.Empty;
         public string PartsUsedInput
@@ -299,6 +278,8 @@ namespace ESCenter.ViewModels
             RemovePartCommand = new RelayCommand(param => RemovePart(param as string));
 
             ClearForm();
+
+            LoadPartsCatalog();
 
             SelectedPartsUsed.CollectionChanged += (_, __) => SyncPartsUsedFromCollection();
         }
@@ -547,6 +528,26 @@ namespace ESCenter.ViewModels
 
             DeviceChecklist = new DeviceChecklist();
             Accessories = new Accessories();
+        }
+
+        private void LoadPartsCatalog()
+        {
+            _partsCatalog.Clear();
+
+            try
+            {
+                var repo = new PartsRepository();
+                var skus = repo.GetSkus()
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(sku => sku);
+                _partsCatalog.AddRange(skus);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to load parts catalog: {ex.Message}");
+            }
+
+            UpdatePartsSuggestions();
         }
 
         private void AddPart(string part)

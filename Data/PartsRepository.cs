@@ -41,6 +41,28 @@ namespace ESCenter.Data
             return result;
         }
 
+        public List<string> GetSkus()
+        {
+            var result = new List<string>();
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand("SELECT SKU FROM Parts WHERE SKU IS NOT NULL AND TRIM(SKU) <> '';", conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var sku = reader["SKU"]?.ToString();
+                if (!string.IsNullOrWhiteSpace(sku))
+                {
+                    result.Add(sku.Trim());
+                }
+            }
+
+            return result;
+        }
+
         // -------------------------
         // INSERT
         // -------------------------
