@@ -37,6 +37,7 @@ namespace ESCenter.ViewModels
                 FilterLowCommand = new RelayCommand(_ => SetStockFilter("Low"));
                 FilterOutCommand = new RelayCommand(_ => SetStockFilter("Out"));
 
+                DatabasePathService.DatabasePathChanged += (_, __) => LoadParts();
                 AppLogger.Success("Parts Control Loaded");
             }
             catch (Exception ex)

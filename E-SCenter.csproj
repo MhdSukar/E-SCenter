@@ -101,7 +101,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Themes\E-SCenter1.ico" />
+    <Resource Include="Themes\E-SCenter1.ico" />
   </ItemGroup>
 
   <ItemGroup>

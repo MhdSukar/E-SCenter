@@ -1,26 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.IO;
 using ESCenter.Models;
+using ESCenter.Services;
 
 namespace ESCenter.Data
 {
     public class BoneyardRepository
     {
-        private readonly string _connectionString;
-
-        public BoneyardRepository()
-        {
-            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql");
-            _connectionString = $"Data Source={dbPath};Version=3;";
-        }
+        private string ConnectionString => $"Data Source={DatabasePathService.CurrentDatabasePath};Version=3;";
 
         public List<BoneyardModel> GetAll()
         {
             var list = new List<BoneyardModel>();
 
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             const string sql = """
@@ -53,7 +47,7 @@ namespace ESCenter.Data
 
         public int Insert(BoneyardModel d)
         {
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             const string sql = """
@@ -79,7 +73,7 @@ namespace ESCenter.Data
 
         public void Update(BoneyardModel d)
         {
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             const string sql = """
@@ -111,7 +105,7 @@ namespace ESCenter.Data
 
         public void Delete(int deviceId)
         {
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             const string sql = "DELETE FROM Boneyard WHERE DeviceId = @id;";

@@ -1,20 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Input;
-using System.IO;
 using ESCenter.Core;
-using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Services;
-
+//hello there
 namespace ESCenter.ViewModels
 {
     public class DashboardViewModel : ObservableObject
     {
         private readonly TicketsDataService _service;
 
-        // ===== Summary metrics =====
         private int _totalTickets;
         public int TotalTickets { get => _totalTickets; set => SetProperty(ref _totalTickets, value); }
 
@@ -27,42 +25,42 @@ namespace ESCenter.ViewModels
         private int _readyForPickupTickets;
         public int ReadyForPickupTickets { get => _readyForPickupTickets; set => SetProperty(ref _readyForPickupTickets, value); }
 
-        // ===== Alerts =====
-        private int _CriticalOpenTickets;
-        public int CriticalOpenTickets { get => _CriticalOpenTickets; set => SetProperty(ref _CriticalOpenTickets, value); }
+        private int _criticalOpenTickets;
+        public int CriticalOpenTickets { get => _criticalOpenTickets; set => SetProperty(ref _criticalOpenTickets, value); }
 
         private int _overdueTickets;
         public int OverdueTickets { get => _overdueTickets; set => SetProperty(ref _overdueTickets, value); }
 
-        // ===== Recent tickets =====
-        public ObservableCollection<RepairTicket> RecentTickets { get; } = new ObservableCollection<RepairTicket>();
+        private int _weeklyTotalTickets;
+        public int WeeklyTotalTickets { get => _weeklyTotalTickets; set => SetProperty(ref _weeklyTotalTickets, value); }
 
-        // ===== Parts risk counter =====
-        public ObservableCollection<PartsRiskItem> LowPartSkus { get; } = new ObservableCollection<PartsRiskItem>();
-        public ObservableCollection<PartsRiskItem> LowInventoryItems { get; } = new ObservableCollection<PartsRiskItem>();
+        private int _weeklyFinishedTickets;
+        public int WeeklyFinishedTickets { get => _weeklyFinishedTickets; set => SetProperty(ref _weeklyFinishedTickets, value); }
 
-        // ===== Commands =====
+        private decimal? _weeklyIncome;
+        public decimal? WeeklyIncome { get => _weeklyIncome; set => SetProperty(ref _weeklyIncome, value); }
+
+        private double _weeklyCompletionPercent;
+        public double WeeklyCompletionPercent { get => _weeklyCompletionPercent; set => SetProperty(ref _weeklyCompletionPercent, value); }
+
+        public ObservableCollection<RepairTicket> RecentTickets { get; } = new();
+        public ObservableCollection<PriorityStat> PriorityStats { get; } = new();
+
         public ICommand RefreshCommand { get; }
+        public ICommand OpenTicketsCommand { get; }
+        public ICommand ClosedTicketsCommand { get; }
 
         public DashboardViewModel()
         {
-            var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql");
-            _service = new TicketsDataService(dbPath);
+            _service = new TicketsDataService();
 
             RefreshCommand = new RelayCommand(_ => Refresh());
+            OpenTicketsCommand = new RelayCommand(param => ExecuteShowRepairTickets(param));
+            ClosedTicketsCommand = new RelayCommand(param => ExecuteShowRepairTickets(param));
 
-            Refresh();
-        }
+            TicketEvents.TicketsChanged += (_, _) => Refresh();
+            DatabasePathService.DatabasePathChanged += (_, _) => Refresh();
 
-        private void OnTicketsChanged(object sender, EventArgs e)
-        {
-            // Refresh dashboard when tickets change
-            Refresh();
-        }
-
-        private void OnDashboardRefreshRequested(object sender, EventArgs e)
-        {
-            // Refresh dashboard when requested
             Refresh();
         }
 
@@ -71,22 +69,40 @@ namespace ESCenter.ViewModels
             try
             {
                 var all = _service.GetAll().ToList();
+                var now = DateTime.Now;
+                var weekStart = now.Date.AddDays(-(int)now.DayOfWeek);
+                var weekEnd = weekStart.AddDays(7);
 
                 TotalTickets = all.Count;
                 ClosedTickets = all.Count(t => t.DeliveryDate.HasValue);
                 OpenTickets = TotalTickets - ClosedTickets;
                 ReadyForPickupTickets = all.Count(t => t.IsReadyForPickup && !t.DeliveryDate.HasValue);
 
-                // Recent tickets: open or ready for pickup
                 RecentTickets.Clear();
-                foreach (var t in all.Where(t => !t.DeliveryDate.HasValue).OrderByDescending(t => t.ReceiveDate).Take(10))
-                    RecentTickets.Add(t);
+                foreach (var ticket in all.Where(t => !t.DeliveryDate.HasValue).OrderByDescending(t => t.ReceiveDate).Take(10))
+                {
+                    RecentTickets.Add(ticket);
+                }
 
-                PartsRiskCounter();
+                PriorityStats.Clear();
+                foreach (var priority in new[] { "Critical", "Major", "Normal", "Minor" })
+                {
+                    var count = all.Count(t => string.Equals(t.PriorityLevel, priority, StringComparison.OrdinalIgnoreCase) && !t.DeliveryDate.HasValue);
+                    PriorityStats.Add(new PriorityStat { Priority = priority, Count = count });
+                }
 
-                // Alerts
                 CriticalOpenTickets = all.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase) && !t.DeliveryDate.HasValue);
-                OverdueTickets = all.Count(t => !t.DeliveryDate.HasValue && (DateTime.Now - t.ReceiveDate).TotalDays > 2);
+                OverdueTickets = all.Count(t => !t.DeliveryDate.HasValue && (now - t.ReceiveDate).TotalDays > 2);
+
+                WeeklyTotalTickets = all.Count(t => t.ReceiveDate >= weekStart && t.ReceiveDate < weekEnd);
+                WeeklyFinishedTickets = all.Count(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value >= weekStart && t.DeliveryDate.Value < weekEnd);
+                WeeklyIncome = all
+                    .Where(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value >= weekStart && t.DeliveryDate.Value < weekEnd)
+                    .Sum(t => t.FinalCost);
+
+                WeeklyCompletionPercent = WeeklyTotalTickets == 0
+                    ? 0
+                    : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
 
                 AppLogger.Info("Dashboard refreshed.");
             }
@@ -96,49 +112,33 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private void PartsRiskCounter()
+        private void ExecuteShowRepairTickets(object parameter)
         {
-            LowPartSkus.Clear();
-            LowInventoryItems.Clear();
-
-            var partsRepo = new PartsRepository();
-            var inventoryRepo = new InventoryRepository(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql"));
-
-            var lowParts = partsRepo.GetAll()
-                .Where(p => p.QuantityOnHand < 5 && !string.IsNullOrWhiteSpace(p.SKU))
-                .OrderBy(p => p.QuantityOnHand);
-            foreach (var part in lowParts)
+            try
             {
-                LowPartSkus.Add(new PartsRiskItem
+                var mainVm = System.Windows.Application.Current?.MainWindow?.DataContext;
+                if (mainVm == null)
                 {
-                    Label = part.SKU.Trim(),
-                    Quantity = part.QuantityOnHand
-                });
+                    return;
+                }
+
+                var property = mainVm.GetType().GetProperty("ShowRepairTicketsCommand", BindingFlags.Public | BindingFlags.Instance);
+                var command = property?.GetValue(mainVm) as ICommand;
+                if (command != null && command.CanExecute(parameter))
+                {
+                    command.Execute(parameter);
+                }
             }
-
-            var lowInventory = inventoryRepo.GetAll()
-                .Where(i => i.QuantityOnHand < 2)
-                .OrderBy(i => i.QuantityOnHand);
-            foreach (var item in lowInventory)
+            catch (Exception ex)
             {
-                LowInventoryItems.Add(new PartsRiskItem
-                {
-                    Label = BuildInventoryLabel(item),
-                    Quantity = item.QuantityOnHand
-                });
+                AppLogger.Warning($"Failed to forward navigation command: {ex.Message}");
             }
         }
 
-        private static string BuildInventoryLabel(InventoryItemModel item)
+        public class PriorityStat
         {
-            var label = $"{item.ItemType} {item.Brand} {item.Model}".Trim();
-            return string.IsNullOrWhiteSpace(label) ? "Inventory item" : label;
-        }
-
-        public class PartsRiskItem
-        {
-            public string Label { get; set; }
-            public int Quantity { get; set; }
+            public string Priority { get; set; } = string.Empty;
+            public int Count { get; set; }
         }
     }
 }

@@ -2,21 +2,17 @@
 using System.Data.SQLite;
 using System.Linq;
 using ESCenter.Models;
+using ESCenter.Services;
 
 namespace ESCenter.Data
 {
     public class InventoryRepository
     {
-        private readonly string _connectionString;
-
-        public InventoryRepository(string dbPath)
-        {
-            _connectionString = $"Data Source={dbPath};Version=3;";
-        }
+        private string ConnectionString => $"Data Source={DatabasePathService.CurrentDatabasePath};Version=3;";
 
         private SQLiteConnection GetConnection()
         {
-            return new SQLiteConnection(_connectionString);
+            return new SQLiteConnection(ConnectionString);
         }
 
         public List<InventoryItemModel> GetAll()
@@ -99,27 +95,6 @@ namespace ESCenter.Data
                     WHEN QuantityOnHand - @amount < 0 THEN 0
                     ELSE QuantityOnHand - @amount
                 END
-                WHERE Description = @name
-                   OR (Description IS NULL AND
-                       TRIM(COALESCE(ItemType, '') || ' ' || COALESCE(Brand, '') || ' ' || COALESCE(Model, '')) = @name);", conn);
-            cmd.Parameters.AddWithValue("@amount", amount);
-            cmd.Parameters.AddWithValue("@name", name.Trim());
-            cmd.ExecuteNonQuery();
-        }
-
-        public void IncrementQuantityByName(string name, int amount)
-        {
-            if (string.IsNullOrWhiteSpace(name) || amount <= 0)
-            {
-                return;
-            }
-
-            using var conn = GetConnection();
-            conn.Open();
-
-            using var cmd = new SQLiteCommand(@"
-                UPDATE Inventory
-                SET QuantityOnHand = QuantityOnHand + @amount
                 WHERE Description = @name
                    OR (Description IS NULL AND
                        TRIM(COALESCE(ItemType, '') || ' ' || COALESCE(Brand, '') || ' ' || COALESCE(Model, '')) = @name);", conn);

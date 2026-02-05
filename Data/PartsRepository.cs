@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.IO;
 using ESCenter.Models;
+using ESCenter.Services;
 
 namespace ESCenter.Data
 {
     public class PartsRepository
     {
-        private readonly string _dbPath;
-
-        public PartsRepository()
-        {
-            _dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql");
-        }
-
         private SQLiteConnection GetConnection()
         {
-            return new SQLiteConnection($"Data Source={_dbPath};Version=3;");
+            return new SQLiteConnection($"Data Source={DatabasePathService.CurrentDatabasePath};Version=3;");
         }
 
         // -------------------------
@@ -79,25 +72,6 @@ namespace ESCenter.Data
                     WHEN QuantityOnHand - @amount < 0 THEN 0
                     ELSE QuantityOnHand - @amount
                 END
-                WHERE SKU = @sku;", conn);
-            cmd.Parameters.AddWithValue("@amount", amount);
-            cmd.Parameters.AddWithValue("@sku", sku.Trim());
-            cmd.ExecuteNonQuery();
-        }
-
-        public void IncrementQuantityBySku(string sku, int amount)
-        {
-            if (string.IsNullOrWhiteSpace(sku) || amount <= 0)
-            {
-                return;
-            }
-
-            using var conn = GetConnection();
-            conn.Open();
-
-            using var cmd = new SQLiteCommand(@"
-                UPDATE Parts
-                SET QuantityOnHand = QuantityOnHand + @amount
                 WHERE SKU = @sku;", conn);
             cmd.Parameters.AddWithValue("@amount", amount);
             cmd.Parameters.AddWithValue("@sku", sku.Trim());

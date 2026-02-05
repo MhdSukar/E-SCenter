@@ -8,6 +8,7 @@ using ESCenter.Core;
 using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Views;
+using ESCenter.Services;
 
 namespace ESCenter.ViewModels
 {
@@ -49,8 +50,8 @@ namespace ESCenter.ViewModels
 
         public InventoryViewModel()
         {
-            var dbPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "E-SCenter.sql");
-            _repository = new InventoryRepository(dbPath);
+            _repository = new InventoryRepository();
+            DatabasePathService.DatabasePathChanged += (_, __) => Load();
 
             _inventoryView = CollectionViewSource.GetDefaultView(Items);
             _inventoryView.Filter = FilterInventory;

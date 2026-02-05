@@ -7,19 +7,14 @@ namespace ESCenter.Services
 {
     public class TicketsDataService
     {
-        private readonly string _connectionString;
-
-        public TicketsDataService(string dbPath)
-        {
-            _connectionString = $"Data Source={dbPath};Version=3;";
-        }
+        private string ConnectionString => $"Data Source={DatabasePathService.CurrentDatabasePath};Version=3;";
 
         // ===================== GET ALL =====================
         public List<RepairTicket> GetAll()
         {
             var list = new List<RepairTicket>();
 
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             var sql = @"
@@ -57,7 +52,7 @@ namespace ESCenter.Services
             if (ticket.AccessoriesJson == null)
                 ticket.Accessories = new Accessories();
 
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             var sql = @"
@@ -90,7 +85,7 @@ namespace ESCenter.Services
         // ===================== UPDATE =====================
         public void Update(RepairTicket ticket)
         {
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             var sql = @"
@@ -118,7 +113,7 @@ namespace ESCenter.Services
         // ===================== DELETE =====================
         public void Delete(int ticketId)
         {
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             using var cmd = new SQLiteCommand("DELETE FROM TicketsDB WHERE TicketId=@id;", conn);
@@ -221,7 +216,7 @@ namespace ESCenter.Services
         // ===================== ESC ID =====================
         private string GenerateEscTicketId()
         {
-            using var conn = new SQLiteConnection(_connectionString);
+            using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
             using var cmd = new SQLiteCommand("SELECT COALESCE(MAX(TicketId), 0) + 1 FROM TicketsDB;", conn);

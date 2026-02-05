@@ -865,13 +865,7 @@
                                                 <TextBlock Text="{Binding}"
                                                            Margin="0,0,6,0" />
                                                 <Button Content="✕"
-                                                       
-                                                        Width="18"
-                                                        Height="18"
-                                                        Padding="0"
-                                                        Background="Transparent"
-                                                        BorderThickness="0"
-                                                        Foreground="{StaticResource TextPrimaryBrush}"
+                                                        Style="{StaticResource PartsRemoveIconButtonStyle}"
                                                         Command="{Binding DataContext.RemovePartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                         CommandParameter="{Binding}" />
                                             </StackPanel>
