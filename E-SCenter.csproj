@@ -12,10 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Converters\BooleanToVisibilityConverter.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Assets\Icons\add_task.png" />
     <None Remove="Assets\Icons\amend.png" />
     <None Remove="Assets\Icons\aod_watch.png" />
