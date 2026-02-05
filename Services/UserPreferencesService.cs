@@ -85,6 +85,13 @@ namespace ESCenter.Services
             Save(preferences);
         }
 
+        public static void ResetToDefaultPreferences(string defaultDatabasePath)
+        {
+            var defaults = CreateDefaultPreferences();
+            defaults.PreferredDatabasePath = defaultDatabasePath;
+            Save(defaults);
+        }
+
         public static bool ValidateAdminCredentials(string username, string password)
         {
             var preferences = Load();
