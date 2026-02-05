@@ -426,7 +426,7 @@
                                     </StackPanel>
                                 </Button>
 
-                                <Button Style="{StaticResource NeonOrangeButtonStyle}" Width="145" FontSize="16" Margin="0,2,6,0"
+                                <Button Style="{StaticResource NeonOrangeButtonStyle}" Width="145" FontSize="16" Margin="0,5,6,0"
                                         Command="{Binding ShowReportsCommand}">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <Image Source="{StaticResource DataArray}" Width="16" Height="16" Margin="0,0,6,0"/>
@@ -434,7 +434,7 @@
                                     </StackPanel>
                                 </Button>
 
-                                <Button Style="{StaticResource NeonBlueButtonStyle}" Width="145" FontSize="13" Margin="0,2,6,0"
+                                <Button Style="{StaticResource NeonBlueButtonStyle}" Width="145" FontSize="13" Margin="0,5,6,0"
                                         Command="{Binding ChangeAdminPasswordCommand}">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <Image Source="{StaticResource settings1}" Width="16" Height="16" Margin="0,0,6,0"/>
@@ -445,8 +445,6 @@
                             </UniformGrid>
                         </GroupBox>
                         
-                        
-
                         <!-- ========= Admin Group ========= -->
                     </UniformGrid>
                 </Border>
