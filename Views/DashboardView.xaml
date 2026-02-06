@@ -71,7 +71,7 @@
                                   CanUserResizeColumns="True"
                                   GridLinesVisibility="None">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="ESC-ID" Binding="{Binding EscTicketId}" Width="70"/>
+                                <DataGridTextColumn Header="ESC-ID" Binding="{Binding EscTicketId}" Width="82"/>
                                 <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="150"/>
                                 <DataGridTextColumn Header="Device" Binding="{Binding DeviceCategory}" Width="120"/>
                                 <DataGridTextColumn Header="Status" Binding="{Binding RepairStatus}" Width="130"/>

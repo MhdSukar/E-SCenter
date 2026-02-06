@@ -91,7 +91,7 @@ namespace ESCenter
 
         private void SetupTrayIcon()
         {
-            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Themes", "Trox E-SCenter Icon.ico");
+            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Themes", "Philips E-SCenter Icon.ico");
 
             _trayIcon = new NotifyIcon
             {
