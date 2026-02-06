@@ -336,7 +336,7 @@
                             <oxy:PlotView Model="{Binding TicketsPlotModel}"
                                           Height="140"
                                           Background="Transparent"
-                                          Margin="0,-8,0,0"/>
+                                          Margin="0,-20,0,0"/>
                         </GroupBox>
 
                         <!-- ========= Statistics Group ========= -->
