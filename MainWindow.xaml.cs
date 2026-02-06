@@ -1,10 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
 using System.Windows;
-using ESCenter.Core;
 using System.Windows.Input;
-using System.Windows.Controls;
 
 namespace ESCenter
 {
