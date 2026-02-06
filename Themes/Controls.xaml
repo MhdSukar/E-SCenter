@@ -986,6 +986,8 @@
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+        <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
     </Style>
 
     <!-- Compact DataGrid Header -->
@@ -1008,6 +1010,13 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="DarkDataGridCellStyle" TargetType="DataGridCell">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+        <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+    </Style>
+
     <Style x:Key="DarkDataGridStyle" TargetType="DataGrid">
         <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
@@ -1019,6 +1028,7 @@
         <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="SelectionUnit" Value="FullRow"/>
         <Setter Property="CanUserAddRows" Value="False"/>
+        <Setter Property="CellStyle" Value="{StaticResource DarkDataGridCellStyle}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
