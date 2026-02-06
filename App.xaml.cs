@@ -91,13 +91,13 @@ namespace ESCenter
 
         private void SetupTrayIcon()
         {
-            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Themes", "E-SCenter1.ico");
+            var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Themes", "Trox E-SCenter Icon.ico");
 
             _trayIcon = new NotifyIcon
             {
                 Icon = File.Exists(iconPath) ? new System.Drawing.Icon(iconPath) : System.Drawing.SystemIcons.Application,
                 Visible = true,
-                Text = "E-SCenter"
+                Text = "E-SCenter Control Center"
             };
 
             _trayIcon.DoubleClick += (_, _) => ShowMainWindow();

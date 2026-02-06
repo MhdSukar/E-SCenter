@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -64,27 +63,44 @@ namespace ESCenter.Models
         [JsonIgnore]
         public DeviceChecklist DeviceChecklist
         {
-            get => string.IsNullOrEmpty(DeviceChecklistJson)
-                ? new DeviceChecklist()
-                : JsonSerializer.Deserialize<DeviceChecklist>(DeviceChecklistJson);
-            set => DeviceChecklistJson = JsonSerializer.Serialize(value);
+            get => DeserializeOrDefault(DeviceChecklistJson, new DeviceChecklist());
+            set => DeviceChecklistJson = JsonSerializer.Serialize(value ?? new DeviceChecklist());
         }
 
         [JsonIgnore]
         public Accessories Accessories
         {
-            get => string.IsNullOrEmpty(AccessoriesJson)
-                ? new Accessories()
-                : JsonSerializer.Deserialize<Accessories>(AccessoriesJson);
-            set => AccessoriesJson = JsonSerializer.Serialize(value);
+            get => DeserializeOrDefault(AccessoriesJson, new Accessories());
+            set => AccessoriesJson = JsonSerializer.Serialize(value ?? new Accessories());
         }
+
         public string FinalCostDisplay
         {
             get
             {
                 if (FinalCost.HasValue)
+                {
                     return $"{FinalCost.Value:F0} {FinalCostCurrency ?? "USD"}";
+                }
+
                 return "-";
+            }
+        }
+
+        private static T DeserializeOrDefault<T>(string json, T fallback)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                return fallback;
+            }
+
+            try
+            {
+                return JsonSerializer.Deserialize<T>(json) ?? fallback;
+            }
+            catch (JsonException)
+            {
+                return fallback;
             }
         }
     }

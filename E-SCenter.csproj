@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
 	  <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>Themes\E-SCenter1.ico</ApplicationIcon>
+    <ApplicationIcon>Themes\Trox E-SCenter Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -97,7 +97,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Themes\E-SCenter1.ico" />
+    <Content Include="Themes\Trox E-SCenter Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>

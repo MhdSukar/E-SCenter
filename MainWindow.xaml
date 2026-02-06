@@ -124,7 +124,7 @@
 
                     <!-- App Icon -->
                     <Image Grid.Column="0"
-                           Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\E-SCenter.png"
+                           Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\Trox E-SCenter Logo.png"
                            Width="18"
                            Height="18"
                            Margin="10,0,6,0"
@@ -236,7 +236,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Image Grid.Column="0"
-                               Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\E-SCenter.png" 
+                               Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\Trox E-SCenter Logo.png" 
                                Height="40" 
                                VerticalAlignment="Center"
                                HorizontalAlignment="Left"/>
