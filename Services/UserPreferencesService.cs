@@ -8,10 +8,10 @@ namespace ESCenter.Services
 {
     public static class UserPreferencesService
     {
-        private const string SettingsFileName = "E-SCenter-settings.json";
-        private const string LegacyDatabaseSettingsFileName = "E-SCenter-settings.json";
-        private const string DefaultAdminUsername = "Mhdsukar";
-        private static readonly string DefaultAdminPasswordHash = ComputeHash("Admin");
+        private const string SettingsFileName = "user-preferences.json";
+        private const string LegacyDatabaseSettingsFileName = "database-settings.json";
+        private const string DefaultAdminUsername = "MhdSukar";
+        private static readonly string DefaultAdminPasswordHash = ComputeHash("Mhdsu");
 
         private static readonly string SettingsDirectory =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ESCenter");
@@ -83,6 +83,13 @@ namespace ESCenter.Services
             }
 
             Save(preferences);
+        }
+
+        public static void ResetToDefaultPreferences(string defaultDatabasePath)
+        {
+            var defaults = CreateDefaultPreferences();
+            defaults.PreferredDatabasePath = defaultDatabasePath;
+            Save(defaults);
         }
 
         public static bool ValidateAdminCredentials(string username, string password)

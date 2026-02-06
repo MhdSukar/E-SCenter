@@ -1107,21 +1107,24 @@
             <Setter.Value>
                 <ControlTemplate TargetType="GroupBox">
                     <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="10"
-                            Padding="8">
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10"
+                        Padding="8">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="{TemplateBinding Header}"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       FontWeight="{TemplateBinding FontWeight}"
-                                       FontSize="{TemplateBinding FontSize}"
-                                       Margin="8,0,0,6"/>
+                            <!-- Header (icon-safe, color-safe) -->
+                            <ContentPresenter
+                            ContentSource="Header"
+                            Margin="8,0,0,6"
+                            VerticalAlignment="Center"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
 
                             <ContentPresenter Grid.Row="1"/>
                         </Grid>
@@ -1130,7 +1133,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="DarkRedGroupBoxStyle" TargetType="GroupBox">
         <Setter Property="Foreground" Value="{StaticResource NeonRedDarkBrush}"/>
         <Setter Property="FontSize" Value="15"/>
@@ -1144,21 +1147,24 @@
             <Setter.Value>
                 <ControlTemplate TargetType="GroupBox">
                     <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="10"
-                            Padding="8">
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10"
+                        Padding="8">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="{TemplateBinding Header}"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       FontWeight="{TemplateBinding FontWeight}"
-                                       FontSize="{TemplateBinding FontSize}"
-                                       Margin="8,0,0,6"/>
+                            <!-- Header (icon-safe, color-safe) -->
+                            <ContentPresenter
+                            ContentSource="Header"
+                            Margin="8,0,0,6"
+                            VerticalAlignment="Center"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
 
                             <ContentPresenter Grid.Row="1"/>
                         </Grid>
@@ -1181,21 +1187,24 @@
             <Setter.Value>
                 <ControlTemplate TargetType="GroupBox">
                     <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="10"
-                            Padding="8">
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10"
+                        Padding="8">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="{TemplateBinding Header}"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       FontWeight="{TemplateBinding FontWeight}"
-                                       FontSize="{TemplateBinding FontSize}"
-                                       Margin="8,0,0,6"/>
+                            <!-- Header (icon-safe, color-safe) -->
+                            <ContentPresenter
+                            ContentSource="Header"
+                            Margin="8,0,0,6"
+                            VerticalAlignment="Center"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
 
                             <ContentPresenter Grid.Row="1"/>
                         </Grid>
@@ -1204,6 +1213,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
 
     <Style x:Key="DarkPurpleGroupBoxStyle" TargetType="GroupBox">
         <Setter Property="Foreground" Value="{StaticResource NeonPurpleBrush}"/>
@@ -1222,17 +1232,21 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="10"
                         Padding="8">
+
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="{TemplateBinding Header}"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   FontWeight="{TemplateBinding FontWeight}"
-                                   FontSize="{TemplateBinding FontSize}"
-                                   Margin="8,0,0,6"/>
+                            <!-- ✅ Header keeps original color + font -->
+                            <ContentPresenter
+                            ContentSource="Header"
+                            Margin="8,0,0,6"
+                            VerticalAlignment="Center"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
 
                             <ContentPresenter Grid.Row="1"/>
                         </Grid>
@@ -1241,6 +1255,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
 
     <!-- Modern ProgressBar Style -->
     <Style x:Key="ModernProgressBarStyle" TargetType="ProgressBar">

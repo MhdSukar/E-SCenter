@@ -25,6 +25,9 @@ namespace ESCenter.ViewModels
         private ICommand? _changeAdminPasswordCommand;
         public ICommand ChangeAdminPasswordCommand => _changeAdminPasswordCommand ??= new RelayCommand(_ => ChangeAdminPassword());
 
+        private ICommand? _resetSettingsCommand;
+        public ICommand ResetSettingsCommand => _resetSettingsCommand ??= new RelayCommand(_ => ResetSettings());
+
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
         public ICommand ShowPartsControlCommand { get; }
@@ -265,6 +268,51 @@ namespace ESCenter.ViewModels
             }
         }
 
+        private void ResetSettings()
+        {
+            try
+            {
+                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
+                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                {
+                    return;
+                }
+
+                var confirm = System.Windows.MessageBox.Show(
+                    "This will reset all app settings to default, including admin login and database selection. Continue?",
+                    "Reset Settings",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Warning);
+
+                if (confirm != System.Windows.MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                DatabasePathService.ResetToDefaultPath();
+
+                Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
+                RefreshTicketsChart();
+
+                AppLogger.Success("All app settings were reset to default.");
+                System.Windows.MessageBox.Show(
+                    "All app settings were reset to default.\nAdmin credentials are now default: MhdSukar / Mhdsu.",
+                    "Reset Completed",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to reset settings: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Failed to reset settings:\n{ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+
         private void RefreshTicketsChart()
         {
             TicketsPlotModel = CreateTicketsActivityPlotModel();
@@ -287,7 +335,7 @@ namespace ESCenter.ViewModels
                 LegendOrientation = LegendOrientation.Horizontal,
                 TextColor = OxyColors.White,
                 LegendTitleColor = OxyColors.White,
-                LegendFontSize = 10
+                LegendFontSize = 9
             });
 
             var dataService = new TicketsDataService();
@@ -302,7 +350,7 @@ namespace ESCenter.ViewModels
                 Title = "Opened",
                 Color = OxyColor.Parse("#37E2D5"),
                 StrokeThickness = 3,
-                MarkerType = MarkerType.Circle,
+                MarkerType = MarkerType.Star,
                 MarkerSize = 3,
                 MarkerFill = OxyColor.Parse("#37E2D5"),
                 CanTrackerInterpolatePoints = false,
@@ -315,6 +363,7 @@ namespace ESCenter.ViewModels
                 Color = OxyColor.Parse("#5AA7FF"),
                 Fill = OxyColor.FromAColor(90, OxyColor.Parse("#5AA7FF")),
                 StrokeThickness = 2,
+                MarkerType = MarkerType.Star,
                 TrackerFormatString = "{2}: {4:0} finished"
             };
 

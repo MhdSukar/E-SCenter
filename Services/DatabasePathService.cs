@@ -16,6 +16,8 @@ namespace ESCenter.Services
 
         public static string CurrentDatabasePath => _databasePath;
 
+        public static string DefaultPath => DefaultDatabasePath;
+
         private static string ResolveInitialPath()
         {
             var preferences = UserPreferencesService.Load();
@@ -33,6 +35,16 @@ namespace ESCenter.Services
             }
 
             return DefaultDatabasePath;
+
+        }
+
+
+        public static void ResetToDefaultPath()
+        {
+            _databasePath = DefaultDatabasePath;
+            UserPreferencesService.ResetToDefaultPreferences(DefaultDatabasePath);
+            DatabasePathChanged?.Invoke(null, EventArgs.Empty);
+
         }
 
         public static void SetDatabasePath(string databasePath)
