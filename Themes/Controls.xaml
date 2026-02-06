@@ -972,28 +972,29 @@
     <Style x:Key="CompactDataGridRowStyle"
            TargetType="DataGridRow"
            BasedOn="{StaticResource DarkDataGridRowStyle}">
-        <Setter Property="MinHeight" Value="22"/>
-        <Setter Property="Height" Value="22"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="MinHeight" Value="25"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="FontSize" Value="12"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
     <Style x:Key="CompactDataGridCellStyle" TargetType="DataGridCell">
         <Setter Property="Padding" Value="6,1"/>
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontSize" Value="12"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="TextBlock.TextAlignment" Value="Center"/>
         <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+        <Setter Property="Height" Value="32"/>  
     </Style>
 
     <!-- Compact DataGrid Header -->
     <Style x:Key="CompactDataGridHeaderStyle" TargetType="DataGridColumnHeader"
        BasedOn="{StaticResource DarkDataGridHeaderStyle}">
-        <Setter Property="Height" Value="24"/>
+        <Setter Property="Height" Value="23"/>
         <Setter Property="FontSize" Value="11"/>
         <Setter Property="Padding" Value="6,2"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -1010,25 +1011,17 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="DarkDataGridCellStyle" TargetType="DataGridCell">
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
-        <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
-    </Style>
-
     <Style x:Key="DarkDataGridStyle" TargetType="DataGrid">
         <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderDarkBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="RowHeight" Value="30"/>
+        <Setter Property="RowHeight" Value="32"/>
         <Setter Property="GridLinesVisibility" Value="Horizontal"/>
         <Setter Property="HeadersVisibility" Value="Column"/>
         <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="SelectionUnit" Value="FullRow"/>
         <Setter Property="CanUserAddRows" Value="False"/>
-        <Setter Property="CellStyle" Value="{StaticResource DarkDataGridCellStyle}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
