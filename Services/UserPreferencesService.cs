@@ -10,8 +10,8 @@ namespace ESCenter.Services
     {
         private const string SettingsFileName = "user-preferences.json";
         private const string LegacyDatabaseSettingsFileName = "database-settings.json";
-        private const string DefaultAdminUsername = "Mhdsu";
-        private static readonly string DefaultAdminPasswordHash = ComputeHash("Mhdsu");
+        private const string DefaultAdminUsername = "Admin";
+        private static readonly string DefaultAdminPasswordHash = ComputeHash("Admin");
 
         private static readonly string SettingsDirectory =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ESCenter");
