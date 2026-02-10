@@ -5,11 +5,6 @@ Add Parts Risk Counter to check nearly out of stock parts
 
 
 
-
-
-
-
-
 **Tickets Manager**
 
 Add Pictures
@@ -18,15 +13,9 @@ Add Pictures
 
 
 
-
-
 **Parts Control**
 
 Predict Parts Shortage
-
-
-
-
 
 
 
