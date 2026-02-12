@@ -34,6 +34,7 @@ namespace ESCenter.ViewModels
         public ICommand ShowReportsCommand { get; }
         public ICommand ShowInventoryCommand { get; }
         public ICommand ShowBoneyardCommand { get; }
+        public ICommand ShowWarrantySystemCommand { get; }
 
         private object _currentView;
         public object CurrentView
@@ -95,6 +96,7 @@ namespace ESCenter.ViewModels
             ShowReportsCommand = new RelayCommand(_ => Navigate(new ReportsViewModel(), "Reports loaded"));
             ShowInventoryCommand = new RelayCommand(_ => Navigate(new InventoryViewModel(), "Inventory loaded"));
             ShowBoneyardCommand = new RelayCommand(_ => Navigate(new BoneyardViewModel(), "Boneyard loaded"));
+            ShowWarrantySystemCommand = new RelayCommand(_ => ShowWarrantySystem());
 
             CurrentView = Dashboard;
             SetStatus("System Ready", StatusLevel.Info);
@@ -307,6 +309,29 @@ namespace ESCenter.ViewModels
                 AppLogger.Error($"Failed to reset settings: {ex.Message}");
                 System.Windows.MessageBox.Show(
                     $"Failed to reset settings:\n{ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+
+        private void ShowWarrantySystem()
+        {
+            try
+            {
+                var window = new WarrantySystemWindow
+                {
+                    Owner = System.Windows.Application.Current.MainWindow
+                };
+
+                window.ShowDialog();
+                AppLogger.Success("Warranty system opened.");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to open warranty system: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Failed to open warranty system:\n{ex.Message}",
                     "Error",
                     System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Error);
