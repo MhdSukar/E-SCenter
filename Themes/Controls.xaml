@@ -988,6 +988,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="TextBlock.TextAlignment" Value="Center"/>
         <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+        <Setter Property="TextBlock.HorizontalAlignment" Value="Center"/>
         <Setter Property="Height" Value="32"/>  
     </Style>
 

@@ -772,6 +772,7 @@
                                 <ComboBox.ItemsSource>
                                     <x:Array Type="{x:Type sys:String}"
                                              xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                        <sys:String>24 Hours</sys:String>
                                         <sys:String>7 Days</sys:String>
                                         <sys:String>14 Days</sys:String>
                                         <sys:String>30 Days</sys:String>

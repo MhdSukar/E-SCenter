@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace ESCenter
 {
@@ -15,15 +18,35 @@ namespace ESCenter
             Loaded += (_, __) =>
             {
                 if (DataContext is ESCenter.ViewModels.MainViewModel vm)
+                {
                     vm.Dashboard.Refresh();
+                }
             };
 
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var dir = Path.Combine(appData, "ESCenter");
             _settingsPath = Path.Combine(dir, "windowsettings.json");
 
-            this.SourceInitialized += MainWindow_SourceInitialized;
-            this.Closing += MainWindow_Closing;
+            SourceInitialized += MainWindow_SourceInitialized;
+            Closing += MainWindow_Closing;
+
+            var descriptor = DependencyPropertyDescriptor.FromProperty(ContentControl.ContentProperty, typeof(ContentControl));
+            descriptor?.AddValueChanged(MainContentHost, (_, _) => AnimateCurrentViewTransition());
+        }
+
+        private void AnimateCurrentViewTransition()
+        {
+            MainContentHost.Opacity = 0;
+
+            var animation = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(230),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            MainContentHost.BeginAnimation(OpacityProperty, animation);
         }
 
         private void MainWindow_SourceInitialized(object? sender, EventArgs e)
@@ -41,19 +64,19 @@ namespace ESCenter
                         !double.IsNaN(saved.Width) && !double.IsNaN(saved.Height))
                     {
                         // Ensure we use Manual startup so we can set Left/Top explicitly
-                        this.WindowStartupLocation = WindowStartupLocation.Manual;
+                        WindowStartupLocation = WindowStartupLocation.Manual;
 
                         // Clamp values so window is visible (handles monitor changes)
                         var left = Clamp(saved.Left, SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Math.Max(100, saved.Width));
                         var top = Clamp(saved.Top, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Math.Max(100, saved.Height));
 
-                        //this.Width = Math.Max(100, saved.Width);
-                        this.Height = Math.Max(100, saved.Height);
-                        this.Left = left;
-                        this.Top = top;
+                        //Width = Math.Max(100, saved.Width);
+                        Height = Math.Max(100, saved.Height);
+                        Left = left;
+                        Top = top;
 
                         // Apply state after bounds set
-                        this.WindowState = saved.State;
+                        WindowState = saved.State;
                     }
                     else
                     {
@@ -77,20 +100,23 @@ namespace ESCenter
             try
             {
                 // When maximized, use RestoreBounds to get the normal window size and position.
-                double left, top, width, height;
-                var stateToSave = this.WindowState;
+                double left;
+                double top;
+                double width;
+                double height;
+                var stateToSave = WindowState;
 
-                if (this.WindowState == WindowState.Normal)
+                if (WindowState == WindowState.Normal)
                 {
-                    left = this.Left;
-                    top = this.Top;
-                    width = this.Width;
-                    height = this.Height;
+                    left = Left;
+                    top = Top;
+                    width = Width;
+                    height = Height;
                 }
                 else
                 {
                     // If Window is Maximized or Minimized, use RestoreBounds so normal position/size are preserved.
-                    var rb = this.RestoreBounds;
+                    var rb = RestoreBounds;
                     left = rb.Left;
                     top = rb.Top;
                     width = rb.Width;
@@ -107,7 +133,10 @@ namespace ESCenter
                 };
 
                 var dir = Path.GetDirectoryName(_settingsPath);
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
 
                 var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(_settingsPath, json);
@@ -121,16 +150,17 @@ namespace ESCenter
 
         private void CenterOnScreen()
         {
-            this.WindowStartupLocation = WindowStartupLocation.Manual;
+            WindowStartupLocation = WindowStartupLocation.Manual;
             var workArea = SystemParameters.WorkArea;
             // Use current Width/Height from XAML defaults (already set)
-            this.Left = workArea.Left + (workArea.Width - this.Width) / 2;
-            this.Top = workArea.Top + (workArea.Height - this.Height) / 2;
-            this.WindowState = WindowState.Normal;
+            Left = workArea.Left + (workArea.Width - Width) / 2;
+            Top = workArea.Top + (workArea.Height - Height) / 2;
+            WindowState = WindowState.Normal;
         }
+
         private void btnMinimize_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            WindowState = WindowState.Minimized;
         }
 
         private void btnMaximize_Click(object sender, RoutedEventArgs e)
@@ -140,19 +170,19 @@ namespace ESCenter
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void AdjustWindowSize()
         {
-            if (this.WindowState == WindowState.Maximized)
+            if (WindowState == WindowState.Maximized)
             {
-                this.WindowState = WindowState.Normal;
+                WindowState = WindowState.Normal;
                 btnMaximize.Content = "□";
             }
             else
             {
-                this.WindowState = WindowState.Maximized;
+                WindowState = WindowState.Maximized;
                 btnMaximize.Content = "❐";
             }
         }
@@ -160,10 +190,15 @@ namespace ESCenter
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
+            {
                 AdjustWindowSize();
+            }
             else
+            {
                 DragMove();
+            }
         }
+
         private static double Clamp(double value, double min, double max)
             => Math.Max(min, Math.Min(max, value));
 
@@ -172,9 +207,7 @@ namespace ESCenter
             e.Cancel = true;
             Hide();
         }
-
     }
-
 
     // Small DTO persisted to disk
     internal class WindowSettings
@@ -185,5 +218,4 @@ namespace ESCenter
         public double Height { get; set; }
         public WindowState State { get; set; } = WindowState.Normal;
     }
-
 }

@@ -1,0 +1,133 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using ESCenter.Models;
+using ESCenter.Services;
+
+namespace ESCenter.Windows
+{
+    public partial class WarrantySystemWindow : Window
+    {
+        private readonly TicketsDataService _ticketsDataService = new();
+
+        public ObservableCollection<WarrantyDeviceRow> WarrantyItems { get; } = new();
+
+        public WarrantySystemWindow()
+        {
+            InitializeComponent();
+            DataContext = this;
+            LoadWarrantyItems();
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadWarrantyItems();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void LoadWarrantyItems()
+        {
+            WarrantyItems.Clear();
+
+            var tickets = _ticketsDataService.GetAll()
+                .Where(t => t.HasWarranty)
+                .OrderByDescending(t => t.ReceiveDate)
+                .ToList();
+
+            foreach (var ticket in tickets)
+            {
+                if (!TryGetExpiration(ticket, out var expiresAt))
+                {
+                    continue;
+                }
+
+                var daysLeft = (expiresAt.Date - DateTime.Today).Days;
+
+                WarrantyItems.Add(new WarrantyDeviceRow
+                {
+                    TicketCode = ticket.EscTicketId ?? $"ESC-{ticket.TicketId:D6}",
+                    CustomerName = ticket.CustomerName ?? "-",
+                    DeviceName = BuildDeviceName(ticket),
+                    SerialNumber = string.IsNullOrWhiteSpace(ticket.SerialIMEI) ? "-" : ticket.SerialIMEI,
+                    WarrantyPeriod = string.IsNullOrWhiteSpace(ticket.WarrantyPeriod) ? "-" : ticket.WarrantyPeriod,
+                    WarrantyStartDateText = GetWarrantyStart(ticket).ToString("yyyy-MM-dd"),
+                    WarrantyEndDateText = expiresAt.ToString("yyyy-MM-dd"),
+                    RemainingText = daysLeft >= 0 ? $"{daysLeft} day(s)" : $"Expired {-daysLeft} day(s) ago",
+                    WarrantyState = daysLeft >= 0 ? "Active" : "Expired"
+                });
+            }
+        }
+
+        private static string BuildDeviceName(RepairTicket ticket)
+        {
+            var parts = new[] { ticket.DeviceCategory, ticket.DeviceBrand, ticket.DeviceModel }
+                .Where(value => !string.IsNullOrWhiteSpace(value));
+
+            var combined = string.Join(" / ", parts);
+            return string.IsNullOrWhiteSpace(combined) ? "Unknown Device" : combined;
+        }
+
+        private static DateTime GetWarrantyStart(RepairTicket ticket)
+        {
+            return ticket.DeliveryDate?.Date ?? ticket.ReceiveDate.Date;
+        }
+
+        private static bool TryGetExpiration(RepairTicket ticket, out DateTime expiration)
+        {
+            expiration = GetWarrantyStart(ticket);
+
+            if (string.IsNullOrWhiteSpace(ticket.WarrantyPeriod))
+            {
+                return false;
+            }
+
+            var normalized = ticket.WarrantyPeriod.Trim().ToLowerInvariant();
+            var digits = new string(normalized.Where(char.IsDigit).ToArray());
+
+            if (!int.TryParse(digits, NumberStyles.Integer, CultureInfo.InvariantCulture, out var amount) || amount <= 0)
+            {
+                return false;
+            }
+
+            if (normalized.Contains("year"))
+            {
+                expiration = expiration.AddYears(amount);
+                return true;
+            }
+
+            if (normalized.Contains("month"))
+            {
+                expiration = expiration.AddMonths(amount);
+                return true;
+            }
+
+            if (normalized.Contains("day"))
+            {
+                expiration = expiration.AddDays(amount);
+                return true;
+            }
+
+            expiration = expiration.AddDays(amount);
+            return true;
+        }
+    }
+
+    public class WarrantyDeviceRow
+    {
+        public string TicketCode { get; set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
+        public string DeviceName { get; set; } = string.Empty;
+        public string SerialNumber { get; set; } = string.Empty;
+        public string WarrantyPeriod { get; set; } = string.Empty;
+        public string WarrantyStartDateText { get; set; } = string.Empty;
+        public string WarrantyEndDateText { get; set; } = string.Empty;
+        public string RemainingText { get; set; } = string.Empty;
+        public string WarrantyState { get; set; } = string.Empty;
+    }
+}
