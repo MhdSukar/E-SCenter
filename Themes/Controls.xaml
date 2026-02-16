@@ -984,12 +984,16 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
-        <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
-        <Setter Property="TextBlock.HorizontalAlignment" Value="Center"/>
         <Setter Property="Height" Value="32"/>  
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource DataGridRowSelectedBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- Compact DataGrid Header -->
@@ -1025,6 +1029,17 @@
         <Setter Property="CanUserAddRows" Value="False"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <!-- Make textblocks inside DataGrid cells not handle mouse events so clicks bubble to the cell/row -->
+        <Style.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="IsHitTestVisible" Value="False"/>
+                <!-- Center text horizontally and vertically inside DataGrid cells -->
+                <Setter Property="TextAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style x:Key="TicketRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource CompactDataGridRowStyle}">

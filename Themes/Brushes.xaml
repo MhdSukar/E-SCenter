@@ -68,8 +68,10 @@
     <SolidColorBrush x:Key="DataGridRowBackgroundBrush" Color="#1F1F26"/>
     <SolidColorBrush x:Key="DataGridRowAltBackgroundBrush" Color="#242430"/>
     <SolidColorBrush x:Key="DataGridRowHoverBrush" Color="#2E2E3A"/>
-    <SolidColorBrush x:Key="DataGridRowSelectedBrush" Color="#3A1E1E"/>
-    <SolidColorBrush x:Key="DataGridRowSelectedInactiveBrush" Color="#1A4A6E"/>
+    <!-- Selected row color: use primary/brand blue -->
+    <SolidColorBrush x:Key="DataGridRowSelectedBrush" Color="{StaticResource NewPrimaryBlue}"/>
+    <!-- Inactive selected should match active selected to remain blue when focus lost -->
+    <SolidColorBrush x:Key="DataGridRowSelectedInactiveBrush" Color="{StaticResource NewPrimaryBlue}"/>
     <SolidColorBrush x:Key="DataGridRowBorderBrush" Color="#33000000"/>
 
 
