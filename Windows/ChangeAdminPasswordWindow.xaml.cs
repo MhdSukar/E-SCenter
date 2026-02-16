@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Input;
 using ESCenter.Services;
 
 namespace ESCenter.Windows
@@ -41,6 +42,22 @@ namespace ESCenter.Windows
         {
             DialogResult = false;
             Close();
+        }
+
+        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
     }
 }
