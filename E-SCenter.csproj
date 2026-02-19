@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <None Remove="Assets\Icons\add_task.png" />
+    <None Remove="Assets\Icons\Al-Baraka Logo.png" />
     <None Remove="Assets\Icons\amend.png" />
     <None Remove="Assets\Icons\aod_watch.png" />
     <None Remove="Assets\Icons\area_chart.png" />
@@ -117,6 +118,9 @@
 	
   <ItemGroup>
     <Resource Include="Assets\Icons\add_task.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Al-Baraka Logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\amend.png">
