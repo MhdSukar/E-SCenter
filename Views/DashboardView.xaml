@@ -140,6 +140,7 @@
                                   GridLinesVisibility="None">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="90"/>
+                                <DataGridTextColumn Header="SKU" Binding="{Binding Sku}" Width="120"/>
                                 <DataGridTextColumn Header="Item" Binding="{Binding Name}" Width="*"/>
                                 <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="60"/>
                             </DataGrid.Columns>

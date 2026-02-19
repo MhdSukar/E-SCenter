@@ -54,6 +54,9 @@
     <Color x:Key="NeonCyanColor">#FF3BE7FF</Color>
     <Color x:Key="NeonCyanSoftColor">#FF6BEFFF</Color>
     <Color x:Key="NeonCyanDarkColor">#FF2FB8CC</Color>
+    <Color x:Key="NeonDarkCyanColor">#FF008B8B</Color>
+    <Color x:Key="NeonDarkCyanSoftColor">#FF2CA6A6</Color>
+    <Color x:Key="NeonDarkCyanDarkColor">#FF006C6C</Color>
 
     <!-- Logo Blue -->
     <Color x:Key="NewPrimaryBlue">#237EF2</Color>

@@ -14,6 +14,18 @@ namespace ESCenter.Windows
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(CurrentUsernameBox.Text))
+            {
+                System.Windows.MessageBox.Show("Current username cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(NewUsernameBox.Text))
+            {
+                System.Windows.MessageBox.Show("New username cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(NewPasswordBox.Password))
             {
                 System.Windows.MessageBox.Show("New password cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -26,9 +38,15 @@ namespace ESCenter.Windows
                 return;
             }
 
-            if (!UserPreferencesService.ChangeAdminPassword(CurrentPasswordBox.Password, NewPasswordBox.Password))
+            var changed = UserPreferencesService.ChangeAdminCredentials(
+                CurrentUsernameBox.Text,
+                CurrentPasswordBox.Password,
+                NewUsernameBox.Text,
+                NewPasswordBox.Password);
+
+            if (!changed)
             {
-                System.Windows.MessageBox.Show("Current password is incorrect.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("Current admin credentials are incorrect.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -45,7 +63,7 @@ namespace ESCenter.Windows
 
         private void btnMinimize_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            WindowState = WindowState.Minimized;
         }
 
         private void btnMaximize_Click(object sender, RoutedEventArgs e)
@@ -55,19 +73,19 @@ namespace ESCenter.Windows
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void AdjustWindowSize()
         {
-            if (this.WindowState == WindowState.Maximized)
+            if (WindowState == WindowState.Maximized)
             {
-                this.WindowState = WindowState.Normal;
+                WindowState = WindowState.Normal;
                 btnMaximize.Content = "□";
             }
             else
             {
-                this.WindowState = WindowState.Maximized;
+                WindowState = WindowState.Maximized;
                 btnMaximize.Content = "❐";
             }
         }
@@ -75,9 +93,13 @@ namespace ESCenter.Windows
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
+            {
                 AdjustWindowSize();
+            }
             else
+            {
                 DragMove();
+            }
         }
     }
 }

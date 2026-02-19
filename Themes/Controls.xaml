@@ -50,6 +50,11 @@
                       BlurRadius="18"
                       ShadowDepth="0"
                       Opacity="0.9"/>
+    <DropShadowEffect x:Key="NeonDarkCyanGlowEffect"
+                      Color="#FF008B8B"
+                      BlurRadius="18"
+                      ShadowDepth="0"
+                      Opacity="0.9"/>
     <DropShadowEffect x:Key="NeonWhiteGlowEffect"
                       Color="#FFFFFFFF"
                       BlurRadius="18"
@@ -277,6 +282,64 @@
                             <Setter TargetName="ContentPresenter"
                                     Property="TextElement.Foreground"
                                     Value="{StaticResource NeonCyanBrush}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter TargetName="ContentPresenter"
+                                    Property="TextElement.Foreground"
+                                    Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Neon Dark Cyan -->
+    <Style x:Key="NeonDarkCyanButtonStyle" TargetType="Button" BasedOn="{StaticResource NeonCyanButtonStyle}">
+        <Setter Property="BorderBrush" Value="{StaticResource NeonDarkCyanBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="Glow"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="2"
+                                CornerRadius="7"
+                                Opacity="0"
+                                Effect="{StaticResource NeonDarkCyanGlowEffect}"/>
+
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Glow" Property="Effect" Value="{StaticResource NeonRedGlowEffect}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NeonRedBrush}"/>
+                            <Setter TargetName="ContentPresenter"
+                                    Property="TextElement.Foreground"
+                                    Value="{StaticResource NeonRedBrush}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Glow" Property="Effect" Value="{StaticResource NeonDarkCyanGlowEffect}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NeonDarkCyanBrush}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="#14008B8B"/>
+                            <Setter TargetName="ContentPresenter"
+                                    Property="TextElement.Foreground"
+                                    Value="{StaticResource NeonDarkCyanBrush}"/>
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">
@@ -1217,6 +1280,47 @@
                             </Grid.RowDefinitions>
 
                             <!-- Header (icon-safe, color-safe) -->
+                            <ContentPresenter
+                            ContentSource="Header"
+                            Margin="8,0,0,6"
+                            VerticalAlignment="Center"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
+
+                            <ContentPresenter Grid.Row="1"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="DarkCyanGroupBoxStyle" TargetType="GroupBox">
+        <Setter Property="Foreground" Value="{StaticResource NeonDarkCyanBrush}"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Margin" Value="6"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource NeonDarkCyanBrush}"/>
+        <Setter Property="Background" Value="{StaticResource DarkCardBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10"
+                        Padding="8">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
                             <ContentPresenter
                             ContentSource="Header"
                             Margin="8,0,0,6"
