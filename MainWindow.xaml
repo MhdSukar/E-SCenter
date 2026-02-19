@@ -480,7 +480,7 @@
                                         Command="{Binding ChangeAdminPasswordCommand}">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <Image Source="{StaticResource settings1}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                        <TextBlock Text="Change Password"/>
+                                        <TextBlock Text="Change Admin"/>
                                     </StackPanel>
                                 </Button>
 

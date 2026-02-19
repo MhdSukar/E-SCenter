@@ -265,9 +265,9 @@ namespace ESCenter.ViewModels
             }
             catch (Exception ex)
             {
-                AppLogger.Error($"Failed to change admin password: {ex.Message}");
+                AppLogger.Error($"Failed to change admin credentials: {ex.Message}");
                 System.Windows.MessageBox.Show(
-                    $"Failed to change admin password:\n{ex.Message}",
+                    $"Failed to change admin credentials:\n{ex.Message}",
                     "Error",
                     System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Error);
