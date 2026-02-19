@@ -7,122 +7,213 @@
         MinHeight="420"
         MinWidth="720"
         WindowStartupLocation="CenterOwner"
-        Background="{StaticResource AppBackgroundBrush}">
+        Background="Transparent"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip">
 
-    <Border Style="{StaticResource CardBorderStyle}" Margin="12">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                <Image Source="{StaticResource verified}" Width="20" Height="20" Margin="0,0,8,0"/>
-                <TextBlock Text="Warranty Tracking"
-                           Style="{StaticResource CardTitleTextStyle}"
-                           Margin="0"
-                           VerticalAlignment="Center"/>
-            </StackPanel>
-
-            <DataGrid Grid.Row="1"
-                      ItemsSource="{Binding WarrantyItems}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      CanUserAddRows="False"
-                      SelectionMode="Single"
-                      SelectionUnit="FullRow"
-                      Style="{StaticResource DarkDataGridStyle}"
-                      RowStyle="{StaticResource CompactDataGridRowStyle}"
-                      ColumnHeaderStyle="{StaticResource DarkDataGridHeaderStyle}"
-                      CellStyle="{StaticResource CompactDataGridCellStyle}">
-
-                <DataGrid.Resources>
-                    <Style TargetType="DataGridRow" BasedOn="{StaticResource CompactDataGridRowStyle}">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="Focusable" Value="True"/>
-                        <Setter Property="SnapsToDevicePixels" Value="True"/>
-                        <Setter Property="MinHeight" Value="30"/>
-                        <Setter Property="Height" Value="30"/>
-                        <Style.Triggers>
+    <Window.Resources>
+        <Style x:Key="TitleBarButtonBase" TargetType="Button">
+            <Setter Property="Width" Value="46"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{StaticResource DataGridRowHoverBrush}"/>
+                                <Setter TargetName="Root" Property="Background" Value="#22FFFFFF"/>
                             </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="{StaticResource DataGridRowSelectedBrush}"/>
-                                <Setter Property="Foreground" Value="White"/>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#33FFFFFF"/>
                             </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="True"/>
-                                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background" Value="{StaticResource DataGridRowSelectedBrush}"/>
-                                <Setter Property="Foreground" Value="White"/>
-                            </MultiTrigger>
-                        </Style.Triggers>
-                    </Style>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-                    <Style TargetType="DataGridCell" BasedOn="{StaticResource CompactDataGridCellStyle}">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Height" Value="30"/>
-                        <Setter Property="Padding" Value="8,1"/>
-                        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
+        <Style x:Key="TitleBarCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarButtonBase}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="0,8,0,0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#E81123"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#C50F1F"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="12"
+            Background="{StaticResource AppBackgroundBrush}"
+            BorderBrush="{StaticResource DarkBorderBrush}"
+            BorderThickness="0"
+            SnapsToDevicePixels="True">
+        <Grid>
+            <Border Height="36"
+                    Background="{StaticResource DarkCardBrush}"
+                    CornerRadius="12,12,0,0"
+                    BorderBrush="{StaticResource DarkBorderBrush}"
+                    BorderThickness="0"
+                    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
+                    VerticalAlignment="Top">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0"
+                           Source="{StaticResource verified}"
+                           Width="18"
+                           Height="18"
+                           Margin="10,0,6,0"
+                           VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Column="1"
+                               Text="Warranty Tracking"
+                               VerticalAlignment="Center"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}"/>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button x:Name="btnMinimize"
+                                Style="{StaticResource TitleBarButtonBase}"
+                                Content="—"
+                                Click="btnMinimize_Click"/>
+
+                        <Button x:Name="btnMaximize"
+                                Style="{StaticResource TitleBarButtonBase}"
+                                Content="□"
+                                FontSize="18"
+                                Click="btnMaximize_Click"/>
+
+                        <Button Style="{StaticResource TitleBarCloseButtonStyle}"
+                                Content="✕"
+                                Click="btnClose_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Margin="0,36,0,0" Padding="12" Style="{StaticResource CardBorderStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <Image Source="{StaticResource verified}" Width="20" Height="20" Margin="0,0,8,0"/>
+                        <TextBlock Text="Warranty Tracking"
+                                   Style="{StaticResource CardTitleTextStyle}"
+                                   Margin="0"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding WarrantyItems}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              SelectionMode="Single"
+                              SelectionUnit="FullRow"
+                              Style="{StaticResource DarkDataGridStyle}"
+                              RowStyle="{StaticResource CompactDataGridRowStyle}"
+                              ColumnHeaderStyle="{StaticResource DarkDataGridHeaderStyle}"
+                              CellStyle="{StaticResource CompactDataGridCellStyle}">
+
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow" BasedOn="{StaticResource CompactDataGridRowStyle}">
                                 <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="Foreground" Value="White"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.Resources>
+                                <Setter Property="Focusable" Value="True"/>
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                <Setter Property="MinHeight" Value="30"/>
+                                <Setter Property="Height" Value="30"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource DataGridRowHoverBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource DataGridRowSelectedBrush}"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="IsSelected" Value="True"/>
+                                            <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter Property="Background" Value="{StaticResource DataGridRowSelectedBrush}"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </MultiTrigger>
+                                </Style.Triggers>
+                            </Style>
 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Ticket"
-                                        Binding="{Binding TicketCode}"
-                                        Width="120"/>
-                    <DataGridTextColumn Header="Customer"
-                                        Binding="{Binding CustomerName}"
-                                        Width="160"/>
-                    <DataGridTextColumn Header="Device"
-                                        Binding="{Binding DeviceName}"
-                                        Width="220"/>
-                    <DataGridTextColumn Header="Serial/IMEI"
-                                        Binding="{Binding SerialNumber}"
-                                        Width="150"/>
-                    <DataGridTextColumn Header="Warranty"
-                                        Binding="{Binding WarrantyPeriod}"
-                                        Width="110"/>
-                    <DataGridTextColumn Header="Start"
-                                        Binding="{Binding WarrantyStartDateText}"
-                                        Width="110"/>
-                    <DataGridTextColumn Header="Expires"
-                                        Binding="{Binding WarrantyEndDateText}"
-                                        Width="110"/>
-                    <DataGridTextColumn Header="Days Left"
-                                        Binding="{Binding RemainingText}"
-                                        Width="130"/>
-                    <DataGridTextColumn Header="State"
-                                        Binding="{Binding WarrantyState}"
-                                        Width="90"/>
-                </DataGrid.Columns>
-            </DataGrid>
+                            <Style TargetType="DataGridCell" BasedOn="{StaticResource CompactDataGridCellStyle}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="Height" Value="30"/>
+                                <Setter Property="Padding" Value="8,1"/>
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
 
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-                <Button Content="Refresh"
-                        Width="100"
-                        Margin="0,0,8,0"
-                        Style="{StaticResource NeonCyanButtonStyle}"
-                        Click="RefreshButton_Click"/>
-                <Button Content="Close"
-                        Width="100"
-                        Style="{StaticResource NeonOrangeButtonStyle}"
-                        Click="CloseButton_Click"/>
-            </StackPanel>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Ticket" Binding="{Binding TicketCode}" Width="120"/>
+                            <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="160"/>
+                            <DataGridTextColumn Header="Device" Binding="{Binding DeviceName}" Width="220"/>
+                            <DataGridTextColumn Header="Serial/IMEI" Binding="{Binding SerialNumber}" Width="150"/>
+                            <DataGridTextColumn Header="Warranty" Binding="{Binding WarrantyPeriod}" Width="110"/>
+                            <DataGridTextColumn Header="Start" Binding="{Binding WarrantyStartDateText}" Width="110"/>
+                            <DataGridTextColumn Header="Expires" Binding="{Binding WarrantyEndDateText}" Width="110"/>
+                            <DataGridTextColumn Header="Days Left" Binding="{Binding RemainingText}" Width="130"/>
+                            <DataGridTextColumn Header="State" Binding="{Binding WarrantyState}" Width="90"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                        <Button Content="Refresh"
+                                Width="100"
+                                Margin="0,0,8,0"
+                                Style="{StaticResource NeonCyanButtonStyle}"
+                                Click="RefreshButton_Click"/>
+                        <Button Content="Close"
+                                Width="100"
+                                Style="{StaticResource NeonOrangeButtonStyle}"
+                                Click="CloseButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
     </Border>
 </Window>
