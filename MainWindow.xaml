@@ -416,9 +416,9 @@
                                            Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
 
                                 <Image Grid.Column="0" Grid.Row="1"
-                                       Source="{StaticResource DeviceWear25}"
-                                       Width="25"
-                                       Height="25"
+                                       Source="{StaticResource BatteryShield2}"
+                                       Width="35"
+                                       Height="30"
                                        Margin="0,0,40,0"
                                        VerticalAlignment="Top"/>
 

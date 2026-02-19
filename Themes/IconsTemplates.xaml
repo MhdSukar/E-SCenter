@@ -74,6 +74,6 @@
     <BitmapImage x:Key="segment" UriSource="/Assets/Icons/segment.png"/>
     <BitmapImage x:Key="token" UriSource="/Assets/Icons/token.png"/>
     <BitmapImage x:Key="cancel" UriSource="/Assets/Icons/cancel.png"/>
-    <BitmapImage x:Key="Baraka" UriSource="/Assets/Icons/Al-Baraka Logo.png"/>
+    <BitmapImage x:Key="Baraka" UriSource="/Assets/Icons/AlBaraka.png"/>
 
 </ResourceDictionary>

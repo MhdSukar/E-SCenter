@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using ESCenter.Services;
+using Microsoft.Win32;
 
 namespace ESCenter
 {
@@ -56,7 +59,6 @@ namespace ESCenter
 
         private void MainWindow_SourceInitialized(object? sender, EventArgs e)
         {
-            // If a saved settings file exists, restore bounds/state; otherwise center on the primary work area.
             if (File.Exists(_settingsPath))
             {
                 try
@@ -68,19 +70,14 @@ namespace ESCenter
                     if (saved != null &&
                         !double.IsNaN(saved.Width) && !double.IsNaN(saved.Height))
                     {
-                        // Ensure we use Manual startup so we can set Left/Top explicitly
                         WindowStartupLocation = WindowStartupLocation.Manual;
 
-                        // Clamp values so window is visible (handles monitor changes)
                         var left = Clamp(saved.Left, SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Math.Max(100, saved.Width));
                         var top = Clamp(saved.Top, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Math.Max(100, saved.Height));
 
-                        //Width = Math.Max(100, saved.Width);
                         Height = Math.Max(100, saved.Height);
                         Left = left;
                         Top = top;
-
-                        // Apply state after bounds set
                         WindowState = saved.State;
                     }
                     else
@@ -90,7 +87,6 @@ namespace ESCenter
                 }
                 catch
                 {
-                    // If any error reading/deserialize, fallback to center
                     CenterOnScreen();
                 }
             }
@@ -100,11 +96,10 @@ namespace ESCenter
             }
         }
 
-        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closing(object? sender, CancelEventArgs e)
         {
             try
             {
-                // When maximized, use RestoreBounds to get the normal window size and position.
                 double left;
                 double top;
                 double width;
@@ -120,7 +115,6 @@ namespace ESCenter
                 }
                 else
                 {
-                    // If Window is Maximized or Minimized, use RestoreBounds so normal position/size are preserved.
                     var rb = RestoreBounds;
                     left = rb.Left;
                     top = rb.Top;
@@ -140,7 +134,7 @@ namespace ESCenter
                 var dir = Path.GetDirectoryName(_settingsPath);
                 if (!Directory.Exists(dir))
                 {
-                    Directory.CreateDirectory(dir);
+                    Directory.CreateDirectory(dir!);
                 }
 
                 var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
@@ -148,7 +142,6 @@ namespace ESCenter
             }
             catch
             {
-                // swallow exceptions on save to avoid blocking app close
                 System.Windows.MessageBox.Show("Failed to save window settings.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -157,7 +150,6 @@ namespace ESCenter
         {
             WindowStartupLocation = WindowStartupLocation.Manual;
             var workArea = SystemParameters.WorkArea;
-            // Use current Width/Height from XAML defaults (already set)
             Left = workArea.Left + (workArea.Width - Width) / 2;
             Top = workArea.Top + (workArea.Height - Height) / 2;
             WindowState = WindowState.Normal;
@@ -176,6 +168,73 @@ namespace ESCenter
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void AlBarakaButton_Click(object sender, RoutedEventArgs e)
+        {
+            var preferences = UserPreferencesService.Load();
+            var configuredPath = preferences.AlBarakaExecutablePath?.Trim() ?? string.Empty;
+
+            if (TryLaunchAlBaraka(configuredPath))
+            {
+                return;
+            }
+
+            var selectedPath = PromptForAlBarakaPath();
+            if (string.IsNullOrWhiteSpace(selectedPath))
+            {
+                return;
+            }
+
+            preferences.AlBarakaExecutablePath = selectedPath;
+            UserPreferencesService.Save(preferences);
+
+            if (!TryLaunchAlBaraka(selectedPath))
+            {
+                System.Windows.MessageBox.Show(
+                    "The selected Al-Baraka file could not be opened. Please choose a valid executable or shortcut.",
+                    "Al-Baraka",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+        }
+
+        private static bool TryLaunchAlBaraka(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            {
+                return false;
+            }
+
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = path,
+                    UseShellExecute = true
+                };
+
+                Process.Start(startInfo);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private string? PromptForAlBarakaPath()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Select Al-Baraka executable or shortcut",
+                Filter = "Applications (*.exe;*.lnk)|*.exe;*.lnk|Executable (*.exe)|*.exe|Shortcut (*.lnk)|*.lnk|All files (*.*)|*.*",
+                CheckFileExists = true,
+                Multiselect = false
+            };
+
+            var result = dialog.ShowDialog(this);
+            return result == true ? dialog.FileName : null;
         }
 
         private void AdjustWindowSize()
@@ -207,14 +266,13 @@ namespace ESCenter
         private static double Clamp(double value, double min, double max)
             => Math.Max(min, Math.Min(max, value));
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
             e.Cancel = true;
             Hide();
         }
     }
 
-    // Small DTO persisted to disk
     internal class WindowSettings
     {
         public double Left { get; set; }
