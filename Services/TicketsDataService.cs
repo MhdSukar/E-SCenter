@@ -219,10 +219,46 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            using var cmd = new SQLiteCommand("SELECT COALESCE(MAX(TicketId), 0) + 1 FROM TicketsDB;", conn);
-            var nextId = Convert.ToInt32(cmd.ExecuteScalar());
+            using var cmd = new SQLiteCommand("SELECT EscTicketId FROM TicketsDB WHERE EscTicketId IS NOT NULL AND TRIM(EscTicketId) <> '';", conn);
+            using var reader = cmd.ExecuteReader();
 
-            return $"ESC-{nextId:D6}";
+            var allocatedNumbers = new HashSet<int>();
+
+            while (reader.Read())
+            {
+                var escId = reader["EscTicketId"]?.ToString();
+                if (TryParseEscIdNumber(escId, out var parsedNumber) && parsedNumber > 0)
+                {
+                    allocatedNumbers.Add(parsedNumber);
+                }
+            }
+
+            var nextNumber = 1;
+            while (allocatedNumbers.Contains(nextNumber))
+            {
+                nextNumber++;
+            }
+
+            return $"ESC-{nextNumber:D6}";
+        }
+
+        private static bool TryParseEscIdNumber(string escId, out int number)
+        {
+            number = 0;
+
+            if (string.IsNullOrWhiteSpace(escId))
+            {
+                return false;
+            }
+
+            var normalized = escId.Trim();
+            const string prefix = "ESC-";
+            if (!normalized.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return int.TryParse(normalized.Substring(prefix.Length), out number);
         }
 
         public string GetNextEscTicketId() => GenerateEscTicketId();

@@ -107,26 +107,20 @@ namespace ESCenter.Services
                    && string.Equals(expectedPasswordHash, ComputeHash(password ?? string.Empty), StringComparison.Ordinal);
         }
 
-        public static bool ChangeAdminPassword(string currentPassword, string newPassword)
+        public static bool ChangeAdminCredentials(string currentUsername, string currentPassword, string newUsername, string newPassword)
         {
-            if (string.IsNullOrWhiteSpace(newPassword))
+            if (string.IsNullOrWhiteSpace(newUsername) || string.IsNullOrWhiteSpace(newPassword))
+            {
+                return false;
+            }
+
+            if (!ValidateAdminCredentials(currentUsername, currentPassword))
             {
                 return false;
             }
 
             var preferences = Load();
-            var currentHash = string.IsNullOrWhiteSpace(preferences.AdminPasswordHash)
-                ? DefaultAdminPasswordHash
-                : preferences.AdminPasswordHash;
-
-            if (!string.Equals(currentHash, ComputeHash(currentPassword ?? string.Empty), StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            preferences.AdminUsername = string.IsNullOrWhiteSpace(preferences.AdminUsername)
-                ? DefaultAdminUsername
-                : preferences.AdminUsername.Trim();
+            preferences.AdminUsername = newUsername.Trim();
             preferences.AdminPasswordHash = ComputeHash(newPassword);
             Save(preferences);
             return true;

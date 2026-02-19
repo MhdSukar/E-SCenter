@@ -177,6 +177,7 @@ namespace ESCenter.ViewModels
                     .Select(p => new LowStockCounterItem
                     {
                         Source = "Parts",
+                        Sku = p.SKU ?? string.Empty,
                         Name = string.IsNullOrWhiteSpace(p.PartCode)
                             ? string.IsNullOrWhiteSpace(p.SKU) ? "Unnamed Part" : p.SKU
                             : p.PartCode,
@@ -188,6 +189,7 @@ namespace ESCenter.ViewModels
                     .Select(i => new LowStockCounterItem
                     {
                         Source = "Inventory",
+                        Sku = string.Empty,
                         Name = string.IsNullOrWhiteSpace(i.ItemType)
                             ? string.IsNullOrWhiteSpace(i.Model) ? "Unnamed Inventory Item" : i.Model
                             : i.ItemType,
@@ -255,6 +257,7 @@ namespace ESCenter.ViewModels
         public class LowStockCounterItem
         {
             public string Source { get; set; } = string.Empty;
+            public string Sku { get; set; } = string.Empty;
             public string Name { get; set; } = string.Empty;
             public int Quantity { get; set; }
         }

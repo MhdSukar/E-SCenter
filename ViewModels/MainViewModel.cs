@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -27,6 +28,9 @@ namespace ESCenter.ViewModels
 
         private ICommand? _resetSettingsCommand;
         public ICommand ResetSettingsCommand => _resetSettingsCommand ??= new RelayCommand(_ => ResetSettings());
+
+        private ICommand? _resetDatabaseCommand;
+        public ICommand ResetDatabaseCommand => _resetDatabaseCommand ??= new RelayCommand(_ => ResetDatabase());
 
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
@@ -251,9 +255,9 @@ namespace ESCenter.ViewModels
 
                 if (dialog.ShowDialog() == true && dialog.PasswordChanged)
                 {
-                    AppLogger.Success("Admin password changed successfully.");
+                    AppLogger.Success("Admin credentials changed successfully.");
                     System.Windows.MessageBox.Show(
-                        "Admin password changed successfully.",
+                        "Admin credentials changed successfully.",
                         "Success",
                         System.Windows.MessageBoxButton.OK,
                         System.Windows.MessageBoxImage.Information);
@@ -299,7 +303,7 @@ namespace ESCenter.ViewModels
 
                 AppLogger.Success("All app settings were reset to default.");
                 System.Windows.MessageBox.Show(
-                    "All app settings were reset to default.\nAdmin credentials are now default: MhdSukar / Mhdsu.",
+                    "All app settings were reset to default.\nAdmin credentials are now default: Admin / Admin.",
                     "Reset Completed",
                     System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Information);
@@ -309,6 +313,59 @@ namespace ESCenter.ViewModels
                 AppLogger.Error($"Failed to reset settings: {ex.Message}");
                 System.Windows.MessageBox.Show(
                     $"Failed to reset settings:\n{ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+
+
+        private void ResetDatabase()
+        {
+            try
+            {
+                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
+                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                {
+                    return;
+                }
+
+                var confirm = System.Windows.MessageBox.Show(
+                    $"This will permanently delete the current database file:\n{DatabasePathService.CurrentDatabasePath}\n\nContinue?",
+                    "Reset Database",
+                    System.Windows.MessageBoxButton.YesNo,
+                    System.Windows.MessageBoxImage.Warning);
+
+                if (confirm != System.Windows.MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                var databasePath = DatabasePathService.CurrentDatabasePath;
+                if (File.Exists(databasePath))
+                {
+                    File.Delete(databasePath);
+                }
+
+                var initializer = new DatabaseInitializer(databasePath);
+                initializer.EnsureDatabaseReady();
+
+                Dashboard.Refresh();
+                TicketEvents.RaiseTicketsChanged();
+                RefreshTicketsChart();
+
+                AppLogger.Success("Database was recreated successfully.");
+                System.Windows.MessageBox.Show(
+                    "Old database was deleted and a new empty database was created.",
+                    "Database Reset Complete",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to reset database: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Failed to reset database:\n{ex.Message}",
                     "Error",
                     System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Error);

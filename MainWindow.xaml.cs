@@ -36,15 +36,20 @@ namespace ESCenter
 
         private void AnimateCurrentViewTransition()
         {
-            MainContentHost.Opacity = 0;
-
-            var animation = new DoubleAnimation
+            var animation = new DoubleAnimationUsingKeyFrames
             {
-                From = 0,
-                To = 1,
-                Duration = TimeSpan.FromMilliseconds(230),
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                Duration = TimeSpan.FromMilliseconds(320)
             };
+
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0))));
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(120)))
+            {
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+            });
+            animation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(320)))
+            {
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            });
 
             MainContentHost.BeginAnimation(OpacityProperty, animation);
         }
