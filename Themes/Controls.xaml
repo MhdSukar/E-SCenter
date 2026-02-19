@@ -55,6 +55,11 @@
                       BlurRadius="18"
                       ShadowDepth="0"
                       Opacity="0.9"/>
+    <DropShadowEffect x:Key="NeonDarkGreenGlowEffect"
+                      Color="#FF0E8C3A"
+                      BlurRadius="18"
+                      ShadowDepth="0"
+                      Opacity="0.9"/>
     <DropShadowEffect x:Key="NeonWhiteGlowEffect"
                       Color="#FFFFFFFF"
                       BlurRadius="18"
@@ -340,6 +345,64 @@
                             <Setter TargetName="ContentPresenter"
                                     Property="TextElement.Foreground"
                                     Value="{StaticResource NeonDarkCyanBrush}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter TargetName="ContentPresenter"
+                                    Property="TextElement.Foreground"
+                                    Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Neon Dark Green -->
+    <Style x:Key="NeonDarkGreenButtonStyle" TargetType="Button" BasedOn="{StaticResource NeonCyanButtonStyle}">
+        <Setter Property="BorderBrush" Value="{StaticResource NeonDarkGreenBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border x:Name="Glow"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="2"
+                                CornerRadius="7"
+                                Opacity="0"
+                                Effect="{StaticResource NeonDarkGreenGlowEffect}"/>
+
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Glow" Property="Effect" Value="{StaticResource NeonGreenGlowEffect}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NeonGreenBrush}"/>
+                            <Setter TargetName="ContentPresenter"
+                                    Property="TextElement.Foreground"
+                                    Value="{StaticResource NeonGreenBrush}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Glow" Property="Effect" Value="{StaticResource NeonDarkGreenGlowEffect}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NeonDarkGreenBrush}"/>
+                            <Setter TargetName="Bd" Property="Background" Value="#140E8C3A"/>
+                            <Setter TargetName="ContentPresenter"
+                                    Property="TextElement.Foreground"
+                                    Value="{StaticResource NeonDarkGreenBrush}"/>
                         </Trigger>
 
                         <Trigger Property="IsEnabled" Value="False">

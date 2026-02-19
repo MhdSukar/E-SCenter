@@ -37,6 +37,9 @@
     <SolidColorBrush x:Key="NeonDarkCyanBrush" Color="{StaticResource NeonDarkCyanColor}"/>
     <SolidColorBrush x:Key="NeonDarkCyanSoftBrush" Color="{StaticResource NeonDarkCyanSoftColor}"/>
     <SolidColorBrush x:Key="NeonDarkCyanDarkBrush" Color="{StaticResource NeonDarkCyanDarkColor}"/>
+    <SolidColorBrush x:Key="NeonDarkGreenBrush" Color="{StaticResource NeonDarkGreenColor}"/>
+    <SolidColorBrush x:Key="NeonDarkGreenSoftBrush" Color="{StaticResource NeonDarkGreenSoftColor}"/>
+    <SolidColorBrush x:Key="NeonDarkGreenDarkBrush" Color="{StaticResource NeonDarkGreenDarkColor}"/>
 
     <!-- Additional neon palette -->
     <SolidColorBrush x:Key="NeonGreenBrush" Color="#FF2EFF2E"/>

@@ -148,6 +148,7 @@ namespace ESCenter.Services
                     LastCustomDatabasePath = legacySettings.DatabasePath,
                     PartsLowStockThreshold = 3,
                     InventoryLowStockThreshold = 3,
+                    AlBarakaExecutablePath = string.Empty,
                     AdminUsername = DefaultAdminUsername,
                     AdminPasswordHash = DefaultAdminPasswordHash
                 };
@@ -164,6 +165,7 @@ namespace ESCenter.Services
             LastCustomDatabasePath = string.Empty,
             PartsLowStockThreshold = 3,
             InventoryLowStockThreshold = 3,
+            AlBarakaExecutablePath = string.Empty,
             AdminUsername = DefaultAdminUsername,
             AdminPasswordHash = DefaultAdminPasswordHash
         };
@@ -194,6 +196,7 @@ namespace ESCenter.Services
 
             normalized.PreferredDatabasePath ??= string.Empty;
             normalized.LastCustomDatabasePath ??= string.Empty;
+            normalized.AlBarakaExecutablePath ??= string.Empty;
 
             return normalized;
         }
@@ -210,6 +213,7 @@ namespace ESCenter.Services
             public string LastCustomDatabasePath { get; set; } = string.Empty;
             public int PartsLowStockThreshold { get; set; } = 3;
             public int InventoryLowStockThreshold { get; set; } = 3;
+            public string AlBarakaExecutablePath { get; set; } = string.Empty;
             public string AdminUsername { get; set; } = DefaultAdminUsername;
             public string AdminPasswordHash { get; set; } = DefaultAdminPasswordHash;
         }
