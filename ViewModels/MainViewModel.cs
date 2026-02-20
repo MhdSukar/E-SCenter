@@ -17,6 +17,9 @@ namespace ESCenter.ViewModels
 {
     public class MainViewModel : ObservableObject
     {
+        private ICommand? _requestAdminAccessCommand;
+        public ICommand RequestAdminAccessCommand => _requestAdminAccessCommand ??= new RelayCommand(_ => RequestAdminAccess());
+
         private ICommand? _initializeDatabaseCommand;
         public ICommand InitializeDatabaseCommand => _initializeDatabaseCommand ??= new RelayCommand(_ => InitializeDatabase());
 
@@ -31,6 +34,13 @@ namespace ESCenter.ViewModels
 
         private ICommand? _resetDatabaseCommand;
         public ICommand ResetDatabaseCommand => _resetDatabaseCommand ??= new RelayCommand(_ => ResetDatabase());
+
+        private bool _isAdminAccessGranted;
+        public bool IsAdminAccessGranted
+        {
+            get => _isAdminAccessGranted;
+            set => SetProperty(ref _isAdminAccessGranted, value);
+        }
 
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
@@ -54,8 +64,8 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _statusText, value);
         }
 
-        private System.Windows.Media.Brush _statusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
-        public System.Windows.Media.Brush StatusBrush
+        private Brush _statusBrush = Brushes.DeepSkyBlue;
+        public Brush StatusBrush
         {
             get => _statusBrush;
             set => SetProperty(ref _statusBrush, value);
@@ -76,7 +86,7 @@ namespace ESCenter.ViewModels
         }
 
         public string CurrentUser => "мн∂ ѕυкαя";
-        public System.Windows.Media.Brush UsernameBrush { get; } = System.Windows.Media.Brushes.DeepSkyBlue;
+        public Brush UsernameBrush { get; } = Brushes.DeepSkyBlue;
 
         public DashboardViewModel Dashboard { get; }
 
@@ -143,30 +153,75 @@ namespace ESCenter.ViewModels
             switch (level)
             {
                 case StatusLevel.Success:
-                    StatusBrush = System.Windows.Media.Brushes.LimeGreen;
+                    StatusBrush = Brushes.LimeGreen;
                     StatusIcon = "\uE73E";
                     break;
                 case StatusLevel.Warning:
-                    StatusBrush = System.Windows.Media.Brushes.Orange;
+                    StatusBrush = Brushes.Orange;
                     StatusIcon = "\uE7BA";
                     break;
                 case StatusLevel.Error:
-                    StatusBrush = System.Windows.Media.Brushes.IndianRed;
+                    StatusBrush = Brushes.IndianRed;
                     StatusIcon = "\uEA39";
                     break;
                 default:
-                    StatusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
+                    StatusBrush = Brushes.DeepSkyBlue;
                     StatusIcon = "\uE946";
                     break;
             }
+        }
+
+        private void RequestAdminAccess()
+        {
+            try
+            {
+                if (IsAdminAccessGranted)
+                {
+                    return;
+                }
+
+                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
+                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                {
+                    return;
+                }
+
+                IsAdminAccessGranted = true;
+                AppLogger.Success("Admin access granted.");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to validate admin access: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Failed to validate admin access:\n{ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+
+        private bool EnsureAdminAccessGranted()
+        {
+            if (IsAdminAccessGranted)
+            {
+                return true;
+            }
+
+            AppLogger.Warning("Admin access is required.");
+            System.Windows.MessageBox.Show(
+                "Click 'Admin Access' first and log in to use administration tools.",
+                "Admin Access Required",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information);
+
+            return false;
         }
 
         private void InitializeDatabase()
         {
             try
             {
-                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
-                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                if (!EnsureAdminAccessGranted())
                 {
                     return;
                 }
@@ -199,8 +254,7 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
-                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                if (!EnsureAdminAccessGranted())
                 {
                     return;
                 }
@@ -278,8 +332,7 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
-                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                if (!EnsureAdminAccessGranted())
                 {
                     return;
                 }
@@ -319,13 +372,11 @@ namespace ESCenter.ViewModels
             }
         }
 
-
         private void ResetDatabase()
         {
             try
             {
-                var login = new AdminLoginWindow { Owner = System.Windows.Application.Current.MainWindow };
-                if (login.ShowDialog() != true || !login.IsAuthenticated)
+                if (!EnsureAdminAccessGranted())
                 {
                     return;
                 }
