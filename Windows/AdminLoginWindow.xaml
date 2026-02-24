@@ -96,17 +96,17 @@
 
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,6">
                         <TextBlock Text="Username:" Width="80" VerticalAlignment="Center"/>
-                        <TextBox x:Name="UsernameBox" Width="180" Height="28" Style="{StaticResource NeonTextBoxStyle}"/>
+                        <TextBox TabIndex="0" x:Name="UsernameBox" Width="180" Height="28" Style="{StaticResource NeonTextBoxStyle}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,6">
                         <TextBlock Text="Password:" Width="80" VerticalAlignment="Center"/>
-                        <PasswordBox x:Name="PasswordBox" Width="180" Style="{StaticResource NeonPasswordBoxStyle}"/>
+                        <PasswordBox TabIndex="1" x:Name="PasswordBox" Width="180" Style="{StaticResource NeonPasswordBoxStyle}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="0,12,0,0">
-                        <Button Content="Login" Width="80" Margin="6,0" Style="{StaticResource NeonGreenButtonStyle}" Click="LoginButton_Click"/>
-                        <Button Content="Cancel" Width="80" Margin="6,0" Style="{StaticResource NeonOrangeButtonStyle}" Click="CancelButton_Click"/>
+                        <Button TabIndex="2" Content="Login" Width="80" Margin="6,0" Style="{StaticResource NeonGreenButtonStyle}" Click="LoginButton_Click"/>
+                        <Button TabIndex="3" Content="Cancel" Width="80" Margin="6,0" Style="{StaticResource NeonOrangeButtonStyle}" Click="CancelButton_Click"/>
                     </StackPanel>
                 </Grid>
             </Border>

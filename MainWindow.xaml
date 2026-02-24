@@ -93,6 +93,27 @@
         </Style>
 
     </Window.Resources>
+    
+    <Window.InputBindings>
+        <!-- F1 = Dashboard -->
+        <KeyBinding Key="F1" Command="{Binding OpenDashboardCommand}" />
+
+        <!-- F2 = Repair Tickets -->
+        <KeyBinding Key="F2" Command="{Binding OpenRepairTicketsCommand}" />
+
+        <!-- F3 = Parts Control -->
+        <KeyBinding Key="F3" Command="{Binding OpenPartsControlCommand}" />
+
+        <!-- F4 = Inventory -->
+        <KeyBinding Key="F4" Command="{Binding OpenInventoryCommand}" />
+
+        <!-- F5 = Boneyard -->
+        <KeyBinding Key="F5" Command="{Binding OpenBoneyardCommand}" />
+
+        <!-- F6 = Warranty Window -->
+        <KeyBinding Key="F6" Command="{Binding OpenWarrantySystemCommand}" />
+    </Window.InputBindings>
+    
 
     <!-- Rounded window shell -->
     <Border CornerRadius="12"
@@ -102,9 +123,6 @@
             SnapsToDevicePixels="True">
 
         <Grid>
-
-            <!-- ================= Custom Title Bar ================= -->
-            <!-- ================= Custom Title Bar ================= -->
             <!-- ================= Custom Title Bar ================= -->
             <Border Height="36"
                     Background="{StaticResource DarkCardBrush}"
@@ -138,9 +156,9 @@
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
-                                     IsChecked="True"
                                      Command="{Binding ShowDashboardCommand}"
-                                     x:Name="BtnDashboard">
+                                     x:Name="BtnDashboard"
+                                     IsChecked="{Binding IsDashboardSelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource ArmingCountdown}" Width="16" Height="16" Margin="0,0,6,0"/>
                                 <TextBlock Text="Dashboard"/>
@@ -149,7 +167,8 @@
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
-                                     Command="{Binding ShowRepairTicketsCommand}">
+                                     Command="{Binding ShowRepairTicketsCommand}"
+                                     IsChecked="{Binding IsRepairTicketsSelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource local_activity}" Width="16" Height="16" Margin="0,0,6,0"/>
                                 <TextBlock Text="Tickets"/>
@@ -158,7 +177,8 @@
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
-                                     Command="{Binding ShowPartsControlCommand}">
+                                     Command="{Binding ShowPartsControlCommand}"
+                                     IsChecked="{Binding IsPartsControlSelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource component}" Width="16" Height="16" Margin="0,0,6,0"/>
                                 <TextBlock Text="Parts"/>
@@ -167,7 +187,8 @@
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
-                                     Command="{Binding ShowInventoryCommand}">
+                                     Command="{Binding ShowInventoryCommand}"
+                                     IsChecked="{Binding IsInventorySelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource inventory}" Width="16" Height="16" Margin="0,0,6,0"/>
                                 <TextBlock Text="Inventory"/>
@@ -176,7 +197,8 @@
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
-                                     Command="{Binding ShowBoneyardCommand}">
+                                     Command="{Binding ShowBoneyardCommand}"
+                                     IsChecked="{Binding IsBoneyardSelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource settings1}" Width="16" Height="16" Margin="0,0,6,0"/>
                                 <TextBlock Text="Boneyard"/>

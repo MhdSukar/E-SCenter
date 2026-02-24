@@ -59,7 +59,7 @@
 
     <Border CornerRadius="14"
             Background="{StaticResource DarkBackgroundBrush}"
-            BorderBrush="{StaticResource DarkBorderBrush}"
+            BorderBrush="{StaticResource NeonBlueBrush}"
             BorderThickness="1"
             Padding="12"
             Effect="{StaticResource TrayPopupShadow}">
@@ -87,8 +87,8 @@
                                    VerticalAlignment="Center"
                                    FontSize="14"
                                    FontWeight="SemiBold"
-                                   Foreground="{StaticResource TextPrimaryBrush}"/>
-                        <TextBlock Text="Tray shortcuts"
+                                   Foreground="{StaticResource NeonBlueBrush}"/>
+                        <TextBlock Text="Repair System"
                                    FontSize="11"
                                    Foreground="{StaticResource TextSecondaryBrush}"
                                    Margin="0,3,0,0"/>

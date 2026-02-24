@@ -84,7 +84,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Image Grid.Column="0"
-                           Source="{StaticResource verified}"
+                           Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\Philips E-SCenter Logo.png"
                            Width="18"
                            Height="18"
                            Margin="10,0,6,0"
@@ -126,7 +126,7 @@
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                         <Image Source="{StaticResource verified}" Width="20" Height="20" Margin="0,0,8,0"/>
-                        <TextBlock Text="Warranty Tracking"
+                        <TextBlock Text="Warranties Database"
                                    Style="{StaticResource CardTitleTextStyle}"
                                    Margin="0"
                                    VerticalAlignment="Center"/>
