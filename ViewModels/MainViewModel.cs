@@ -44,6 +44,13 @@ namespace ESCenter.ViewModels
 
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
+        // Commands bound from MainWindow input bindings (F-keys)
+        public ICommand OpenDashboardCommand { get; }
+        public ICommand OpenRepairTicketsCommand { get; }
+        public ICommand OpenPartsControlCommand { get; }
+        public ICommand OpenInventoryCommand { get; }
+        public ICommand OpenBoneyardCommand { get; }
+        public ICommand OpenWarrantySystemCommand { get; }
         public ICommand ShowPartsControlCommand { get; }
         public ICommand ShowReportsCommand { get; }
         public ICommand ShowInventoryCommand { get; }
@@ -55,6 +62,41 @@ namespace ESCenter.ViewModels
         {
             get => _currentView;
             set => SetProperty(ref _currentView, value);
+        }
+
+        private bool _isDashboardSelected = true;
+        public bool IsDashboardSelected
+        {
+            get => _isDashboardSelected;
+            set => SetProperty(ref _isDashboardSelected, value);
+        }
+
+        private bool _isRepairTicketsSelected;
+        public bool IsRepairTicketsSelected
+        {
+            get => _isRepairTicketsSelected;
+            set => SetProperty(ref _isRepairTicketsSelected, value);
+        }
+
+        private bool _isPartsControlSelected;
+        public bool IsPartsControlSelected
+        {
+            get => _isPartsControlSelected;
+            set => SetProperty(ref _isPartsControlSelected, value);
+        }
+
+        private bool _isInventorySelected;
+        public bool IsInventorySelected
+        {
+            get => _isInventorySelected;
+            set => SetProperty(ref _isInventorySelected, value);
+        }
+
+        private bool _isBoneyardSelected;
+        public bool IsBoneyardSelected
+        {
+            get => _isBoneyardSelected;
+            set => SetProperty(ref _isBoneyardSelected, value);
         }
 
         private string _statusText = "System Ready";
@@ -104,13 +146,85 @@ namespace ESCenter.ViewModels
         {
             Dashboard = new DashboardViewModel();
 
-            ShowDashboardCommand = new RelayCommand(_ => Navigate(Dashboard, "Dashboard loaded"));
-            ShowRepairTicketsCommand = new RelayCommand(_ => Navigate(new RepairTicketsViewModel(), "Tickets loaded"));
-            ShowPartsControlCommand = new RelayCommand(_ => Navigate(new PartsControlViewModel(), "Parts Control loaded"));
-            ShowReportsCommand = new RelayCommand(_ => Navigate(new ReportsViewModel(), "Reports loaded"));
-            ShowInventoryCommand = new RelayCommand(_ => Navigate(new InventoryViewModel(), "Inventory loaded"));
-            ShowBoneyardCommand = new RelayCommand(_ => Navigate(new BoneyardViewModel(), "Boneyard loaded"));
-            ShowWarrantySystemCommand = new RelayCommand(_ => ShowWarrantySystem());
+            ShowDashboardCommand = new RelayCommand(_ =>
+            {
+                // select dashboard and deselect others
+                IsDashboardSelected = true;
+                IsRepairTicketsSelected = false;
+                IsPartsControlSelected = false;
+                IsInventorySelected = false;
+                IsBoneyardSelected = false;
+                Navigate(Dashboard, "Dashboard loaded");
+            });
+
+            ShowRepairTicketsCommand = new RelayCommand(_ =>
+            {
+                IsDashboardSelected = false;
+                IsRepairTicketsSelected = true;
+                IsPartsControlSelected = false;
+                IsInventorySelected = false;
+                IsBoneyardSelected = false;
+                Navigate(new RepairTicketsViewModel(), "Tickets loaded");
+            });
+
+            ShowPartsControlCommand = new RelayCommand(_ =>
+            {
+                IsDashboardSelected = false;
+                IsRepairTicketsSelected = false;
+                IsPartsControlSelected = true;
+                IsInventorySelected = false;
+                IsBoneyardSelected = false;
+                Navigate(new PartsControlViewModel(), "Parts Control loaded");
+            });
+
+            ShowReportsCommand = new RelayCommand(_ =>
+            {
+                IsDashboardSelected = false;
+                IsRepairTicketsSelected = false;
+                IsPartsControlSelected = false;
+                IsInventorySelected = false;
+                IsBoneyardSelected = false;
+                Navigate(new ReportsViewModel(), "Reports loaded");
+            });
+
+            ShowInventoryCommand = new RelayCommand(_ =>
+            {
+                IsDashboardSelected = false;
+                IsRepairTicketsSelected = false;
+                IsPartsControlSelected = false;
+                IsInventorySelected = true;
+                IsBoneyardSelected = false;
+                Navigate(new InventoryViewModel(), "Inventory loaded");
+            });
+
+            ShowBoneyardCommand = new RelayCommand(_ =>
+            {
+                IsDashboardSelected = false;
+                IsRepairTicketsSelected = false;
+                IsPartsControlSelected = false;
+                IsInventorySelected = false;
+                IsBoneyardSelected = true;
+                Navigate(new BoneyardViewModel(), "Boneyard loaded");
+            });
+
+            ShowWarrantySystemCommand = new RelayCommand(_ =>
+            {
+                // warranty is a window - deselect all tabs
+                IsDashboardSelected = false;
+                IsRepairTicketsSelected = false;
+                IsPartsControlSelected = false;
+                IsInventorySelected = false;
+                IsBoneyardSelected = false;
+                ShowWarrantySystem();
+            });
+
+            // F-key bindings use these commands (declared separately so XAML can bind by name)
+            OpenDashboardCommand = ShowDashboardCommand;
+            OpenRepairTicketsCommand = ShowRepairTicketsCommand;
+            OpenPartsControlCommand = ShowPartsControlCommand;
+            OpenInventoryCommand = ShowInventoryCommand;
+            OpenBoneyardCommand = ShowBoneyardCommand;
+            OpenWarrantySystemCommand = ShowWarrantySystemCommand;
 
             CurrentView = Dashboard;
             SetStatus("System Ready", StatusLevel.Info);
@@ -119,7 +233,7 @@ namespace ESCenter.ViewModels
             _clockTimer.Tick += (_, _) => ClockText = DateTime.Now.ToString("HH:mm:ss");
             _clockTimer.Start();
 
-            _statusResetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
+            _statusResetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
             _statusResetTimer.Tick += (_, _) =>
             {
                 _statusResetTimer.Stop();
@@ -468,7 +582,7 @@ namespace ESCenter.ViewModels
                 LegendOrientation = LegendOrientation.Horizontal,
                 TextColor = OxyColors.White,
                 LegendTitleColor = OxyColors.White,
-                LegendFontSize = 9
+                LegendFontSize = 8
             });
 
             var dataService = new TicketsDataService();
@@ -548,7 +662,6 @@ namespace ESCenter.ViewModels
                 Title = "Tickets",
                 TitleColor = OxyColors.White
             });
-
             return model;
         }
     }

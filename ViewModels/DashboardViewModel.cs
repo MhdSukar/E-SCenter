@@ -143,7 +143,7 @@ namespace ESCenter.ViewModels
                     : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
 
                 UpdateLowStockCounter();
-                AppLogger.Info("Dashboard refreshed.");
+                AppLogger.Success("Dashboard Loaded.");
             }
             catch (Exception ex)
             {

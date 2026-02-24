@@ -22,6 +22,16 @@ namespace ESCenter
             {
                 if (DataContext is ESCenter.ViewModels.MainViewModel vm)
                 {
+                    // Require admin access on startup
+                    var login = new Windows.AdminLoginWindow { Owner = this };
+                    if (login.ShowDialog() != true || !login.IsAuthenticated)
+                    {
+                        // terminate application if authentication fails or canceled
+                        Environment.Exit(0);
+                        return;
+                    }
+
+                    vm.IsAdminAccessGranted = true;
                     vm.Dashboard.Refresh();
                 }
             };

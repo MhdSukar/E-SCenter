@@ -98,7 +98,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Themes\Philips E-SCenter Icon.ico" />
+    <Content Include="Themes\Philips E-SCenter Icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
