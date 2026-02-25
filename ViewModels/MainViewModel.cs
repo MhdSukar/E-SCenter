@@ -42,6 +42,22 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _isAdminAccessGranted, value);
         }
 
+        private bool _autoGrantAdminAccess;
+        public bool AutoGrantAdminAccess
+        {
+            get => _autoGrantAdminAccess;
+            set
+            {
+                if (SetProperty(ref _autoGrantAdminAccess, value))
+                {
+                    // Persist preference
+                    ESCenter.Services.UserPreferencesService.SetAutoGrantAdminAccess(value);
+                    // If enabled, grant admin access immediately; if disabled, revoke it so login is required again
+                    IsAdminAccessGranted = value;
+                }
+            }
+        }
+
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
         // Commands bound from MainWindow input bindings (F-keys)
@@ -53,6 +69,7 @@ namespace ESCenter.ViewModels
         public ICommand OpenWarrantySystemCommand { get; }
         public ICommand ShowPartsControlCommand { get; }
         public ICommand ShowReportsCommand { get; }
+        public ICommand ShowAlBarakaCommand { get; }
         public ICommand ShowInventoryCommand { get; }
         public ICommand ShowBoneyardCommand { get; }
         public ICommand ShowWarrantySystemCommand { get; }
@@ -145,6 +162,12 @@ namespace ESCenter.ViewModels
         public MainViewModel()
         {
             Dashboard = new DashboardViewModel();
+            // Load persisted preference for auto-granting admin access on startup
+            _autoGrantAdminAccess = ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess();
+            if (_autoGrantAdminAccess)
+            {
+                IsAdminAccessGranted = true;
+            }
 
             ShowDashboardCommand = new RelayCommand(_ =>
             {
@@ -185,6 +208,17 @@ namespace ESCenter.ViewModels
                 IsInventorySelected = false;
                 IsBoneyardSelected = false;
                 Navigate(new ReportsViewModel(), "Reports loaded");
+            });
+
+            ShowAlBarakaCommand = new RelayCommand(_ =>
+            {
+                // Open internal Al-Baraka view (replaces external launcher)
+                IsDashboardSelected = false;
+                IsRepairTicketsSelected = false;
+                IsPartsControlSelected = false;
+                IsInventorySelected = false;
+                IsBoneyardSelected = false;
+                Navigate(new AlBarakaViewModel(), "Al-Baraka loaded");
             });
 
             ShowInventoryCommand = new RelayCommand(_ =>
