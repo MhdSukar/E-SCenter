@@ -177,10 +177,10 @@
                                             CellStyle="{StaticResource PriorityCellStyle}" />
                         <DataGridTextColumn Header="Received"
                                             Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}"
-                                            Width="95" />
+                                            Width="100" />
                         <DataGridTextColumn Header="Delivery"
                                             Binding="{Binding DeliveryDate, StringFormat='yyyy-MM-dd HH:mm'}"
-                                            Width="95" />
+                                            Width="100" />
                         <DataGridTextColumn Header="Notes"
                                             Binding="{Binding Notes}"
                                             Width="*" />

@@ -148,7 +148,6 @@ namespace ESCenter.Services
                     LastCustomDatabasePath = legacySettings.DatabasePath,
                     PartsLowStockThreshold = 3,
                     InventoryLowStockThreshold = 3,
-                    AlBarakaExecutablePath = string.Empty,
                     AdminUsername = DefaultAdminUsername,
                     AdminPasswordHash = DefaultAdminPasswordHash
                 };
@@ -165,9 +164,9 @@ namespace ESCenter.Services
             LastCustomDatabasePath = string.Empty,
             PartsLowStockThreshold = 3,
             InventoryLowStockThreshold = 3,
-            AlBarakaExecutablePath = string.Empty,
             AdminUsername = DefaultAdminUsername,
-            AdminPasswordHash = DefaultAdminPasswordHash
+            AdminPasswordHash = DefaultAdminPasswordHash,
+            AutoGrantAdminAccess = false
         };
 
         private static UserPreferences Normalize(UserPreferences? preferences)
@@ -196,7 +195,11 @@ namespace ESCenter.Services
 
             normalized.PreferredDatabasePath ??= string.Empty;
             normalized.LastCustomDatabasePath ??= string.Empty;
-            normalized.AlBarakaExecutablePath ??= string.Empty;
+
+            // Ensure new preference exists when migrating from older settings
+            // Default value is false (do not auto-grant admin access)
+            // This will be serialized on next Save.
+            // No further normalization needed for a bool.
 
             return normalized;
         }
@@ -207,15 +210,28 @@ namespace ESCenter.Services
             return Convert.ToHexString(bytes);
         }
 
+        public static bool GetAutoGrantAdminAccess()
+        {
+            var preferences = Load();
+            return preferences.AutoGrantAdminAccess;
+        }
+
+        public static void SetAutoGrantAdminAccess(bool enabled)
+        {
+            var preferences = Load();
+            preferences.AutoGrantAdminAccess = enabled;
+            Save(preferences);
+        }
+
         public sealed class UserPreferences
         {
             public string PreferredDatabasePath { get; set; } = string.Empty;
             public string LastCustomDatabasePath { get; set; } = string.Empty;
             public int PartsLowStockThreshold { get; set; } = 3;
             public int InventoryLowStockThreshold { get; set; } = 3;
-            public string AlBarakaExecutablePath { get; set; } = string.Empty;
             public string AdminUsername { get; set; } = DefaultAdminUsername;
             public string AdminPasswordHash { get; set; } = DefaultAdminPasswordHash;
+            public bool AutoGrantAdminAccess { get; set; } = false;
         }
 
         private sealed class LegacyDatabaseSettings

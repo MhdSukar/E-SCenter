@@ -70,7 +70,7 @@
                     <Button Width="90"
                             Margin="0,0,8,0"
                             Style="{StaticResource NeonGreenButtonStyle}"
-                            Command="{Binding AddDeviceCommand}">
+                            Command="{Binding AddCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource AddTask}" Width="16" Height="16" Margin="0,0,6,0"/>
                             <TextBlock Text="Add"/>
@@ -81,7 +81,7 @@
                     <Button Width="90"
                             Margin="0,0,8,0"
                             Style="{StaticResource NeonCyanButtonStyle}"
-                            Command="{Binding EditDeviceCommand}">
+                            Command="{Binding EditCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource edit_document}" Width="16" Height="16" Margin="0,0,6,0"/>
                             <TextBlock Text="Edit"/>
@@ -91,7 +91,7 @@
                     <!-- Remove -->
                     <Button Width="90"
                             Style="{StaticResource NeonRedButtonStyle}"
-                            Command="{Binding RemoveDeviceCommand}">
+                            Command="{Binding DeleteCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource Delete}" Width="16" Height="16" Margin="0,0,6,0"/>
                             <TextBlock Text="Remove"/>

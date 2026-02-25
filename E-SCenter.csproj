@@ -54,6 +54,10 @@
     <None Remove="Assets\Icons\flutter.png" />
     <None Remove="Assets\Icons\foot_bones.png" />
     <None Remove="Assets\Icons\frame_reload.png" />
+    <None Remove="Assets\Icons\galaxy-ai.png" />
+    <None Remove="Assets\Icons\galaxy-ai1.png" />
+    <None Remove="Assets\Icons\galaxy-ai2.png" />
+    <None Remove="Assets\Icons\galaxy-ai3.png" />
     <None Remove="Assets\Icons\identity.png" />
     <None Remove="Assets\Icons\id_card - Copy.png" />
     <None Remove="Assets\Icons\id_card.png" />
@@ -230,6 +234,9 @@
     <Resource Include="Assets\Icons\frame_reload.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\galaxy-ai1.png" />
+    <Resource Include="Assets\Icons\galaxy-ai2.png" />
+    <Resource Include="Assets\Icons\galaxy-ai3.png" />
     <Resource Include="Assets\Icons\identity.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

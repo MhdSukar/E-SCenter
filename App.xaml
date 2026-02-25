@@ -41,6 +41,9 @@
             <DataTemplate DataType="{x:Type vm:BoneyardViewModel}">
                 <views:BoneyardView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:AlBarakaViewModel}">
+                <views:AlBarakaView/>
+            </DataTemplate>
             
         </ResourceDictionary>
     </Application.Resources>

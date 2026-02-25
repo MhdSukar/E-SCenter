@@ -22,17 +22,26 @@ namespace ESCenter
             {
                 if (DataContext is ESCenter.ViewModels.MainViewModel vm)
                 {
-                    // Require admin access on startup
-                    var login = new Windows.AdminLoginWindow { Owner = this };
-                    if (login.ShowDialog() != true || !login.IsAuthenticated)
+                    // If user chose to auto-grant admin access, respect that and do not prompt
+                    if (ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess())
                     {
-                        // terminate application if authentication fails or canceled
-                        Environment.Exit(0);
-                        return;
+                        vm.IsAdminAccessGranted = true;
+                        vm.Dashboard.Refresh();
                     }
+                    else
+                    {
+                        // Require admin access on startup
+                        var login = new Windows.AdminLoginWindow { Owner = this };
+                        if (login.ShowDialog() != true || !login.IsAuthenticated)
+                        {
+                            // terminate application if authentication fails or canceled
+                            Environment.Exit(0);
+                            return;
+                        }
 
-                    vm.IsAdminAccessGranted = true;
-                    vm.Dashboard.Refresh();
+                        vm.IsAdminAccessGranted = true;
+                        vm.Dashboard.Refresh();
+                    }
                 }
             };
 
@@ -178,73 +187,6 @@ namespace ESCenter
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             Close();
-        }
-
-        private void AlBarakaButton_Click(object sender, RoutedEventArgs e)
-        {
-            var preferences = UserPreferencesService.Load();
-            var configuredPath = preferences.AlBarakaExecutablePath?.Trim() ?? string.Empty;
-
-            if (TryLaunchAlBaraka(configuredPath))
-            {
-                return;
-            }
-
-            var selectedPath = PromptForAlBarakaPath();
-            if (string.IsNullOrWhiteSpace(selectedPath))
-            {
-                return;
-            }
-
-            preferences.AlBarakaExecutablePath = selectedPath;
-            UserPreferencesService.Save(preferences);
-
-            if (!TryLaunchAlBaraka(selectedPath))
-            {
-                System.Windows.MessageBox.Show(
-                    "The selected Al-Baraka file could not be opened. Please choose a valid executable or shortcut.",
-                    "Al-Baraka",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-            }
-        }
-
-        private static bool TryLaunchAlBaraka(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
-            {
-                return false;
-            }
-
-            try
-            {
-                var startInfo = new ProcessStartInfo
-                {
-                    FileName = path,
-                    UseShellExecute = true
-                };
-
-                Process.Start(startInfo);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private string? PromptForAlBarakaPath()
-        {
-            var dialog = new Microsoft.Win32.OpenFileDialog
-            {
-                Title = "Select Al-Baraka executable or shortcut",
-                Filter = "Applications (*.exe;*.lnk)|*.exe;*.lnk|Executable (*.exe)|*.exe|Shortcut (*.lnk)|*.lnk|All files (*.*)|*.*",
-                CheckFileExists = true,
-                Multiselect = false
-            };
-
-            var result = dialog.ShowDialog(this);
-            return result == true ? dialog.FileName : null;
         }
 
         private void AdjustWindowSize()

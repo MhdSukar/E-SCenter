@@ -75,5 +75,8 @@
     <BitmapImage x:Key="token" UriSource="/Assets/Icons/token.png"/>
     <BitmapImage x:Key="cancel" UriSource="/Assets/Icons/cancel.png"/>
     <BitmapImage x:Key="Baraka" UriSource="/Assets/Icons/AlBaraka.png"/>
+    <BitmapImage x:Key="GalaxyAi2" UriSource="/Assets/Icons/galaxy-ai2.png"/>
+    <BitmapImage x:Key="GalaxyAi1" UriSource="/Assets/Icons/galaxy-ai1.png"/>
+    <BitmapImage x:Key="GalaxyAi3" UriSource="/Assets/Icons/galaxy-ai3.png"/>
 
 </ResourceDictionary>

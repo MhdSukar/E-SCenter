@@ -50,10 +50,31 @@ namespace ESCenter.Services
                 EnsureTicketsTable(conn),
                 EnsurePartsTable(conn),
                 EnsureInventoryTable(conn),
-                EnsureBoneyardTable(conn)
+                EnsureBoneyardTable(conn),
+                EnsureAlBarakaTable(conn)
             };
 
             return string.Join(Environment.NewLine, reports);
+        }
+
+        private string EnsureAlBarakaTable(SQLiteConnection conn)
+        {
+            const string tableName = "AlBaraka";
+
+            var expectedColumns = new Dictionary<string, string>
+            {
+                ["AlBarakaId"] = "INTEGER PRIMARY KEY AUTOINCREMENT",
+                ["Date"] = "TEXT NOT NULL",
+                ["ItemName"] = "TEXT NOT NULL",
+                ["Price"] = "REAL",
+                ["PriceCurrency"] = "TEXT DEFAULT 'S.P'",
+                ["Category"] = "TEXT",
+                ["Account"] = "TEXT",
+                ["CreatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP",
+                ["UpdatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP"
+            };
+
+            return EnsureTable(conn, tableName, expectedColumns);
         }
 
         private string EnsureTicketsTable(SQLiteConnection conn)

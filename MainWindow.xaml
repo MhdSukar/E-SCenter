@@ -110,8 +110,11 @@
         <!-- F5 = Boneyard -->
         <KeyBinding Key="F5" Command="{Binding OpenBoneyardCommand}" />
 
-        <!-- F6 = Warranty Window -->
-        <KeyBinding Key="F6" Command="{Binding OpenWarrantySystemCommand}" />
+        <!-- F6 = Al-Baraka -->
+        <KeyBinding Key="F6" Command="{Binding ShowAlBarakaCommand}" />
+
+        <!-- F7 = Warranty Window -->
+        <KeyBinding Key="F7" Command="{Binding OpenWarrantySystemCommand}" />
     </Window.InputBindings>
     
 
@@ -158,50 +161,51 @@
                                      GroupName="MainTabs"
                                      Command="{Binding ShowDashboardCommand}"
                                      x:Name="BtnDashboard"
+                                     Width="120"
                                      IsChecked="{Binding IsDashboardSelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource ArmingCountdown}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="F1 - Dashboard"/>
+                                <TextBlock Text="(F1) Dashboard"/>
                             </StackPanel>
                         </RadioButton>
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs"
+                                     GroupName="MainTabs" Width="110"
                                      Command="{Binding ShowRepairTicketsCommand}"
                                      IsChecked="{Binding IsRepairTicketsSelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource local_activity}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="F2 - Tickets"/>
+                                <TextBlock Text="(F2) Tickets"/>
                             </StackPanel>
                         </RadioButton>
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs"
+                                     GroupName="MainTabs" Width="110"
                                      Command="{Binding ShowPartsControlCommand}"
                                      IsChecked="{Binding IsPartsControlSelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource component}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="F3 - Parts"/>
+                                <TextBlock Text="(F3) Parts"/>
                             </StackPanel>
                         </RadioButton>
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs"
+                                     GroupName="MainTabs" Width="110"
                                      Command="{Binding ShowInventoryCommand}"
                                      IsChecked="{Binding IsInventorySelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource inventory}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="F4 - Inventory"/>
+                                <TextBlock Text="(F4) Inventory"/>
                             </StackPanel>
                         </RadioButton>
 
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs"
+                                     GroupName="MainTabs" Width="110"
                                      Command="{Binding ShowBoneyardCommand}"
                                      IsChecked="{Binding IsBoneyardSelected, Mode=TwoWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource settings1}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="F5 - Boneyard"/>
+                                <TextBlock Text="(F5) Boneyard"/>
                             </StackPanel>
                         </RadioButton>
 
@@ -327,6 +331,7 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -410,6 +415,20 @@
                                            Foreground="{StaticResource NeonRedBrush}"
                                            Margin="0,8,0,0"
                                            HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Margin="0,20,0,0">
+                                    <Image Source="{StaticResource Baraka}" Width="10" Height="10" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Al-Baraka" Foreground="{StaticResource NeonDarkCyanBrush}" FontSize="10"/>
+                                </StackPanel>
+                                
+                                
+
+                                <!-- Al-Baraka totals: S.P in 3rd column, USD in 5th column -->
+                                <TextBlock Grid.Column="1" Grid.Row="2" Text="Total (S.P):" Foreground="{StaticResource NeonYellowBrush}" FontSize="10" Margin="0,21,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding TotalAlBarakaSP, StringFormat=N2}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource NeonYellowBrush}" Margin="0,20,0,0" HorizontalAlignment="Center"/>
+
+                                <TextBlock Grid.Column="3" Grid.Row="2" Text="Total (USD):" Foreground="{StaticResource NeonGreenBrush}" FontSize="10" Margin="0,21,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TotalAlBarakaUSD, StringFormat=N2}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource NeonGreenBrush}" Margin="0,20,0,0" HorizontalAlignment="Center"/>
+
                             </Grid>
                         </GroupBox>
 
@@ -445,15 +464,15 @@
                                        VerticalAlignment="Top"/>
 
                                 <TextBox Grid.Column="1" Grid.Row="0"
-                                         Height="20"
+                                         Height="22"
                                          VerticalAlignment="Top"
-                                         Style="{StaticResource NeonTextBoxStyle}"/>
+                                         Style="{StaticResource NeonDarkCyanTextBoxStyle}"/>
 
                                 <ComboBox Grid.Column="1" Grid.Row="1"
                                           Padding="8,0,25,0"
                                           Height="22"
                                           VerticalAlignment="Center"
-                                          Style="{StaticResource NeonComboBoxStyle}"
+                                          Style="{StaticResource NeonDarkCyanComboBoxStyle}"
                                           Margin="0,0,0,0">
                                     <ComboBoxItem Content="All Categories"/>
                                     <ComboBoxItem Content="Laptops"/>
@@ -466,7 +485,7 @@
                                              HorizontalAlignment="Center"
                                              VerticalAlignment="Center">
                                     <Button Style="{StaticResource NeonDarkCyanButtonStyle}" Width="125" FontSize="14" Margin="0,5,6,0"
-                                            Click="AlBarakaButton_Click">
+                                            Command="{Binding ShowAlBarakaCommand}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <Image Source="{StaticResource Baraka}" Width="16" Height="16" Margin="0,0,6,0"/>
                                             <TextBlock Text="Al-Baraka"/>
@@ -489,6 +508,12 @@
                                         </StackPanel>
                                     </Button>
                                     
+                                    <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="120" Margin="0,5,-10,0" Style="{StaticResource NeonCheckBoxStyle}">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Image Source="{StaticResource GalaxyAi3}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                            <TextBlock Text="gαℓαאָу αι" Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
+                                        </StackPanel>
+                                    </CheckBox>
                                 </UniformGrid>
                             </Grid>
                         </GroupBox>

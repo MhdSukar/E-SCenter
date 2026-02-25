@@ -42,6 +42,22 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _isAdminAccessGranted, value);
         }
 
+        private bool _autoGrantAdminAccess;
+        public bool AutoGrantAdminAccess
+        {
+            get => _autoGrantAdminAccess;
+            set
+            {
+                if (SetProperty(ref _autoGrantAdminAccess, value))
+                {
+                    // Persist preference
+                    ESCenter.Services.UserPreferencesService.SetAutoGrantAdminAccess(value);
+                    // If enabled, grant admin access immediately; if disabled, revoke it so login is required again
+                    IsAdminAccessGranted = value;
+                }
+            }
+        }
+
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
         // Commands bound from MainWindow input bindings (F-keys)
@@ -53,6 +69,7 @@ namespace ESCenter.ViewModels
         public ICommand OpenWarrantySystemCommand { get; }
         public ICommand ShowPartsControlCommand { get; }
         public ICommand ShowReportsCommand { get; }
+        public ICommand ShowAlBarakaCommand { get; }
         public ICommand ShowInventoryCommand { get; }
         public ICommand ShowBoneyardCommand { get; }
         public ICommand ShowWarrantySystemCommand { get; }
@@ -132,6 +149,20 @@ namespace ESCenter.ViewModels
 
         public DashboardViewModel Dashboard { get; }
 
+        private decimal _totalAlBarakaSP;
+        public decimal TotalAlBarakaSP
+        {
+            get => _totalAlBarakaSP;
+            set => SetProperty(ref _totalAlBarakaSP, value);
+        }
+
+        private decimal _totalAlBarakaUSD;
+        public decimal TotalAlBarakaUSD
+        {
+            get => _totalAlBarakaUSD;
+            set => SetProperty(ref _totalAlBarakaUSD, value);
+        }
+
         private PlotModel _ticketsPlotModel;
         public PlotModel TicketsPlotModel
         {
@@ -145,6 +176,12 @@ namespace ESCenter.ViewModels
         public MainViewModel()
         {
             Dashboard = new DashboardViewModel();
+            // Load persisted preference for auto-granting admin access on startup
+            _autoGrantAdminAccess = ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess();
+            if (_autoGrantAdminAccess)
+            {
+                IsAdminAccessGranted = true;
+            }
 
             ShowDashboardCommand = new RelayCommand(_ =>
             {
@@ -185,6 +222,17 @@ namespace ESCenter.ViewModels
                 IsInventorySelected = false;
                 IsBoneyardSelected = false;
                 Navigate(new ReportsViewModel(), "Reports loaded");
+            });
+
+            ShowAlBarakaCommand = new RelayCommand(_ =>
+            {
+                // Open internal Al-Baraka view (replaces external launcher)
+                IsDashboardSelected = false;
+                IsRepairTicketsSelected = false;
+                IsPartsControlSelected = false;
+                IsInventorySelected = false;
+                IsBoneyardSelected = false;
+                Navigate(new AlBarakaViewModel(), "Al-Baraka loaded");
             });
 
             ShowInventoryCommand = new RelayCommand(_ =>
@@ -245,6 +293,32 @@ namespace ESCenter.ViewModels
             DatabasePathService.DatabasePathChanged += (_, _) => RefreshTicketsChart();
 
             _ticketsPlotModel = CreateTicketsActivityPlotModel();
+
+            // Load Al-Baraka totals for current month
+            RefreshAlBarakaTotals();
+        }
+
+        public void RefreshAlBarakaTotals(DateTime? start = null, DateTime? end = null)
+        {
+            try
+            {
+                var svc = new AlBarakaDataService();
+                // default to current month when not specified
+                if (!start.HasValue || !end.HasValue)
+                {
+                    var today = DateTime.Today;
+                    start ??= new DateTime(today.Year, today.Month, 1);
+                    end ??= start.Value.AddMonths(1).AddDays(-1);
+                }
+
+                var totals = svc.GetTotals(start, end);
+                TotalAlBarakaSP = totals.TotalSP;
+                TotalAlBarakaUSD = totals.TotalUSD;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to refresh Al-Baraka totals: {ex.Message}");
+            }
         }
 
         private void Navigate(object viewModel, string successMessage)

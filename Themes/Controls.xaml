@@ -79,6 +79,151 @@
         <Setter Property="FontSize" Value="13"/>
     </Style>
 
+    <!-- DatePicker styles removed to restore default DatePicker behavior -->
+
+    <!-- Neon Dark Cyan variants for TextBox and ComboBox (uses NeonDarkCyanDarkBrush glow) -->
+    <Style x:Key="NeonDarkCyanTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Padding" Value="9,4"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderDarkBrush}"/>
+        <Setter Property="BorderThickness" Value="1.4"/>
+        <Setter Property="CaretBrush" Value="{StaticResource NeonDarkCyanDarkBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <Border x:Name="Glow"
+                                BorderBrush="{StaticResource NeonDarkCyanDarkBrush}"
+                                BorderThickness="2"
+                                CornerRadius="6"
+                                Opacity="0"
+                                Effect="{StaticResource NeonDarkCyanGlowEffect}"/>
+
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NeonDarkCyanDarkBrush}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NewPrimaryBlueBrush}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NeonDarkCyanComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Padding" Value="8,0,25,0"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource PanelBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource BorderDarkBrush}"/>
+        <Setter Property="BorderThickness" Value="1.4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <Border x:Name="Glow"
+                                BorderBrush="{StaticResource NeonDarkCyanDarkBrush}"
+                                BorderThickness="2"
+                                CornerRadius="6"
+                                Opacity="0"
+                                Effect="{StaticResource NeonDarkCyanGlowEffect}"/>
+
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="28"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ContentPresenter x:Name="ContentSite"
+                                                  Grid.Column="0"
+                                                  VerticalAlignment="Center"
+                                                  Margin="8,0,4,0"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
+
+                                <ToggleButton x:Name="DropDownToggle"
+                                              Grid.Column="1"
+                                              Width="28"
+                                              Focusable="False"
+                                              IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                              ClickMode="Press"
+                                              Background="Transparent"
+                                              BorderThickness="0">
+                                    <Path x:Name="Arrow" Fill="{StaticResource TextPrimaryBrush}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                </ToggleButton>
+                            </Grid>
+                        </Border>
+
+                        <Popup x:Name="PART_Popup"
+                               Placement="Bottom"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Fade">
+                            <Grid x:Name="DropDown"
+                                  SnapsToDevicePixels="True"
+                                  MinWidth="{TemplateBinding ActualWidth}"
+                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border x:Name="DropDownBorder"
+                                        Background="{StaticResource PanelBackgroundBrush}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="6"/>
+                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NeonDarkCyanDarkBrush}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NewPrimaryBlueBrush}"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="CardBorderStyle" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderDarkBrush}"/>
@@ -104,10 +249,6 @@
     <!-- ========================================================================================= -->
     <!-- Buttons - Neon / Border variations                                                      -->
     <!-- ========================================================================================= -->
-
-    <!-- Reusable template pattern: Glow + Bd with ContentPresenter
-         Several styles below share the same ControlTemplate structure but differ by brushes/effects.
-         Nothing removed — all original styles preserved and grouped for clarity. -->
 
     <Style x:Key="NeonBorderButtonStyle" TargetType="Button">
         <Setter Property="Height" Value="26"/>

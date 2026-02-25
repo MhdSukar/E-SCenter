@@ -71,7 +71,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <Image Grid.Column="0" Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\E-SCenter.png" Width="18" Height="18" Margin="10,0,6,0" VerticalAlignment="Center"/>
+                    <Image Grid.Column="0" Source="/Themes/Philips E-SCenter Logo.png" Width="18" Height="18" Margin="10,0,6,0" VerticalAlignment="Center"/>
 
                     <TextBlock Grid.Column="1" Text="Admin Login" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
 
@@ -96,12 +96,12 @@
 
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,6">
                         <TextBlock Text="Username:" Width="80" VerticalAlignment="Center"/>
-                        <TextBox TabIndex="0" x:Name="UsernameBox" Width="180" Height="28" Style="{StaticResource NeonTextBoxStyle}"/>
+                        <TextBox Height="25" TabIndex="0" x:Name="UsernameBox" Width="180"  Style="{StaticResource NeonTextBoxStyle}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,6">
                         <TextBlock Text="Password:" Width="80" VerticalAlignment="Center"/>
-                        <PasswordBox TabIndex="1" x:Name="PasswordBox" Width="180" Style="{StaticResource NeonPasswordBoxStyle}"/>
+                        <PasswordBox Height="25" TabIndex="1" x:Name="PasswordBox" Width="180" Style="{StaticResource NeonPasswordBoxStyle}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="0,12,0,0">
