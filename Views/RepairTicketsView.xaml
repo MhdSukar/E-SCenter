@@ -236,11 +236,11 @@
                             Margin="4,0">
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource save}"
+                            <Image Source="{StaticResource EditAI}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
-                            <TextBlock Text="Save" />
+                            <TextBlock Text="Edit" />
                         </StackPanel>
                     </Button>
 
@@ -401,7 +401,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource ContactMethod}"
+                            <Image Source="{StaticResource ContactMAI}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -419,7 +419,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource ContactMethod}"
+                            <Image Source="{StaticResource ContactMAI}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />

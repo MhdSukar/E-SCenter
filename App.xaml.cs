@@ -113,10 +113,17 @@ namespace ESCenter
 
         private void ShowTrayPopupAt(int x, int y)
         {
+            if (MainWindow == null)
+            {
+                ShowMainWindow();
+            }
+
             if (_trayPopup == null)
             {
                 _trayPopup = new TrayPopupWindow();
             }
+
+            _trayPopup.DataContext = MainWindow?.DataContext;
 
             if (_trayPopup.IsVisible)
             {

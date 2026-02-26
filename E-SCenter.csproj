@@ -97,6 +97,7 @@
     <None Remove="Assets\Icons\process_chart_30dp.png" />
     <None Remove="Assets\Icons\QR.png" />
     <None Remove="Assets\Icons\ReadyToPick.png" />
+    <None Remove="Assets\Icons\reboot_galaxy_s10.png" />
     <None Remove="Assets\Icons\recycling.png" />
     <None Remove="Assets\Icons\regular_expression.png" />
     <None Remove="Assets\Icons\safety_check.png" />
@@ -107,6 +108,7 @@
     <None Remove="Assets\Icons\segment.png" />
     <None Remove="Assets\Icons\Serial.png" />
     <None Remove="Assets\Icons\settings1.png" />
+    <None Remove="Assets\Icons\Shutdown_galaxy_s10.png" />
     <None Remove="Assets\Icons\stacks_35dp.png" />
     <None Remove="Assets\Icons\token.png" />
     <None Remove="Assets\Icons\translate.png" />
@@ -368,6 +370,9 @@
     <Resource Include="Assets\Icons\ReadyToPick.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\reboot_galaxy_s10.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\recycling.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -396,6 +401,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\settings1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Shutdown_galaxy_s10.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\stacks_35dp.png">

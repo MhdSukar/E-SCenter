@@ -22,7 +22,9 @@
     <BitmapImage x:Key="mobilewrench24" UriSource="/Assets/Icons/mobile_wrench_24dp.png"/>
     <BitmapImage x:Key="mobilewrench35" UriSource="/Assets/Icons/mobile_wrench_35dp.png"/>
     <BitmapImage x:Key="Completed" UriSource="/Assets/Icons/offline_pin_30dp.png"/>
-    <BitmapImage x:Key="PowerOff" UriSource="/Assets/Icons/power_settings_circle_30dp.png"/>
+    <BitmapImage x:Key="PowerOffAlt" UriSource="/Assets/Icons/power_settings_circle_30dp.png"/>
+    <BitmapImage x:Key="PowerOff" UriSource="/Assets/Icons/Shutdown_galaxy_s10.png"/>
+    <BitmapImage x:Key="Reboot" UriSource="/Assets/Icons/reboot_galaxy_s10.png"/>
     <BitmapImage x:Key="FinalCost" UriSource="/Assets/Icons/price_check_24dp.png"/>
     <BitmapImage x:Key="Priority1" UriSource="/Assets/Icons/priority_30dp.png"/>
     <BitmapImage x:Key="Priority2" UriSource="/Assets/Icons/priority_high_24dp.png"/>
