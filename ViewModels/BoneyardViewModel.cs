@@ -7,8 +7,8 @@ using System.Windows.Input;
 using ESCenter.Core;
 using ESCenter.Data;
 using ESCenter.Models;
-using ESCenter.Views;
 using ESCenter.Services;
+using ESCenter.Views;
 
 namespace ESCenter.ViewModels
 {
@@ -63,12 +63,17 @@ namespace ESCenter.ViewModels
         private bool FilterDevices(object obj)
         {
             if (obj is not BoneyardModel device)
+            {
                 return false;
+            }
 
             if (string.IsNullOrWhiteSpace(SearchText))
+            {
                 return true;
+            }
 
-            return (device.Brand?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+            return (device.DeviceTypeText?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
+                || (device.Brand?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
                 || (device.Model?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
                 || (device.Condition?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false)
                 || (device.HolderID?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ?? false);
@@ -78,7 +83,9 @@ namespace ESCenter.ViewModels
         {
             Devices.Clear();
             foreach (var d in _repo.GetAll())
+            {
                 Devices.Add(d);
+            }
         }
 
         // =====================
@@ -88,7 +95,7 @@ namespace ESCenter.ViewModels
         {
             var device = new BoneyardModel
             {
-                DeviceType = 0,
+                DeviceType = -1,
                 AddedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm")
             };
 
@@ -105,7 +112,10 @@ namespace ESCenter.ViewModels
 
         private void EditDevice()
         {
-            if (SelectedDevice == null) return;
+            if (SelectedDevice == null)
+            {
+                return;
+            }
 
             // Clone to allow canceling edits
             var clone = new BoneyardModel
@@ -146,7 +156,10 @@ namespace ESCenter.ViewModels
         // =====================
         private void DeleteDevice()
         {
-            if (SelectedDevice == null) return;
+            if (SelectedDevice == null)
+            {
+                return;
+            }
 
             _repo.Delete(SelectedDevice.DeviceId);
             Devices.Remove(SelectedDevice);
@@ -164,13 +177,16 @@ namespace ESCenter.ViewModels
             var filtered = string.IsNullOrWhiteSpace(_searchText)
                 ? allDevices
                 : allDevices.Where(d =>
+                    (d.DeviceTypeText?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (d.Brand?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (d.Model?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (d.Condition?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (d.HolderID?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false));
 
             foreach (var d in filtered)
+            {
                 Devices.Add(d);
+            }
         }
     }
 }

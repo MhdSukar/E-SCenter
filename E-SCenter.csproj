@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <None Remove="Assets\Icons\add_task.png" />
+    <None Remove="Assets\Icons\AI Select.png" />
+    <None Remove="Assets\Icons\Al-Baraka Logo.ico" />
     <None Remove="Assets\Icons\AlBaraka.png" />
     <None Remove="Assets\Icons\amend.png" />
     <None Remove="Assets\Icons\aod_watch.png" />
@@ -23,8 +25,13 @@
     <None Remove="Assets\Icons\battery_android_shield.png" />
     <None Remove="Assets\Icons\Brand.png" />
     <None Remove="Assets\Icons\cadence.png" />
+    <None Remove="Assets\Icons\Call Assist.png" />
     <None Remove="Assets\Icons\cancel.png" />
+    <None Remove="Assets\Icons\Chat Assist.png" />
+    <None Remove="Assets\Icons\Chat Assist2.png" />
+    <None Remove="Assets\Icons\Circle to Search.png" />
     <None Remove="Assets\Icons\clear_all.png" />
+    <None Remove="Assets\Icons\click-to search.png" />
     <None Remove="Assets\Icons\ClientName.png" />
     <None Remove="Assets\Icons\clock_arrow_down.png" />
     <None Remove="Assets\Icons\component.png" />
@@ -43,6 +50,7 @@
     <None Remove="Assets\Icons\devices_wearables_35dp - Copy.png" />
     <None Remove="Assets\Icons\devices_wearables_35dp.png" />
     <None Remove="Assets\Icons\do_not_disturb.png" />
+    <None Remove="Assets\Icons\Drawing Assist.png" />
     <None Remove="Assets\Icons\edit_audio.png" />
     <None Remove="Assets\Icons\edit_document.png" />
     <None Remove="Assets\Icons\EstimatedCost.png" />
@@ -58,11 +66,16 @@
     <None Remove="Assets\Icons\galaxy-ai1.png" />
     <None Remove="Assets\Icons\galaxy-ai2.png" />
     <None Remove="Assets\Icons\galaxy-ai3.png" />
+    <None Remove="Assets\Icons\galaxy-ai4.png" />
+    <None Remove="Assets\Icons\galaxy-ai5.png" />
+    <None Remove="Assets\Icons\galaxy-ai6.png" />
+    <None Remove="Assets\Icons\google-toolbar.png" />
     <None Remove="Assets\Icons\identity.png" />
     <None Remove="Assets\Icons\id_card - Copy.png" />
     <None Remove="Assets\Icons\id_card.png" />
     <None Remove="Assets\Icons\inventory.png" />
     <None Remove="Assets\Icons\join.png" />
+    <None Remove="Assets\Icons\List.png" />
     <None Remove="Assets\Icons\list_alt_add - Copy.png" />
     <None Remove="Assets\Icons\list_alt_add.png" />
     <None Remove="Assets\Icons\local_activity.png" />
@@ -72,8 +85,10 @@
     <None Remove="Assets\Icons\mobile_code_35dp.png" />
     <None Remove="Assets\Icons\mobile_wrench_24dp.png" />
     <None Remove="Assets\Icons\mobile_wrench_35dp.png" />
+    <None Remove="Assets\Icons\Note Assist.png" />
     <None Remove="Assets\Icons\Notes.png" />
     <None Remove="Assets\Icons\offline_pin_30dp.png" />
+    <None Remove="Assets\Icons\Play AI.png" />
     <None Remove="Assets\Icons\power_settings_circle_30dp.png" />
     <None Remove="Assets\Icons\preliminary.png" />
     <None Remove="Assets\Icons\price_check_24dp.png" />
@@ -87,12 +102,14 @@
     <None Remove="Assets\Icons\safety_check.png" />
     <None Remove="Assets\Icons\save.png" />
     <None Remove="Assets\Icons\saved_search.png" />
+    <None Remove="Assets\Icons\search-engines.png" />
     <None Remove="Assets\Icons\search_insights.png" />
     <None Remove="Assets\Icons\segment.png" />
     <None Remove="Assets\Icons\Serial.png" />
     <None Remove="Assets\Icons\settings1.png" />
     <None Remove="Assets\Icons\stacks_35dp.png" />
     <None Remove="Assets\Icons\token.png" />
+    <None Remove="Assets\Icons\translate.png" />
     <None Remove="Assets\Icons\Unassigned.png" />
     <None Remove="Assets\Icons\verified.png" />
     <None Remove="Assets\Icons\warning_24d.png" />
@@ -126,6 +143,12 @@
     <Resource Include="Assets\Icons\add_task.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\AI Select.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Al-Baraka Logo.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\AlBaraka.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -156,10 +179,25 @@
     <Resource Include="Assets\Icons\cadence.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\Call Assist.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\cancel.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\Chat Assist.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Chat Assist2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Circle to Search.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\clear_all.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\click-to search.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\ClientName.png">
@@ -207,6 +245,9 @@
     <Resource Include="Assets\Icons\do_not_disturb.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\Drawing Assist.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\edit_audio.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -234,9 +275,27 @@
     <Resource Include="Assets\Icons\frame_reload.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\galaxy-ai1.png" />
-    <Resource Include="Assets\Icons\galaxy-ai2.png" />
-    <Resource Include="Assets\Icons\galaxy-ai3.png" />
+    <Resource Include="Assets\Icons\galaxy-ai1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\galaxy-ai2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\galaxy-ai3.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\galaxy-ai4.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\galaxy-ai5.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\galaxy-ai6.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\google-toolbar.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\identity.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -247,6 +306,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\join.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\List.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\list_alt_add.png">
@@ -270,10 +332,16 @@
     <Resource Include="Assets\Icons\mobile_wrench_35dp.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\Note Assist.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\Notes.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\offline_pin_30dp.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Play AI.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\power_settings_circle_30dp.png">
@@ -315,6 +383,9 @@
     <Resource Include="Assets\Icons\saved_search.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\search-engines.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\search_insights.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -331,6 +402,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\token.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\translate.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Unassigned.png">

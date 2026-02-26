@@ -108,7 +108,7 @@
                                     BorderThickness="1"
                                     Margin="0,0,8,0"
                                     VerticalAlignment="Center">
-                                <Image Source="{StaticResource search_insights}"
+                                <Image Source="{StaticResource SearchAI4}"
                                        Width="16"
                                        Height="16"
                                        VerticalAlignment="Center"
