@@ -126,7 +126,7 @@
                                         IsReadOnly="True"/>
 
                     <DataGridTextColumn Header="Type"
-                                        Binding="{Binding DeviceType}"
+                                        Binding="{Binding DeviceTypeText}"
                                         Width="100"/>
 
                     <DataGridTextColumn Header="Brand"
