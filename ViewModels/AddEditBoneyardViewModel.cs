@@ -35,8 +35,14 @@ namespace ESCenter.ViewModels
         {
             Device = device ?? new BoneyardModel
             {
+                DeviceType = -1,
                 AddedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm")
             };
+
+            if (Device.DeviceType < 0)
+            {
+                Device.DeviceType = -1;
+            }
 
             IsEditMode = isEdit;
 
@@ -46,9 +52,9 @@ namespace ESCenter.ViewModels
 
         private void Save()
         {
-            if (Device.DeviceType == 0)
+            if (Device.DeviceType < 0)
             {
-                System.Windows.MessageBox.Show("Please select a device type.");
+                MessageBox.Show("Please select a device type.");
                 return;
             }
 
@@ -62,7 +68,7 @@ namespace ESCenter.ViewModels
 
         private void CloseWindow(bool result)
         {
-            foreach (Window w in System.Windows.Application.Current.Windows)
+            foreach (Window w in Application.Current.Windows)
             {
                 if (w.DataContext == this)
                 {
