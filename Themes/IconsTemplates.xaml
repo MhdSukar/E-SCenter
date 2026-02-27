@@ -6,17 +6,13 @@
     <BitmapImage x:Key="ArmingCountdown" UriSource="/Assets/Icons/arming_countdown.png"/>
     <BitmapImage x:Key="BatteryShield1" UriSource="/Assets/Icons/Battery_android_frame_shield.png"/>
     <BitmapImage x:Key="BatteryShield2" UriSource="/Assets/Icons/battery_android_shield.png"/>
-    <BitmapImage x:Key="ClearAll" UriSource="/Assets/Icons/clear_all.png"/>
     <BitmapImage x:Key="DataArray" UriSource="/Assets/Icons/data_array.png"/>
     <BitmapImage x:Key="Database" UriSource="/Assets/Icons/database.png"/>
     <BitmapImage x:Key="DatabaseUpload" UriSource="/Assets/Icons/database_upload.png"/>
     <BitmapImage x:Key="DeployedCodeAlert" UriSource="/Assets/Icons/deployed_code_alert.png"/>
     <BitmapImage x:Key="DeviceWear25" UriSource="/Assets/Icons/devices_wearables.png"/>
     <BitmapImage x:Key="DeviceWear35" UriSource="/Assets/Icons/devices_wearables_35dp.png"/>
-    <BitmapImage x:Key="Reopen" UriSource="/Assets/Icons/expand_circle_up.png"/>
-    <BitmapImage x:Key="Flutter" UriSource="/Assets/Icons/flutter.png"/>
     <BitmapImage x:Key="ListAlt" UriSource="/Assets/Icons/list_alt_add.png"/>
-    <BitmapImage x:Key="LowPriority" UriSource="/Assets/Icons/low_priority.png"/>
     <BitmapImage x:Key="Mobile1" UriSource="/Assets/Icons/mobile_3_35dp.png"/>
     <BitmapImage x:Key="MobileCode" UriSource="/Assets/Icons/mobile_code_35dp.png"/>
     <BitmapImage x:Key="mobilewrench24" UriSource="/Assets/Icons/mobile_wrench_24dp.png"/>
@@ -25,57 +21,34 @@
     <BitmapImage x:Key="PowerOffAlt" UriSource="/Assets/Icons/power_settings_circle_30dp.png"/>
     <BitmapImage x:Key="PowerOff" UriSource="/Assets/Icons/Shutdown_galaxy_s10.png"/>
     <BitmapImage x:Key="Reboot" UriSource="/Assets/Icons/reboot_galaxy_s10.png"/>
-    <BitmapImage x:Key="FinalCost" UriSource="/Assets/Icons/price_check_24dp.png"/>
-    <BitmapImage x:Key="Priority1" UriSource="/Assets/Icons/priority_30dp.png"/>
-    <BitmapImage x:Key="Priority2" UriSource="/Assets/Icons/priority_high_24dp.png"/>
-    <BitmapImage x:Key="List1" UriSource="/Assets/Icons/process_chart_30dp.png"/>
     <BitmapImage x:Key="Stacks" UriSource="/Assets/Icons/stacks_35dp.png"/>
     <BitmapImage x:Key="Warning" UriSource="/Assets/Icons/warning_24d.png"/>
     <BitmapImage x:Key="Watchlock" UriSource="/Assets/Icons/watch_lock_24dp.png"/>
     <BitmapImage x:Key="watchScreenTime" UriSource="/Assets/Icons/watch_screentime_35dp.png"/>
-    <BitmapImage x:Key="IDCARD" UriSource="/Assets/Icons/id_card.png"/>
     <BitmapImage x:Key="CrulityFree" UriSource="/Assets/Icons/cruelty_free_35dp.png"/>
-    <BitmapImage x:Key="Delete" UriSource="/Assets/Icons/cancel.png"/>
     <BitmapImage x:Key="Unassigned" UriSource="/Assets/Icons/Unassigned.png"/>
     <BitmapImage x:Key="do_not_disturb" UriSource="/Assets/Icons/do_not_disturb.png"/>
-    <BitmapImage x:Key="ClientName" UriSource="/Assets/Icons/ClientName.png"/>
-    <BitmapImage x:Key="DeviceModel" UriSource="/Assets/Icons/DeviceModel.png"/>
     <BitmapImage x:Key="Notes" UriSource="/Assets/Icons/Notes.png"/>
-    <BitmapImage x:Key="Serial" UriSource="/Assets/Icons/Serial.png"/>
-    <BitmapImage x:Key="FinalCost1" UriSource="/Assets/Icons/FinalCost1.png"/>
-    <BitmapImage x:Key="ContactMethod" UriSource="/Assets/Icons/ContactMethod.png"/>
     <BitmapImage x:Key="QR" UriSource="/Assets/Icons/QR.png"/>
-    <BitmapImage x:Key="recycling" UriSource="/Assets/Icons/recycling.png"/>
-    <BitmapImage x:Key="EstimatedCost" UriSource="/Assets/Icons/EstimatedCost.png"/>
     <BitmapImage x:Key="safety_check" UriSource="/Assets/Icons/safety_check.png"/>
     <BitmapImage x:Key="settings1" UriSource="/Assets/Icons/settings1.png"/>
     <BitmapImage x:Key="verified" UriSource="/Assets/Icons/verified.png"/>
-    <BitmapImage x:Key="ReadyToPick" UriSource="/Assets/Icons/ReadyToPick.png"/>
     <BitmapImage x:Key="devicesType" UriSource="/Assets/Icons/devicesType.png"/>
     <BitmapImage x:Key="save" UriSource="/Assets/Icons/save.png"/>
     <BitmapImage x:Key="amend" UriSource="/Assets/Icons/amend.png"/>
     <BitmapImage x:Key="area_chart" UriSource="/Assets/Icons/area_chart.png"/>
     <BitmapImage x:Key="azm" UriSource="/Assets/Icons/azm.png"/>
-    <BitmapImage x:Key="Brand" UriSource="/Assets/Icons/Brand.png"/>
     <BitmapImage x:Key="cadence" UriSource="/Assets/Icons/cadence.png"/>
-    <BitmapImage x:Key="clock_arrow_down" UriSource="/Assets/Icons/clock_arrow_down.png"/>
     <BitmapImage x:Key="component" UriSource="/Assets/Icons/component.png"/>
-    <BitmapImage x:Key="counter0" UriSource="/Assets/Icons/counter0.png"/>
     <BitmapImage x:Key="edit_audio" UriSource="/Assets/Icons/edit_audio.png"/>
     <BitmapImage x:Key="edit_document" UriSource="/Assets/Icons/edit_document.png"/>
     <BitmapImage x:Key="filter_vintage" UriSource="/Assets/Icons/filter_vintage.png"/>
     <BitmapImage x:Key="foot_bones" UriSource="/Assets/Icons/foot_bones.png"/>
     <BitmapImage x:Key="frame_reload" UriSource="/Assets/Icons/frame_reload.png"/>
-    <BitmapImage x:Key="identity" UriSource="/Assets/Icons/identity.png"/>
-    <BitmapImage x:Key="inventory" UriSource="/Assets/Icons/inventory.png"/>
     <BitmapImage x:Key="join" UriSource="/Assets/Icons/join.png"/>
     <BitmapImage x:Key="local_activity" UriSource="/Assets/Icons/local_activity.png"/>
     <BitmapImage x:Key="regular_expression" UriSource="/Assets/Icons/regular_expression.png"/>
-    <BitmapImage x:Key="saved_search" UriSource="/Assets/Icons/saved_search.png"/>
-    <BitmapImage x:Key="search_insights" UriSource="/Assets/Icons/search_insights.png"/>
-    <BitmapImage x:Key="segment" UriSource="/Assets/Icons/segment.png"/>
     <BitmapImage x:Key="token" UriSource="/Assets/Icons/token.png"/>
-    <BitmapImage x:Key="cancel" UriSource="/Assets/Icons/cancel.png"/>
     <BitmapImage x:Key="Baraka" UriSource="/Assets/Icons/AlBaraka.png"/>
     <BitmapImage x:Key="GalaxyAi1" UriSource="/Assets/Icons/galaxy-ai1.png"/>
     <BitmapImage x:Key="GalaxyAi2" UriSource="/Assets/Icons/galaxy-ai2.png"/>
@@ -96,7 +69,54 @@
     <BitmapImage x:Key="ListAI1" UriSource="/Assets/Icons/Drawing Assist.png"/>
     <BitmapImage x:Key="ListAI2" UriSource="/Assets/Icons/List.png"/>
     <BitmapImage x:Key="ListAI3" UriSource="/Assets/Icons/Note Assist.png"/>
+    <BitmapImage x:Key="AddressBook" UriSource="/Assets/Icons/AddressBook.png"/>
+    <BitmapImage x:Key="Admin" UriSource="/Assets/Icons/AdminTitle.png"/>
+    <BitmapImage x:Key="DeleteClose" UriSource="/Assets/Icons/Delete-Close Title.png"/>
+    <BitmapImage x:Key="DmgHistory1" UriSource="/Assets/Icons/DmgHistory1Title.png"/>
+    <BitmapImage x:Key="DmgHistory2" UriSource="/Assets/Icons/DmgHistoryTitle.png"/>
+    <BitmapImage x:Key="ESCID1" UriSource="/Assets/Icons/ESC-ID Title.png"/>
+    <BitmapImage x:Key="ESCID2" UriSource="/Assets/Icons/ESC-ID Title1.png"/>
+    <BitmapImage x:Key="IDTitle" UriSource="/Assets/Icons/ID Title.png"/>
+    <BitmapImage x:Key="Refresh" UriSource="/Assets/Icons/Refresh.png"/>
+    <BitmapImage x:Key="Reopen1" UriSource="/Assets/Icons/ReopenTitle.png"/>
+    <BitmapImage x:Key="SerialTitle" UriSource="/Assets/Icons/SerialTitle.png"/>
+    <BitmapImage x:Key="Settings" UriSource="/Assets/Icons/Settings.png"/>
+    <BitmapImage x:Key="Add" UriSource="/Assets/Icons/Add.png"/>
+    <BitmapImage x:Key="AISearch" UriSource="/Assets/Icons/GalaxyAiSearch.png"/>
+    <BitmapImage x:Key="BoardMod" UriSource="/Assets/Icons/BoardMod.png"/>
+    <BitmapImage x:Key="Boneyard" UriSource="/Assets/Icons/boneyard.png"/>
+    <BitmapImage x:Key="Charts" UriSource="/Assets/Icons/Charts.png"/>
+    <BitmapImage x:Key="Dashboard" UriSource="/Assets/Icons/Dashboard.png"/>
+    <BitmapImage x:Key="DBCreate" UriSource="/Assets/Icons/DatabaseCreate.png"/>
+    <BitmapImage x:Key="DBEdit" UriSource="/Assets/Icons/DatabaseEdit.png"/>
+    <BitmapImage x:Key="DBReset" UriSource="/Assets/Icons/DatabaseReset.png"/>
+    <BitmapImage x:Key="EstimatedCost" UriSource="/Assets/Icons/EstimatedCost.png"/>
+    <BitmapImage x:Key="FinalCost" UriSource="/Assets/Icons/FinalCost.png"/>
+    <BitmapImage x:Key="Inventory" UriSource="/Assets/Icons/Inevntory.png"/>
+    <BitmapImage x:Key="Parts" UriSource="/Assets/Icons/Parts.png"/>
+    <BitmapImage x:Key="RepOnWar" UriSource="/Assets/Icons/RepairOnWarranty.png"/>
+    <BitmapImage x:Key="RootCause" UriSource="/Assets/Icons/RootCause.png"/>
+    <BitmapImage x:Key="Statistics" UriSource="/Assets/Icons/Statistics.png"/>
+    <BitmapImage x:Key="Tickets" UriSource="/Assets/Icons/Tickets.png"/>
+    <BitmapImage x:Key="Warranty" UriSource="/Assets/Icons/Warranty.png"/>
+    <BitmapImage x:Key="Brand" UriSource="/Assets/Icons/Brand.png"/>
+    <BitmapImage x:Key="CategoryList" UriSource="/Assets/Icons/CategoryList.png"/>
+    <BitmapImage x:Key="Clear" UriSource="/Assets/Icons/Clear.png"/>
+    <BitmapImage x:Key="LowStock" UriSource="/Assets/Icons/LowStock.png"/>
+    <BitmapImage x:Key="Model" UriSource="/Assets/Icons/Model.png"/>
+    <BitmapImage x:Key="OutStock" UriSource="/Assets/Icons/OutStock.png"/>
+    <BitmapImage x:Key="PartsUsed" UriSource="/Assets/Icons/PartsUsed.png"/>
+    <BitmapImage x:Key="Priority" UriSource="/Assets/Icons/Priority.png"/>
+    <BitmapImage x:Key="ProblemDescription" UriSource="/Assets/Icons/ProblemDescription.png"/>
+    <BitmapImage x:Key="ReadyToPick" UriSource="/Assets/Icons/ReadyToPick.png"/>
+    <BitmapImage x:Key="RepairStatus" UriSource="/Assets/Icons/RepairStatus.png"/>
+    <BitmapImage x:Key="TickClosed" UriSource="/Assets/Icons/TickClosed.png"/>
+    <BitmapImage x:Key="AllList" UriSource="/Assets/Icons/AllList.png"/>
+    <BitmapImage x:Key="ResetSTG" UriSource="/Assets/Icons/ResetSTG.png"/>
     
+
+
+
 
 
 </ResourceDictionary>
