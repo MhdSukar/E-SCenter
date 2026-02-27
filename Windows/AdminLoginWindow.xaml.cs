@@ -24,8 +24,11 @@ namespace ESCenter.Windows
                 return;
             }
 
-            DialogResult = false;
-            Close();
+            IsAuthenticated = false;
+            UsernameBox.Clear();
+            PasswordBox.Clear();
+            ErrorMessageText.Visibility = Visibility.Visible;
+            UsernameBox.Focus();
             AppLogger.Error("invalid Credentials");
         }
 
@@ -37,7 +40,7 @@ namespace ESCenter.Windows
 
         private void btnMinimize_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            WindowState = WindowState.Minimized;
         }
 
         private void btnMaximize_Click(object sender, RoutedEventArgs e)
@@ -47,19 +50,19 @@ namespace ESCenter.Windows
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void AdjustWindowSize()
         {
-            if (this.WindowState == WindowState.Maximized)
+            if (WindowState == WindowState.Maximized)
             {
-                this.WindowState = WindowState.Normal;
+                WindowState = WindowState.Normal;
                 btnMaximize.Content = "□";
             }
             else
             {
-                this.WindowState = WindowState.Maximized;
+                WindowState = WindowState.Maximized;
                 btnMaximize.Content = "❐";
             }
         }
@@ -67,9 +70,13 @@ namespace ESCenter.Windows
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
+            {
                 AdjustWindowSize();
+            }
             else
+            {
                 DragMove();
+            }
         }
     }
 }

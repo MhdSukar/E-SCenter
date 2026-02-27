@@ -2,9 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Admin Login"
-        Height="220"
+        Height="250"
         Width="320"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="Transparent"
         WindowStyle="None"
@@ -86,17 +86,18 @@
             <Border Margin="0,36,0,0" Padding="12" CornerRadius="0,0,10,10" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="1">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Enter Admin Credentials" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,12" Grid.Row="0"/>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,6">
                         <TextBlock Text="Username:" Width="80" VerticalAlignment="Center"/>
-                        <TextBox Height="25" TabIndex="0" x:Name="UsernameBox" Width="180"  Style="{StaticResource NeonTextBoxStyle}"/>
+                        <TextBox Height="25" TabIndex="0" x:Name="UsernameBox" Width="180" Style="{StaticResource NeonTextBoxStyle}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,6">
@@ -108,6 +109,15 @@
                         <Button TabIndex="2" Content="Login" Width="80" Margin="6,0" Style="{StaticResource NeonGreenButtonStyle}" Click="LoginButton_Click"/>
                         <Button TabIndex="3" Content="Cancel" Width="80" Margin="6,0" Style="{StaticResource NeonOrangeButtonStyle}" Click="CancelButton_Click"/>
                     </StackPanel>
+
+                    <TextBlock x:Name="ErrorMessageText"
+                               Grid.Row="4"
+                               Margin="0,10,0,0"
+                               HorizontalAlignment="Center"
+                               Foreground="{StaticResource ErrorBrush}"
+                               FontWeight="SemiBold"
+                               Text="Wrong credentials"
+                               Visibility="Collapsed"/>
                 </Grid>
             </Border>
         </Grid>
