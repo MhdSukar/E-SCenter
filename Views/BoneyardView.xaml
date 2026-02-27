@@ -46,7 +46,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Image Source="{StaticResource SearchAI4}"
+                        <Image Source="{StaticResource AISearch}"
                                Width="16"
                                Height="16"
                                Margin="8,0,6,0"
@@ -72,7 +72,7 @@
                             Style="{StaticResource NeonGreenButtonStyle}"
                             Command="{Binding AddCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Image Source="{StaticResource AddTask}" Width="16" Height="16" Margin="0,0,6,0"/>
+                            <Image Source="{StaticResource Add}" Width="16" Height="16" Margin="0,0,6,0"/>
                             <TextBlock Text="Add"/>
                         </StackPanel>
                     </Button>
@@ -83,7 +83,7 @@
                             Style="{StaticResource NeonCyanButtonStyle}"
                             Command="{Binding EditCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Image Source="{StaticResource EditAI}" Width="16" Height="16" Margin="0,0,6,0"/>
+                            <Image Source="{StaticResource EditAI}" Width="19" Height="16" Margin="0,0,6,0"/>
                             <TextBlock Text="Edit"/>
                         </StackPanel>
                     </Button>
@@ -93,7 +93,7 @@
                             Style="{StaticResource NeonRedButtonStyle}"
                             Command="{Binding DeleteCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Image Source="{StaticResource Delete}" Width="16" Height="16" Margin="0,0,6,0"/>
+                            <Image Source="{StaticResource DeleteClose}" Width="16" Height="16" Margin="0,0,6,0"/>
                             <TextBlock Text="Remove"/>
                         </StackPanel>
                     </Button>

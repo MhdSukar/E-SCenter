@@ -24,11 +24,12 @@
                        DockPanel.Dock="Left"/>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                <Button Content="Refresh"
-                        Width="100"
-                        Margin="10,0"
-                        Command="{Binding RefreshCommand}"
-                        Style="{StaticResource NeonCyanButtonStyle}"/>
+                <Button Command="{Binding RefreshCommand}" Style="{StaticResource NeonCyanButtonStyle}" Width="80" Margin="20,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource Refresh}" Width="16" Height="16" Margin="0,0,8,0" />
+                        <TextBlock Text="Refresh" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </DockPanel>
 

@@ -42,7 +42,7 @@
                                 IsEnabled="{Binding SelectedTicket}">
                             <StackPanel Orientation="Horizontal"
                                         VerticalAlignment="Center">
-                                <Image Source="{StaticResource Completed}"
+                                <Image Source="{StaticResource TickClosed}"
                                        Width="16"
                                        Height="16"
                                        Margin="0,0,6,0" />
@@ -57,7 +57,7 @@
                                 IsEnabled="{Binding SelectedTicket}">
                             <StackPanel Orientation="Horizontal"
                                         VerticalAlignment="Center">
-                                <Image Source="{StaticResource Reopen}"
+                                <Image Source="{StaticResource Reopen1}"
                                        Width="16"
                                        Height="16"
                                        Margin="0,0,6,0" />
@@ -72,7 +72,7 @@
                                 IsEnabled="{Binding SelectedTicket}">
                             <StackPanel Orientation="Horizontal"
                                         VerticalAlignment="Center">
-                                <Image Source="{StaticResource Delete}"
+                                <Image Source="{StaticResource DeleteClose}"
                                        Width="16"
                                        Height="16"
                                        Margin="0,0,6,0" />
@@ -108,7 +108,7 @@
                                     BorderThickness="1"
                                     Margin="0,0,8,0"
                                     VerticalAlignment="Center">
-                                <Image Source="{StaticResource SearchAI4}"
+                                <Image Source="{StaticResource AISearch}"
                                        Width="16"
                                        Height="16"
                                        VerticalAlignment="Center"
@@ -222,7 +222,7 @@
                             Margin="4,0">
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource AddTask}"
+                            <Image Source="{StaticResource Add}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -250,7 +250,7 @@
                             Margin="4,0">
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource ClearAll}"
+                            <Image Source="{StaticResource Clear}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -326,7 +326,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource verified}"
+                            <Image Source="{StaticResource ReadyToPick}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -345,11 +345,11 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource edit_audio}"
-                                   Width="16"
-                                   Height="16"
+                            <Image Source="{StaticResource ESCID2}"
+                                   Width="17"
+                                   Height="17"
                                    Margin="0,0,6,0" />
-                            <TextBlock Text="Ticket Code:"
+                            <TextBlock Text="ESC Code:"
                                        VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding EscTicketId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -365,7 +365,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource IDCARD}"
+                            <Image Source="{StaticResource IDTitle}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -383,7 +383,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource identity}"
+                            <Image Source="{StaticResource AddressBook}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -449,7 +449,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource segment}"
+                            <Image Source="{StaticResource CategoryList}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -485,7 +485,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource DeviceModel}"
+                            <Image Source="{StaticResource Model}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -504,7 +504,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Top">
-                            <Image Source="{StaticResource Warning}"
+                            <Image Source="{StaticResource DmgHistory1}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -525,7 +525,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource Serial}"
+                            <Image Source="{StaticResource SerialTitle  }"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -544,7 +544,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Top">
-                            <Image Source="{StaticResource Warning}"
+                            <Image Source="{StaticResource ProblemDescription}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -565,7 +565,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Top">
-                            <Image Source="{StaticResource Notes}"
+                            <Image Source="{StaticResource ListAI3}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -590,7 +590,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Top">
-                            <Image Source="{StaticResource Unassigned}"
+                            <Image Source="{StaticResource BoardMod}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -612,7 +612,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource mobilewrench35}"
+                            <Image Source="{StaticResource RepairStatus}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -645,7 +645,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource Warning}"
+                            <Image Source="{StaticResource Priority}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -751,7 +751,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource ReadyToPick}"
+                            <Image Source="{StaticResource Warranty}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -790,7 +790,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource safety_check}"
+                            <Image Source="{StaticResource RepOnWar}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -809,7 +809,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource token}"
+                            <Image Source="{StaticResource RootCause}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -838,7 +838,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Top">
-                            <Image Source="{StaticResource filter_vintage}"
+                            <Image Source="{StaticResource PartsUsed}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
