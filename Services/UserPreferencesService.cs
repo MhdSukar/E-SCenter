@@ -166,7 +166,8 @@ namespace ESCenter.Services
             InventoryLowStockThreshold = 3,
             AdminUsername = DefaultAdminUsername,
             AdminPasswordHash = DefaultAdminPasswordHash,
-            AutoGrantAdminAccess = false
+            AutoGrantAdminAccess = false,
+            LaunchAtWindowsStartup = false
         };
 
         private static UserPreferences Normalize(UserPreferences? preferences)
@@ -223,6 +224,20 @@ namespace ESCenter.Services
             Save(preferences);
         }
 
+
+
+        public static bool GetLaunchAtWindowsStartup()
+        {
+            var preferences = Load();
+            return preferences.LaunchAtWindowsStartup;
+        }
+
+        public static void SetLaunchAtWindowsStartup(bool enabled)
+        {
+            var preferences = Load();
+            preferences.LaunchAtWindowsStartup = enabled;
+            Save(preferences);
+        }
         public sealed class UserPreferences
         {
             public string PreferredDatabasePath { get; set; } = string.Empty;
@@ -232,6 +247,7 @@ namespace ESCenter.Services
             public string AdminUsername { get; set; } = DefaultAdminUsername;
             public string AdminPasswordHash { get; set; } = DefaultAdminPasswordHash;
             public bool AutoGrantAdminAccess { get; set; } = false;
+            public bool LaunchAtWindowsStartup { get; set; } = false;
         }
 
         private sealed class LegacyDatabaseSettings

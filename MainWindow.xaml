@@ -529,7 +529,13 @@
                             </GroupBox.Header>
 
                             <Grid>
-                                <Button Width="300"
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Button Grid.Row="0"
+                                        Width="300"
                                         Height="44"
                                         FontSize="16"
                                         Margin="0,0,0,0"
@@ -552,7 +558,8 @@
                                     </StackPanel>
                                 </Button>
 
-                                <UniformGrid Columns="2"
+                                <UniformGrid Grid.Row="0"
+                                             Columns="2"
                                              Rows="3"
                                              HorizontalAlignment="Center"
                                              VerticalAlignment="Center">
@@ -607,6 +614,19 @@
                                         </StackPanel>
                                     </Button>
                                 </UniformGrid>
+
+                                <CheckBox Grid.Row="1"
+                                          IsChecked="{Binding LaunchAtWindowsStartup, Mode=TwoWay}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Bottom"
+                                          Margin="0,8,0,0"
+                                          Style="{StaticResource NeonCheckBoxStyle}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Image Source="{StaticResource cadence}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Launch at Windows startup"
+                                                   Foreground="{StaticResource NeonRedDarkBrush}"/>
+                                    </StackPanel>
+                                </CheckBox>
                             </Grid>
                         </GroupBox>
                     </UniformGrid>

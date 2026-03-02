@@ -58,6 +58,33 @@ namespace ESCenter.ViewModels
             }
         }
 
+        private bool _launchAtWindowsStartup;
+        public bool LaunchAtWindowsStartup
+        {
+            get => _launchAtWindowsStartup;
+            set
+            {
+                if (!SetProperty(ref _launchAtWindowsStartup, value))
+                {
+                    return;
+                }
+
+                UserPreferencesService.SetLaunchAtWindowsStartup(value);
+
+                if (!WindowsStartupService.SetLaunchAtStartup(value))
+                {
+                    _launchAtWindowsStartup = WindowsStartupService.IsLaunchAtStartupEnabled();
+                    OnPropertyChanged(nameof(LaunchAtWindowsStartup));
+                    AppLogger.Warning("Unable to update Windows startup setting.");
+                    return;
+                }
+
+                AppLogger.Success(value
+                    ? "Launch at Windows startup enabled."
+                    : "Launch at Windows startup disabled.");
+            }
+        }
+
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
         // Commands bound from MainWindow input bindings (F-keys)
@@ -181,6 +208,14 @@ namespace ESCenter.ViewModels
             if (_autoGrantAdminAccess)
             {
                 IsAdminAccessGranted = true;
+            }
+
+            _launchAtWindowsStartup = UserPreferencesService.GetLaunchAtWindowsStartup();
+            var startupApplyResult = WindowsStartupService.SetLaunchAtStartup(_launchAtWindowsStartup);
+            if (!startupApplyResult)
+            {
+                _launchAtWindowsStartup = WindowsStartupService.IsLaunchAtStartupEnabled();
+                UserPreferencesService.SetLaunchAtWindowsStartup(_launchAtWindowsStartup);
             }
 
             ShowDashboardCommand = new RelayCommand(_ =>
@@ -537,6 +572,10 @@ namespace ESCenter.ViewModels
                 }
 
                 DatabasePathService.ResetToDefaultPath();
+                UserPreferencesService.ResetToDefaultPreferences(DatabasePathService.DefaultPath);
+                IsAdminAccessGranted = false;
+                AutoGrantAdminAccess = false;
+                LaunchAtWindowsStartup = false;
 
                 Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
