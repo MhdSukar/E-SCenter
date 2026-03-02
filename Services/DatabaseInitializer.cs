@@ -85,7 +85,7 @@ namespace ESCenter.Services
             {
                 ["TicketId"] = "INTEGER PRIMARY KEY AUTOINCREMENT",
                 ["EscTicketId"] = "TEXT UNIQUE NOT NULL",
-                ["CustomerId"] = "INTEGER",
+                ["CustomerId"] = "TEXT",
                 ["CustomerName"] = "TEXT NOT NULL",
                 ["PhoneNumber"] = "TEXT NOT NULL",
                 ["ContactMethod"] = "TEXT NOT NULL",

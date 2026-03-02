@@ -128,7 +128,7 @@ namespace ESCenter.Services
             {
                 TicketId = Convert.ToInt32(reader["TicketId"]),
                 EscTicketId = reader["EscTicketId"]?.ToString(),
-                CustomerId = reader["CustomerId"] != DBNull.Value ? Convert.ToInt64(reader["CustomerId"]) : (long?)null,
+                CustomerId = reader["CustomerId"]?.ToString(),
                 CustomerName = reader["CustomerName"]?.ToString(),
                 PhoneNumber = reader["PhoneNumber"]?.ToString(),
                 ContactMethod = reader["ContactMethod"]?.ToString(),
@@ -175,7 +175,7 @@ namespace ESCenter.Services
         private void AddAllParameters(SQLiteCommand cmd, RepairTicket ticket)
         {
             cmd.Parameters.AddWithValue("@escTicketId", ticket.EscTicketId ?? GenerateEscTicketId());
-            cmd.Parameters.AddWithValue("@customerId", ticket.CustomerId.HasValue ? (object)ticket.CustomerId.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@customerId", string.IsNullOrWhiteSpace(ticket.CustomerId) ? (object)DBNull.Value : ticket.CustomerId.Trim());
             cmd.Parameters.AddWithValue("@name", ticket.CustomerName ?? string.Empty);
             cmd.Parameters.AddWithValue("@phone", ticket.PhoneNumber ?? string.Empty);
             cmd.Parameters.AddWithValue("@contact", ticket.ContactMethod ?? string.Empty);

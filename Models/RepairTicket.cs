@@ -13,7 +13,7 @@ namespace ESCenter.Models
         public string EscTicketId { get; set; }
 
         // ================= CUSTOMER =================
-        public long? CustomerId { get; set; }
+        public string CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string PhoneNumber { get; set; }
         public string ContactMethod { get; set; }

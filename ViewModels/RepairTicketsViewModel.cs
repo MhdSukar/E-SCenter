@@ -742,7 +742,7 @@ namespace ESCenter.ViewModels
             }
 
             EscTicketId = ticket.EscTicketId;
-            CustomerIdText = ticket.CustomerId?.ToString() ?? string.Empty;
+            CustomerIdText = ticket.CustomerId ?? string.Empty;
             CustomerName = ticket.CustomerName ?? string.Empty;
             PhoneNumber = ticket.PhoneNumber ?? string.Empty;
             ContactMethod = ticket.ContactMethod ?? "Call";
@@ -793,7 +793,7 @@ namespace ESCenter.ViewModels
             return new RepairTicket
             {
                 EscTicketId = EscTicketId,
-                CustomerId = long.TryParse(CustomerIdText, out var id) ? id : null,
+                CustomerId = string.IsNullOrWhiteSpace(CustomerIdText) ? null : CustomerIdText.Trim(),
                 CustomerName = CustomerName,
                 PhoneNumber = PhoneNumber,
                 ContactMethod = ContactMethod,
@@ -832,7 +832,7 @@ namespace ESCenter.ViewModels
             var receiveDateTime = ReceiveDate.Date.Add(ReceiveTime);
 
             ticket.EscTicketId = EscTicketId;
-            ticket.CustomerId = long.TryParse(CustomerIdText, out var id) ? id : null;
+            ticket.CustomerId = string.IsNullOrWhiteSpace(CustomerIdText) ? null : CustomerIdText.Trim();
             ticket.CustomerName = CustomerName;
             ticket.PhoneNumber = PhoneNumber;
             ticket.ContactMethod = ContactMethod;
@@ -868,7 +868,9 @@ namespace ESCenter.ViewModels
         private string BuildDuplicateNotice(RepairTicket candidate)
         {
             var repeatedCustomer = Tickets.Any(existing =>
-                (candidate.CustomerId.HasValue && existing.CustomerId.HasValue && candidate.CustomerId.Value == existing.CustomerId.Value) ||
+                (!string.IsNullOrWhiteSpace(candidate.CustomerId) &&
+                 !string.IsNullOrWhiteSpace(existing.CustomerId) &&
+                 string.Equals(candidate.CustomerId.Trim(), existing.CustomerId.Trim(), StringComparison.OrdinalIgnoreCase)) ||
                 (!string.IsNullOrWhiteSpace(candidate.CustomerName) &&
                  !string.IsNullOrWhiteSpace(existing.CustomerName) &&
                  string.Equals(candidate.CustomerName.Trim(), existing.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)));
@@ -905,10 +907,10 @@ namespace ESCenter.ViewModels
         {
             foreach (var ticket in Tickets)
             {
-                var hasCustomerIdMatch = ticket.CustomerId.HasValue &&
+                var hasCustomerIdMatch = !string.IsNullOrWhiteSpace(ticket.CustomerId) &&
                                          Tickets.Any(other => other.TicketId != ticket.TicketId &&
-                                                              other.CustomerId.HasValue &&
-                                                              other.CustomerId.Value == ticket.CustomerId.Value);
+                                                              !string.IsNullOrWhiteSpace(other.CustomerId) &&
+                                                              string.Equals(ticket.CustomerId.Trim(), other.CustomerId.Trim(), StringComparison.OrdinalIgnoreCase));
 
                 var hasCustomerNameMatch = !string.IsNullOrWhiteSpace(ticket.CustomerName) &&
                                            Tickets.Any(other => other.TicketId != ticket.TicketId &&
