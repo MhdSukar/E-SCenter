@@ -99,6 +99,7 @@ namespace ESCenter.Services
                 ["Notes"] = "TEXT",
                 ["RepairStatus"] = "TEXT NOT NULL DEFAULT 'Received'",
                 ["PriorityLevel"] = "TEXT NOT NULL DEFAULT 'Normal'",
+                ["TicketType"] = "TEXT NOT NULL DEFAULT 'Normal'",
                 ["EstimatedCost"] = "REAL",
                 ["EstimatedCostCurrency"] = "TEXT DEFAULT 'EUR'",
                 ["FinalCost"] = "REAL",

@@ -1376,6 +1376,25 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="TicketTypeCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource CompactDataGridCellStyle}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding TicketType}" Value="Basic">
+                <Setter Property="Background" Value="#FF87CEEB"/>
+                <Setter Property="Foreground" Value="Black"/>
+            </DataTrigger>
+
+            <DataTrigger Binding="{Binding TicketType}" Value="Advanced">
+                <Setter Property="Background" Value="#FF8A2BE2"/>
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+
+            <DataTrigger Binding="{Binding TicketType}" Value="Premium">
+                <Setter Property="Background" Value="#FFFFD700"/>
+                <Setter Property="Foreground" Value="Black"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- ========================================================================================= -->
     <!-- Other Controls / GroupBox / ProgressBar / Helpers                                      -->
     <!-- ========================================================================================= -->
