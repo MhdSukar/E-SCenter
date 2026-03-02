@@ -77,6 +77,9 @@ namespace ESCenter.ViewModels
         public ObservableCollection<string> PriorityFilters { get; } =
             new ObservableCollection<string> { "All", "Minor", "Normal", "Major", "Critical" };
 
+        public ObservableCollection<string> TicketTypeOptions { get; } =
+            new ObservableCollection<string> { "Normal", "Basic", "Advanced", "Premium" };
+
         private string _selectedPriorityFilter = "All";
         public string SelectedPriorityFilter
         {
@@ -157,6 +160,9 @@ namespace ESCenter.ViewModels
 
         private string _priorityLevel = "Normal";
         public string PriorityLevel { get => _priorityLevel; set => SetProperty(ref _priorityLevel, value); }
+
+        private string _ticketType = "Normal";
+        public string TicketType { get => _ticketType; set => SetProperty(ref _ticketType, value); }
 
         private decimal? _estimatedCost;
         public decimal? EstimatedCost { get => _estimatedCost; set => SetProperty(ref _estimatedCost, value); }
@@ -266,6 +272,8 @@ namespace ESCenter.ViewModels
             _ticketsView = CollectionViewSource.GetDefaultView(Tickets);
             _ticketsView.Filter = TicketFilter;
 
+            EvaluateDuplicateMarkers();
+
             AddCommand = new RelayCommand(_ => AddTicket(), _ => SelectedTicket == null);
             SaveCommand = new RelayCommand(_ => SaveTicket(), _ => SelectedTicket != null);
             DeleteCommand = new RelayCommand(_ => DeleteTicket(), _ => SelectedTicket != null);
@@ -333,6 +341,7 @@ namespace ESCenter.ViewModels
                 Tickets.Add(ticket);
             }
 
+            EvaluateDuplicateMarkers();
             ClearForm();
             _ticketsView.Refresh();
         }
@@ -345,9 +354,16 @@ namespace ESCenter.ViewModels
                     return;
 
                 var ticket = BuildTicketFromForm();
+                var duplicateNotice = BuildDuplicateNotice(ticket);
                 ticket.TicketId = _service.Insert(ticket);
 
                 Tickets.Insert(0, ticket);
+                EvaluateDuplicateMarkers();
+
+                if (!string.IsNullOrWhiteSpace(duplicateNotice))
+                {
+                    MessageBox.Show(duplicateNotice, "Repeated Customer / Device", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
                 _ticketsView.Refresh();
 
                 SelectedTicket = ticket;
@@ -375,6 +391,7 @@ namespace ESCenter.ViewModels
                 _service.Update(SelectedTicket);
 
                 RefreshTicketInCollection(SelectedTicket);
+                EvaluateDuplicateMarkers();
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket updated successfully!");
@@ -406,6 +423,7 @@ namespace ESCenter.ViewModels
                 _service.Delete(SelectedTicket.TicketId);
                 Tickets.Remove(SelectedTicket);
 
+                EvaluateDuplicateMarkers();
                 ClearForm();
                 _ticketsView.Refresh();
 
@@ -524,6 +542,7 @@ namespace ESCenter.ViewModels
             Notes = string.Empty;
             RepairStatus = "Received";
             PriorityLevel = "Normal";
+            TicketType = "Normal";
             EstimatedCost = null;
             FinalCost = null;
             EstimatedCostCurrency = "S.P";
@@ -737,6 +756,7 @@ namespace ESCenter.ViewModels
             Notes = ticket.Notes ?? string.Empty;
             RepairStatus = ticket.RepairStatus ?? "Received";
             PriorityLevel = ticket.PriorityLevel ?? "Normal";
+            TicketType = ticket.TicketType ?? "Normal";
             EstimatedCost = ticket.EstimatedCost;
             FinalCost = ticket.FinalCost;
             EstimatedCostCurrency = ticket.EstimatedCostCurrency ?? "S.P";
@@ -787,6 +807,7 @@ namespace ESCenter.ViewModels
                 Notes = Notes,
                 RepairStatus = RepairStatus,
                 PriorityLevel = PriorityLevel,
+                TicketType = TicketType,
                 EstimatedCost = EstimatedCost,
                 EstimatedCostCurrency = EstimatedCostCurrency,
                 FinalCost = FinalCost,
@@ -825,6 +846,7 @@ namespace ESCenter.ViewModels
             ticket.Notes = Notes;
             ticket.RepairStatus = RepairStatus;
             ticket.PriorityLevel = PriorityLevel;
+            ticket.TicketType = TicketType;
             ticket.EstimatedCost = EstimatedCost;
             ticket.EstimatedCostCurrency = EstimatedCostCurrency;
             ticket.FinalCost = FinalCost;
@@ -841,6 +863,66 @@ namespace ESCenter.ViewModels
                 : null;
             ticket.DeviceChecklist = DeviceChecklist;
             ticket.Accessories = Accessories;
+        }
+
+        private string BuildDuplicateNotice(RepairTicket candidate)
+        {
+            var repeatedCustomer = Tickets.Any(existing =>
+                (candidate.CustomerId.HasValue && existing.CustomerId.HasValue && candidate.CustomerId.Value == existing.CustomerId.Value) ||
+                (!string.IsNullOrWhiteSpace(candidate.CustomerName) &&
+                 !string.IsNullOrWhiteSpace(existing.CustomerName) &&
+                 string.Equals(candidate.CustomerName.Trim(), existing.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)));
+
+            var repeatedDevice = !string.IsNullOrWhiteSpace(candidate.SerialIMEI) &&
+                                 Tickets.Any(existing =>
+                                     !string.IsNullOrWhiteSpace(existing.SerialIMEI) &&
+                                     string.Equals(candidate.SerialIMEI.Trim(), existing.SerialIMEI.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (!repeatedCustomer && !repeatedDevice)
+            {
+                return string.Empty;
+            }
+
+            var lines = new List<string>
+            {
+                "This ticket matches existing records:"
+            };
+
+            if (repeatedCustomer)
+            {
+                lines.Add("• Repeated customer detected (Customer ID or Name matched).");
+            }
+
+            if (repeatedDevice)
+            {
+                lines.Add("• Repeated device detected (Serial/IMEI matched).");
+            }
+
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        private void EvaluateDuplicateMarkers()
+        {
+            foreach (var ticket in Tickets)
+            {
+                var hasCustomerIdMatch = ticket.CustomerId.HasValue &&
+                                         Tickets.Any(other => other.TicketId != ticket.TicketId &&
+                                                              other.CustomerId.HasValue &&
+                                                              other.CustomerId.Value == ticket.CustomerId.Value);
+
+                var hasCustomerNameMatch = !string.IsNullOrWhiteSpace(ticket.CustomerName) &&
+                                           Tickets.Any(other => other.TicketId != ticket.TicketId &&
+                                                                !string.IsNullOrWhiteSpace(other.CustomerName) &&
+                                                                string.Equals(ticket.CustomerName.Trim(), other.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase));
+
+                var hasDeviceMatch = !string.IsNullOrWhiteSpace(ticket.SerialIMEI) &&
+                                     Tickets.Any(other => other.TicketId != ticket.TicketId &&
+                                                          !string.IsNullOrWhiteSpace(other.SerialIMEI) &&
+                                                          string.Equals(ticket.SerialIMEI.Trim(), other.SerialIMEI.Trim(), StringComparison.OrdinalIgnoreCase));
+
+                ticket.IsRepeatedCustomer = hasCustomerIdMatch || hasCustomerNameMatch;
+                ticket.IsRepeatedDevice = hasDeviceMatch;
+            }
         }
 
         // =========================================================

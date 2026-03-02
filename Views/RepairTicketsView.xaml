@@ -153,6 +153,9 @@
                           AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}"
                           SelectionUnit="FullRow">
                     <DataGrid.Columns>
+                        <DataGridTextColumn Header=""
+                                            Binding="{Binding SymbolDisplay}"
+                                            Width="34" />
                         <DataGridTextColumn Header="ESC-ID"
                                             Binding="{Binding EscTicketId}"
                                             Width="70" />
@@ -175,6 +178,10 @@
                                             Binding="{Binding PriorityLevel}"
                                             Width="75"
                                             CellStyle="{StaticResource PriorityCellStyle}" />
+                        <DataGridTextColumn Header="Ticket Type"
+                                            Binding="{Binding TicketType}"
+                                            Width="90"
+                                            CellStyle="{StaticResource TicketTypeCellStyle}" />
                         <DataGridTextColumn Header="Received"
                                             Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}"
                                             Width="100" />
@@ -649,24 +656,33 @@
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
-                            <TextBlock Text="Priority:"
+                            <TextBlock Text="Priority / Type:"
                                        VerticalAlignment="Center" />
                         </StackPanel>
-                        <ComboBox SelectedItem="{Binding PriorityLevel, Mode=TwoWay}"
-                                  Grid.Row="15"
-                                  Grid.Column="1"
-                                  Margin="4"
-                                  Style="{StaticResource NeonComboBoxStyle}">
-                            <ComboBox.ItemsSource>
-                                <x:Array Type="{x:Type sys:String}"
-                                         xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                    <sys:String>Minor</sys:String>
-                                    <sys:String>Normal</sys:String>
-                                    <sys:String>Major</sys:String>
-                                    <sys:String>Critical</sys:String>
-                                </x:Array>
-                            </ComboBox.ItemsSource>
-                        </ComboBox>
+                        <StackPanel Grid.Row="15"
+                                    Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Margin="4">
+                            <ComboBox SelectedItem="{Binding PriorityLevel, Mode=TwoWay}"
+                                      Width="130"
+                                      Margin="0,0,6,0"
+                                      Style="{StaticResource NeonComboBoxStyle}">
+                                <ComboBox.ItemsSource>
+                                    <x:Array Type="{x:Type sys:String}"
+                                             xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                        <sys:String>Minor</sys:String>
+                                        <sys:String>Normal</sys:String>
+                                        <sys:String>Major</sys:String>
+                                        <sys:String>Critical</sys:String>
+                                    </x:Array>
+                                </ComboBox.ItemsSource>
+                            </ComboBox>
+
+                            <ComboBox Width="130"
+                                      SelectedItem="{Binding TicketType, Mode=TwoWay}"
+                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      ItemsSource="{Binding TicketTypeOptions}" />
+                        </StackPanel>
 
                         <!-- ================= COST ================= -->
                         <StackPanel Orientation="Horizontal"

@@ -33,6 +33,7 @@ namespace ESCenter.Models
         // ================= STATUS =================
         public string RepairStatus { get; set; }
         public string PriorityLevel { get; set; }
+        public string TicketType { get; set; } = "Normal";
 
         // ================= COST =================
         public decimal? EstimatedCost { get; set; }
@@ -84,6 +85,23 @@ namespace ESCenter.Models
                 }
 
                 return "-";
+            }
+        }
+
+        [JsonIgnore]
+        public bool IsRepeatedCustomer { get; set; }
+
+        [JsonIgnore]
+        public bool IsRepeatedDevice { get; set; }
+
+        [JsonIgnore]
+        public string SymbolDisplay
+        {
+            get
+            {
+                var star = IsRepeatedCustomer ? "★" : string.Empty;
+                var warning = IsRepeatedDevice ? "⚠" : string.Empty;
+                return $"{star}{warning}";
             }
         }
 
