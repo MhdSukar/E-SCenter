@@ -215,7 +215,7 @@
                                 Command="{Binding CancelCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{StaticResource cancel}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                <Image Source="{StaticResource DeleteClose}" Width="16" Height="16" Margin="0,0,8,0"/>
                                 <TextBlock Text="Cancel"/>
                             </StackPanel>
                         </Button>
@@ -226,7 +226,7 @@
                                 Command="{Binding SaveCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{StaticResource save}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                <Image Source="{StaticResource EditAI}" Width="16" Height="16" Margin="0,0,8,0"/>
                                 <TextBlock Text="Save"/>
                             </StackPanel>
                         </Button>

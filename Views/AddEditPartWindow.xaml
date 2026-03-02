@@ -240,7 +240,7 @@
                                 Command="{Binding CancelCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source ="{StaticResource cancel}"
+                                <Image Source ="{StaticResource DeleteClose}"
                                        Width="16"
                                        Height="16"
                                        Margin="0,0,8,0"/>
@@ -254,7 +254,7 @@
                                 Command="{Binding SaveCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source ="{StaticResource save}"
+                                <Image Source ="{StaticResource EditAI}"
                                        Width="16"
                                        Height="16"
                                        Margin="0,0,8,0"/>
