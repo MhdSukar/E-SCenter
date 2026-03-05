@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -99,9 +99,10 @@ namespace ESCenter.Models
         {
             get
             {
-                var star = IsRepeatedCustomer ? "★" : string.Empty;
-                var warning = IsRepeatedDevice ? "⚠" : string.Empty;
-                return $"{star}{warning}";
+                var warranty = IsWarrantyRepair ? "#" : string.Empty;
+                var star = IsRepeatedCustomer ? "\u2605" : string.Empty;
+                var warning = IsRepeatedDevice ? "\u26A0" : string.Empty;
+                return $"{warranty}{star}{warning}";
             }
         }
 

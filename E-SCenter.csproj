@@ -9,6 +9,12 @@
     <UseWPF>true</UseWPF>
 	  <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Themes\Philips E-SCenter Icon.ico</ApplicationIcon>
+
+	  <Company>E-SCenter</Company>
+	  <Authors>Mohamad Sukar</Authors>
+	  <Product>E-SCenter</Product>
+	  <Description>Electronics Service Center Management App</Description>
+	  <Copyright>© 2026 Mohamad Sukar</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -101,6 +107,7 @@
     <None Remove="Assets\Icons\galaxy-ai6.png" />
     <None Remove="Assets\Icons\GalaxyAiSearch.png" />
     <None Remove="Assets\Icons\google-toolbar.png" />
+    <None Remove="Assets\Icons\Guard.png" />
     <None Remove="Assets\Icons\ID Title.png" />
     <None Remove="Assets\Icons\identity.png" />
     <None Remove="Assets\Icons\id_card - Copy.png" />
@@ -147,7 +154,7 @@
     <None Remove="Assets\Icons\ResetSTG.png" />
     <None Remove="Assets\Icons\RootCause.png" />
     <None Remove="Assets\Icons\safety_check.png" />
-    <None Remove="Assets\Icons\save.png" />
+    <None Remove="Assets\Icons\Save.png" />
     <None Remove="Assets\Icons\saved_search.png" />
     <None Remove="Assets\Icons\search-engines.png" />
     <None Remove="Assets\Icons\search_insights.png" />
@@ -167,6 +174,7 @@
     <None Remove="Assets\Icons\verified.png" />
     <None Remove="Assets\Icons\warning_24d.png" />
     <None Remove="Assets\Icons\Warranty.png" />
+    <None Remove="Assets\Icons\Warranty1.png" />
     <None Remove="Assets\Icons\watch_lock_24dp.png" />
     <None Remove="Assets\Icons\watch_screentime_35dp.png" />
     <None Remove="Themes\Statistics Resurces.txt" />
@@ -350,6 +358,9 @@
     <Resource Include="Assets\Icons\google-toolbar.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\Guard.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\ID Title.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -431,6 +442,9 @@
     <Resource Include="Assets\Icons\safety_check.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\Save.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\search-engines.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -468,6 +482,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Warranty.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Warranty1.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\watch_lock_24dp.png">

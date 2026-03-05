@@ -243,11 +243,11 @@
                             Margin="4,0">
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource EditAI}"
+                            <Image Source="{StaticResource Save}"
                                    Width="23"
                                    Height="23"
                                    Margin="0,0,6,0" />
-                            <TextBlock Text="Edit" Margin="0,2,0,0" />
+                            <TextBlock Text="Save" Margin="0,2,0,0" />
                         </StackPanel>
                     </Button>
 
@@ -768,9 +768,9 @@
                                     Margin="0,6"
                                     VerticalAlignment="Center">
                             <Image Source="{StaticResource Warranty}"
-                                   Width="16"
-                                   Height="16"
-                                   Margin="0,0,6,0" />
+                                   Width="22"
+                                   Height="22"
+                                   Margin="-3,0,3,0" />
                             <TextBlock Text="Warranty:"
                                        VerticalAlignment="Center" />
                         </StackPanel>
@@ -788,7 +788,7 @@
                                 <ComboBox.ItemsSource>
                                     <x:Array Type="{x:Type sys:String}"
                                              xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                        <sys:String>24 Hours</sys:String>
+                                        <sys:String>1 Day</sys:String>
                                         <sys:String>7 Days</sys:String>
                                         <sys:String>14 Days</sys:String>
                                         <sys:String>30 Days</sys:String>

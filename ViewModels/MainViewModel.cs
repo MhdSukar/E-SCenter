@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ESCenter.Core;
+using ESCenter.Models;
 using ESCenter.Services;
 using ESCenter.Windows;
 using OxyPlot;
@@ -199,6 +201,7 @@ namespace ESCenter.ViewModels
 
         private readonly DispatcherTimer _clockTimer;
         private readonly DispatcherTimer _statusResetTimer;
+        private RepairTicketsViewModel? _repairTicketsViewModel;
 
         public MainViewModel()
         {
@@ -236,7 +239,7 @@ namespace ESCenter.ViewModels
                 IsPartsControlSelected = false;
                 IsInventorySelected = false;
                 IsBoneyardSelected = false;
-                Navigate(new RepairTicketsViewModel(), "Tickets loaded");
+                Navigate(GetOrCreateRepairTicketsViewModel(), "Tickets loaded");
             });
 
             ShowPartsControlCommand = new RelayCommand(_ =>
@@ -331,6 +334,60 @@ namespace ESCenter.ViewModels
 
             // Load Al-Baraka totals for current month
             RefreshAlBarakaTotals();
+        }
+
+        public Task HandleDockControlCommandAsync(EscCommandRequest request)
+        {
+            var command = request.Command?.Trim().ToLowerInvariant();
+
+            switch (command)
+            {
+                case "open_dashboard":
+                    ShowDashboardCommand.Execute(null);
+                    break;
+
+                case "new_ticket":
+                    ShowRepairTicketsCommand.Execute(null);
+                    GetOrCreateRepairTicketsViewModel().PrepareNewTicketFromIntegration();
+                    AppLogger.Success("DockControl: New ticket form ready.");
+                    break;
+
+                case "search_device":
+                    ShowRepairTicketsCommand.Execute(null);
+                    var search = TryGetParameter(request.Parameters, "query")
+                                 ?? TryGetParameter(request.Parameters, "search")
+                                 ?? TryGetParameter(request.Parameters, "device")
+                                 ?? TryGetParameter(request.Parameters, "imei")
+                                 ?? string.Empty;
+                    GetOrCreateRepairTicketsViewModel().SearchDeviceFromIntegration(search);
+                    AppLogger.Success($"DockControl: Device search applied ({search}).");
+                    break;
+
+                case "ready_pickups":
+                    ShowRepairTicketsCommand.Execute(null);
+                    GetOrCreateRepairTicketsViewModel().ShowReadyPickupsFromIntegration();
+                    AppLogger.Success("DockControl: Ready pickups view applied.");
+                    break;
+
+                default:
+                    AppLogger.Warning($"DockControl command not supported: {request.Command}");
+                    break;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private RepairTicketsViewModel GetOrCreateRepairTicketsViewModel()
+            => _repairTicketsViewModel ??= new RepairTicketsViewModel();
+
+        private static string? TryGetParameter(Dictionary<string, string>? parameters, string key)
+        {
+            if (parameters == null)
+            {
+                return null;
+            }
+
+            return parameters.TryGetValue(key, out var value) ? value : null;
         }
 
         public void RefreshAlBarakaTotals(DateTime? start = null, DateTime? end = null)

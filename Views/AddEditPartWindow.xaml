@@ -254,9 +254,7 @@
                                 Command="{Binding SaveCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source ="{StaticResource EditAI}"
-                                       Width="16"
-                                       Height="16"
+                                <Image Source="{StaticResource Save}" Width="20" Height="20"
                                        Margin="0,0,8,0"/>
                                 <TextBlock Text="Save"/>
 

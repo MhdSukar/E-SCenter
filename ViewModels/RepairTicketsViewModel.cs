@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -88,6 +88,19 @@ namespace ESCenter.ViewModels
             {
                 if (SetProperty(ref _selectedPriorityFilter, value))
                     _ticketsView.Refresh();
+            }
+        }
+
+        private bool _showReadyPickupsOnly;
+        public bool ShowReadyPickupsOnly
+        {
+            get => _showReadyPickupsOnly;
+            set
+            {
+                if (SetProperty(ref _showReadyPickupsOnly, value))
+                {
+                    _ticketsView.Refresh();
+                }
             }
         }
 
@@ -291,6 +304,28 @@ namespace ESCenter.ViewModels
             SelectedPartsUsed.CollectionChanged += (_, __) => SyncPartsUsedFromCollection();
         }
 
+        public void PrepareNewTicketFromIntegration()
+        {
+            ShowReadyPickupsOnly = false;
+            SearchQuery = string.Empty;
+            SelectedStatusFilter = "Open";
+            ClearForm();
+        }
+
+        public void SearchDeviceFromIntegration(string searchQuery)
+        {
+            ShowReadyPickupsOnly = false;
+            SelectedStatusFilter = "All";
+            SearchQuery = searchQuery?.Trim() ?? string.Empty;
+        }
+
+        public void ShowReadyPickupsFromIntegration()
+        {
+            SearchQuery = string.Empty;
+            SelectedStatusFilter = "All";
+            ShowReadyPickupsOnly = true;
+        }
+
         // =========================================================
         // FILTER LOGIC
         // =========================================================
@@ -308,6 +343,9 @@ namespace ESCenter.ViewModels
 
             if (SelectedPriorityFilter != "All" &&
                 !string.Equals(t.PriorityLevel, SelectedPriorityFilter, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            if (ShowReadyPickupsOnly && !t.IsReadyForPickup)
                 return false;
 
             if (!string.IsNullOrWhiteSpace(SearchQuery))
@@ -355,6 +393,7 @@ namespace ESCenter.ViewModels
 
                 var ticket = BuildTicketFromForm();
                 var duplicateNotice = BuildDuplicateNotice(ticket);
+                ApplyWarrantyRepairSuggestion(ticket);
                 ticket.TicketId = _service.Insert(ticket);
 
                 Tickets.Insert(0, ticket);
@@ -864,6 +903,56 @@ namespace ESCenter.ViewModels
             ticket.DeviceChecklist = DeviceChecklist;
             ticket.Accessories = Accessories;
         }
+        private void ApplyWarrantyRepairSuggestion(RepairTicket ticket)
+        {
+            if (ticket == null)
+            {
+                return;
+            }
+
+            var matchingWarrantyRecord = FindActiveWarrantyMatch(ticket);
+            if (matchingWarrantyRecord == null)
+            {
+                return;
+            }
+
+            var prompt =
+                $"This device has an active warranty from ticket {matchingWarrantyRecord.EscTicketId}." + Environment.NewLine +
+                "Do you want to set this new ticket as a warranty repair?";
+
+            var result = System.Windows.MessageBox.Show(
+                prompt,
+                "Active Warranty Found",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            ticket.IsWarrantyRepair = true;
+            IsWarrantyRepair = true;
+        }
+
+        private RepairTicket FindActiveWarrantyMatch(RepairTicket candidate)
+        {
+            if (candidate == null ||
+                !candidate.CustomerId.HasValue ||
+                string.IsNullOrWhiteSpace(candidate.SerialIMEI))
+            {
+                return null;
+            }
+
+            var normalizedSerial = candidate.SerialIMEI.Trim();
+
+            return Tickets.FirstOrDefault(existing =>
+                existing.CustomerId.HasValue &&
+                existing.CustomerId.Value == candidate.CustomerId.Value &&
+                !string.IsNullOrWhiteSpace(existing.SerialIMEI) &&
+                string.Equals(existing.SerialIMEI.Trim(), normalizedSerial, StringComparison.OrdinalIgnoreCase) &&
+                WarrantyEvaluator.HasActiveWarranty(existing));
+        }
 
         private string BuildDuplicateNotice(RepairTicket candidate)
         {
@@ -890,12 +979,12 @@ namespace ESCenter.ViewModels
 
             if (repeatedCustomer)
             {
-                lines.Add("• Repeated customer detected (Customer ID or Name matched).");
+                lines.Add("ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Repeated customer detected (Customer ID or Name matched).");
             }
 
             if (repeatedDevice)
             {
-                lines.Add("• Repeated device detected (Serial/IMEI matched).");
+                lines.Add("ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Repeated device detected (Serial/IMEI matched).");
             }
 
             return string.Join(Environment.NewLine, lines);

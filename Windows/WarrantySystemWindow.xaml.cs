@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -52,12 +51,12 @@ namespace ESCenter.Windows
             if (WindowState == WindowState.Maximized)
             {
                 WindowState = WindowState.Normal;
-                btnMaximize.Content = "□";
+                btnMaximize.Content = "\\u25A1";
             }
             else
             {
                 WindowState = WindowState.Maximized;
-                btnMaximize.Content = "❐";
+                btnMaximize.Content = "\\u25A1";
             }
         }
 
@@ -84,7 +83,7 @@ namespace ESCenter.Windows
 
             foreach (var ticket in tickets)
             {
-                if (!TryGetExpiration(ticket, out var expiresAt))
+                if (!WarrantyEvaluator.TryGetExpiration(ticket, out var expiresAt))
                 {
                     continue;
                 }
@@ -98,7 +97,7 @@ namespace ESCenter.Windows
                     DeviceName = BuildDeviceName(ticket),
                     SerialNumber = string.IsNullOrWhiteSpace(ticket.SerialIMEI) ? "-" : ticket.SerialIMEI,
                     WarrantyPeriod = string.IsNullOrWhiteSpace(ticket.WarrantyPeriod) ? "-" : ticket.WarrantyPeriod,
-                    WarrantyStartDateText = GetWarrantyStart(ticket).ToString("yyyy-MM-dd"),
+                    WarrantyStartDateText = (ticket.DeliveryDate?.Date ?? ticket.ReceiveDate.Date).ToString("yyyy-MM-dd"),
                     WarrantyEndDateText = expiresAt.ToString("yyyy-MM-dd"),
                     RemainingText = daysLeft >= 0 ? $"{daysLeft} day(s)" : $"Expired {-daysLeft} day(s) ago",
                     WarrantyState = daysLeft >= 0 ? "Active" : "Expired"
@@ -113,50 +112,6 @@ namespace ESCenter.Windows
 
             var combined = string.Join(" / ", parts);
             return string.IsNullOrWhiteSpace(combined) ? "Unknown Device" : combined;
-        }
-
-        private static DateTime GetWarrantyStart(RepairTicket ticket)
-        {
-            return ticket.DeliveryDate?.Date ?? ticket.ReceiveDate.Date;
-        }
-
-        private static bool TryGetExpiration(RepairTicket ticket, out DateTime expiration)
-        {
-            expiration = GetWarrantyStart(ticket);
-
-            if (string.IsNullOrWhiteSpace(ticket.WarrantyPeriod))
-            {
-                return false;
-            }
-
-            var normalized = ticket.WarrantyPeriod.Trim().ToLowerInvariant();
-            var digits = new string(normalized.Where(char.IsDigit).ToArray());
-
-            if (!int.TryParse(digits, NumberStyles.Integer, CultureInfo.InvariantCulture, out var amount) || amount <= 0)
-            {
-                return false;
-            }
-
-            if (normalized.Contains("year"))
-            {
-                expiration = expiration.AddYears(amount);
-                return true;
-            }
-
-            if (normalized.Contains("month"))
-            {
-                expiration = expiration.AddMonths(amount);
-                return true;
-            }
-
-            if (normalized.Contains("day"))
-            {
-                expiration = expiration.AddDays(amount);
-                return true;
-            }
-
-            expiration = expiration.AddDays(amount);
-            return true;
         }
     }
 
