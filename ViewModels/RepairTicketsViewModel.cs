@@ -91,6 +91,19 @@ namespace ESCenter.ViewModels
             }
         }
 
+        private bool _showReadyPickupsOnly;
+        public bool ShowReadyPickupsOnly
+        {
+            get => _showReadyPickupsOnly;
+            set
+            {
+                if (SetProperty(ref _showReadyPickupsOnly, value))
+                {
+                    _ticketsView.Refresh();
+                }
+            }
+        }
+
         // =========================================================
         // CURRENCY
         // =========================================================
@@ -291,6 +304,28 @@ namespace ESCenter.ViewModels
             SelectedPartsUsed.CollectionChanged += (_, __) => SyncPartsUsedFromCollection();
         }
 
+        public void PrepareNewTicketFromIntegration()
+        {
+            ShowReadyPickupsOnly = false;
+            SearchQuery = string.Empty;
+            SelectedStatusFilter = "Open";
+            ClearForm();
+        }
+
+        public void SearchDeviceFromIntegration(string searchQuery)
+        {
+            ShowReadyPickupsOnly = false;
+            SelectedStatusFilter = "All";
+            SearchQuery = searchQuery?.Trim() ?? string.Empty;
+        }
+
+        public void ShowReadyPickupsFromIntegration()
+        {
+            SearchQuery = string.Empty;
+            SelectedStatusFilter = "All";
+            ShowReadyPickupsOnly = true;
+        }
+
         // =========================================================
         // FILTER LOGIC
         // =========================================================
@@ -308,6 +343,9 @@ namespace ESCenter.ViewModels
 
             if (SelectedPriorityFilter != "All" &&
                 !string.Equals(t.PriorityLevel, SelectedPriorityFilter, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            if (ShowReadyPickupsOnly && !t.IsReadyForPickup)
                 return false;
 
             if (!string.IsNullOrWhiteSpace(SearchQuery))

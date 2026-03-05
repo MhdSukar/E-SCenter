@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using ESCenter.Models;
 using ESCenter.Services;
 using ESCenter.Windows;
 
@@ -13,6 +14,7 @@ namespace ESCenter
         private static Mutex? _mutex;
         private NotifyIcon? _trayIcon;
         private TrayPopupWindow? _trayPopup;
+        private DockControlIntegrationServer? _dockControlServer;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -33,6 +35,7 @@ namespace ESCenter
             InitializeDatabase();
             SetupTrayIcon();
             ShowMainWindow();
+            StartDockControlIntegrationServer();
         }
 
         private void InitializeDatabase()
@@ -76,6 +79,31 @@ namespace ESCenter
             MainWindow.Show();
             MainWindow.WindowState = WindowState.Normal;
             MainWindow.Activate();
+        }
+
+        private void StartDockControlIntegrationServer()
+        {
+            _dockControlServer = new DockControlIntegrationServer(HandleDockControlCommandAsync);
+            _dockControlServer.Start();
+        }
+
+        private Task HandleDockControlCommandAsync(EscCommandRequest request)
+        {
+            return Dispatcher.InvokeAsync(() =>
+            {
+                if (MainWindow == null)
+                {
+                    ShowMainWindow();
+                }
+
+                if (MainWindow?.DataContext is not ViewModels.MainViewModel vm)
+                {
+                    Core.AppLogger.Warning("DockControl command ignored: main view model unavailable.");
+                    return;
+                }
+
+                vm.HandleDockControlCommandAsync(request);
+            }).Task;
         }
 
         public void ExitApp()
@@ -167,6 +195,9 @@ namespace ESCenter
                 _mutex.ReleaseMutex();
                 _mutex.Dispose();
             }
+
+            _dockControlServer?.StopAsync().GetAwaiter().GetResult();
+            _dockControlServer?.Dispose();
 
             base.OnExit(e);
         }
