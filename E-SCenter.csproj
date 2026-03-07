@@ -29,6 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\DockControlIntegrationServer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Assets\Icons\Add.png" />
     <None Remove="Assets\Icons\AddressBook.png" />
     <None Remove="Assets\Icons\add_task.png" />

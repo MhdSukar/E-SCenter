@@ -14,7 +14,6 @@ namespace ESCenter
         private static Mutex? _mutex;
         private NotifyIcon? _trayIcon;
         private TrayPopupWindow? _trayPopup;
-        private DockControlIntegrationServer? _dockControlServer;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -35,7 +34,6 @@ namespace ESCenter
             InitializeDatabase();
             SetupTrayIcon();
             ShowMainWindow();
-            StartDockControlIntegrationServer();
         }
 
         private void InitializeDatabase()
@@ -79,12 +77,6 @@ namespace ESCenter
             MainWindow.Show();
             MainWindow.WindowState = WindowState.Normal;
             MainWindow.Activate();
-        }
-
-        private void StartDockControlIntegrationServer()
-        {
-            _dockControlServer = new DockControlIntegrationServer(HandleDockControlCommandAsync);
-            _dockControlServer.Start();
         }
 
         private Task HandleDockControlCommandAsync(EscCommandRequest request)
@@ -195,9 +187,6 @@ namespace ESCenter
                 _mutex.ReleaseMutex();
                 _mutex.Dispose();
             }
-
-            _dockControlServer?.StopAsync().GetAwaiter().GetResult();
-            _dockControlServer?.Dispose();
 
             base.OnExit(e);
         }
