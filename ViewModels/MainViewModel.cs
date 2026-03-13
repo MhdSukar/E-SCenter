@@ -791,7 +791,7 @@ namespace ESCenter.ViewModels
                                                    && t.ReceiveDate < dayEnd));
             }
 
-            EnsureStatusToggle("Open", "#FFFFFF");
+            EnsureStatusToggle("ongoing", "#FFFFFF");
             EnsureStatusToggle("Finished", "#5AA7FF");
             EnsureStatusToggle("Critical", "#FF8C42");
 
@@ -803,7 +803,7 @@ namespace ESCenter.ViewModels
 
             TicketsSeries = new ISeries[]
             {
-                BuildSeries("Open", openCounts, SKColor.Parse("#FFFFFF")),
+                BuildSeries("ongoing", openCounts, SKColor.Parse("#FFFFFF")),
                 BuildSeries("Finished", finishedCounts, SKColor.Parse("#5AA7FF")),
                 BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42"))
             };
@@ -826,7 +826,7 @@ namespace ESCenter.ViewModels
                 {
                     MinLimit = 0,
                     LabelsPaint = new SolidColorPaint(SKColors.White),
-                    TextSize = 10,
+                    TextSize = 8,
                     Name = "Tickets",
                     NamePaint = new SolidColorPaint(SKColors.White),
                     MinStep = 1,
