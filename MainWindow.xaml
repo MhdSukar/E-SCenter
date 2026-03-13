@@ -427,6 +427,14 @@
                                            VerticalAlignment="Center"
                                            Foreground="{StaticResource TextSecondaryBrush}"/>
 
+                                <TextBlock Grid.Column="4" Grid.Row="0"
+                                           Text="Overdue (>2 days)"
+                                           FontSize="8"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+
 
                                 <TextBlock Text="{Binding Dashboard.TotalTickets}" Grid.Row="1" Grid.Column="0"
                                            FontSize="28"
@@ -453,6 +461,13 @@
                                            FontSize="28"
                                            FontWeight="Bold"
                                            Foreground="{StaticResource NeonOrangeBrush}"
+                                           Margin="0,8,0,0"
+                                           HorizontalAlignment="Center"/>
+
+                                <TextBlock Text="{Binding Dashboard.OverdueTickets}" Grid.Row="1" Grid.Column="4"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource NeonRedBrush}"
                                            Margin="0,8,0,0"
                                            HorizontalAlignment="Center"/>
 
