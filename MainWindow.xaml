@@ -311,7 +311,7 @@
                                 </StackPanel>
                             </GroupBox.Header>
 
-                            <Grid Height="170" Margin="0,-8,0,0">
+                            <Grid Height="137" Margin="0,-8,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
@@ -322,13 +322,12 @@
                                                     Series="{Binding TicketsSeries}"
                                                     XAxes="{Binding TicketsXAxis}"
                                                     YAxes="{Binding TicketsYAxis}"
-                                                    DrawMarginFrame="True"
                                                     LegendPosition="Hidden"/>
 
                                 <ScrollViewer Grid.Row="1"
                                               HorizontalScrollBarVisibility="Auto"
                                               VerticalScrollBarVisibility="Disabled">
-                                    <ItemsControl ItemsSource="{Binding TicketStatusCurves}">
+                                    <ItemsControl ItemsSource="{Binding TicketStatusCurves}" Width="335">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <StackPanel Orientation="Horizontal"/>
@@ -343,7 +342,7 @@
                                                         CommandParameter="{Binding Key}">
                                                     <Button.Style>
                                                         <Style TargetType="Button" BasedOn="{StaticResource NeonDarkCyanButtonStyle}">
-                                                            <Setter Property="Width" Value="58"/>
+                                                            <Setter Property="Width" Value="20"/>
                                                             <Setter Property="Height" Value="22"/>
                                                             <Setter Property="BorderThickness" Value="1"/>
                                                             <Setter Property="Opacity" Value="1"/>
@@ -355,7 +354,7 @@
                                                         </Style>
                                                     </Button.Style>
                                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                        <Image Width="14"
+                                                        <Image Width="12"
                                                                Height="14"
                                                                Stretch="Uniform"
                                                                Margin="0,0,4,0"
