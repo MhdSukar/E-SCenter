@@ -8,19 +8,19 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Declare converters first -->
-            <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-            <conv:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
-            <conv:SeriesKeyToIconConverter x:Key="SeriesKeyToIconConverter"/>
-
-
-            <!-- Merge your themes -->
+            <!-- Merge your themes first (property element must be before dictionary items) -->
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Themes/Colors.xaml"/>
                 <ResourceDictionary Source="/Themes/Brushes.xaml"/>
                 <ResourceDictionary Source="/Themes/Controls.xaml"/>
                 <ResourceDictionary Source="/Themes/IconsTemplates.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Declare converters -->
+            <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <conv:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+            <conv:SeriesKeyToIconConverter x:Key="SeriesKeyToIconConverter"/>
+
             <!-- ================= MVVM View Mappings ================= -->
             <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
                 <views:DashboardView/>
@@ -45,10 +45,10 @@
             <DataTemplate DataType="{x:Type vm:BoneyardViewModel}">
                 <views:BoneyardView/>
             </DataTemplate>
+
             <DataTemplate DataType="{x:Type vm:AlBarakaViewModel}">
                 <views:AlBarakaView/>
             </DataTemplate>
-            
         </ResourceDictionary>
     </Application.Resources>
 </Application>
