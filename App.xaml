@@ -11,7 +11,7 @@
             <!-- Declare converters first -->
             <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <conv:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
-
+            <conv:SeriesKeyToIconConverter x:Key="SeriesKeyToIconConverter"/>
 
 
             <!-- Merge your themes -->

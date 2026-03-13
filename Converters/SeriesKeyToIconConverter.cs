@@ -20,11 +20,11 @@ namespace ESCenter.Converters
                 _ => "Charts"
             };
 
-            var image = System.Windows.Application.Current.TryFindResource(iconResourceKey);
+            var image = Application.Current.TryFindResource(iconResourceKey);
             return image as ImageSource ?? DependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => System.Windows.Data.Binding.DoNothing;
+            => Binding.DoNothing;
     }
 }
