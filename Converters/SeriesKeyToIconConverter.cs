@@ -1,12 +1,14 @@
 using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Media;
+using WApplication = System.Windows.Application;
+using WDependencyProperty = System.Windows.DependencyProperty;
+using WImageSource = System.Windows.Media.ImageSource;
+using WBinding = System.Windows.Data.Binding;
+using WData = System.Windows.Data;
 
 namespace ESCenter.Converters
 {
-    public class SeriesKeyToIconConverter : IValueConverter
+    public class SeriesKeyToIconConverter : WData.IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -20,11 +22,11 @@ namespace ESCenter.Converters
                 _ => "Charts"
             };
 
-            var image = Application.Current.TryFindResource(iconResourceKey);
-            return image as ImageSource ?? DependencyProperty.UnsetValue;
+            var image = WApplication.Current.TryFindResource(iconResourceKey);
+            return image as WImageSource ?? WDependencyProperty.UnsetValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+            => WBinding.DoNothing;
     }
 }
