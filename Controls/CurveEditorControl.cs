@@ -11,6 +11,7 @@ using System.Windows.Media;
 using ESCenter.Models;
 using WPoint = System.Windows.Point;
 using WVector = System.Windows.Vector;
+using WFlowDirection = System.Windows.FlowDirection;
 using WMouseEventArgs = System.Windows.Input.MouseEventArgs;
 using WMouseButtonEventArgs = System.Windows.Input.MouseButtonEventArgs;
 using WMouseWheelEventArgs = System.Windows.Input.MouseWheelEventArgs;
@@ -134,14 +135,14 @@ namespace ESCenter.Controls
             for (var i = 0; i <= 4; i++)
             {
                 var x = (ActualWidth / 4.0) * i;
-                var xLabel = new FormattedText($"{i * 25}%", CultureInfo.InvariantCulture, FlowDirection.LeftToRight, typeface, 9, textBrush, dpi);
+                var xLabel = new FormattedText($"{i * 25}%", CultureInfo.InvariantCulture, WFlowDirection.LeftToRight, typeface, 9, textBrush, dpi);
                 dc.DrawText(xLabel, new WPoint(Math.Max(0, x - 10), Math.Max(0, ActualHeight - 14)));
             }
 
             for (var i = 0; i <= 4; i++)
             {
                 var y = (ActualHeight / 4.0) * i;
-                var yLabel = new FormattedText($"{100 - (i * 25)}", CultureInfo.InvariantCulture, FlowDirection.LeftToRight, typeface, 9, textBrush, dpi);
+                var yLabel = new FormattedText($"{100 - (i * 25)}", CultureInfo.InvariantCulture, WFlowDirection.LeftToRight, typeface, 9, textBrush, dpi);
                 dc.DrawText(yLabel, new WPoint(2, Math.Max(0, y - 7)));
             }
 
