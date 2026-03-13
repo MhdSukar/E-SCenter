@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,13 +8,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ESCenter.Core;
+using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Services;
 using ESCenter.Windows;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Legends;
-using OxyPlot.Series;
 
 namespace ESCenter.ViewModels
 {
@@ -192,12 +190,23 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _totalAlBarakaUSD, value);
         }
 
-        private PlotModel _ticketsPlotModel;
-        public PlotModel TicketsPlotModel
+        public ObservableCollection<CurveSeries> TicketStatusCurves { get; } = new();
+
+        private double _curveIndicatorRatio = 0.5;
+        public double CurveIndicatorRatio
         {
-            get => _ticketsPlotModel;
-            set => SetProperty(ref _ticketsPlotModel, value);
+            get => _curveIndicatorRatio;
+            set => SetProperty(ref _curveIndicatorRatio, value);
         }
+
+        private double _statusButtonSize = 18;
+        public double StatusButtonSize
+        {
+            get => _statusButtonSize;
+            set => SetProperty(ref _statusButtonSize, value);
+        }
+
+        public ICommand ToggleCurveVisibilityCommand { get; }
 
         private readonly DispatcherTimer _clockTimer;
         private readonly DispatcherTimer _statusResetTimer;
@@ -330,7 +339,22 @@ namespace ESCenter.ViewModels
             TicketEvents.TicketsChanged += (_, _) => RefreshTicketsChart();
             DatabasePathService.DatabasePathChanged += (_, _) => RefreshTicketsChart();
 
-            _ticketsPlotModel = CreateTicketsActivityPlotModel();
+            ToggleCurveVisibilityCommand = new RelayCommand(param =>
+            {
+                var key = param as string;
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    return;
+                }
+
+                var curve = TicketStatusCurves.FirstOrDefault(c => c.Key == key);
+                if (curve is not null)
+                {
+                    curve.IsVisible = !curve.IsVisible;
+                }
+            });
+
+            RefreshTicketsChart();
 
             // Load Al-Baraka totals for current month
             RefreshAlBarakaTotals();
@@ -732,29 +756,6 @@ namespace ESCenter.ViewModels
 
         private void RefreshTicketsChart()
         {
-            TicketsPlotModel = CreateTicketsActivityPlotModel();
-        }
-
-        private PlotModel CreateTicketsActivityPlotModel()
-        {
-            var model = new PlotModel
-            {
-                Background = OxyColors.Transparent,
-                PlotAreaBorderColor = OxyColor.FromAColor(80, OxyColors.White),
-                TextColor = OxyColors.White,
-                Padding = new OxyThickness(10, 8, 10, 0)
-            };
-
-            model.Legends.Add(new Legend
-            {
-                LegendPosition = LegendPosition.TopRight,
-                LegendPlacement = LegendPlacement.Outside,
-                LegendOrientation = LegendOrientation.Horizontal,
-                TextColor = OxyColors.White,
-                LegendTitleColor = OxyColors.White,
-                LegendFontSize = 8
-            });
-
             var dataService = new TicketsDataService();
             var tickets = dataService.GetAll();
 
@@ -762,77 +763,52 @@ namespace ESCenter.ViewModels
                 .Select(offset => DateTime.Today.AddDays(-6 + offset))
                 .ToList();
 
-            var openedSeries = new LineSeries
-            {
-                Title = "Opened",
-                Color = OxyColor.Parse("#37E2D5"),
-                StrokeThickness = 3,
-                MarkerType = MarkerType.Star,
-                MarkerSize = 3,
-                MarkerFill = OxyColor.Parse("#37E2D5"),
-                CanTrackerInterpolatePoints = false,
-                TrackerFormatString = "{2}: {4:0} opened"
-            };
+            var openCounts = new List<int>();
+            var finishedCounts = new List<int>();
+            var criticalCounts = new List<int>();
+            var overdueCounts = new List<int>();
 
-            var finishedSeries = new AreaSeries
+            foreach (var day in days)
             {
-                Title = "Finished",
-                Color = OxyColor.Parse("#5AA7FF"),
-                Fill = OxyColor.FromAColor(90, OxyColor.Parse("#5AA7FF")),
-                StrokeThickness = 2,
-                MarkerType = MarkerType.Star,
-                TrackerFormatString = "{2}: {4:0} finished"
-            };
-
-            for (var i = 0; i < days.Count; i++)
-            {
-                var day = days[i];
                 var dayEnd = day.AddDays(1);
+                var open = tickets.Count(t => t.ReceiveDate >= day && t.ReceiveDate < dayEnd);
+                var finished = tickets.Count(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value >= day && t.DeliveryDate.Value < dayEnd);
+                var criticalOpen = tickets.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase)
+                                                     && !t.DeliveryDate.HasValue
+                                                     && t.ReceiveDate < dayEnd);
+                var overdue = tickets.Count(t => !t.DeliveryDate.HasValue && (day - t.ReceiveDate.Date).TotalDays > 2);
 
-                var opened = tickets.Count(t => t.ReceiveDate >= day && t.ReceiveDate < dayEnd);
-                var finished = tickets.Count(t => t.DeliveryDate.HasValue &&
-                                                  t.DeliveryDate.Value >= day &&
-                                                  t.DeliveryDate.Value < dayEnd);
-
-                openedSeries.Points.Add(new DataPoint(i, opened));
-                finishedSeries.Points.Add(new DataPoint(i, finished));
-                finishedSeries.Points2.Add(new DataPoint(i, 0));
+                openCounts.Add(open);
+                finishedCounts.Add(finished);
+                criticalCounts.Add(criticalOpen);
+                overdueCounts.Add(overdue);
             }
 
-            model.Series.Add(finishedSeries);
-            model.Series.Add(openedSeries);
+            var max = new[] { 1, openCounts.Max(), finishedCounts.Max(), criticalCounts.Max(), overdueCounts.Max() }.Max();
 
-            var xAxis = new CategoryAxis
-            {
-                Position = AxisPosition.Bottom,
-                TextColor = OxyColors.White,
-                AxislineColor = OxyColors.White,
-                TicklineColor = OxyColors.White,
-                MajorGridlineStyle = LineStyle.None,
-                MinorGridlineStyle = LineStyle.None
-            };
+            BuildOrUpdateCurve("Open", Colors.White, openCounts, max);
+            BuildOrUpdateCurve("Finished", (Color)ColorConverter.ConvertFromString("#5AA7FF"), finishedCounts, max);
+            BuildOrUpdateCurve("Critical", (Color)ColorConverter.ConvertFromString("#FF8C42"), criticalCounts, max);
+            BuildOrUpdateCurve("Overdue", (Color)ColorConverter.ConvertFromString("#FF5A5A"), overdueCounts, max);
+        }
 
-            foreach (var d in days)
+        private void BuildOrUpdateCurve(string key, Color color, IReadOnlyList<int> values, int max)
+        {
+            var existing = TicketStatusCurves.FirstOrDefault(c => c.Key == key);
+            if (existing is null)
             {
-                xAxis.Labels.Add(d.ToString("ddd"));
+                existing = new CurveSeries { Key = key, Stroke = new SolidColorBrush(color), IsVisible = true };
+                TicketStatusCurves.Add(existing);
             }
 
-            model.Axes.Add(xAxis);
-
-            model.Axes.Add(new LinearAxis
+            existing.Nodes.Clear();
+            for (var i = 0; i < values.Count; i++)
             {
-                Position = AxisPosition.Left,
-                Minimum = 0,
-                TextColor = OxyColors.White,
-                AxislineColor = OxyColors.White,
-                TicklineColor = OxyColors.White,
-                MajorGridlineStyle = LineStyle.Solid,
-                MajorGridlineColor = OxyColor.FromAColor(30, OxyColors.White),
-                MinorGridlineStyle = LineStyle.None,
-                Title = "Tickets",
-                TitleColor = OxyColors.White
-            });
-            return model;
+                var x = values.Count == 1 ? 0 : i / (double)(values.Count - 1);
+                var y = 1 - (values[i] / (double)max);
+                var node = new CurveNode(new System.Windows.Point(x, y));
+                existing.Nodes.Add(node);
+            }
         }
     }
 }
