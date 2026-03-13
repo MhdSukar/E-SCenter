@@ -5,10 +5,21 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Media;
 using ESCenter.Models;
+using WPoint = System.Windows.Point;
+using WVector = System.Windows.Vector;
+using WMouseEventArgs = System.Windows.Input.MouseEventArgs;
+using WMouseButtonEventArgs = System.Windows.Input.MouseButtonEventArgs;
+using WMouseWheelEventArgs = System.Windows.Input.MouseWheelEventArgs;
+using WCursors = System.Windows.Input.Cursors;
+using MediaBrushes = System.Windows.Media.Brushes;
+using MediaColor = System.Windows.Media.Color;
+using MediaColorConverter = System.Windows.Media.ColorConverter;
+using MediaPen = System.Windows.Media.Pen;
+using SolidColorBrush = System.Windows.Media.SolidColorBrush;
+using DrawingContext = System.Windows.Media.DrawingContext;
 
 namespace ESCenter.Controls
 {
@@ -33,9 +44,9 @@ namespace ESCenter.Controls
         private CurveSeries? _selectedSeries;
         private CurveNode? _selectedNode;
         private DragTarget _dragTarget = DragTarget.None;
-        private Point _dragStart;
-        private Point _nodeStart;
-        private Point _handleStart;
+        private WPoint _dragStart;
+        private WPoint _nodeStart;
+        private WPoint _handleStart;
         private double _zoom = 1.0;
         private double _hoverIndicatorRatio = 0.5;
         private bool _isMouseIndicatorActive;
@@ -55,15 +66,15 @@ namespace ESCenter.Controls
         public CurveEditorControl()
         {
             ClipToBounds = true;
-            Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0F1624"));
+            Background = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#0F1624"));
             MinHeight = 140;
 
-            _curvePath.Stroke = Brushes.White;
+            _curvePath.Stroke = MediaBrushes.White;
             _curvePath.StrokeThickness = 2.2;
             _curvePath.SnapsToDevicePixels = true;
             Children.Add(_curvePath);
 
-            _indicatorLine.Stroke = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6AF7EF"));
+            _indicatorLine.Stroke = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#6AF7EF"));
             _indicatorLine.StrokeThickness = 1.5;
             _indicatorLine.IsHitTestVisible = false;
             Children.Add(_indicatorLine);
@@ -77,37 +88,37 @@ namespace ESCenter.Controls
             MouseLeftButtonUp += OnMouseLeftButtonUp;
             MouseRightButtonUp += OnMouseRightButtonUp;
             MouseWheel += OnMouseWheel;
-            MouseDoubleClick += OnMouseDoubleClick;
+            
         }
 
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
 
-            var majorPen = new Pen(new SolidColorBrush(Color.FromArgb(65, 255, 255, 255)), 1);
-            var minorPen = new Pen(new SolidColorBrush(Color.FromArgb(25, 255, 255, 255)), 1);
+            var majorPen = new MediaPen(new SolidColorBrush(MediaColor.FromArgb(65, 255, 255, 255)), 1);
+            var minorPen = new MediaPen(new SolidColorBrush(MediaColor.FromArgb(25, 255, 255, 255)), 1);
 
             var minorStep = 12.0 * _zoom;
             var majorStep = 48.0 * _zoom;
 
             for (var x = 0.0; x <= ActualWidth; x += minorStep)
             {
-                dc.DrawLine(minorPen, new Point(x, 0), new Point(x, ActualHeight));
+                dc.DrawLine(minorPen, new WPoint(x, 0), new WPoint(x, ActualHeight));
             }
 
             for (var y = 0.0; y <= ActualHeight; y += minorStep)
             {
-                dc.DrawLine(minorPen, new Point(0, y), new Point(ActualWidth, y));
+                dc.DrawLine(minorPen, new WPoint(0, y), new WPoint(ActualWidth, y));
             }
 
             for (var x = 0.0; x <= ActualWidth; x += majorStep)
             {
-                dc.DrawLine(majorPen, new Point(x, 0), new Point(x, ActualHeight));
+                dc.DrawLine(majorPen, new WPoint(x, 0), new WPoint(x, ActualHeight));
             }
 
             for (var y = 0.0; y <= ActualHeight; y += majorStep)
             {
-                dc.DrawLine(majorPen, new Point(0, y), new Point(ActualWidth, y));
+                dc.DrawLine(majorPen, new WPoint(0, y), new WPoint(ActualWidth, y));
             }
         }
 
@@ -273,7 +284,7 @@ namespace ESCenter.Controls
                 group.Children.Add(seriesGeometry);
             }
 
-            _curvePath.Stroke = Brushes.White;
+            _curvePath.Stroke = MediaBrushes.White;
             _curvePath.Data = group;
         }
 
@@ -293,7 +304,7 @@ namespace ESCenter.Controls
                     var handleIn = CreateHandleEllipse(node, DragTarget.HandleIn, 6, "#FFD800");
                     var handleOut = CreateHandleEllipse(node, DragTarget.HandleOut, 6, "#FFD800");
 
-                    var connectorPen = new Pen(new SolidColorBrush(Color.FromArgb(120, 255, 216, 0)), 1);
+                    var connectorPen = new MediaPen(new SolidColorBrush(MediaColor.FromArgb(120, 255, 216, 0)), 1);
                     var inLine = new Line
                     {
                         X1 = ToCanvas(node.Position).X,
@@ -339,10 +350,10 @@ namespace ESCenter.Controls
             {
                 Width = size,
                 Height = size,
-                Fill = new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorHex)),
-                Stroke = Brushes.Black,
+                Fill = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString(colorHex)),
+                Stroke = MediaBrushes.Black,
                 StrokeThickness = 1,
-                Cursor = Cursors.Hand
+                Cursor = WCursors.Hand
             };
 
             SetLeft(ellipse, point.X - size / 2);
@@ -350,8 +361,14 @@ namespace ESCenter.Controls
             return ellipse;
         }
 
-        private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonDown(object sender, WMouseButtonEventArgs e)
         {
+            if (e.ClickCount == 2)
+            {
+                OnMouseDoubleClick(sender, e);
+                return;
+            }
+
             if (e.OriginalSource is Ellipse ellipse && ellipse.Tag is ValueTuple<CurveSeries, CurveNode, DragTarget> tag)
             {
                 _selectedSeries = tag.Item1;
@@ -371,7 +388,7 @@ namespace ESCenter.Controls
             }
         }
 
-        private void OnMouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove(object sender, WMouseEventArgs e)
         {
             var mouse = e.GetPosition(this);
 
@@ -383,32 +400,32 @@ namespace ESCenter.Controls
                 return;
             }
 
-            var delta = new Vector((mouse.X - _dragStart.X) / Math.Max(1, ActualWidth) / _zoom, (mouse.Y - _dragStart.Y) / Math.Max(1, ActualHeight));
+            var delta = new WVector((mouse.X - _dragStart.X) / Math.Max(1, ActualWidth) / _zoom, (mouse.Y - _dragStart.Y) / Math.Max(1, ActualHeight));
             if (_dragTarget == DragTarget.Anchor)
             {
-                var newPos = new Point(Clamp(_nodeStart.X + delta.X, 0, 1), Clamp(_nodeStart.Y + delta.Y, 0, 1));
-                var move = new Vector(newPos.X - _selectedNode.Position.X, newPos.Y - _selectedNode.Position.Y);
+                var newPos = new WPoint(Clamp(_nodeStart.X + delta.X, 0, 1), Clamp(_nodeStart.Y + delta.Y, 0, 1));
+                var move = new WVector(newPos.X - _selectedNode.Position.X, newPos.Y - _selectedNode.Position.Y);
                 _selectedNode.Position = newPos;
-                _selectedNode.HandleIn = new Point(Clamp(_selectedNode.HandleIn.X + move.X, 0, 1), Clamp(_selectedNode.HandleIn.Y + move.Y, 0, 1));
-                _selectedNode.HandleOut = new Point(Clamp(_selectedNode.HandleOut.X + move.X, 0, 1), Clamp(_selectedNode.HandleOut.Y + move.Y, 0, 1));
+                _selectedNode.HandleIn = new WPoint(Clamp(_selectedNode.HandleIn.X + move.X, 0, 1), Clamp(_selectedNode.HandleIn.Y + move.Y, 0, 1));
+                _selectedNode.HandleOut = new WPoint(Clamp(_selectedNode.HandleOut.X + move.X, 0, 1), Clamp(_selectedNode.HandleOut.Y + move.Y, 0, 1));
             }
             else if (_dragTarget == DragTarget.HandleIn)
             {
-                _selectedNode.HandleIn = new Point(Clamp(_handleStart.X + delta.X, 0, 1), Clamp(_handleStart.Y + delta.Y, 0, 1));
+                _selectedNode.HandleIn = new WPoint(Clamp(_handleStart.X + delta.X, 0, 1), Clamp(_handleStart.Y + delta.Y, 0, 1));
             }
             else if (_dragTarget == DragTarget.HandleOut)
             {
-                _selectedNode.HandleOut = new Point(Clamp(_handleStart.X + delta.X, 0, 1), Clamp(_handleStart.Y + delta.Y, 0, 1));
+                _selectedNode.HandleOut = new WPoint(Clamp(_handleStart.X + delta.X, 0, 1), Clamp(_handleStart.Y + delta.Y, 0, 1));
             }
         }
 
-        private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseLeftButtonUp(object sender, WMouseButtonEventArgs e)
         {
             _dragTarget = DragTarget.None;
             ReleaseMouseCapture();
         }
 
-        private void OnMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseRightButtonUp(object sender, WMouseButtonEventArgs e)
         {
             if (e.OriginalSource is Ellipse ellipse && ellipse.Tag is ValueTuple<CurveSeries, CurveNode, DragTarget> tag)
             {
@@ -421,7 +438,7 @@ namespace ESCenter.Controls
             }
         }
 
-        private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void OnMouseDoubleClick(object sender, WMouseButtonEventArgs e)
         {
             if (Curves is null || Curves.Count == 0)
             {
@@ -430,11 +447,11 @@ namespace ESCenter.Controls
 
             var targetSeries = _selectedSeries ?? Curves.FirstOrDefault(c => c.IsVisible) ?? Curves[0];
             var pos = e.GetPosition(this);
-            var normalized = new Point(Clamp(pos.X / Math.Max(1, ActualWidth), 0, 1), Clamp(pos.Y / Math.Max(1, ActualHeight), 0, 1));
+            var normalized = new WPoint(Clamp(pos.X / Math.Max(1, ActualWidth), 0, 1), Clamp(pos.Y / Math.Max(1, ActualHeight), 0, 1));
             targetSeries.Nodes.Add(new CurveNode(normalized));
         }
 
-        private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        private void OnMouseWheel(object sender, WMouseWheelEventArgs e)
         {
             var step = e.Delta > 0 ? 0.1 : -0.1;
             _zoom = Clamp(_zoom + step, 0.6, 2.2);
@@ -451,11 +468,11 @@ namespace ESCenter.Controls
             _indicatorLine.Y2 = ActualHeight;
         }
 
-        private Point ToCanvas(Point normalized)
+        private WPoint ToCanvas(WPoint normalized)
         {
             var x = normalized.X * ActualWidth * _zoom;
             var y = normalized.Y * ActualHeight;
-            return new Point(x, y);
+            return new WPoint(x, y);
         }
 
         private static double Clamp(double value, double min, double max)

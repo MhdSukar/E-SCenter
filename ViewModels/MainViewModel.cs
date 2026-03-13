@@ -786,18 +786,18 @@ namespace ESCenter.ViewModels
 
             var max = new[] { 1, openCounts.Max(), finishedCounts.Max(), criticalCounts.Max(), overdueCounts.Max() }.Max();
 
-            BuildOrUpdateCurve("Open", Colors.White, openCounts, max);
-            BuildOrUpdateCurve("Finished", (Color)ColorConverter.ConvertFromString("#5AA7FF"), finishedCounts, max);
-            BuildOrUpdateCurve("Critical", (Color)ColorConverter.ConvertFromString("#FF8C42"), criticalCounts, max);
-            BuildOrUpdateCurve("Overdue", (Color)ColorConverter.ConvertFromString("#FF5A5A"), overdueCounts, max);
+            BuildOrUpdateCurve("Open", System.Windows.Media.Colors.White, openCounts, max);
+            BuildOrUpdateCurve("Finished", (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#5AA7FF"), finishedCounts, max);
+            BuildOrUpdateCurve("Critical", (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF8C42"), criticalCounts, max);
+            BuildOrUpdateCurve("Overdue", (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF5A5A"), overdueCounts, max);
         }
 
-        private void BuildOrUpdateCurve(string key, Color color, IReadOnlyList<int> values, int max)
+        private void BuildOrUpdateCurve(string key, System.Windows.Media.Color color, IReadOnlyList<int> values, int max)
         {
             var existing = TicketStatusCurves.FirstOrDefault(c => c.Key == key);
             if (existing is null)
             {
-                existing = new CurveSeries { Key = key, Stroke = new SolidColorBrush(color), IsVisible = true };
+                existing = new CurveSeries { Key = key, Stroke = new System.Windows.Media.SolidColorBrush(color), IsVisible = true };
                 TicketStatusCurves.Add(existing);
             }
 
