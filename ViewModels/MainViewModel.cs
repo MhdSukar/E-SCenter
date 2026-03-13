@@ -199,7 +199,7 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _curveIndicatorRatio, value);
         }
 
-        private double _statusButtonSize = 18;
+        private double _statusButtonSize = 14;
         public double StatusButtonSize
         {
             get => _statusButtonSize;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -120,6 +121,33 @@ namespace ESCenter.Controls
             {
                 dc.DrawLine(majorPen, new WPoint(0, y), new WPoint(ActualWidth, y));
             }
+
+            DrawAxisLabels(dc);
+        }
+
+        private void DrawAxisLabels(DrawingContext dc)
+        {
+            var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            var typeface = new Typeface("Segoe UI");
+            var textBrush = new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#A0FFFFFF"));
+
+            for (var i = 0; i <= 4; i++)
+            {
+                var x = (ActualWidth / 4.0) * i;
+                var xLabel = new FormattedText($"{i * 25}%", CultureInfo.InvariantCulture, FlowDirection.LeftToRight, typeface, 9, textBrush, dpi);
+                dc.DrawText(xLabel, new WPoint(Math.Max(0, x - 10), Math.Max(0, ActualHeight - 14)));
+            }
+
+            for (var i = 0; i <= 4; i++)
+            {
+                var y = (ActualHeight / 4.0) * i;
+                var yLabel = new FormattedText($"{100 - (i * 25)}", CultureInfo.InvariantCulture, FlowDirection.LeftToRight, typeface, 9, textBrush, dpi);
+                dc.DrawText(yLabel, new WPoint(2, Math.Max(0, y - 7)));
+            }
+
+            var axisPen = new MediaPen(new SolidColorBrush((MediaColor)MediaColorConverter.ConvertFromString("#55FFFFFF")), 1);
+            dc.DrawLine(axisPen, new WPoint(0, ActualHeight - 1), new WPoint(ActualWidth, ActualHeight - 1));
+            dc.DrawLine(axisPen, new WPoint(0, 0), new WPoint(0, ActualHeight));
         }
 
         private static void OnCurvesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
