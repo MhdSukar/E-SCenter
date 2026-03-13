@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using ESCenter.Core;
 
 namespace ESCenter.Models
@@ -10,8 +9,6 @@ namespace ESCenter.Models
         public string Key { get; set; } = string.Empty;
 
         public System.Windows.Media.Brush Stroke { get; set; } = System.Windows.Media.Brushes.White;
-
-        public ObservableCollection<CurveNode> Nodes { get; set; } = new();
 
         public bool IsVisible
         {
