@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:ESCenter.ViewModels"
-        xmlns:controls="clr-namespace:ESCenter.Controls"
+        xmlns:lvc="http://livecharts.com"
         Title="E-SCenter"
         Height="880"
         Width="1595"
@@ -17,54 +17,6 @@
     </Window.DataContext>
 
     <Window.Resources>
-        <Style x:Key="DotSliderStyle" TargetType="Slider">
-            <Setter Property="Height" Value="18"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Slider">
-                        <Grid Margin="0,2,0,2">
-                            <Track x:Name="PART_Track">
-                                <Track.DecreaseRepeatButton>
-                                    <RepeatButton Command="Slider.DecreaseLarge" Background="#2AFFFFFF" BorderThickness="0"/>
-                                </Track.DecreaseRepeatButton>
-                                <Track.Thumb>
-                                    <Thumb Width="12" Height="12" Background="{StaticResource NeonDarkCyanBrush}" BorderBrush="White" BorderThickness="1"/>
-                                </Track.Thumb>
-                                <Track.IncreaseRepeatButton>
-                                    <RepeatButton Command="Slider.IncreaseLarge" Background="#1AFFFFFF" BorderThickness="0"/>
-                                </Track.IncreaseRepeatButton>
-                            </Track>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="MaterialSliderStyle" TargetType="Slider" BasedOn="{StaticResource DotSliderStyle}">
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Slider">
-                        <Grid Margin="0,2,0,2">
-                            <Border CornerRadius="6" Background="#22000000" BorderBrush="#3300E5FF" BorderThickness="1"/>
-                            <Track x:Name="PART_Track" Margin="2">
-                                <Track.DecreaseRepeatButton>
-                                    <RepeatButton Command="Slider.DecreaseLarge" Background="#6600E5FF" BorderThickness="0"/>
-                                </Track.DecreaseRepeatButton>
-                                <Track.Thumb>
-                                    <Thumb Width="14" Height="14" Background="{StaticResource NeonDarkCyanBrush}" BorderBrush="White" BorderThickness="1.2"/>
-                                </Track.Thumb>
-                                <Track.IncreaseRepeatButton>
-                                    <RepeatButton Command="Slider.IncreaseLarge" Background="#1AFFFFFF" BorderThickness="0"/>
-                                </Track.IncreaseRepeatButton>
-                            </Track>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-
         <!-- Severity Icons -->
         <Style x:Key="StatusIconStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
@@ -359,49 +311,21 @@
                                 </StackPanel>
                             </GroupBox.Header>
 
-                            <Grid Height="220" Margin="0,-6,0,0">
+                            <Grid Height="170" Margin="0,-8,0,0">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="130"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <controls:CurveEditorControl Grid.Row="0"
-                                                             Margin="0,0,0,6"
-                                                             Curves="{Binding TicketStatusCurves}"
-                                                             IndicatorRatio="{Binding CurveIndicatorRatio}"/>
+                                <lvc:CartesianChart Grid.Row="0"
+                                                    Margin="0,0,0,6"
+                                                    Series="{Binding TicketsSeries}"
+                                                    XAxes="{Binding TicketsXAxis}"
+                                                    YAxes="{Binding TicketsYAxis}"
+                                                    DrawMarginFrame="False"
+                                                    LegendPosition="Right"/>
 
-                                <Grid Grid.Row="1" Margin="0,0,0,6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1.2*"/>
-                                        <ColumnDefinition Width="10"/>
-                                        <ColumnDefinition Width="3*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="0" Orientation="Vertical">
-                                        <TextBlock Text="Size"
-                                                   FontSize="9"
-                                                   Foreground="{StaticResource TextSecondaryBrush}"/>
-                                        <Slider Minimum="10"
-                                                Maximum="22"
-                                                SmallChange="1"
-                                                Style="{StaticResource DotSliderStyle}"
-                                                Value="{Binding StatusButtonSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </StackPanel>
-
-                                    <StackPanel Grid.Column="2" Orientation="Vertical">
-                                        <TextBlock Text="Indicator"
-                                                   FontSize="9"
-                                                   Foreground="{StaticResource TextSecondaryBrush}"/>
-                                        <Slider Minimum="0"
-                                                Maximum="1"
-                                                SmallChange="0.01"
-                                                Style="{StaticResource MaterialSliderStyle}"
-                                                Value="{Binding CurveIndicatorRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <ScrollViewer Grid.Row="2"
+                                <ScrollViewer Grid.Row="1"
                                               HorizontalScrollBarVisibility="Auto"
                                               VerticalScrollBarVisibility="Disabled">
                                     <ItemsControl ItemsSource="{Binding TicketStatusCurves}">
@@ -414,7 +338,6 @@
                                             <DataTemplate>
                                                 <Button Width="{Binding DataContext.StatusButtonSize, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         Height="{Binding DataContext.StatusButtonSize, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                        MinWidth="10"
                                                         Margin="2,0,2,0"
                                                         Padding="0"
                                                         ToolTip="{Binding Key}"
