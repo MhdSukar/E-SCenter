@@ -780,7 +780,6 @@ namespace ESCenter.ViewModels
             var openCounts = new List<int>();
             var finishedCounts = new List<int>();
             var criticalCounts = new List<int>();
-            var overdueCounts = new List<int>();
 
             foreach (var day in days)
             {
@@ -790,20 +789,23 @@ namespace ESCenter.ViewModels
                 criticalCounts.Add(tickets.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase)
                                                    && !t.DeliveryDate.HasValue
                                                    && t.ReceiveDate < dayEnd));
-                overdueCounts.Add(tickets.Count(t => !t.DeliveryDate.HasValue && (day - t.ReceiveDate.Date).TotalDays > 2));
             }
 
             EnsureStatusToggle("Open", "#FFFFFF");
             EnsureStatusToggle("Finished", "#5AA7FF");
             EnsureStatusToggle("Critical", "#FF8C42");
-            EnsureStatusToggle("Overdue", "#FF5A5A");
+
+            var overdueToggle = TicketStatusCurves.FirstOrDefault(c => c.Key == "Overdue");
+            if (overdueToggle is not null)
+            {
+                TicketStatusCurves.Remove(overdueToggle);
+            }
 
             TicketsSeries = new ISeries[]
             {
                 BuildSeries("Open", openCounts, SKColor.Parse("#FFFFFF")),
                 BuildSeries("Finished", finishedCounts, SKColor.Parse("#5AA7FF")),
-                BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42")),
-                BuildSeries("Overdue", overdueCounts, SKColor.Parse("#FF5A5A"))
+                BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42"))
             };
 
             TicketsXAxis = new[]

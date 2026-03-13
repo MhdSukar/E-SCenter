@@ -311,7 +311,7 @@
                                 </StackPanel>
                             </GroupBox.Header>
 
-                            <Grid Height="137" Margin="0,-8,0,0">
+                            <Grid Height="170" Margin="0,-8,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
@@ -327,7 +327,7 @@
                                 <ScrollViewer Grid.Row="1"
                                               HorizontalScrollBarVisibility="Auto"
                                               VerticalScrollBarVisibility="Disabled">
-                                    <ItemsControl ItemsSource="{Binding TicketStatusCurves}" Width="335">
+                                    <ItemsControl ItemsSource="{Binding TicketStatusCurves}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <StackPanel Orientation="Horizontal"/>
@@ -342,7 +342,7 @@
                                                         CommandParameter="{Binding Key}">
                                                     <Button.Style>
                                                         <Style TargetType="Button" BasedOn="{StaticResource NeonDarkCyanButtonStyle}">
-                                                            <Setter Property="Width" Value="20"/>
+                                                            <Setter Property="Width" Value="58"/>
                                                             <Setter Property="Height" Value="22"/>
                                                             <Setter Property="BorderThickness" Value="1"/>
                                                             <Setter Property="Opacity" Value="1"/>
@@ -354,8 +354,8 @@
                                                         </Style>
                                                     </Button.Style>
                                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                        <Image Width="12"
-                                                               Height="14"
+                                                        <Image Width="11.2"
+                                                               Height="11.2"
                                                                Stretch="Uniform"
                                                                Margin="0,0,4,0"
                                                                Source="{Binding Key, Converter={StaticResource SeriesKeyToIconConverter}}"/>
@@ -427,13 +427,6 @@
                                            VerticalAlignment="Center"
                                            Foreground="{StaticResource TextSecondaryBrush}"/>
 
-                                <TextBlock Grid.Column="4" Grid.Row="0"
-                                           Text="Overdue (>2 days)"
-                                           FontSize="8"
-                                           FontWeight="SemiBold"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{StaticResource TextSecondaryBrush}"/>
 
                                 <TextBlock Text="{Binding Dashboard.TotalTickets}" Grid.Row="1" Grid.Column="0"
                                            FontSize="28"
@@ -463,12 +456,6 @@
                                            Margin="0,8,0,0"
                                            HorizontalAlignment="Center"/>
 
-                                <TextBlock Text="{Binding Dashboard.OverdueTickets}" Grid.Row="1" Grid.Column="4"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource NeonRedBrush}"
-                                           Margin="0,8,0,0"
-                                           HorizontalAlignment="Center"/>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Margin="0,20,0,0">
                                     <Image Source="{StaticResource Baraka}" Width="10" Height="10" Margin="0,0,3,0"/>
                                     <TextBlock Text="Expanses:" Foreground="{StaticResource NeonDarkCyanBrush}" FontSize="10"/>
