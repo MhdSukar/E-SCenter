@@ -2,13 +2,17 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:ESCenter.ViewModels"
-             xmlns:views="clr-namespace:ESCenter.Views">
+             xmlns:views="clr-namespace:ESCenter.Views"
+             xmlns:conv="clr-namespace:ESCenter.Converters">
     <!--StartupUri="MainWindow.xaml">-->
 
     <Application.Resources>
         <ResourceDictionary>
             <!-- Declare converters first -->
-            
+            <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <conv:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+
+
 
             <!-- Merge your themes -->
             <ResourceDictionary.MergedDictionaries>

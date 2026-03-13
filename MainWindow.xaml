@@ -338,6 +338,7 @@
                                                 <Button Width="{Binding DataContext.StatusButtonSize, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         Height="{Binding DataContext.StatusButtonSize, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         Margin="3,0,3,0"
+                                                        Padding="0"
                                                         ToolTip="{Binding Key}"
                                                         Command="{Binding DataContext.ToggleCurveVisibilityCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         CommandParameter="{Binding Key}">
@@ -351,32 +352,43 @@
                                                             </Style.Triggers>
                                                         </Style>
                                                     </Button.Style>
-                                                    <Ellipse Width="8"
-                                                             Height="8"
-                                                             Fill="{Binding Stroke}"/>
+                                                    <Image Width="{Binding DataContext.StatusButtonSize, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                           Height="{Binding DataContext.StatusButtonSize, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                           Stretch="Uniform"
+                                                           Source="{Binding Key, Converter={StaticResource SeriesKeyToIconConverter}}"/>
                                                 </Button>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </ScrollViewer>
 
-                                <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0,4,0,0">
-                                    <TextBlock Text="Indicator"
-                                               FontSize="9"
-                                               Foreground="{StaticResource TextSecondaryBrush}"/>
-                                    <Slider Minimum="0"
-                                            Maximum="1"
-                                            SmallChange="0.01"
-                                            Value="{Binding CurveIndicatorRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <TextBlock Text="Button Size"
-                                               FontSize="9"
-                                               Margin="0,2,0,0"
-                                               Foreground="{StaticResource TextSecondaryBrush}"/>
-                                    <Slider Minimum="14"
-                                            Maximum="32"
-                                            SmallChange="1"
-                                            Value="{Binding StatusButtonSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
+                                <Grid Grid.Row="2" Margin="0,4,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="8"/>
+                                        <ColumnDefinition Width="1.2*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Orientation="Vertical">
+                                        <TextBlock Text="Indicator"
+                                                   FontSize="9"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                                        <Slider Minimum="0"
+                                                Maximum="1"
+                                                SmallChange="0.01"
+                                                Value="{Binding CurveIndicatorRatio, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" Orientation="Vertical">
+                                        <TextBlock Text="Size"
+                                                   FontSize="9"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                                        <Slider Minimum="14"
+                                                Maximum="32"
+                                                SmallChange="1"
+                                                Value="{Binding StatusButtonSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                </Grid>
                             </Grid>
                         </GroupBox>
 
