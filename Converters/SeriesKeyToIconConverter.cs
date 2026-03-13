@@ -16,8 +16,8 @@ namespace ESCenter.Converters
             var iconResourceKey = key switch
             {
                 "ongoing" => "Baraka",
-                "Finished" => "GalaxyAi2",
-                "Critical" => "Baraka",
+                "Finished" => "AIBox",
+                "Critical" => "Priority",
                 "Overdue" => "ReadyToPick",
                 _ => "Charts"
             };
