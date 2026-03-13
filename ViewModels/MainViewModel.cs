@@ -218,7 +218,6 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _ticketsYAxis, value);
         }
 
-        public double StatusButtonSize => 14;
 
         public ICommand ToggleCurveVisibilityCommand { get; }
 
@@ -814,7 +813,8 @@ namespace ESCenter.ViewModels
                     Labels = days.Select(d => d.ToString("ddd")).ToArray(),
                     LabelsPaint = new SolidColorPaint(SKColors.White),
                     TextSize = 10,
-                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255, 20))
+                    MinStep = 1,
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(90, 167, 255, 100))
                 }
             };
 
@@ -827,7 +827,8 @@ namespace ESCenter.ViewModels
                     TextSize = 10,
                     Name = "Tickets",
                     NamePaint = new SolidColorPaint(SKColors.White),
-                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255, 30))
+                    MinStep = 1,
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(90, 167, 255, 120))
                 }
             };
         }
