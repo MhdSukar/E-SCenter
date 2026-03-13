@@ -802,7 +802,7 @@ namespace ESCenter.ViewModels
             EnsureStatusToggle("Major", "#FFD54A");
             EnsureStatusToggle("Critical", "#FF8C42");
             EnsureStatusToggle("Overdue", "#FF5A5A");
-            OrderStatusToggles("Open", "Finished", "Major", "Critical", "Overdue");
+            OrderStatusToggles("ongoing", "Finished", "Major", "Critical", "Overdue");
 
             TicketsSeries = new ISeries[]
             {
@@ -831,7 +831,7 @@ namespace ESCenter.ViewModels
                 {
                     MinLimit = 0,
                     LabelsPaint = new SolidColorPaint(SKColors.White),
-                    TextSize = 10,
+                    TextSize = 8,
                     Name = "Tickets",
                     NamePaint = new SolidColorPaint(SKColors.White),
                     MinStep = 1,
@@ -869,12 +869,22 @@ namespace ESCenter.ViewModels
                 return;
             }
 
-            TicketStatusCurves.Add(new CurveSeries
+            var curve = new CurveSeries
             {
                 Key = key,
                 Stroke = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(colorHex)),
                 IsVisible = true
-            });
+            };
+
+            curve.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(CurveSeries.IsVisible))
+                {
+                    ApplySeriesVisibility();
+                }
+            };
+
+            TicketStatusCurves.Add(curve);
         }
 
         private void OrderStatusToggles(params string[] orderedKeys)
@@ -896,6 +906,7 @@ namespace ESCenter.ViewModels
                 TicketStatusCurves.Add(curve);
             }
         }
+
 
         private void ApplySeriesVisibility()
         {
