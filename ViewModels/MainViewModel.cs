@@ -12,6 +12,11 @@ using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Services;
 using ESCenter.Windows;
+using LiveChartsCore;
+using LiveChartsCore.Measure;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace ESCenter.ViewModels
 {
@@ -192,19 +197,28 @@ namespace ESCenter.ViewModels
 
         public ObservableCollection<CurveSeries> TicketStatusCurves { get; } = new();
 
-        private double _curveIndicatorRatio = 0.5;
-        public double CurveIndicatorRatio
+        private ISeries[] _ticketsSeries = Array.Empty<ISeries>();
+        public ISeries[] TicketsSeries
         {
-            get => _curveIndicatorRatio;
-            set => SetProperty(ref _curveIndicatorRatio, value);
+            get => _ticketsSeries;
+            set => SetProperty(ref _ticketsSeries, value);
         }
 
-        private double _statusButtonSize = 14;
-        public double StatusButtonSize
+        private Axis[] _ticketsXAxis = Array.Empty<Axis>();
+        public Axis[] TicketsXAxis
         {
-            get => _statusButtonSize;
-            set => SetProperty(ref _statusButtonSize, value);
+            get => _ticketsXAxis;
+            set => SetProperty(ref _ticketsXAxis, value);
         }
+
+        private Axis[] _ticketsYAxis = Array.Empty<Axis>();
+        public Axis[] TicketsYAxis
+        {
+            get => _ticketsYAxis;
+            set => SetProperty(ref _ticketsYAxis, value);
+        }
+
+        public double StatusButtonSize => 14;
 
         public ICommand ToggleCurveVisibilityCommand { get; }
 
@@ -351,6 +365,7 @@ namespace ESCenter.ViewModels
                 if (curve is not null)
                 {
                     curve.IsVisible = !curve.IsVisible;
+                    ApplySeriesVisibility();
                 }
             });
 
@@ -771,44 +786,97 @@ namespace ESCenter.ViewModels
             foreach (var day in days)
             {
                 var dayEnd = day.AddDays(1);
-                var open = tickets.Count(t => t.ReceiveDate >= day && t.ReceiveDate < dayEnd);
-                var finished = tickets.Count(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value >= day && t.DeliveryDate.Value < dayEnd);
-                var criticalOpen = tickets.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase)
-                                                     && !t.DeliveryDate.HasValue
-                                                     && t.ReceiveDate < dayEnd);
-                var overdue = tickets.Count(t => !t.DeliveryDate.HasValue && (day - t.ReceiveDate.Date).TotalDays > 2);
-
-                openCounts.Add(open);
-                finishedCounts.Add(finished);
-                criticalCounts.Add(criticalOpen);
-                overdueCounts.Add(overdue);
+                openCounts.Add(tickets.Count(t => t.ReceiveDate >= day && t.ReceiveDate < dayEnd));
+                finishedCounts.Add(tickets.Count(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value >= day && t.DeliveryDate.Value < dayEnd));
+                criticalCounts.Add(tickets.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase)
+                                                   && !t.DeliveryDate.HasValue
+                                                   && t.ReceiveDate < dayEnd));
+                overdueCounts.Add(tickets.Count(t => !t.DeliveryDate.HasValue && (day - t.ReceiveDate.Date).TotalDays > 2));
             }
 
-            var max = new[] { 1, openCounts.Max(), finishedCounts.Max(), criticalCounts.Max(), overdueCounts.Max() }.Max();
+            EnsureStatusToggle("Open", "#FFFFFF");
+            EnsureStatusToggle("Finished", "#5AA7FF");
+            EnsureStatusToggle("Critical", "#FF8C42");
+            EnsureStatusToggle("Overdue", "#FF5A5A");
 
-            BuildOrUpdateCurve("Open", System.Windows.Media.Colors.White, openCounts, max);
-            BuildOrUpdateCurve("Finished", (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#5AA7FF"), finishedCounts, max);
-            BuildOrUpdateCurve("Critical", (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF8C42"), criticalCounts, max);
-            BuildOrUpdateCurve("Overdue", (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString("#FF5A5A"), overdueCounts, max);
+            TicketsSeries = new ISeries[]
+            {
+                BuildSeries("Open", openCounts, SKColor.Parse("#FFFFFF")),
+                BuildSeries("Finished", finishedCounts, SKColor.Parse("#5AA7FF")),
+                BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42")),
+                BuildSeries("Overdue", overdueCounts, SKColor.Parse("#FF5A5A"))
+            };
+
+            TicketsXAxis = new[]
+            {
+                new Axis
+                {
+                    Labels = days.Select(d => d.ToString("ddd")).ToArray(),
+                    LabelsPaint = new SolidColorPaint(SKColors.White),
+                    TextSize = 10,
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255, 20))
+                }
+            };
+
+            TicketsYAxis = new[]
+            {
+                new Axis
+                {
+                    MinLimit = 0,
+                    LabelsPaint = new SolidColorPaint(SKColors.White),
+                    TextSize = 10,
+                    Name = "Tickets",
+                    NamePaint = new SolidColorPaint(SKColors.White),
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255, 30))
+                }
+            };
         }
 
-        private void BuildOrUpdateCurve(string key, System.Windows.Media.Color color, IReadOnlyList<int> values, int max)
+        private LineSeries<int> BuildSeries(string key, IReadOnlyCollection<int> values, SKColor color)
+        {
+            return new LineSeries<int>
+            {
+                Name = key,
+                Values = values,
+                GeometrySize = 7,
+                LineSmoothness = 0.75,
+                Stroke = new SolidColorPaint(color, 3),
+                GeometryStroke = new SolidColorPaint(color, 2),
+                GeometryFill = new SolidColorPaint(color),
+                Fill = null,
+                IsVisible = IsSeriesVisible(key)
+            };
+        }
+
+        private bool IsSeriesVisible(string key)
         {
             var existing = TicketStatusCurves.FirstOrDefault(c => c.Key == key);
-            if (existing is null)
+            return existing?.IsVisible ?? true;
+        }
+
+        private void EnsureStatusToggle(string key, string colorHex)
+        {
+            if (TicketStatusCurves.Any(c => c.Key == key))
             {
-                existing = new CurveSeries { Key = key, Stroke = new System.Windows.Media.SolidColorBrush(color), IsVisible = true };
-                TicketStatusCurves.Add(existing);
+                return;
             }
 
-            existing.Nodes.Clear();
-            for (var i = 0; i < values.Count; i++)
+            TicketStatusCurves.Add(new CurveSeries
             {
-                var x = values.Count == 1 ? 0 : i / (double)(values.Count - 1);
-                var y = 1 - (values[i] / (double)max);
-                var node = new CurveNode(new System.Windows.Point(x, y));
-                existing.Nodes.Add(node);
+                Key = key,
+                Stroke = new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(colorHex)),
+                IsVisible = true
+            });
+        }
+
+        private void ApplySeriesVisibility()
+        {
+            foreach (var series in TicketsSeries.OfType<LineSeries<int>>())
+            {
+                series.IsVisible = IsSeriesVisible(series.Name ?? string.Empty);
             }
+
+            OnPropertyChanged(nameof(TicketsSeries));
         }
     }
 }
