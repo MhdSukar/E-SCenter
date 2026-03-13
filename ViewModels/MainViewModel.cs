@@ -797,7 +797,7 @@ namespace ESCenter.ViewModels
                 overdueCounts.Add(tickets.Count(t => !t.DeliveryDate.HasValue && (day - t.ReceiveDate.Date).TotalDays > 2));
             }
 
-            EnsureStatusToggle("Open", "#FFFFFF");
+            EnsureStatusToggle("ongoing", "#FFFFFF");
             EnsureStatusToggle("Finished", "#5AA7FF");
             EnsureStatusToggle("Major", "#FFD54A");
             EnsureStatusToggle("Critical", "#FF8C42");
@@ -805,7 +805,7 @@ namespace ESCenter.ViewModels
 
             TicketsSeries = new ISeries[]
             {
-                BuildSeries("Open", openCounts, SKColor.Parse("#FFFFFF")),
+                BuildSeries("ongoing", openCounts, SKColor.Parse("#FFFFFF")),
                 BuildSeries("Finished", finishedCounts, SKColor.Parse("#5AA7FF")),
                 BuildSeries("Major", majorCounts, SKColor.Parse("#FFD54A")),
                 BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42")),
