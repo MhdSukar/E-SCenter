@@ -500,6 +500,62 @@
         </Setter>
     </Style>
 
+    <!-- Chart Status Toggle Button -->
+    <Style x:Key="ChartStatusToggleButtonStyle" TargetType="ToggleButton">
+        <Setter Property="Width" Value="58"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource NeonDarkCyanBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Border x:Name="Glow"
+                                BorderBrush="{StaticResource NeonDarkCyanBrush}"
+                                BorderThickness="2"
+                                CornerRadius="7"
+                                Opacity="0.65"
+                                Effect="{StaticResource NeonDarkCyanGlowEffect}"/>
+
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0"
+                                CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
+                            <Setter TargetName="Glow" Property="Opacity" Value="0"/>
+                        </Trigger>
+
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="0"/>
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.75"/>
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Neon Dark Green -->
     <Style x:Key="NeonDarkGreenButtonStyle" TargetType="Button" BasedOn="{StaticResource NeonCyanButtonStyle}">
         <Setter Property="BorderBrush" Value="{StaticResource NeonDarkGreenBrush}"/>
