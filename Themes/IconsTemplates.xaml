@@ -105,6 +105,7 @@
     <BitmapImage x:Key="TickClosed" UriSource="/Assets/Icons/TickClosed.png"/>
     <BitmapImage x:Key="OpenStatusIcon" UriSource="/Assets/Icons/New/clock_arrow_down.png"/>
     <BitmapImage x:Key="FinishedStatusIcon" UriSource="/Assets/Icons/New/clear_all.png"/>
+    <BitmapImage x:Key="MajorStatusIcon" UriSource="/Assets/Icons/New/priority_high_24dp.png"/>
     <BitmapImage x:Key="AllList" UriSource="/Assets/Icons/AllList.png"/>
     <BitmapImage x:Key="Save" UriSource="/Assets/Icons/Save.png"/>
     <BitmapImage x:Key="Warranty" UriSource="/Assets/Icons/Warranty.png"/>

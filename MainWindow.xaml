@@ -311,7 +311,7 @@
                                 </StackPanel>
                             </GroupBox.Header>
 
-                            <Grid Height="137" Margin="0,-8,0,0">
+                            <Grid Height="170" Margin="0,-8,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
@@ -342,9 +342,8 @@
                                                         CommandParameter="{Binding Key}">
                                                     <Button.Style>
                                                         <Style TargetType="Button" BasedOn="{StaticResource NeonDarkCyanButtonStyle}">
-                                                            <Setter Property="MinWidth" Value="35"/>
                                                             <Setter Property="Width" Value="58"/>
-                                                            <Setter Property="Height" Value="20"/>
+                                                            <Setter Property="Height" Value="22"/>
                                                             <Setter Property="BorderThickness" Value="1"/>
                                                             <Setter Property="Opacity" Value="1"/>
                                                             <Style.Triggers>

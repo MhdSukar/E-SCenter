@@ -780,6 +780,8 @@ namespace ESCenter.ViewModels
             var openCounts = new List<int>();
             var finishedCounts = new List<int>();
             var criticalCounts = new List<int>();
+            var majorCounts = new List<int>();
+            var overdueCounts = new List<int>();
 
             foreach (var day in days)
             {
@@ -789,23 +791,25 @@ namespace ESCenter.ViewModels
                 criticalCounts.Add(tickets.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase)
                                                    && !t.DeliveryDate.HasValue
                                                    && t.ReceiveDate < dayEnd));
+                majorCounts.Add(tickets.Count(t => string.Equals(t.PriorityLevel, "Major", StringComparison.OrdinalIgnoreCase)
+                                                && !t.DeliveryDate.HasValue
+                                                && t.ReceiveDate < dayEnd));
+                overdueCounts.Add(tickets.Count(t => !t.DeliveryDate.HasValue && (day - t.ReceiveDate.Date).TotalDays > 2));
             }
 
-            EnsureStatusToggle("ongoing", "#FFFFFF");
+            EnsureStatusToggle("Open", "#FFFFFF");
             EnsureStatusToggle("Finished", "#5AA7FF");
+            EnsureStatusToggle("Major", "#FFD54A");
             EnsureStatusToggle("Critical", "#FF8C42");
-
-            var overdueToggle = TicketStatusCurves.FirstOrDefault(c => c.Key == "Overdue");
-            if (overdueToggle is not null)
-            {
-                TicketStatusCurves.Remove(overdueToggle);
-            }
+            EnsureStatusToggle("Overdue", "#FF5A5A");
 
             TicketsSeries = new ISeries[]
             {
-                BuildSeries("ongoing", openCounts, SKColor.Parse("#FFFFFF")),
+                BuildSeries("Open", openCounts, SKColor.Parse("#FFFFFF")),
                 BuildSeries("Finished", finishedCounts, SKColor.Parse("#5AA7FF")),
-                BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42"))
+                BuildSeries("Major", majorCounts, SKColor.Parse("#FFD54A")),
+                BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42")),
+                BuildSeries("Overdue", overdueCounts, SKColor.Parse("#FF5A5A"))
             };
 
             TicketsXAxis = new[]
@@ -826,7 +830,7 @@ namespace ESCenter.ViewModels
                 {
                     MinLimit = 0,
                     LabelsPaint = new SolidColorPaint(SKColors.White),
-                    TextSize = 8,
+                    TextSize = 10,
                     Name = "Tickets",
                     NamePaint = new SolidColorPaint(SKColors.White),
                     MinStep = 1,
