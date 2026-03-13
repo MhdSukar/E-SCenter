@@ -218,7 +218,6 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _ticketsYAxis, value);
         }
 
-        public double StatusButtonSize => 14;
 
         public ICommand ToggleCurveVisibilityCommand { get; }
 
@@ -781,6 +780,7 @@ namespace ESCenter.ViewModels
             var openCounts = new List<int>();
             var finishedCounts = new List<int>();
             var criticalCounts = new List<int>();
+            var majorCounts = new List<int>();
             var overdueCounts = new List<int>();
 
             foreach (var day in days)
@@ -791,11 +791,15 @@ namespace ESCenter.ViewModels
                 criticalCounts.Add(tickets.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase)
                                                    && !t.DeliveryDate.HasValue
                                                    && t.ReceiveDate < dayEnd));
+                majorCounts.Add(tickets.Count(t => string.Equals(t.PriorityLevel, "Major", StringComparison.OrdinalIgnoreCase)
+                                                && !t.DeliveryDate.HasValue
+                                                && t.ReceiveDate < dayEnd));
                 overdueCounts.Add(tickets.Count(t => !t.DeliveryDate.HasValue && (day - t.ReceiveDate.Date).TotalDays > 2));
             }
 
             EnsureStatusToggle("Open", "#FFFFFF");
             EnsureStatusToggle("Finished", "#5AA7FF");
+            EnsureStatusToggle("Major", "#FFD54A");
             EnsureStatusToggle("Critical", "#FF8C42");
             EnsureStatusToggle("Overdue", "#FF5A5A");
 
@@ -803,6 +807,7 @@ namespace ESCenter.ViewModels
             {
                 BuildSeries("Open", openCounts, SKColor.Parse("#FFFFFF")),
                 BuildSeries("Finished", finishedCounts, SKColor.Parse("#5AA7FF")),
+                BuildSeries("Major", majorCounts, SKColor.Parse("#FFD54A")),
                 BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42")),
                 BuildSeries("Overdue", overdueCounts, SKColor.Parse("#FF5A5A"))
             };
@@ -814,7 +819,8 @@ namespace ESCenter.ViewModels
                     Labels = days.Select(d => d.ToString("ddd")).ToArray(),
                     LabelsPaint = new SolidColorPaint(SKColors.White),
                     TextSize = 10,
-                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255, 20))
+                    MinStep = 1,
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(90, 167, 255, 100))
                 }
             };
 
@@ -827,7 +833,8 @@ namespace ESCenter.ViewModels
                     TextSize = 10,
                     Name = "Tickets",
                     NamePaint = new SolidColorPaint(SKColors.White),
-                    SeparatorsPaint = new SolidColorPaint(new SKColor(255, 255, 255, 30))
+                    MinStep = 1,
+                    SeparatorsPaint = new SolidColorPaint(new SKColor(90, 167, 255, 120))
                 }
             };
         }
