@@ -342,7 +342,6 @@
                                                         CommandParameter="{Binding Key}">
                                                     <Button.Style>
                                                         <Style TargetType="Button" BasedOn="{StaticResource NeonDarkCyanButtonStyle}">
-                                                            <Setter Property="MinWidth" Value="52"/>
                                                             <Setter Property="Width" Value="58"/>
                                                             <Setter Property="Height" Value="22"/>
                                                             <Setter Property="BorderThickness" Value="1"/>
