@@ -856,7 +856,8 @@ namespace ESCenter.ViewModels
                 GeometryStroke = new SolidColorPaint(color, 2),
                 GeometryFill = new SolidColorPaint(color),
                 Fill = null,
-                IsVisible = IsSeriesVisible(key)
+                IsVisible = IsSeriesVisible(key),
+                TooltipLabelFormatter = chartPoint => $"{key}: {chartPoint.PrimaryValue:0}"
             };
         }
 
