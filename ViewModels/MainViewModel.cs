@@ -834,6 +834,9 @@ namespace ESCenter.ViewModels
                     TextSize = 8,
                     Name = "Tickets",
                     NamePaint = new SolidColorPaint(SKColors.White),
+                    NameTextSize = 11,
+                    NamePadding = new Padding(0, 0, 0, 6),
+                    LabelsPadding = new Padding(0, 0, 4, 0),
                     MinStep = 1,
                     SeparatorsPaint = new SolidColorPaint(new SKColor(90, 167, 255, 120))
                 }
