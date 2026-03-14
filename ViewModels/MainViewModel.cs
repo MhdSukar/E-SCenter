@@ -831,7 +831,7 @@ namespace ESCenter.ViewModels
                 {
                     MinLimit = 0,
                     LabelsPaint = new SolidColorPaint(SKColors.White),
-                    TextSize = 10,
+                    TextSize = 8,
                     Name = "Tickets",
                     NamePaint = new SolidColorPaint(SKColors.White),
                     MinStep = 1,
