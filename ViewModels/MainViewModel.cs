@@ -218,6 +218,8 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _ticketsYAxis, value);
         }
 
+        public SolidColorPaint TicketsTooltipTextPaint { get; } = new(SKColors.White);
+        public SolidColorPaint TicketsTooltipBackgroundPaint { get; } = new(new SKColor(11, 26, 42, 204));
 
         public ICommand ToggleCurveVisibilityCommand { get; }
 

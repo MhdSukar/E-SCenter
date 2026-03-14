@@ -322,8 +322,8 @@
                                                     Series="{Binding TicketsSeries}"
                                                     XAxes="{Binding TicketsXAxis}"
                                                     YAxes="{Binding TicketsYAxis}"
-                                                    TooltipTextPaint="{lvc:SolidColorPaint White}"
-                                                    TooltipBackgroundPaint="{lvc:SolidColorPaint #CC0B1A2A}"
+                                                    TooltipTextPaint="{Binding TicketsTooltipTextPaint}"
+                                                    TooltipBackgroundPaint="{Binding TicketsTooltipBackgroundPaint}"
                                                     LegendPosition="Hidden"/>
 
                                 <ScrollViewer Grid.Row="1"
