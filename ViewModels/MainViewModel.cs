@@ -837,8 +837,7 @@ namespace ESCenter.ViewModels
                     Name = "Tickets",
                     NamePaint = new SolidColorPaint(SKColors.White),
                     NameTextSize = 11,
-                    NamePadding = new Padding(0, 0, 0, 6),
-                    LabelsPadding = new Padding(0, 0, 4, 0),
+                    NamePadding = new LiveChartsCore.Drawing.Padding(0, 0, 0, 6),
                     MinStep = 1,
                     SeparatorsPaint = new SolidColorPaint(new SKColor(90, 167, 255, 120))
                 }
