@@ -323,17 +323,7 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="0"
-                                               Text="Tickets"
-                                               FontSize="10"
-                                               FontWeight="SemiBold"
-                                               Foreground="{StaticResource TextSecondaryBrush}"
-                                               VerticalAlignment="Center"
-                                               Margin="0,0,10,16">
-                                        <TextBlock.LayoutTransform>
-                                            <RotateTransform Angle="-90"/>
-                                        </TextBlock.LayoutTransform>
-                                    </TextBlock>
+
 
                                     <lvc:CartesianChart Grid.Column="1"
                                                         Margin="0"
@@ -618,7 +608,7 @@
                                         </Style>
                                     </Button.Style>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Image Source="{StaticResource token}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                        <Image Source="{StaticResource Admin}" Width="16" Height="16" Margin="0,0,8,0"/>
                                         <TextBlock Text="Admin Access"/>
                                     </StackPanel>
                                 </Button>
