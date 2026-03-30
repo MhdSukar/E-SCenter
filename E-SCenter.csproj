@@ -37,9 +37,16 @@
     <None Remove="Assets\Icons\circled_status_icon_colored.png" />
     <None Remove="Assets\Icons\DatabaseReports.png" />
     <None Remove="Assets\Icons\db_normal.png" />
+    <None Remove="Assets\Icons\Edit.png" />
+    <None Remove="Assets\Icons\exchange.png" />
     <None Remove="Assets\Icons\galaxy-ai.png" />
+    <None Remove="Assets\Icons\List1.png" />
+    <None Remove="Assets\Icons\List2.png" />
+    <None Remove="Assets\Icons\Notes.png" />
     <None Remove="Assets\Icons\phone.png" />
     <None Remove="Assets\Icons\reports_DB.png" />
+    <None Remove="Assets\Icons\Shutdown.png" />
+    <None Remove="Assets\Icons\StatusAi.png" />
     <None Remove="Themes\Statistics Resurces.txt" />
   </ItemGroup>
 
@@ -64,9 +71,6 @@
 	</ItemGroup>
 	
   <ItemGroup>
-    <Resource Include="Assets\Icons\02_recycle.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\Icons\Add.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -77,9 +81,6 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\AI Select.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\Al-Baraka Logo.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\AlBaraka.png">
@@ -121,19 +122,7 @@
     <Resource Include="Assets\Icons\Charts.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\Chat Assist.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\Circle to Search.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\circled_status_icon_colored.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\Icons\Clear.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\click-to search.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Dashboard.png">
@@ -151,28 +140,13 @@
     <Resource Include="Assets\Icons\DatabaseReset.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\db_normal.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\Icons\Delete-Close Title.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\deployed_code_alert.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\devices_wearables.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\DmgHistoryTitle.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\do_not_disturb.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\Drawing Assist.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\edit_audio.png">
+    <Resource Include="Assets\Icons\Edit.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\ESC-ID Title.png">
@@ -184,28 +158,13 @@
     <Resource Include="Assets\Icons\EstimatedCost.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\filter_vintage.png">
+    <Resource Include="Assets\Icons\exchange.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\FinalCost.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\galaxy-ai.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\galaxy-ai1.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\galaxy-ai2.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\galaxy-ai3.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\Icons\galaxy-ai4.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\galaxy-ai5.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\galaxy-ai6.png">
@@ -220,22 +179,19 @@
     <Resource Include="Assets\Icons\Inevntory.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\List.png">
+    <Resource Include="Assets\Icons\List1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\List2.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\LowStock.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\mobile_code_35dp.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\mobile_wrench_24dp.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\Icons\Model.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\Note Assist.png">
+    <Resource Include="Assets\Icons\Notes.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\OutStock.png">
@@ -250,9 +206,6 @@
     <Resource Include="Assets\Icons\phone.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\Play AI.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\Icons\Priority.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -263,9 +216,6 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\ReadyToPick.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\Icons\reboot_galaxy_s10.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Refresh.png">
@@ -298,10 +248,13 @@
     <Resource Include="Assets\Icons\Settings.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\Shutdown_galaxy_s10.png">
+    <Resource Include="Assets\Icons\Shutdown.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Statistics.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\StatusAi.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\TickClosed.png">
