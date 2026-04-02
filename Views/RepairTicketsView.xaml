@@ -408,7 +408,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource ContactMAI}"
+                            <Image Source="{StaticResource PhoneNumber}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -426,7 +426,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Center">
-                            <Image Source="{StaticResource ContactMAI}"
+                            <Image Source="{StaticResource ContactAI}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
@@ -572,7 +572,7 @@
                                     Grid.Column="0"
                                     Margin="0,6"
                                     VerticalAlignment="Top">
-                            <Image Source="{StaticResource ListAI3}"
+                            <Image Source="{StaticResource Notes}"
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
