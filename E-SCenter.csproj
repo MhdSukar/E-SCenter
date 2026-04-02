@@ -35,14 +35,19 @@
   <ItemGroup>
     <None Remove="Assets\Icons\02_recycle.png" />
     <None Remove="Assets\Icons\circled_status_icon_colored.png" />
+    <None Remove="Assets\Icons\critical.png" />
     <None Remove="Assets\Icons\DatabaseReports.png" />
     <None Remove="Assets\Icons\db_normal.png" />
     <None Remove="Assets\Icons\Edit.png" />
     <None Remove="Assets\Icons\exchange.png" />
+    <None Remove="Assets\Icons\finished.png" />
     <None Remove="Assets\Icons\galaxy-ai.png" />
     <None Remove="Assets\Icons\List1.png" />
     <None Remove="Assets\Icons\List2.png" />
+    <None Remove="Assets\Icons\major.png" />
     <None Remove="Assets\Icons\Notes.png" />
+    <None Remove="Assets\Icons\ongoing.png" />
+    <None Remove="Assets\Icons\overdue.png" />
     <None Remove="Assets\Icons\phone.png" />
     <None Remove="Assets\Icons\reports_DB.png" />
     <None Remove="Assets\Icons\Shutdown.png" />
@@ -125,6 +130,9 @@
     <Resource Include="Assets\Icons\Clear.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\critical.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\Dashboard.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -164,6 +172,9 @@
     <Resource Include="Assets\Icons\FinalCost.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\finished.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\galaxy-ai4.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -188,13 +199,22 @@
     <Resource Include="Assets\Icons\LowStock.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\major.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\Model.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Notes.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\ongoing.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\OutStock.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\overdue.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Parts.png">

@@ -73,6 +73,10 @@
     
     
     <!-- ================================= Not Sorted ================================= -->
-
+    <BitmapImage x:Key="CharOngoing" UriSource="/Assets/Icons/ongoing.png"/>
+    <BitmapImage x:Key="CharFinished" UriSource="/Assets/Icons/finished.png"/>
+    <BitmapImage x:Key="CharMajor" UriSource="/Assets/Icons/major.png"/>
+    <BitmapImage x:Key="CharCritical" UriSource="/Assets/Icons/critical.png"/>
+    <BitmapImage x:Key="CharOverdue" UriSource="/Assets/Icons/overdue.png"/>
 
 </ResourceDictionary>

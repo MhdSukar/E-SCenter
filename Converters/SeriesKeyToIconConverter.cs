@@ -15,11 +15,11 @@ namespace ESCenter.Converters
             var key = value as string ?? string.Empty;
             var iconResourceKey = key switch
             {
-                "ongoing" => "AISearch",
-                "Finished" => "TickClosed",
-                "Major" => "AISearch",
-                "Critical" => "Priority",
-                "Overdue" => "Baraka",
+                "ongoing" => "CharOngoing",
+                "Finished" => "CharFinished",
+                "Major" => "CharMajor",
+                "Critical" => "CharCritical",
+                "Overdue" => "CharOverdue",
                 _ => "Charts"
             };
 
