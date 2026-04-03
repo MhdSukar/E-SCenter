@@ -16,7 +16,7 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            var sql = @"SELECT AlBarakaId, Date, ItemName, Price, PriceCurrency, Category, Account, CreatedAt, UpdatedAt FROM AlBaraka ORDER BY Date DESC;";
+            var sql = @"SELECT AlBarakaId, Date, ItemName, Price, PriceCurrency, Category, Account, COALESCE(Amount, Price, 0) Amount, CreatedAt, UpdatedAt FROM AlBaraka ORDER BY Date DESC;";
             using var cmd = new SQLiteCommand(sql, conn);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -40,7 +40,7 @@ namespace ESCenter.Services
             conn.Open();
 
             // Build query with optional date filters
-            var sql = "SELECT PriceCurrency, SUM(Price) as Total FROM AlBaraka";
+            var sql = "SELECT PriceCurrency, SUM(COALESCE(Amount, Price, 0)) as Total FROM AlBaraka";
             var where = new List<string>();
             if (start.HasValue)
             {
@@ -89,7 +89,7 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            var sql = @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category, Account) VALUES (@date, @item, @price, @currency, @category, @account); SELECT last_insert_rowid();";
+            var sql = @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category, Account, Amount) VALUES (@date, @item, @price, @currency, @category, @account, @amount); SELECT last_insert_rowid();";
             using var cmd = new SQLiteCommand(sql, conn);
             // Store date in ISO yyyy-MM-dd format (date-only)
             cmd.Parameters.AddWithValue("@date", rec.Date.ToString("yyyy-MM-dd"));
@@ -98,6 +98,7 @@ namespace ESCenter.Services
             cmd.Parameters.AddWithValue("@currency", rec.PriceCurrency ?? "S.P");
             cmd.Parameters.AddWithValue("@category", rec.Category ?? string.Empty);
             cmd.Parameters.AddWithValue("@account", rec.Account ?? string.Empty);
+            cmd.Parameters.AddWithValue("@amount", rec.Amount == 0 ? (rec.Price ?? 0m) : rec.Amount);
 
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
@@ -107,7 +108,7 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            var sql = @"UPDATE AlBaraka SET Date=@date, ItemName=@item, Price=@price, PriceCurrency=@currency, Category=@category, Account=@account, UpdatedAt=CURRENT_TIMESTAMP WHERE AlBarakaId=@id;";
+            var sql = @"UPDATE AlBaraka SET Date=@date, ItemName=@item, Price=@price, PriceCurrency=@currency, Category=@category, Account=@account, Amount=@amount, UpdatedAt=CURRENT_TIMESTAMP WHERE AlBarakaId=@id;";
             using var cmd = new SQLiteCommand(sql, conn);
             cmd.Parameters.AddWithValue("@id", rec.AlBarakaId);
             // Store date in ISO yyyy-MM-dd format (date-only)
@@ -117,6 +118,7 @@ namespace ESCenter.Services
             cmd.Parameters.AddWithValue("@currency", rec.PriceCurrency ?? "S.P");
             cmd.Parameters.AddWithValue("@category", rec.Category ?? string.Empty);
             cmd.Parameters.AddWithValue("@account", rec.Account ?? string.Empty);
+            cmd.Parameters.AddWithValue("@amount", rec.Amount == 0 ? (rec.Price ?? 0m) : rec.Amount);
 
             cmd.ExecuteNonQuery();
         }
@@ -157,6 +159,7 @@ namespace ESCenter.Services
                 PriceCurrency = reader["PriceCurrency"]?.ToString() ?? "S.P",
                 Category = reader["Category"]?.ToString() ?? string.Empty,
                 Account = reader["Account"]?.ToString() ?? string.Empty,
+                Amount = reader["Amount"] != DBNull.Value ? Convert.ToDecimal(reader["Amount"]) : (reader["Price"] != DBNull.Value ? Convert.ToDecimal(reader["Price"]) : 0m),
                 CreatedAt = reader["CreatedAt"]?.ToString() ?? string.Empty,
                 UpdatedAt = reader["UpdatedAt"]?.ToString() ?? string.Empty
             };

@@ -11,6 +11,7 @@ namespace ESCenter.Models
         public string PriceCurrency { get; set; } = "S.P";
         public string Category { get; set; } = string.Empty;
         public string Account { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
         public string CreatedAt { get; set; } = string.Empty;
         public string UpdatedAt { get; set; } = string.Empty;
     }
