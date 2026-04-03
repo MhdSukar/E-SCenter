@@ -133,13 +133,43 @@ namespace ESCenter.ViewModels
         public string EscTicketId { get => _escTicketId; set => SetProperty(ref _escTicketId, value); }
 
         private string _customerIdText = string.Empty;
-        public string CustomerIdText { get => _customerIdText; set => SetProperty(ref _customerIdText, value); }
+        public string CustomerIdText
+        {
+            get => _customerIdText;
+            set
+            {
+                if (SetProperty(ref _customerIdText, value))
+                {
+                    RefreshCustomerProfile();
+                }
+            }
+        }
 
         private string _customerName = string.Empty;
-        public string CustomerName { get => _customerName; set => SetProperty(ref _customerName, value); }
+        public string CustomerName
+        {
+            get => _customerName;
+            set
+            {
+                if (SetProperty(ref _customerName, value))
+                {
+                    RefreshCustomerProfile();
+                }
+            }
+        }
 
         private string _phoneNumber = string.Empty;
-        public string PhoneNumber { get => _phoneNumber; set => SetProperty(ref _phoneNumber, value); }
+        public string PhoneNumber
+        {
+            get => _phoneNumber;
+            set
+            {
+                if (SetProperty(ref _phoneNumber, value))
+                {
+                    RefreshCustomerProfile();
+                }
+            }
+        }
 
         private string _contactMethod = "Call";
         public string ContactMethod { get => _contactMethod; set => SetProperty(ref _contactMethod, value); }
@@ -326,6 +356,29 @@ namespace ESCenter.ViewModels
             ShowReadyPickupsOnly = true;
         }
 
+        public ObservableCollection<RepairTicket> CustomerProfileHistory { get; } = new ObservableCollection<RepairTicket>();
+
+        private string _customerProfileHeader = "Customer Profile";
+        public string CustomerProfileHeader
+        {
+            get => _customerProfileHeader;
+            private set => SetProperty(ref _customerProfileHeader, value);
+        }
+
+        private bool _hasCustomerProfileHistory;
+        public bool HasCustomerProfileHistory
+        {
+            get => _hasCustomerProfileHistory;
+            private set => SetProperty(ref _hasCustomerProfileHistory, value);
+        }
+
+        private int _customerProfileRepeatCount;
+        public int CustomerProfileRepeatCount
+        {
+            get => _customerProfileRepeatCount;
+            private set => SetProperty(ref _customerProfileRepeatCount, value);
+        }
+
         // =========================================================
         // FILTER LOGIC
         // =========================================================
@@ -381,6 +434,7 @@ namespace ESCenter.ViewModels
 
             EvaluateDuplicateMarkers();
             ClearForm();
+            RefreshCustomerProfile();
             _ticketsView.Refresh();
         }
 
@@ -403,6 +457,7 @@ namespace ESCenter.ViewModels
                 {
                     System.Windows.MessageBox.Show(duplicateNotice, "Repeated Customer / Device", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
+                RefreshCustomerProfile();
                 _ticketsView.Refresh();
 
                 SelectedTicket = ticket;
@@ -431,6 +486,7 @@ namespace ESCenter.ViewModels
 
                 RefreshTicketInCollection(SelectedTicket);
                 EvaluateDuplicateMarkers();
+                RefreshCustomerProfile();
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket updated successfully!");
@@ -464,6 +520,7 @@ namespace ESCenter.ViewModels
 
                 EvaluateDuplicateMarkers();
                 ClearForm();
+                RefreshCustomerProfile();
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket deleted successfully!");
@@ -602,6 +659,7 @@ namespace ESCenter.ViewModels
 
             DeviceChecklist = new DeviceChecklist();
             Accessories = new Accessories();
+            RefreshCustomerProfile();
         }
 
         private void LoadPartsCatalog()
@@ -823,6 +881,7 @@ namespace ESCenter.ViewModels
 
             DeviceChecklist = ticket.DeviceChecklist ?? new DeviceChecklist();
             Accessories = ticket.Accessories ?? new Accessories();
+            RefreshCustomerProfile();
         }
 
         private RepairTicket BuildTicketFromForm()
@@ -960,7 +1019,10 @@ namespace ESCenter.ViewModels
                 (candidate.CustomerId.HasValue && existing.CustomerId.HasValue && candidate.CustomerId.Value == existing.CustomerId.Value) ||
                 (!string.IsNullOrWhiteSpace(candidate.CustomerName) &&
                  !string.IsNullOrWhiteSpace(existing.CustomerName) &&
-                 string.Equals(candidate.CustomerName.Trim(), existing.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)));
+                 string.Equals(candidate.CustomerName.Trim(), existing.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrWhiteSpace(candidate.PhoneNumber) &&
+                 !string.IsNullOrWhiteSpace(existing.PhoneNumber) &&
+                 string.Equals(candidate.PhoneNumber.Trim(), existing.PhoneNumber.Trim(), StringComparison.OrdinalIgnoreCase)));
 
             var repeatedDevice = !string.IsNullOrWhiteSpace(candidate.SerialIMEI) &&
                                  Tickets.Any(existing =>
@@ -979,12 +1041,12 @@ namespace ESCenter.ViewModels
 
             if (repeatedCustomer)
             {
-                lines.Add("ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Repeated customer detected (Customer ID or Name matched).");
+                lines.Add("• Repeated customer detected (Customer ID, Name, or Phone matched).");
             }
 
             if (repeatedDevice)
             {
-                lines.Add("ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Repeated device detected (Serial/IMEI matched).");
+                lines.Add("• Repeated device detected (Serial/IMEI matched).");
             }
 
             return string.Join(Environment.NewLine, lines);
@@ -1004,14 +1066,76 @@ namespace ESCenter.ViewModels
                                                                 !string.IsNullOrWhiteSpace(other.CustomerName) &&
                                                                 string.Equals(ticket.CustomerName.Trim(), other.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase));
 
+                var hasCustomerPhoneMatch = !string.IsNullOrWhiteSpace(ticket.PhoneNumber) &&
+                                            Tickets.Any(other => other.TicketId != ticket.TicketId &&
+                                                                 !string.IsNullOrWhiteSpace(other.PhoneNumber) &&
+                                                                 string.Equals(ticket.PhoneNumber.Trim(), other.PhoneNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+
                 var hasDeviceMatch = !string.IsNullOrWhiteSpace(ticket.SerialIMEI) &&
                                      Tickets.Any(other => other.TicketId != ticket.TicketId &&
                                                           !string.IsNullOrWhiteSpace(other.SerialIMEI) &&
                                                           string.Equals(ticket.SerialIMEI.Trim(), other.SerialIMEI.Trim(), StringComparison.OrdinalIgnoreCase));
 
-                ticket.IsRepeatedCustomer = hasCustomerIdMatch || hasCustomerNameMatch;
+                ticket.IsRepeatedCustomer = hasCustomerIdMatch || hasCustomerNameMatch || hasCustomerPhoneMatch;
                 ticket.IsRepeatedDevice = hasDeviceMatch;
             }
+        }
+
+        private void RefreshCustomerProfile()
+        {
+            var customerId = long.TryParse(CustomerIdText, out var parsedId) ? parsedId : (long?)null;
+            var normalizedName = NormalizeLookup(CustomerName);
+            var normalizedPhone = NormalizeLookup(PhoneNumber);
+
+            var matches = Tickets
+                .Where(ticket => IsCustomerMatch(ticket, customerId, normalizedName, normalizedPhone))
+                .OrderByDescending(ticket => ticket.ReceiveDate)
+                .ToList();
+
+            CustomerProfileHistory.Clear();
+            foreach (var match in matches)
+            {
+                CustomerProfileHistory.Add(match);
+            }
+
+            CustomerProfileRepeatCount = CustomerProfileHistory.Count;
+            HasCustomerProfileHistory = CustomerProfileRepeatCount > 0;
+            CustomerProfileHeader = BuildCustomerProfileHeader(customerId, normalizedName, normalizedPhone, CustomerProfileRepeatCount);
+        }
+
+        private static bool IsCustomerMatch(RepairTicket ticket, long? customerId, string normalizedName, string normalizedPhone)
+        {
+            var hasCustomerIdMatch = customerId.HasValue &&
+                                     ticket.CustomerId.HasValue &&
+                                     ticket.CustomerId.Value == customerId.Value;
+
+            var hasCustomerNameMatch = !string.IsNullOrWhiteSpace(normalizedName) &&
+                                       string.Equals(NormalizeLookup(ticket.CustomerName), normalizedName, StringComparison.OrdinalIgnoreCase);
+
+            var hasPhoneMatch = !string.IsNullOrWhiteSpace(normalizedPhone) &&
+                                string.Equals(NormalizeLookup(ticket.PhoneNumber), normalizedPhone, StringComparison.OrdinalIgnoreCase);
+
+            return hasCustomerIdMatch || hasCustomerNameMatch || hasPhoneMatch;
+        }
+
+        private static string NormalizeLookup(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
+        }
+
+        private static string BuildCustomerProfileHeader(long? customerId, string normalizedName, string normalizedPhone, int historyCount)
+        {
+            if (!customerId.HasValue && string.IsNullOrWhiteSpace(normalizedName) && string.IsNullOrWhiteSpace(normalizedPhone))
+            {
+                return "Customer Profile";
+            }
+
+            if (historyCount == 0)
+            {
+                return "Customer Profile - New Customer";
+            }
+
+            return $"Customer Profile - {historyCount} repair record(s)";
         }
 
         // =========================================================
