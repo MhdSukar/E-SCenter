@@ -376,7 +376,7 @@ namespace ESCenter.ViewModels
         public int CustomerProfileRepeatCount
         {
             get => _customerProfileRepeatCount;
-            set => SetProperty(ref _customerProfileRepeatCount, value);
+            private set => SetProperty(ref _customerProfileRepeatCount, value);
         }
 
         // =========================================================

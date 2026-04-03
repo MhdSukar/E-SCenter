@@ -325,6 +325,8 @@
                             <!-- 22 -->
                             <RowDefinition Height="Auto" />
                             <!-- 23 -->
+                            <RowDefinition Height="Auto" />
+                            <!-- 24 -->
                         </Grid.RowDefinitions>
 
                         <!-- ================= CUSTOMER INFO ================= -->
@@ -1165,9 +1167,59 @@
                             </UniformGrid>
                         </GroupBox>
 
+                        <!-- ================= CUSTOMER PROFILE ================= -->
+                        <GroupBox Header="{Binding CustomerProfileHeader}"
+                                  Grid.Row="23"
+                                  Grid.ColumnSpan="2"
+                                  Margin="0,12,0,0"
+                                  FontWeight="Bold"
+                                  Style="{StaticResource DarkBlueGroupBoxStyle}">
+                            <Grid Margin="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                           Margin="0,0,0,6"
+                                           Foreground="{StaticResource TextSecondaryBrush}">
+                                    <Run Text="Repeat records: " />
+                                    <Run Text="{Binding CustomerProfileRepeatCount}" FontWeight="SemiBold" />
+                                </TextBlock>
+
+                                <DataGrid Grid.Row="1"
+                                          ItemsSource="{Binding CustomerProfileHistory}"
+                                          AutoGenerateColumns="False"
+                                          IsReadOnly="True"
+                                          MinHeight="140"
+                                          MaxHeight="220"
+                                          Style="{StaticResource DarkDataGridStyle}"
+                                          ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
+                                          AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="ESC-ID"
+                                                            Binding="{Binding EscTicketId}"
+                                                            Width="90" />
+                                        <DataGridTextColumn Header="Received"
+                                                            Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}"
+                                                            Width="130" />
+                                        <DataGridTextColumn Header="Model"
+                                                            Binding="{Binding DeviceModel}"
+                                                            Width="130" />
+                                        <DataGridTextColumn Header="Issue"
+                                                            Binding="{Binding ProblemDescription}"
+                                                            Width="*" />
+                                        <DataGridTextColumn Header="Status"
+                                                            Binding="{Binding RepairStatus}"
+                                                            Width="120" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </GroupBox>
+
                         <!-- ================= ACCESSORIES ================= -->
                         <GroupBox Header="Accessories"
-                                  Grid.Row="23"
+                                  Grid.Row="24"
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
