@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\EscCommandRequest.cs" />
     <Compile Remove="Services\DockControlIntegrationServer.cs" />
   </ItemGroup>
 

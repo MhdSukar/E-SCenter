@@ -401,47 +401,6 @@ namespace ESCenter.ViewModels
             RefreshDatabaseConnectionStatus();
         }
 
-        public Task HandleDockControlCommandAsync(EscCommandRequest request)
-        {
-            var command = request.Command?.Trim().ToLowerInvariant();
-
-            switch (command)
-            {
-                case "open_dashboard":
-                    ShowDashboardCommand.Execute(null);
-                    break;
-
-                case "new_ticket":
-                    ShowRepairTicketsCommand.Execute(null);
-                    GetOrCreateRepairTicketsViewModel().PrepareNewTicketFromIntegration();
-                    AppLogger.Success("DockControl: New ticket form ready.");
-                    break;
-
-                case "search_device":
-                    ShowRepairTicketsCommand.Execute(null);
-                    var search = TryGetParameter(request.Parameters, "query")
-                                 ?? TryGetParameter(request.Parameters, "search")
-                                 ?? TryGetParameter(request.Parameters, "device")
-                                 ?? TryGetParameter(request.Parameters, "imei")
-                                 ?? string.Empty;
-                    GetOrCreateRepairTicketsViewModel().SearchDeviceFromIntegration(search);
-                    AppLogger.Success($"DockControl: Device search applied ({search}).");
-                    break;
-
-                case "ready_pickups":
-                    ShowRepairTicketsCommand.Execute(null);
-                    GetOrCreateRepairTicketsViewModel().ShowReadyPickupsFromIntegration();
-                    AppLogger.Success("DockControl: Ready pickups view applied.");
-                    break;
-
-                default:
-                    AppLogger.Warning($"DockControl command not supported: {request.Command}");
-                    break;
-            }
-
-            return Task.CompletedTask;
-        }
-
         private RepairTicketsViewModel GetOrCreateRepairTicketsViewModel()
             => _repairTicketsViewModel ??= new RepairTicketsViewModel();
 

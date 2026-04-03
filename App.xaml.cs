@@ -79,25 +79,6 @@ namespace ESCenter
             MainWindow.Activate();
         }
 
-        private Task HandleDockControlCommandAsync(EscCommandRequest request)
-        {
-            return Dispatcher.InvokeAsync(() =>
-            {
-                if (MainWindow == null)
-                {
-                    ShowMainWindow();
-                }
-
-                if (MainWindow?.DataContext is not ViewModels.MainViewModel vm)
-                {
-                    Core.AppLogger.Warning("DockControl command ignored: main view model unavailable.");
-                    return;
-                }
-
-                vm.HandleDockControlCommandAsync(request);
-            }).Task;
-        }
-
         public void ExitApp()
         {
             if (_trayIcon != null)
