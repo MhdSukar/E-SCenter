@@ -51,6 +51,7 @@
     <None Remove="Assets\Icons\List1.png" />
     <None Remove="Assets\Icons\List2.png" />
     <None Remove="Assets\Icons\major.png" />
+    <None Remove="Assets\Icons\NOT USED [1].png" />
     <None Remove="Assets\Icons\Notes.png" />
     <None Remove="Assets\Icons\ongoing.png" />
     <None Remove="Assets\Icons\overdue.png" />
@@ -222,6 +223,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Model.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\NOT USED [1].png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Notes.png">

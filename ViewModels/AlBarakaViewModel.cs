@@ -161,12 +161,12 @@ namespace ESCenter.ViewModels
                         Price = Price,
                         PriceCurrency = PriceCurrency,
                         Category = Category,
-                        Account = Account
+                        Account = Account?.Trim() ?? string.Empty
                     };
 
                     var id = _service.Insert(rec);
                     rec.AlBarakaId = id;
-                    Records.Insert(0, rec);
+                    Refresh();
                     ClearForm(preserveDate: true);
                 }
                 else
@@ -176,7 +176,7 @@ namespace ESCenter.ViewModels
                     SelectedRecord.Price = Price;
                     SelectedRecord.PriceCurrency = PriceCurrency;
                     SelectedRecord.Category = Category;
-                    SelectedRecord.Account = Account;
+                    SelectedRecord.Account = Account?.Trim() ?? string.Empty;
 
                     _service.Update(SelectedRecord);
                     Refresh();
