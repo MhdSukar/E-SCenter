@@ -85,7 +85,7 @@ namespace ESCenter.ViewModels
 
         public AlBarakaViewModel()
         {
-            AddNewCommand = new RelayCommand(_ => ClearForm());
+            AddNewCommand = new RelayCommand(_ => ClearForm(preserveDate: true));
             SaveCommand = new RelayCommand(_ => Save(), _ => CanSave());
             DeleteCommand = new RelayCommand(_ => Delete(), _ => SelectedRecord != null);
             RefreshCommand = new RelayCommand(_ => Refresh());
@@ -94,6 +94,7 @@ namespace ESCenter.ViewModels
             var today = DateTime.Today;
             FilterStart = new DateTime(today.Year, today.Month, 1);
             FilterEnd = FilterStart.Value.AddMonths(1).AddDays(-1);
+            Date = today;
 
             Refresh();
         }
@@ -111,7 +112,7 @@ namespace ESCenter.ViewModels
             }
             else
             {
-                ClearForm();
+                ClearForm(preserveDate: true);
             }
 
             NotifyAllProperties();
@@ -127,10 +128,12 @@ namespace ESCenter.ViewModels
             OnPropertyChanged(nameof(Account));
         }
 
-        private void ClearForm()
+        private void ClearForm(bool preserveDate = false)
         {
+            var selectedDate = Date;
+
             SelectedRecord = null;
-            Date = DateTime.Today;
+            Date = preserveDate ? selectedDate : DateTime.Today;
             ItemName = string.Empty;
             Price = null;
             PriceCurrency = "S.P";
@@ -164,7 +167,7 @@ namespace ESCenter.ViewModels
                     var id = _service.Insert(rec);
                     rec.AlBarakaId = id;
                     Records.Insert(0, rec);
-                    SelectedRecord = rec;
+                    ClearForm(preserveDate: true);
                 }
                 else
                 {

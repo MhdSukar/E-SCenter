@@ -460,7 +460,7 @@ namespace ESCenter.ViewModels
                 RefreshCustomerProfile();
                 _ticketsView.Refresh();
 
-                SelectedTicket = ticket;
+                ClearForm();
                 AppLogger.Success("Ticket added successfully!");
                 ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
