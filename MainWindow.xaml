@@ -274,7 +274,7 @@
                                    Foreground="{StaticResource TextLogoBrush}"
                                    Grid.Column="0" Margin="50,0,0,0"/>
 
-                        <TextBlock Text="Electronics Services Center"
+                        <TextBlock Text="Electronics Services Center 1"
                                    Style="{StaticResource CardTitleTextStyle}"
                                    FontSize="22"
                                    HorizontalAlignment="Center"
@@ -508,7 +508,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Column="0" Grid.Row="0"
-                                           Text="Search SN:"
+                                           Text="ѕєαяςн ѕи:"
                                            Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
 
                                 <Image Grid.Column="0" Grid.Row="1"
