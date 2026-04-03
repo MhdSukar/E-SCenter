@@ -114,40 +114,30 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _currentView, value);
         }
 
-        private bool _isDashboardSelected = true;
-        public bool IsDashboardSelected
+        private NavSection _activeSection = NavSection.Dashboard;
+        public NavSection ActiveSection
         {
-            get => _isDashboardSelected;
-            set => SetProperty(ref _isDashboardSelected, value);
+            get => _activeSection;
+            set
+            {
+                if (!SetProperty(ref _activeSection, value))
+                {
+                    return;
+                }
+
+                OnPropertyChanged(nameof(IsDashboardSelected));
+                OnPropertyChanged(nameof(IsRepairTicketsSelected));
+                OnPropertyChanged(nameof(IsPartsControlSelected));
+                OnPropertyChanged(nameof(IsInventorySelected));
+                OnPropertyChanged(nameof(IsBoneyardSelected));
+            }
         }
 
-        private bool _isRepairTicketsSelected;
-        public bool IsRepairTicketsSelected
-        {
-            get => _isRepairTicketsSelected;
-            set => SetProperty(ref _isRepairTicketsSelected, value);
-        }
-
-        private bool _isPartsControlSelected;
-        public bool IsPartsControlSelected
-        {
-            get => _isPartsControlSelected;
-            set => SetProperty(ref _isPartsControlSelected, value);
-        }
-
-        private bool _isInventorySelected;
-        public bool IsInventorySelected
-        {
-            get => _isInventorySelected;
-            set => SetProperty(ref _isInventorySelected, value);
-        }
-
-        private bool _isBoneyardSelected;
-        public bool IsBoneyardSelected
-        {
-            get => _isBoneyardSelected;
-            set => SetProperty(ref _isBoneyardSelected, value);
-        }
+        public bool IsDashboardSelected => ActiveSection == NavSection.Dashboard;
+        public bool IsRepairTicketsSelected => ActiveSection == NavSection.RepairTickets;
+        public bool IsPartsControlSelected => ActiveSection == NavSection.PartsControl;
+        public bool IsInventorySelected => ActiveSection == NavSection.Inventory;
+        public bool IsBoneyardSelected => ActiveSection == NavSection.Boneyard;
 
         private string _statusText = "System Ready";
         public string StatusText
@@ -245,7 +235,7 @@ namespace ESCenter.ViewModels
 
         public MainViewModel()
         {
-            Dashboard = new DashboardViewModel();
+            Dashboard = new DashboardViewModel(NavigateToRepairTicketsFromDashboard);
             // Load persisted preference for auto-granting admin access on startup
             _autoGrantAdminAccess = ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess();
             if (_autoGrantAdminAccess)
@@ -263,84 +253,51 @@ namespace ESCenter.ViewModels
 
             ShowDashboardCommand = new RelayCommand(_ =>
             {
-                // select dashboard and deselect others
-                IsDashboardSelected = true;
-                IsRepairTicketsSelected = false;
-                IsPartsControlSelected = false;
-                IsInventorySelected = false;
-                IsBoneyardSelected = false;
+                ActiveSection = NavSection.Dashboard;
                 Navigate(Dashboard, "Dashboard loaded");
             });
 
             ShowRepairTicketsCommand = new RelayCommand(_ =>
             {
-                IsDashboardSelected = false;
-                IsRepairTicketsSelected = true;
-                IsPartsControlSelected = false;
-                IsInventorySelected = false;
-                IsBoneyardSelected = false;
+                ActiveSection = NavSection.RepairTickets;
                 Navigate(GetOrCreateRepairTicketsViewModel(), "Tickets loaded");
             });
 
             ShowPartsControlCommand = new RelayCommand(_ =>
             {
-                IsDashboardSelected = false;
-                IsRepairTicketsSelected = false;
-                IsPartsControlSelected = true;
-                IsInventorySelected = false;
-                IsBoneyardSelected = false;
+                ActiveSection = NavSection.PartsControl;
                 Navigate(new PartsControlViewModel(), "Parts Control loaded");
             });
 
             ShowReportsCommand = new RelayCommand(_ =>
             {
-                IsDashboardSelected = false;
-                IsRepairTicketsSelected = false;
-                IsPartsControlSelected = false;
-                IsInventorySelected = false;
-                IsBoneyardSelected = false;
+                ActiveSection = NavSection.None;
                 Navigate(new ReportsViewModel(), "Reports loaded");
             });
 
             ShowAlBarakaCommand = new RelayCommand(_ =>
             {
                 // Open internal Al-Baraka view (replaces external launcher)
-                IsDashboardSelected = false;
-                IsRepairTicketsSelected = false;
-                IsPartsControlSelected = false;
-                IsInventorySelected = false;
-                IsBoneyardSelected = false;
+                ActiveSection = NavSection.None;
                 Navigate(new AlBarakaViewModel(), "Al-Baraka loaded");
             });
 
             ShowInventoryCommand = new RelayCommand(_ =>
             {
-                IsDashboardSelected = false;
-                IsRepairTicketsSelected = false;
-                IsPartsControlSelected = false;
-                IsInventorySelected = true;
-                IsBoneyardSelected = false;
+                ActiveSection = NavSection.Inventory;
                 Navigate(new InventoryViewModel(), "Inventory loaded");
             });
 
             ShowBoneyardCommand = new RelayCommand(_ =>
             {
-                IsDashboardSelected = false;
-                IsRepairTicketsSelected = false;
-                IsPartsControlSelected = false;
-                IsInventorySelected = false;
-                IsBoneyardSelected = true;
+                ActiveSection = NavSection.Boneyard;
                 Navigate(new BoneyardViewModel(), "Boneyard loaded");
             });
 
             ShowWarrantySystemCommand = new RelayCommand(_ =>
             {
                 // warranty is a window - deselect all tabs
-                IsDashboardSelected = false;
-                IsRepairTicketsSelected = false;
-                IsPartsControlSelected = false;
-                IsInventorySelected = false;
-                IsBoneyardSelected = false;
+                ActiveSection = NavSection.None;
                 ShowWarrantySystem();
             });
 
@@ -399,6 +356,16 @@ namespace ESCenter.ViewModels
             // Load Al-Baraka totals for current month
             RefreshAlBarakaTotals();
             RefreshDatabaseConnectionStatus();
+        }
+
+
+        private void NavigateToRepairTicketsFromDashboard(object? parameter)
+        {
+            ActiveSection = NavSection.RepairTickets;
+            if (ShowRepairTicketsCommand.CanExecute(parameter))
+            {
+                ShowRepairTicketsCommand.Execute(parameter);
+            }
         }
 
         private RepairTicketsViewModel GetOrCreateRepairTicketsViewModel()
@@ -939,6 +906,15 @@ namespace ESCenter.ViewModels
             }
 
             OnPropertyChanged(nameof(TicketsSeries));
+        }
+        public enum NavSection
+        {
+            None,
+            Dashboard,
+            RepairTickets,
+            PartsControl,
+            Inventory,
+            Boneyard
         }
     }
 }

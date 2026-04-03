@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="0001-async-data-loading.patch" />
     <None Remove="Assets\Icons\02_recycle.png" />
     <None Remove="Assets\Icons\circled_status_icon_colored.png" />
     <None Remove="Assets\Icons\critical.png" />
