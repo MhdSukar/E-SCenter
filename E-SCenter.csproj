@@ -39,9 +39,14 @@
     <None Remove="Assets\Icons\DatabaseReports.png" />
     <None Remove="Assets\Icons\db_normal.png" />
     <None Remove="Assets\Icons\Edit.png" />
+    <None Remove="Assets\Icons\ESC-AlBaraka.png" />
     <None Remove="Assets\Icons\exchange.png" />
     <None Remove="Assets\Icons\finished.png" />
     <None Remove="Assets\Icons\galaxy-ai.png" />
+    <None Remove="Assets\Icons\galaxy-ai1.png" />
+    <None Remove="Assets\Icons\galaxy-ai2.png" />
+    <None Remove="Assets\Icons\galaxy-ai3.png" />
+    <None Remove="Assets\Icons\galaxy-ai4.png" />
     <None Remove="Assets\Icons\List1.png" />
     <None Remove="Assets\Icons\List2.png" />
     <None Remove="Assets\Icons\major.png" />
@@ -52,6 +57,10 @@
     <None Remove="Assets\Icons\reports_DB.png" />
     <None Remove="Assets\Icons\Shutdown.png" />
     <None Remove="Assets\Icons\StatusAi.png" />
+    <None Remove="Assets\Icons\TBclose.png" />
+    <None Remove="Assets\Icons\TBmaximize.png" />
+    <None Remove="Assets\Icons\TBminimize.png" />
+    <None Remove="Assets\Icons\TBrestore.png" />
     <None Remove="Themes\Statistics Resurces.txt" />
   </ItemGroup>
 
@@ -157,6 +166,9 @@
     <Resource Include="Assets\Icons\Edit.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\ESC-AlBaraka.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\ESC-ID Title.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -175,10 +187,16 @@
     <Resource Include="Assets\Icons\finished.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\galaxy-ai4.png">
+    <Resource Include="Assets\Icons\galaxy-ai1.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Icons\galaxy-ai6.png">
+    <Resource Include="Assets\Icons\galaxy-ai2.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\galaxy-ai3.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\galaxy-ai4.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\GalaxyAiSearch.png">
@@ -275,6 +293,18 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\StatusAi.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\TBclose.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\TBmaximize.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\TBminimize.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\TBrestore.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\TickClosed.png">

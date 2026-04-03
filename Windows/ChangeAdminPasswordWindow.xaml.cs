@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using ESCenter.Services;
 
 namespace ESCenter.Windows
@@ -10,6 +10,7 @@ namespace ESCenter.Windows
         public ChangeAdminPasswordWindow()
         {
             InitializeComponent();
+            SetMaximizeButtonIcon("Maximize");
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -81,13 +82,25 @@ namespace ESCenter.Windows
             if (WindowState == WindowState.Maximized)
             {
                 WindowState = WindowState.Normal;
-                btnMaximize.Content = "□";
+                SetMaximizeButtonIcon("Maximize");
             }
             else
             {
                 WindowState = WindowState.Maximized;
-                btnMaximize.Content = "❐";
+                SetMaximizeButtonIcon("Restore");
             }
+        }
+
+
+        private void SetMaximizeButtonIcon(string resourceKey)
+        {
+            btnMaximize.Content = new System.Windows.Controls.Image
+            {
+                Source = (System.Windows.Media.ImageSource)FindResource(resourceKey),
+                Width = 14,
+                Height = 14,
+                Stretch = System.Windows.Media.Stretch.Uniform
+            };
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

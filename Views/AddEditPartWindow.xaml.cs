@@ -20,6 +20,7 @@ namespace ESCenter.Views
         public AddEditPartWindow()
         {
             InitializeComponent();
+            SetMaximizeButtonIcon("Maximize");
         }
         private void btnMinimize_Click(object sender, RoutedEventArgs e)
         {
@@ -41,13 +42,25 @@ namespace ESCenter.Views
             if (this.WindowState == WindowState.Maximized)
             {
                 this.WindowState = WindowState.Normal;
-                btnMaximize.Content = "□";
+                SetMaximizeButtonIcon("Maximize");
             }
             else
             {
                 this.WindowState = WindowState.Maximized;
-                btnMaximize.Content = "❐";
+                SetMaximizeButtonIcon("Restore");
             }
+        }
+
+
+        private void SetMaximizeButtonIcon(string resourceKey)
+        {
+            btnMaximize.Content = new System.Windows.Controls.Image
+            {
+                Source = (System.Windows.Media.ImageSource)FindResource(resourceKey),
+                Width = 14,
+                Height = 14,
+                Stretch = System.Windows.Media.Stretch.Uniform
+            };
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
