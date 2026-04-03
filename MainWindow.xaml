@@ -168,7 +168,7 @@
                                      Command="{Binding ShowDashboardCommand}"
                                      x:Name="BtnDashboard"
                                      Width="120"
-                                     IsChecked="{Binding IsDashboardSelected, Mode=TwoWay}">
+                                     IsChecked="{Binding IsDashboardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Dashboard}" Width="25" Height="25" Margin="0,0,2,0"/>
                                 <TextBlock Text="(F1) Dashboard" Margin="0,2,0,0"/>
@@ -178,7 +178,7 @@
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs" Width="110"
                                      Command="{Binding ShowRepairTicketsCommand}"
-                                     IsChecked="{Binding IsRepairTicketsSelected, Mode=TwoWay}">
+                                     IsChecked="{Binding IsRepairTicketsSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Tickets}" Width="25" Height="25" Margin="0,0,2,0"/>
                                 <TextBlock Text="(F2) Tickets" Margin="0,2,0,0"/>
@@ -188,7 +188,7 @@
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs" Width="110"
                                      Command="{Binding ShowPartsControlCommand}"
-                                     IsChecked="{Binding IsPartsControlSelected, Mode=TwoWay}">
+                                     IsChecked="{Binding IsPartsControlSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Parts}" Width="25" Height="25" Margin="0,0,2,0"/>
                                 <TextBlock Text="(F3) Parts" Margin="0,2,0,0"/>
@@ -198,7 +198,7 @@
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs" Width="110"
                                      Command="{Binding ShowInventoryCommand}"
-                                     IsChecked="{Binding IsInventorySelected, Mode=TwoWay}">
+                                     IsChecked="{Binding IsInventorySelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Inventory}" Width="25" Height="25" Margin="0,0,2,0"/>
                                 <TextBlock Text="(F4) Inventory" Margin="0,2,0,0"/>
@@ -208,7 +208,7 @@
                         <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs" Width="110"
                                      Command="{Binding ShowBoneyardCommand}"
-                                     IsChecked="{Binding IsBoneyardSelected, Mode=TwoWay}">
+                                     IsChecked="{Binding IsBoneyardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Boneyard}" Width="25" Height="25" Margin="0,0,2,0"/>
                                 <TextBlock Text="(F5) Boneyard" Margin="0,2,0,0"/>

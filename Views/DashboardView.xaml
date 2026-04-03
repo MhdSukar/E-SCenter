@@ -1,13 +1,9 @@
 ﻿<UserControl x:Class="ESCenter.Views.DashboardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:ESCenter.ViewModels"
              Height="Auto"
              Width="Auto">
 
-    <UserControl.DataContext>
-        <vm:DashboardViewModel/>
-    </UserControl.DataContext>
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
