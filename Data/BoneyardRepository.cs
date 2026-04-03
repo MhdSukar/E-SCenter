@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 using ESCenter.Models;
 using ESCenter.Services;
 
@@ -45,6 +46,9 @@ namespace ESCenter.Data
             return list;
         }
 
+        public Task<List<BoneyardModel>> GetAllAsync()
+            => Task.Run(GetAll);
+
         public int Insert(BoneyardModel d)
         {
             using var conn = new SQLiteConnection(ConnectionString);
@@ -70,6 +74,9 @@ namespace ESCenter.Data
 
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
+
+        public Task<int> InsertAsync(BoneyardModel d)
+            => Task.Run(() => Insert(d));
 
         public void Update(BoneyardModel d)
         {
@@ -103,6 +110,9 @@ namespace ESCenter.Data
             cmd.ExecuteNonQuery();
         }
 
+        public Task UpdateAsync(BoneyardModel d)
+            => Task.Run(() => Update(d));
+
         public void Delete(int deviceId)
         {
             using var conn = new SQLiteConnection(ConnectionString);
@@ -114,5 +124,8 @@ namespace ESCenter.Data
             cmd.Parameters.AddWithValue("@id", deviceId);
             cmd.ExecuteNonQuery();
         }
+
+        public Task DeleteAsync(int deviceId)
+            => Task.Run(() => Delete(deviceId));
     }
 }

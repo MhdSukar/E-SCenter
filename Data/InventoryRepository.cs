@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
+using System.Threading.Tasks;
 using ESCenter.Models;
 using ESCenter.Services;
 
@@ -52,6 +53,9 @@ namespace ESCenter.Data
             return items;
         }
 
+        public Task<List<InventoryItemModel>> GetAllAsync()
+            => Task.Run(GetAll);
+
         public List<string> GetNames()
         {
             var items = new List<string>();
@@ -79,6 +83,9 @@ namespace ESCenter.Data
             return items;
         }
 
+        public Task<List<string>> GetNamesAsync()
+            => Task.Run(GetNames);
+
         public void DecrementQuantityByName(string name, int amount)
         {
             if (string.IsNullOrWhiteSpace(name) || amount <= 0)
@@ -103,6 +110,9 @@ namespace ESCenter.Data
             cmd.ExecuteNonQuery();
         }
 
+        public Task DecrementQuantityByNameAsync(string name, int amount)
+            => Task.Run(() => DecrementQuantityByName(name, amount));
+
         public void Insert(InventoryItemModel item)
         {
             using var conn = GetConnection();
@@ -117,6 +127,9 @@ namespace ESCenter.Data
             BindParams(cmd, item);
             cmd.ExecuteNonQuery();
         }
+
+        public Task InsertAsync(InventoryItemModel item)
+            => Task.Run(() => Insert(item));
 
         public void Update(InventoryItemModel item)
         {
@@ -148,6 +161,9 @@ namespace ESCenter.Data
             cmd.ExecuteNonQuery();
         }
 
+        public Task UpdateAsync(InventoryItemModel item)
+            => Task.Run(() => Update(item));
+
         public void Delete(int id)
         {
             using var conn = GetConnection();
@@ -157,6 +173,9 @@ namespace ESCenter.Data
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.ExecuteNonQuery();
         }
+
+        public Task DeleteAsync(int id)
+            => Task.Run(() => Delete(id));
 
         private void BindParams(SQLiteCommand cmd, InventoryItemModel item)
         {

@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 using ESCenter.Models;
 using ESCenter.Services;
 
@@ -34,6 +35,9 @@ namespace ESCenter.Data
             return result;
         }
 
+        public Task<List<PartModel>> GetAllAsync()
+            => Task.Run(GetAll);
+
         public List<string> GetSkus()
         {
             var result = new List<string>();
@@ -55,6 +59,9 @@ namespace ESCenter.Data
 
             return result;
         }
+
+        public Task<List<string>> GetSkusAsync()
+            => Task.Run(GetSkus);
 
         public void DecrementQuantityBySku(string sku, int amount)
         {
@@ -78,6 +85,9 @@ namespace ESCenter.Data
             cmd.ExecuteNonQuery();
         }
 
+        public Task DecrementQuantityBySkuAsync(string sku, int amount)
+            => Task.Run(() => DecrementQuantityBySku(sku, amount));
+
         // -------------------------
         // INSERT
         // -------------------------
@@ -98,6 +108,9 @@ namespace ESCenter.Data
             Bind(cmd, part);
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
+
+        public Task<int> InsertAsync(PartModel part)
+            => Task.Run(() => Insert(part));
 
         // -------------------------
         // UPDATE
@@ -131,6 +144,9 @@ namespace ESCenter.Data
             cmd.ExecuteNonQuery();
         }
 
+        public Task UpdateAsync(PartModel part)
+            => Task.Run(() => Update(part));
+
         // -------------------------
         // DELETE
         // -------------------------
@@ -143,6 +159,9 @@ namespace ESCenter.Data
             cmd.Parameters.AddWithValue("@Id", partId);
             cmd.ExecuteNonQuery();
         }
+
+        public Task DeleteAsync(int partId)
+            => Task.Run(() => Delete(partId));
 
         // -------------------------
         // Helpers

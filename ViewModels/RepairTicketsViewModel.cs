@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,13 @@ namespace ESCenter.ViewModels
     public class RepairTicketsViewModel : ObservableObject
     {
         private readonly TicketsDataService _service;
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
+        }
 
         // =========================================================
         // COLLECTIONS
@@ -308,9 +316,10 @@ namespace ESCenter.ViewModels
         public RepairTicketsViewModel()
         {
             _service = new TicketsDataService();
-            DatabasePathService.DatabasePathChanged += (_, __) => ReloadTicketsForSelectedDatabase();
+            DatabasePathService.DatabasePathChanged += async (_, __) => await LoadTicketsAsync();
 
-            Tickets = new ObservableCollection<RepairTicket>(_service.GetAll());
+            Tickets = new ObservableCollection<RepairTicket>();
+            _ = LoadTicketsAsync();
 
             _ticketsView = CollectionViewSource.GetDefaultView(Tickets);
             _ticketsView.Filter = TicketFilter;
@@ -424,19 +433,30 @@ namespace ESCenter.ViewModels
         // COMMAND ACTIONS
         // =========================================================
 
-        private void ReloadTicketsForSelectedDatabase()
+        private async Task LoadTicketsAsync()
         {
-            Tickets.Clear();
-            foreach (var ticket in _service.GetAll())
+            IsLoading = true;
+            try
             {
-                Tickets.Add(ticket);
+                var tickets = await _service.GetAllAsync();
+                Tickets.Clear();
+                foreach (var ticket in tickets)
+                    Tickets.Add(ticket);
+                EvaluateDuplicateMarkers();
+                _ticketsView.Refresh();
             }
-
-            EvaluateDuplicateMarkers();
-            ClearForm();
-            RefreshCustomerProfile();
-            _ticketsView.Refresh();
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to load tickets: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
+
+        private void ReloadTicketsForSelectedDatabase() => _ = LoadTicketsAsync();
+
 
         private void AddTicket()
         {
@@ -662,18 +682,20 @@ namespace ESCenter.ViewModels
             RefreshCustomerProfile();
         }
 
-        private void LoadPartsCatalog()
+        private void LoadPartsCatalog() => _ = LoadPartsCatalogAsync();
+
+        private async Task LoadPartsCatalogAsync()
         {
             _partsCatalog.Clear();
 
             try
             {
                 var partsRepo = new PartsRepository();
-                var skus = partsRepo.GetSkus()
+                var skus = (await partsRepo.GetSkusAsync())
                     .Distinct(StringComparer.OrdinalIgnoreCase);
 
                 var inventoryRepo = new InventoryRepository();
-                var inventoryNames = inventoryRepo.GetNames()
+                var inventoryNames = (await inventoryRepo.GetNamesAsync())
                     .Distinct(StringComparer.OrdinalIgnoreCase);
 
                 var combined = skus

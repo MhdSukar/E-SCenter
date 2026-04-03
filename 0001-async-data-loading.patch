@@ -1,0 +1,712 @@
+From 79476d00fd6126022012256f7a55814a6dc2ab38 Mon Sep 17 00:00:00 2001
+From: Claude <claude@anthropic.com>
+Date: Fri, 3 Apr 2026 22:56:01 +0000
+Subject: [PATCH] feat: add async data loading across all repositories and
+ ViewModels
+
+- Add GetAllAsync, InsertAsync, UpdateAsync, DeleteAsync to all repositories
+  (BoneyardRepository, PartsRepository, InventoryRepository)
+- Add async methods to TicketsDataService and AlBarakaDataService
+- DashboardViewModel.Refresh() now delegates to RefreshAsync() using Task.Run
+  offloading DB reads off the UI thread; adds IsLoading property
+- MainViewModel: RefreshTicketsChart and RefreshAlBarakaTotals are now async;
+  database connection status check runs off the UI thread via Task.Run
+- RepairTicketsViewModel: initial ticket load and parts catalog load are now
+  async via LoadTicketsAsync and LoadPartsCatalogAsync; adds IsLoading property
+- All sync public methods preserved as thin wrappers for backward compatibility
+---
+ Data/BoneyardRepository.cs           | 15 ++++++-
+ Data/InventoryRepository.cs          | 21 ++++++++-
+ Data/PartsRepository.cs              | 21 ++++++++-
+ Services/AlBarakaDataService.cs      | 22 +++++++---
+ Services/TicketsDataService.cs       | 16 ++++++-
+ ViewModels/DashboardViewModel.cs     | 37 ++++++++++++----
+ ViewModels/MainViewModel.cs          | 66 +++++++++++++++-------------
+ ViewModels/RepairTicketsViewModel.cs | 50 +++++++++++++++------
+ 8 files changed, 186 insertions(+), 62 deletions(-)
+
+diff --git a/Data/BoneyardRepository.cs b/Data/BoneyardRepository.cs
+index 4d2d47d..c4a411f 100644
+--- a/Data/BoneyardRepository.cs
++++ b/Data/BoneyardRepository.cs
+@@ -1,6 +1,7 @@
+-﻿using System;
++using System;
+ using System.Collections.Generic;
+ using System.Data.SQLite;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ using ESCenter.Services;
+ 
+@@ -45,6 +46,9 @@ namespace ESCenter.Data
+             return list;
+         }
+ 
++        public Task<List<BoneyardModel>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         public int Insert(BoneyardModel d)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -71,6 +75,9 @@ namespace ESCenter.Data
+             return Convert.ToInt32(cmd.ExecuteScalar());
+         }
+ 
++        public Task<int> InsertAsync(BoneyardModel d)
++            => Task.Run(() => Insert(d));
++
+         public void Update(BoneyardModel d)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -103,6 +110,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(BoneyardModel d)
++            => Task.Run(() => Update(d));
++
+         public void Delete(int deviceId)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -114,5 +124,8 @@ namespace ESCenter.Data
+             cmd.Parameters.AddWithValue("@id", deviceId);
+             cmd.ExecuteNonQuery();
+         }
++
++        public Task DeleteAsync(int deviceId)
++            => Task.Run(() => Delete(deviceId));
+     }
+ }
+diff --git a/Data/InventoryRepository.cs b/Data/InventoryRepository.cs
+index 8b778a0..47b8f7f 100644
+--- a/Data/InventoryRepository.cs
++++ b/Data/InventoryRepository.cs
+@@ -1,6 +1,7 @@
+-﻿using System.Collections.Generic;
++using System.Collections.Generic;
+ using System.Data.SQLite;
+ using System.Linq;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ using ESCenter.Services;
+ 
+@@ -52,6 +53,9 @@ namespace ESCenter.Data
+             return items;
+         }
+ 
++        public Task<List<InventoryItemModel>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         public List<string> GetNames()
+         {
+             var items = new List<string>();
+@@ -79,6 +83,9 @@ namespace ESCenter.Data
+             return items;
+         }
+ 
++        public Task<List<string>> GetNamesAsync()
++            => Task.Run(GetNames);
++
+         public void DecrementQuantityByName(string name, int amount)
+         {
+             if (string.IsNullOrWhiteSpace(name) || amount <= 0)
+@@ -103,6 +110,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DecrementQuantityByNameAsync(string name, int amount)
++            => Task.Run(() => DecrementQuantityByName(name, amount));
++
+         public void Insert(InventoryItemModel item)
+         {
+             using var conn = GetConnection();
+@@ -118,6 +128,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task InsertAsync(InventoryItemModel item)
++            => Task.Run(() => Insert(item));
++
+         public void Update(InventoryItemModel item)
+         {
+             using var conn = GetConnection();
+@@ -148,6 +161,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(InventoryItemModel item)
++            => Task.Run(() => Update(item));
++
+         public void Delete(int id)
+         {
+             using var conn = GetConnection();
+@@ -158,6 +174,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DeleteAsync(int id)
++            => Task.Run(() => Delete(id));
++
+         private void BindParams(SQLiteCommand cmd, InventoryItemModel item)
+         {
+             cmd.Parameters.AddWithValue("@ItemType", item.ItemType);
+diff --git a/Data/PartsRepository.cs b/Data/PartsRepository.cs
+index be43cf4..694fcc4 100644
+--- a/Data/PartsRepository.cs
++++ b/Data/PartsRepository.cs
+@@ -1,6 +1,7 @@
+-﻿using System;
++using System;
+ using System.Collections.Generic;
+ using System.Data.SQLite;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ using ESCenter.Services;
+ 
+@@ -34,6 +35,9 @@ namespace ESCenter.Data
+             return result;
+         }
+ 
++        public Task<List<PartModel>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         public List<string> GetSkus()
+         {
+             var result = new List<string>();
+@@ -56,6 +60,9 @@ namespace ESCenter.Data
+             return result;
+         }
+ 
++        public Task<List<string>> GetSkusAsync()
++            => Task.Run(GetSkus);
++
+         public void DecrementQuantityBySku(string sku, int amount)
+         {
+             if (string.IsNullOrWhiteSpace(sku) || amount <= 0)
+@@ -78,6 +85,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DecrementQuantityBySkuAsync(string sku, int amount)
++            => Task.Run(() => DecrementQuantityBySku(sku, amount));
++
+         // -------------------------
+         // INSERT
+         // -------------------------
+@@ -99,6 +109,9 @@ namespace ESCenter.Data
+             return Convert.ToInt32(cmd.ExecuteScalar());
+         }
+ 
++        public Task<int> InsertAsync(PartModel part)
++            => Task.Run(() => Insert(part));
++
+         // -------------------------
+         // UPDATE
+         // -------------------------
+@@ -131,6 +144,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(PartModel part)
++            => Task.Run(() => Update(part));
++
+         // -------------------------
+         // DELETE
+         // -------------------------
+@@ -144,6 +160,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DeleteAsync(int partId)
++            => Task.Run(() => Delete(partId));
++
+         // -------------------------
+         // Helpers
+         // -------------------------
+diff --git a/Services/AlBarakaDataService.cs b/Services/AlBarakaDataService.cs
+index 972ad87..e6a7c81 100644
+--- a/Services/AlBarakaDataService.cs
++++ b/Services/AlBarakaDataService.cs
+@@ -1,6 +1,7 @@
+ using System;
+ using System.Collections.Generic;
+ using System.Data.SQLite;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ 
+ namespace ESCenter.Services
+@@ -30,6 +31,9 @@ namespace ESCenter.Services
+             return list;
+         }
+ 
++        public Task<List<AlBarakaRecord>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         /// <summary>
+         /// Get totals grouped by currency for records optionally within a date range.
+         /// Date column stored as yyyy-MM-dd so string comparison works for ISO dates.
+@@ -42,7 +46,6 @@ namespace ESCenter.Services
+             using var conn = new SQLiteConnection(ConnectionString);
+             conn.Open();
+ 
+-            // Build query with optional date filters
+             var sql = "SELECT PriceCurrency, SUM(Price) as Total FROM AlBaraka";
+             var where = new List<string>();
+             if (start.HasValue)
+@@ -87,6 +90,9 @@ namespace ESCenter.Services
+             return (totalSP, totalUSD);
+         }
+ 
++        public Task<(decimal TotalSP, decimal TotalUSD)> GetTotalsAsync(DateTime? start = null, DateTime? end = null)
++            => Task.Run(() => GetTotals(start, end));
++
+         public int Insert(AlBarakaRecord rec)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -97,7 +103,6 @@ namespace ESCenter.Services
+                 ? @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category, Account) VALUES (@date, @item, @price, @currency, @category, @account); SELECT last_insert_rowid();"
+                 : @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category) VALUES (@date, @item, @price, @currency, @category); SELECT last_insert_rowid();";
+             using var cmd = new SQLiteCommand(sql, conn);
+-            // Store date in ISO yyyy-MM-dd format (date-only)
+             cmd.Parameters.AddWithValue("@date", rec.Date.ToString("yyyy-MM-dd"));
+             cmd.Parameters.AddWithValue("@item", rec.ItemName ?? string.Empty);
+             cmd.Parameters.AddWithValue("@price", rec.Price ?? (object)DBNull.Value);
+@@ -111,6 +116,9 @@ namespace ESCenter.Services
+             return Convert.ToInt32(cmd.ExecuteScalar());
+         }
+ 
++        public Task<int> InsertAsync(AlBarakaRecord rec)
++            => Task.Run(() => Insert(rec));
++
+         public void Update(AlBarakaRecord rec)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -122,7 +130,6 @@ namespace ESCenter.Services
+                 : @"UPDATE AlBaraka SET Date=@date, ItemName=@item, Price=@price, PriceCurrency=@currency, Category=@category, UpdatedAt=CURRENT_TIMESTAMP WHERE AlBarakaId=@id;";
+             using var cmd = new SQLiteCommand(sql, conn);
+             cmd.Parameters.AddWithValue("@id", rec.AlBarakaId);
+-            // Store date in ISO yyyy-MM-dd format (date-only)
+             cmd.Parameters.AddWithValue("@date", rec.Date.ToString("yyyy-MM-dd"));
+             cmd.Parameters.AddWithValue("@item", rec.ItemName ?? string.Empty);
+             cmd.Parameters.AddWithValue("@price", rec.Price ?? (object)DBNull.Value);
+@@ -136,6 +143,9 @@ namespace ESCenter.Services
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(AlBarakaRecord rec)
++            => Task.Run(() => Update(rec));
++
+         public void Delete(int id)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -145,17 +155,17 @@ namespace ESCenter.Services
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DeleteAsync(int id)
++            => Task.Run(() => Delete(id));
++
+         private AlBarakaRecord Map(SQLiteDataReader reader)
+         {
+-            // Date stored as yyyy-MM-dd (date-only); accept older formats as fallback
+             var dateStr = reader["Date"]?.ToString() ?? string.Empty;
+             DateTime parsedDate = DateTime.Today;
+             if (!string.IsNullOrWhiteSpace(dateStr))
+             {
+-                // Try exact parse for yyyy-MM-dd first
+                 if (!DateTime.TryParseExact(dateStr, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out parsedDate))
+                 {
+-                    // Fallback to round-trip or general parse
+                     if (!DateTime.TryParseExact(dateStr, "o", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out parsedDate))
+                     {
+                         DateTime.TryParse(dateStr, out parsedDate);
+diff --git a/Services/TicketsDataService.cs b/Services/TicketsDataService.cs
+index 368dce7..517795e 100644
+--- a/Services/TicketsDataService.cs
++++ b/Services/TicketsDataService.cs
+@@ -1,6 +1,7 @@
+-﻿using System;
++using System;
+ using System.Collections.Generic;
+ using System.Data.SQLite;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ 
+ namespace ESCenter.Services
+@@ -40,6 +41,9 @@ namespace ESCenter.Services
+             return list;
+         }
+ 
++        public Task<List<RepairTicket>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         // ===================== INSERT =====================
+         public int Insert(RepairTicket ticket)
+         {
+@@ -82,6 +86,9 @@ namespace ESCenter.Services
+             return Convert.ToInt32(cmd.ExecuteScalar());
+         }
+ 
++        public Task<int> InsertAsync(RepairTicket ticket)
++            => Task.Run(() => Insert(ticket));
++
+         // ===================== UPDATE =====================
+         public void Update(RepairTicket ticket)
+         {
+@@ -110,6 +117,9 @@ namespace ESCenter.Services
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(RepairTicket ticket)
++            => Task.Run(() => Update(ticket));
++
+         // ===================== DELETE =====================
+         public void Delete(int ticketId)
+         {
+@@ -121,6 +131,9 @@ namespace ESCenter.Services
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DeleteAsync(int ticketId)
++            => Task.Run(() => Delete(ticketId));
++
+         // ===================== MAP =====================
+         private RepairTicket MapToRepairTicket(SQLiteDataReader reader)
+         {
+@@ -264,5 +277,6 @@ namespace ESCenter.Services
+         }
+ 
+         public string GetNextEscTicketId() => GenerateEscTicketId();
++        public Task<string> GetNextEscTicketIdAsync() => Task.Run(GenerateEscTicketId);
+     }
+ }
+diff --git a/ViewModels/DashboardViewModel.cs b/ViewModels/DashboardViewModel.cs
+index 6938129..69b5c93 100644
+--- a/ViewModels/DashboardViewModel.cs
++++ b/ViewModels/DashboardViewModel.cs
+@@ -2,6 +2,7 @@ using System;
+ using System.Collections.ObjectModel;
+ using System.Linq;
+ using System.Reflection;
++using System.Threading.Tasks;
+ using System.Windows.Input;
+ using ESCenter.Core;
+ using ESCenter.Data;
+@@ -55,7 +56,7 @@ namespace ESCenter.ViewModels
+                 if (SetProperty(ref _partsLowStockThreshold, value))
+                 {
+                     PersistLowStockThresholds();
+-                    UpdateLowStockCounter();
++                    _ = UpdateLowStockCounterAsync();
+                 }
+             }
+         }
+@@ -69,11 +70,18 @@ namespace ESCenter.ViewModels
+                 if (SetProperty(ref _inventoryLowStockThreshold, value))
+                 {
+                     PersistLowStockThresholds();
+-                    UpdateLowStockCounter();
++                    _ = UpdateLowStockCounterAsync();
+                 }
+             }
+         }
+ 
++        private bool _isLoading;
++        public bool IsLoading
++        {
++            get => _isLoading;
++            set => SetProperty(ref _isLoading, value);
++        }
++
+         public ObservableCollection<RepairTicket> RecentTickets { get; } = new();
+         public ObservableCollection<PriorityStat> PriorityStats { get; } = new();
+         public ObservableCollection<LowStockCounterItem> LowStockItems { get; } = new();
+@@ -102,11 +110,17 @@ namespace ESCenter.ViewModels
+             Refresh();
+         }
+ 
+-        public void Refresh()
++        // Synchronous wrapper kept for compatibility (fires-and-forgets the async path)
++        public void Refresh() => _ = RefreshAsync();
++
++        public async Task RefreshAsync()
+         {
++            if (IsLoading) return;
++
++            IsLoading = true;
+             try
+             {
+-                var all = _service.GetAll().ToList();
++                var all = await _service.GetAllAsync();
+                 var now = DateTime.Now;
+                 var weekStart = now.Date.AddDays(-(int)now.DayOfWeek);
+                 var weekEnd = weekStart.AddDays(7);
+@@ -142,13 +156,17 @@ namespace ESCenter.ViewModels
+                     ? 0
+                     : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
+ 
+-                UpdateLowStockCounter();
++                await UpdateLowStockCounterAsync();
+                 AppLogger.Success("Dashboard Loaded.");
+             }
+             catch (Exception ex)
+             {
+                 AppLogger.Error($"Failed to refresh dashboard: {ex.Message}");
+             }
++            finally
++            {
++                IsLoading = false;
++            }
+         }
+ 
+         private void PersistLowStockThresholds()
+@@ -165,14 +183,17 @@ namespace ESCenter.ViewModels
+             }
+         }
+ 
+-        private void UpdateLowStockCounter()
++        private async Task UpdateLowStockCounterAsync()
+         {
+             try
+             {
+                 var partsThreshold = ParseThreshold(PartsLowStockThreshold);
+                 var inventoryThreshold = ParseThreshold(InventoryLowStockThreshold);
+ 
+-                var partItems = _partsRepository.GetAll()
++                var allParts = await _partsRepository.GetAllAsync();
++                var allInventory = await _inventoryRepository.GetAllAsync();
++
++                var partItems = allParts
+                     .Where(p => p.QuantityOnHand <= partsThreshold)
+                     .Select(p => new LowStockCounterItem
+                     {
+@@ -184,7 +205,7 @@ namespace ESCenter.ViewModels
+                         Quantity = p.QuantityOnHand
+                     });
+ 
+-                var inventoryItems = _inventoryRepository.GetAll()
++                var inventoryItems = allInventory
+                     .Where(i => i.QuantityOnHand <= inventoryThreshold)
+                     .Select(i => new LowStockCounterItem
+                     {
+diff --git a/ViewModels/MainViewModel.cs b/ViewModels/MainViewModel.cs
+index 6dbb9c8..cc2ecaa 100644
+--- a/ViewModels/MainViewModel.cs
++++ b/ViewModels/MainViewModel.cs
+@@ -367,15 +367,15 @@ namespace ESCenter.ViewModels
+             };
+ 
+             _databaseStatusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
+-            _databaseStatusTimer.Tick += (_, _) => RefreshDatabaseConnectionStatus();
++            _databaseStatusTimer.Tick += async (_, _) => await RefreshDatabaseConnectionStatusAsync();
+             _databaseStatusTimer.Start();
+ 
+             AppLogger.StatusRaised += OnStatusRaised;
+-            TicketEvents.TicketsChanged += (_, _) => RefreshTicketsChart();
+-            DatabasePathService.DatabasePathChanged += (_, _) =>
++            TicketEvents.TicketsChanged += async (_, _) => await RefreshTicketsChartAsync();
++            DatabasePathService.DatabasePathChanged += async (_, _) =>
+             {
+-                RefreshTicketsChart();
+-                RefreshDatabaseConnectionStatus();
++                await RefreshTicketsChartAsync();
++                await RefreshDatabaseConnectionStatusAsync();
+             };
+ 
+             ToggleCurveVisibilityCommand = new RelayCommand(param =>
+@@ -415,6 +415,9 @@ namespace ESCenter.ViewModels
+         }
+ 
+         public void RefreshAlBarakaTotals(DateTime? start = null, DateTime? end = null)
++            => _ = RefreshAlBarakaTotalsAsync(start, end);
++
++        public async Task RefreshAlBarakaTotalsAsync(DateTime? start = null, DateTime? end = null)
+         {
+             try
+             {
+@@ -427,7 +430,7 @@ namespace ESCenter.ViewModels
+                     end ??= start.Value.AddMonths(1).AddDays(-1);
+                 }
+ 
+-                var totals = svc.GetTotals(start, end);
++                var totals = await svc.GetTotalsAsync(start, end);
+                 TotalAlBarakaSP = totals.TotalSP;
+                 TotalAlBarakaUSD = totals.TotalUSD;
+             }
+@@ -754,10 +757,12 @@ namespace ESCenter.ViewModels
+             }
+         }
+ 
+-        private void RefreshTicketsChart()
++        private void RefreshTicketsChart() => _ = RefreshTicketsChartAsync();
++
++        private async Task RefreshTicketsChartAsync()
+         {
+             var dataService = new TicketsDataService();
+-            var tickets = dataService.GetAll();
++            var tickets = await dataService.GetAllAsync();
+ 
+             var days = Enumerable.Range(0, 7)
+                 .Select(offset => DateTime.Today.AddDays(-6 + offset))
+@@ -828,33 +833,34 @@ namespace ESCenter.ViewModels
+             };
+         }
+ 
+-        private void RefreshDatabaseConnectionStatus()
++        private void RefreshDatabaseConnectionStatus() => _ = RefreshDatabaseConnectionStatusAsync();
++
++        private async Task RefreshDatabaseConnectionStatusAsync()
+         {
+-            try
++            var (isOnline) = await Task.Run(() =>
+             {
+-                var dbPath = DatabasePathService.CurrentDatabasePath;
+-
+-                if (string.IsNullOrWhiteSpace(dbPath) || !File.Exists(dbPath))
++                try
+                 {
+-                    DatabaseConnectionStatusText = "Offline";
+-                    DatabaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
+-                    return;
++                    var dbPath = DatabasePathService.CurrentDatabasePath;
++                    if (string.IsNullOrWhiteSpace(dbPath) || !File.Exists(dbPath))
++                        return false;
++
++                    using var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;");
++                    conn.Open();
++                    using var cmd = new SQLiteCommand("SELECT 1", conn);
++                    _ = cmd.ExecuteScalar();
++                    return true;
+                 }
++                catch
++                {
++                    return false;
++                }
++            });
+ 
+-                using var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;");
+-                conn.Open();
+-
+-                using var cmd = new SQLiteCommand("SELECT 1", conn);
+-                _ = cmd.ExecuteScalar();
+-
+-                DatabaseConnectionStatusText = "Online";
+-                DatabaseConnectionBrush = System.Windows.Media.Brushes.LimeGreen;
+-            }
+-            catch
+-            {
+-                DatabaseConnectionStatusText = "Offline";
+-                DatabaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
+-            }
++            DatabaseConnectionStatusText = isOnline ? "Online" : "Offline";
++            DatabaseConnectionBrush = isOnline
++                ? System.Windows.Media.Brushes.LimeGreen
++                : System.Windows.Media.Brushes.IndianRed;
+         }
+ 
+         private LineSeries<int> BuildSeries(string key, IReadOnlyCollection<int> values, SKColor color)
+diff --git a/ViewModels/RepairTicketsViewModel.cs b/ViewModels/RepairTicketsViewModel.cs
+index 825b7c3..c10903e 100644
+--- a/ViewModels/RepairTicketsViewModel.cs
++++ b/ViewModels/RepairTicketsViewModel.cs
+@@ -1,4 +1,5 @@
+ using System;
++using System.Threading.Tasks;
+ using System.Collections.ObjectModel;
+ using System.Collections.Generic;
+ using System.ComponentModel;
+@@ -18,6 +19,13 @@ namespace ESCenter.ViewModels
+     {
+         private readonly TicketsDataService _service;
+ 
++        private bool _isLoading;
++        public bool IsLoading
++        {
++            get => _isLoading;
++            set => SetProperty(ref _isLoading, value);
++        }
++
+         // =========================================================
+         // COLLECTIONS
+         // =========================================================
+@@ -308,9 +316,10 @@ namespace ESCenter.ViewModels
+         public RepairTicketsViewModel()
+         {
+             _service = new TicketsDataService();
+-            DatabasePathService.DatabasePathChanged += (_, __) => ReloadTicketsForSelectedDatabase();
++            DatabasePathService.DatabasePathChanged += async (_, __) => await LoadTicketsAsync();
+ 
+-            Tickets = new ObservableCollection<RepairTicket>(_service.GetAll());
++            Tickets = new ObservableCollection<RepairTicket>();
++            _ = LoadTicketsAsync();
+ 
+             _ticketsView = CollectionViewSource.GetDefaultView(Tickets);
+             _ticketsView.Filter = TicketFilter;
+@@ -424,20 +433,31 @@ namespace ESCenter.ViewModels
+         // COMMAND ACTIONS
+         // =========================================================
+ 
+-        private void ReloadTicketsForSelectedDatabase()
++        private async Task LoadTicketsAsync()
+         {
+-            Tickets.Clear();
+-            foreach (var ticket in _service.GetAll())
++            IsLoading = true;
++            try
+             {
+-                Tickets.Add(ticket);
++                var tickets = await _service.GetAllAsync();
++                Tickets.Clear();
++                foreach (var ticket in tickets)
++                    Tickets.Add(ticket);
++                EvaluateDuplicateMarkers();
++                _ticketsView.Refresh();
++            }
++            catch (Exception ex)
++            {
++                AppLogger.Error($"Failed to load tickets: {ex.Message}");
++            }
++            finally
++            {
++                IsLoading = false;
+             }
+-
+-            EvaluateDuplicateMarkers();
+-            ClearForm();
+-            RefreshCustomerProfile();
+-            _ticketsView.Refresh();
+         }
+ 
++        private void ReloadTicketsForSelectedDatabase() => _ = LoadTicketsAsync();
++
++
+         private void AddTicket()
+         {
+             try
+@@ -662,18 +682,20 @@ namespace ESCenter.ViewModels
+             RefreshCustomerProfile();
+         }
+ 
+-        private void LoadPartsCatalog()
++        private void LoadPartsCatalog() => _ = LoadPartsCatalogAsync();
++
++        private async Task LoadPartsCatalogAsync()
+         {
+             _partsCatalog.Clear();
+ 
+             try
+             {
+                 var partsRepo = new PartsRepository();
+-                var skus = partsRepo.GetSkus()
++                var skus = (await partsRepo.GetSkusAsync())
+                     .Distinct(StringComparer.OrdinalIgnoreCase);
+ 
+                 var inventoryRepo = new InventoryRepository();
+-                var inventoryNames = inventoryRepo.GetNames()
++                var inventoryNames = (await inventoryRepo.GetNamesAsync())
+                     .Distinct(StringComparer.OrdinalIgnoreCase);
+ 
+                 var combined = skus
+-- 
+2.43.0
+

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 using ESCenter.Models;
 
 namespace ESCenter.Services
@@ -30,6 +31,9 @@ namespace ESCenter.Services
             return list;
         }
 
+        public Task<List<AlBarakaRecord>> GetAllAsync()
+            => Task.Run(GetAll);
+
         /// <summary>
         /// Get totals grouped by currency for records optionally within a date range.
         /// Date column stored as yyyy-MM-dd so string comparison works for ISO dates.
@@ -42,7 +46,6 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            // Build query with optional date filters
             var sql = "SELECT PriceCurrency, SUM(Price) as Total FROM AlBaraka";
             var where = new List<string>();
             if (start.HasValue)
@@ -87,6 +90,9 @@ namespace ESCenter.Services
             return (totalSP, totalUSD);
         }
 
+        public Task<(decimal TotalSP, decimal TotalUSD)> GetTotalsAsync(DateTime? start = null, DateTime? end = null)
+            => Task.Run(() => GetTotals(start, end));
+
         public int Insert(AlBarakaRecord rec)
         {
             using var conn = new SQLiteConnection(ConnectionString);
@@ -97,7 +103,6 @@ namespace ESCenter.Services
                 ? @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category, Account) VALUES (@date, @item, @price, @currency, @category, @account); SELECT last_insert_rowid();"
                 : @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category) VALUES (@date, @item, @price, @currency, @category); SELECT last_insert_rowid();";
             using var cmd = new SQLiteCommand(sql, conn);
-            // Store date in ISO yyyy-MM-dd format (date-only)
             cmd.Parameters.AddWithValue("@date", rec.Date.ToString("yyyy-MM-dd"));
             cmd.Parameters.AddWithValue("@item", rec.ItemName ?? string.Empty);
             cmd.Parameters.AddWithValue("@price", rec.Price ?? (object)DBNull.Value);
@@ -111,6 +116,9 @@ namespace ESCenter.Services
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
+        public Task<int> InsertAsync(AlBarakaRecord rec)
+            => Task.Run(() => Insert(rec));
+
         public void Update(AlBarakaRecord rec)
         {
             using var conn = new SQLiteConnection(ConnectionString);
@@ -122,7 +130,6 @@ namespace ESCenter.Services
                 : @"UPDATE AlBaraka SET Date=@date, ItemName=@item, Price=@price, PriceCurrency=@currency, Category=@category, UpdatedAt=CURRENT_TIMESTAMP WHERE AlBarakaId=@id;";
             using var cmd = new SQLiteCommand(sql, conn);
             cmd.Parameters.AddWithValue("@id", rec.AlBarakaId);
-            // Store date in ISO yyyy-MM-dd format (date-only)
             cmd.Parameters.AddWithValue("@date", rec.Date.ToString("yyyy-MM-dd"));
             cmd.Parameters.AddWithValue("@item", rec.ItemName ?? string.Empty);
             cmd.Parameters.AddWithValue("@price", rec.Price ?? (object)DBNull.Value);
@@ -136,6 +143,9 @@ namespace ESCenter.Services
             cmd.ExecuteNonQuery();
         }
 
+        public Task UpdateAsync(AlBarakaRecord rec)
+            => Task.Run(() => Update(rec));
+
         public void Delete(int id)
         {
             using var conn = new SQLiteConnection(ConnectionString);
@@ -145,17 +155,17 @@ namespace ESCenter.Services
             cmd.ExecuteNonQuery();
         }
 
+        public Task DeleteAsync(int id)
+            => Task.Run(() => Delete(id));
+
         private AlBarakaRecord Map(SQLiteDataReader reader)
         {
-            // Date stored as yyyy-MM-dd (date-only); accept older formats as fallback
             var dateStr = reader["Date"]?.ToString() ?? string.Empty;
             DateTime parsedDate = DateTime.Today;
             if (!string.IsNullOrWhiteSpace(dateStr))
             {
-                // Try exact parse for yyyy-MM-dd first
                 if (!DateTime.TryParseExact(dateStr, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out parsedDate))
                 {
-                    // Fallback to round-trip or general parse
                     if (!DateTime.TryParseExact(dateStr, "o", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out parsedDate))
                     {
                         DateTime.TryParse(dateStr, out parsedDate);

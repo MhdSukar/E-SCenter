@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ESCenter.Core;
 using ESCenter.Data;
@@ -55,7 +56,7 @@ namespace ESCenter.ViewModels
                 if (SetProperty(ref _partsLowStockThreshold, value))
                 {
                     PersistLowStockThresholds();
-                    UpdateLowStockCounter();
+                    _ = UpdateLowStockCounterAsync();
                 }
             }
         }
@@ -69,9 +70,16 @@ namespace ESCenter.ViewModels
                 if (SetProperty(ref _inventoryLowStockThreshold, value))
                 {
                     PersistLowStockThresholds();
-                    UpdateLowStockCounter();
+                    _ = UpdateLowStockCounterAsync();
                 }
             }
+        }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
         }
 
         public ObservableCollection<RepairTicket> RecentTickets { get; } = new();
@@ -102,11 +110,17 @@ namespace ESCenter.ViewModels
             Refresh();
         }
 
-        public void Refresh()
+        // Synchronous wrapper kept for compatibility (fires-and-forgets the async path)
+        public void Refresh() => _ = RefreshAsync();
+
+        public async Task RefreshAsync()
         {
+            if (IsLoading) return;
+
+            IsLoading = true;
             try
             {
-                var all = _service.GetAll().ToList();
+                var all = await _service.GetAllAsync();
                 var now = DateTime.Now;
                 var weekStart = now.Date.AddDays(-(int)now.DayOfWeek);
                 var weekEnd = weekStart.AddDays(7);
@@ -142,12 +156,16 @@ namespace ESCenter.ViewModels
                     ? 0
                     : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
 
-                UpdateLowStockCounter();
+                await UpdateLowStockCounterAsync();
                 AppLogger.Success("Dashboard Loaded.");
             }
             catch (Exception ex)
             {
                 AppLogger.Error($"Failed to refresh dashboard: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
@@ -165,14 +183,17 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private void UpdateLowStockCounter()
+        private async Task UpdateLowStockCounterAsync()
         {
             try
             {
                 var partsThreshold = ParseThreshold(PartsLowStockThreshold);
                 var inventoryThreshold = ParseThreshold(InventoryLowStockThreshold);
 
-                var partItems = _partsRepository.GetAll()
+                var allParts = await _partsRepository.GetAllAsync();
+                var allInventory = await _inventoryRepository.GetAllAsync();
+
+                var partItems = allParts
                     .Where(p => p.QuantityOnHand <= partsThreshold)
                     .Select(p => new LowStockCounterItem
                     {
@@ -184,7 +205,7 @@ namespace ESCenter.ViewModels
                         Quantity = p.QuantityOnHand
                     });
 
-                var inventoryItems = _inventoryRepository.GetAll()
+                var inventoryItems = allInventory
                     .Where(i => i.QuantityOnHand <= inventoryThreshold)
                     .Select(i => new LowStockCounterItem
                     {

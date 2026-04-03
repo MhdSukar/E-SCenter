@@ -367,15 +367,15 @@ namespace ESCenter.ViewModels
             };
 
             _databaseStatusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
-            _databaseStatusTimer.Tick += (_, _) => RefreshDatabaseConnectionStatus();
+            _databaseStatusTimer.Tick += async (_, _) => await RefreshDatabaseConnectionStatusAsync();
             _databaseStatusTimer.Start();
 
             AppLogger.StatusRaised += OnStatusRaised;
-            TicketEvents.TicketsChanged += (_, _) => RefreshTicketsChart();
-            DatabasePathService.DatabasePathChanged += (_, _) =>
+            TicketEvents.TicketsChanged += async (_, _) => await RefreshTicketsChartAsync();
+            DatabasePathService.DatabasePathChanged += async (_, _) =>
             {
-                RefreshTicketsChart();
-                RefreshDatabaseConnectionStatus();
+                await RefreshTicketsChartAsync();
+                await RefreshDatabaseConnectionStatusAsync();
             };
 
             ToggleCurveVisibilityCommand = new RelayCommand(param =>
@@ -415,6 +415,9 @@ namespace ESCenter.ViewModels
         }
 
         public void RefreshAlBarakaTotals(DateTime? start = null, DateTime? end = null)
+            => _ = RefreshAlBarakaTotalsAsync(start, end);
+
+        public async Task RefreshAlBarakaTotalsAsync(DateTime? start = null, DateTime? end = null)
         {
             try
             {
@@ -427,7 +430,7 @@ namespace ESCenter.ViewModels
                     end ??= start.Value.AddMonths(1).AddDays(-1);
                 }
 
-                var totals = svc.GetTotals(start, end);
+                var totals = await svc.GetTotalsAsync(start, end);
                 TotalAlBarakaSP = totals.TotalSP;
                 TotalAlBarakaUSD = totals.TotalUSD;
             }
@@ -754,10 +757,12 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private void RefreshTicketsChart()
+        private void RefreshTicketsChart() => _ = RefreshTicketsChartAsync();
+
+        private async Task RefreshTicketsChartAsync()
         {
             var dataService = new TicketsDataService();
-            var tickets = dataService.GetAll();
+            var tickets = await dataService.GetAllAsync();
 
             var days = Enumerable.Range(0, 7)
                 .Select(offset => DateTime.Today.AddDays(-6 + offset))
@@ -828,33 +833,34 @@ namespace ESCenter.ViewModels
             };
         }
 
-        private void RefreshDatabaseConnectionStatus()
+        private void RefreshDatabaseConnectionStatus() => _ = RefreshDatabaseConnectionStatusAsync();
+
+        private async Task RefreshDatabaseConnectionStatusAsync()
         {
-            try
+            var isOnline = await Task.Run(() =>
             {
-                var dbPath = DatabasePathService.CurrentDatabasePath;
-
-                if (string.IsNullOrWhiteSpace(dbPath) || !File.Exists(dbPath))
+                try
                 {
-                    DatabaseConnectionStatusText = "Offline";
-                    DatabaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
-                    return;
+                    var dbPath = DatabasePathService.CurrentDatabasePath;
+                    if (string.IsNullOrWhiteSpace(dbPath) || !File.Exists(dbPath))
+                        return false;
+
+                    using var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;");
+                    conn.Open();
+                    using var cmd = new SQLiteCommand("SELECT 1", conn);
+                    _ = cmd.ExecuteScalar();
+                    return true;
                 }
+                catch
+                {
+                    return false;
+                }
+            });
 
-                using var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;");
-                conn.Open();
-
-                using var cmd = new SQLiteCommand("SELECT 1", conn);
-                _ = cmd.ExecuteScalar();
-
-                DatabaseConnectionStatusText = "Online";
-                DatabaseConnectionBrush = System.Windows.Media.Brushes.LimeGreen;
-            }
-            catch
-            {
-                DatabaseConnectionStatusText = "Offline";
-                DatabaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
-            }
+            DatabaseConnectionStatusText = isOnline ? "Online" : "Offline";
+            DatabaseConnectionBrush = isOnline
+                ? System.Windows.Media.Brushes.LimeGreen
+                : System.Windows.Media.Brushes.IndianRed;
         }
 
         private LineSeries<int> BuildSeries(string key, IReadOnlyCollection<int> values, SKColor color)

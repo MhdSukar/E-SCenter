@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Threading.Tasks;
 using ESCenter.Models;
 
 namespace ESCenter.Services
@@ -39,6 +40,9 @@ namespace ESCenter.Services
 
             return list;
         }
+
+        public Task<List<RepairTicket>> GetAllAsync()
+            => Task.Run(GetAll);
 
         // ===================== INSERT =====================
         public int Insert(RepairTicket ticket)
@@ -82,6 +86,9 @@ namespace ESCenter.Services
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
+        public Task<int> InsertAsync(RepairTicket ticket)
+            => Task.Run(() => Insert(ticket));
+
         // ===================== UPDATE =====================
         public void Update(RepairTicket ticket)
         {
@@ -110,6 +117,9 @@ namespace ESCenter.Services
             cmd.ExecuteNonQuery();
         }
 
+        public Task UpdateAsync(RepairTicket ticket)
+            => Task.Run(() => Update(ticket));
+
         // ===================== DELETE =====================
         public void Delete(int ticketId)
         {
@@ -120,6 +130,9 @@ namespace ESCenter.Services
             cmd.Parameters.AddWithValue("@id", ticketId);
             cmd.ExecuteNonQuery();
         }
+
+        public Task DeleteAsync(int ticketId)
+            => Task.Run(() => Delete(ticketId));
 
         // ===================== MAP =====================
         private RepairTicket MapToRepairTicket(SQLiteDataReader reader)
@@ -264,5 +277,6 @@ namespace ESCenter.Services
         }
 
         public string GetNextEscTicketId() => GenerateEscTicketId();
+        public Task<string> GetNextEscTicketIdAsync() => Task.Run(GenerateEscTicketId);
     }
 }
