@@ -70,6 +70,7 @@ namespace ESCenter.Services
                 ["PriceCurrency"] = "TEXT DEFAULT 'S.P'",
                 ["Category"] = "TEXT",
                 ["Account"] = "TEXT",
+                ["Amount"] = "REAL DEFAULT 0",
                 ["CreatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP",
                 ["UpdatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP"
             };
