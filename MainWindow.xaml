@@ -508,7 +508,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Column="0" Grid.Row="0"
-                                           Text="Search SN:"
+                                           Text="ѕєαяςн ѕи:"
                                            Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
 
                                 <Image Grid.Column="0" Grid.Row="1"
