@@ -687,6 +687,19 @@
 
                     <StatusBarItem HorizontalAlignment="Left">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Width="9"
+                                     Height="9"
+                                     Fill="{Binding DatabaseConnectionBrush}"
+                                     Margin="0,0,6,0"/>
+                            <TextBlock Text="{Binding DatabaseConnectionStatusText}"
+                                       Foreground="{Binding DatabaseConnectionBrush}"
+                                       FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </StatusBarItem>
+                    <Separator/>
+
+                    <StatusBarItem HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="{Binding StatusIcon}"
                                        Foreground="{Binding StatusBrush}"
                                        Style="{StaticResource StatusIconStyle}"/>

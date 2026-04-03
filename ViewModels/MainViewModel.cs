@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Data.SQLite;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -169,6 +170,20 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _statusIcon, value);
         }
 
+        private string _databaseConnectionStatusText = "Offline";
+        public string DatabaseConnectionStatusText
+        {
+            get => _databaseConnectionStatusText;
+            set => SetProperty(ref _databaseConnectionStatusText, value);
+        }
+
+        private System.Windows.Media.Brush _databaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
+        public System.Windows.Media.Brush DatabaseConnectionBrush
+        {
+            get => _databaseConnectionBrush;
+            set => SetProperty(ref _databaseConnectionBrush, value);
+        }
+
         private string _clockText = DateTime.Now.ToString("HH:mm:ss");
         public string ClockText
         {
@@ -225,6 +240,7 @@ namespace ESCenter.ViewModels
 
         private readonly DispatcherTimer _clockTimer;
         private readonly DispatcherTimer _statusResetTimer;
+        private readonly DispatcherTimer _databaseStatusTimer;
         private RepairTicketsViewModel? _repairTicketsViewModel;
 
         public MainViewModel()
@@ -350,9 +366,17 @@ namespace ESCenter.ViewModels
                 SetStatus("System Ready", StatusLevel.Info);
             };
 
+            _databaseStatusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
+            _databaseStatusTimer.Tick += (_, _) => RefreshDatabaseConnectionStatus();
+            _databaseStatusTimer.Start();
+
             AppLogger.StatusRaised += OnStatusRaised;
             TicketEvents.TicketsChanged += (_, _) => RefreshTicketsChart();
-            DatabasePathService.DatabasePathChanged += (_, _) => RefreshTicketsChart();
+            DatabasePathService.DatabasePathChanged += (_, _) =>
+            {
+                RefreshTicketsChart();
+                RefreshDatabaseConnectionStatus();
+            };
 
             ToggleCurveVisibilityCommand = new RelayCommand(param =>
             {
@@ -374,6 +398,7 @@ namespace ESCenter.ViewModels
 
             // Load Al-Baraka totals for current month
             RefreshAlBarakaTotals();
+            RefreshDatabaseConnectionStatus();
         }
 
         public Task HandleDockControlCommandAsync(EscCommandRequest request)
@@ -842,6 +867,35 @@ namespace ESCenter.ViewModels
                     SeparatorsPaint = new SolidColorPaint(new SKColor(90, 167, 255, 120))
                 }
             };
+        }
+
+        private void RefreshDatabaseConnectionStatus()
+        {
+            try
+            {
+                var dbPath = DatabasePathService.CurrentDatabasePath;
+
+                if (string.IsNullOrWhiteSpace(dbPath) || !File.Exists(dbPath))
+                {
+                    DatabaseConnectionStatusText = "Offline";
+                    DatabaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
+                    return;
+                }
+
+                using var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;");
+                conn.Open();
+
+                using var cmd = new SQLiteCommand("SELECT 1", conn);
+                _ = cmd.ExecuteScalar();
+
+                DatabaseConnectionStatusText = "Online";
+                DatabaseConnectionBrush = System.Windows.Media.Brushes.LimeGreen;
+            }
+            catch
+            {
+                DatabaseConnectionStatusText = "Offline";
+                DatabaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
+            }
         }
 
         private LineSeries<int> BuildSeries(string key, IReadOnlyCollection<int> values, SKColor color)

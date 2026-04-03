@@ -78,5 +78,10 @@
     <BitmapImage x:Key="CharMajor" UriSource="/Assets/Icons/major.png"/>
     <BitmapImage x:Key="CharCritical" UriSource="/Assets/Icons/critical.png"/>
     <BitmapImage x:Key="CharOverdue" UriSource="/Assets/Icons/overdue.png"/>
+    <!-- ================================= Titlebar Icons ================================= -->
+    <BitmapImage x:Key="Minimize" UriSource="/Assets/Icons/TBminimize.png"/>
+    <BitmapImage x:Key="Maximize" UriSource="/Assets/Icons/TBmaximize.png"/>
+    <BitmapImage x:Key="Restore" UriSource="/Assets/Icons/TBrestore.png"/>
+    <BitmapImage x:Key="Close" UriSource="/Assets/Icons/TBclose.png"/>
 
 </ResourceDictionary>
