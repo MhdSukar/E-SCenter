@@ -229,19 +229,22 @@
 
                         <Button x:Name="btnMinimize"
                                 Style="{StaticResource TitleBarButtonBase}"
-                                Content="—"
-                                Click="btnMinimize_Click"/>
+                                Click="btnMinimize_Click">
+                            <Image Source="{StaticResource Minimize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
 
                         <Button x:Name="btnMaximize"
                                 Style="{StaticResource TitleBarButtonBase}"
-                                Content="□"
                                 Click="btnMaximize_Click"
-                                FontSize="18"/>
+                                FontSize="18">
+                            <Image Source="{StaticResource Maximize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
 
                         <Button x:Name="btnClose"
                                 Style="{StaticResource TitleBarCloseButtonStyle}"
-                                Content="✕"
-                                Click="btnClose_Click"/>
+                                Click="btnClose_Click">
+                            <Image Source="{StaticResource Close}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>

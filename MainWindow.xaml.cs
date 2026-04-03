@@ -18,6 +18,7 @@ namespace ESCenter
         public MainWindow()
         {
             InitializeComponent();
+            SetMaximizeButtonIcon("Maximize");
             Loaded += (_, __) =>
             {
                 if (DataContext is ESCenter.ViewModels.MainViewModel vm)
@@ -194,13 +195,25 @@ namespace ESCenter
             if (WindowState == WindowState.Maximized)
             {
                 WindowState = WindowState.Normal;
-                btnMaximize.Content = "□";
+                SetMaximizeButtonIcon("Maximize");
             }
             else
             {
                 WindowState = WindowState.Maximized;
-                btnMaximize.Content = "❐";
+                SetMaximizeButtonIcon("Restore");
             }
+        }
+
+
+        private void SetMaximizeButtonIcon(string resourceKey)
+        {
+            btnMaximize.Content = new System.Windows.Controls.Image
+            {
+                Source = (System.Windows.Media.ImageSource)FindResource(resourceKey),
+                Width = 14,
+                Height = 14,
+                Stretch = System.Windows.Media.Stretch.Uniform
+            };
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

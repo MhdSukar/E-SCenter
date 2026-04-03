@@ -16,7 +16,10 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            var sql = @"SELECT AlBarakaId, Date, ItemName, Price, PriceCurrency, Category, Account, CreatedAt, UpdatedAt FROM AlBaraka ORDER BY Date DESC;";
+            var hasAccountColumn = HasColumn(conn, "AlBaraka", "Account");
+            var sql = hasAccountColumn
+                ? @"SELECT AlBarakaId, Date, ItemName, Price, PriceCurrency, Category, Account, CreatedAt, UpdatedAt FROM AlBaraka ORDER BY Date DESC;"
+                : @"SELECT AlBarakaId, Date, ItemName, Price, PriceCurrency, Category, '' AS Account, CreatedAt, UpdatedAt FROM AlBaraka ORDER BY Date DESC;";
             using var cmd = new SQLiteCommand(sql, conn);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -89,7 +92,10 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            var sql = @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category, Account) VALUES (@date, @item, @price, @currency, @category, @account); SELECT last_insert_rowid();";
+            var hasAccountColumn = HasColumn(conn, "AlBaraka", "Account");
+            var sql = hasAccountColumn
+                ? @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category, Account) VALUES (@date, @item, @price, @currency, @category, @account); SELECT last_insert_rowid();"
+                : @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category) VALUES (@date, @item, @price, @currency, @category); SELECT last_insert_rowid();";
             using var cmd = new SQLiteCommand(sql, conn);
             // Store date in ISO yyyy-MM-dd format (date-only)
             cmd.Parameters.AddWithValue("@date", rec.Date.ToString("yyyy-MM-dd"));
@@ -97,7 +103,10 @@ namespace ESCenter.Services
             cmd.Parameters.AddWithValue("@price", rec.Price ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@currency", rec.PriceCurrency ?? "S.P");
             cmd.Parameters.AddWithValue("@category", rec.Category ?? string.Empty);
-            cmd.Parameters.AddWithValue("@account", rec.Account ?? string.Empty);
+            if (hasAccountColumn)
+            {
+                cmd.Parameters.AddWithValue("@account", rec.Account?.Trim() ?? string.Empty);
+            }
 
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
@@ -107,7 +116,10 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            var sql = @"UPDATE AlBaraka SET Date=@date, ItemName=@item, Price=@price, PriceCurrency=@currency, Category=@category, Account=@account, UpdatedAt=CURRENT_TIMESTAMP WHERE AlBarakaId=@id;";
+            var hasAccountColumn = HasColumn(conn, "AlBaraka", "Account");
+            var sql = hasAccountColumn
+                ? @"UPDATE AlBaraka SET Date=@date, ItemName=@item, Price=@price, PriceCurrency=@currency, Category=@category, Account=@account, UpdatedAt=CURRENT_TIMESTAMP WHERE AlBarakaId=@id;"
+                : @"UPDATE AlBaraka SET Date=@date, ItemName=@item, Price=@price, PriceCurrency=@currency, Category=@category, UpdatedAt=CURRENT_TIMESTAMP WHERE AlBarakaId=@id;";
             using var cmd = new SQLiteCommand(sql, conn);
             cmd.Parameters.AddWithValue("@id", rec.AlBarakaId);
             // Store date in ISO yyyy-MM-dd format (date-only)
@@ -116,7 +128,10 @@ namespace ESCenter.Services
             cmd.Parameters.AddWithValue("@price", rec.Price ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@currency", rec.PriceCurrency ?? "S.P");
             cmd.Parameters.AddWithValue("@category", rec.Category ?? string.Empty);
-            cmd.Parameters.AddWithValue("@account", rec.Account ?? string.Empty);
+            if (hasAccountColumn)
+            {
+                cmd.Parameters.AddWithValue("@account", rec.Account?.Trim() ?? string.Empty);
+            }
 
             cmd.ExecuteNonQuery();
         }
@@ -160,6 +175,22 @@ namespace ESCenter.Services
                 CreatedAt = reader["CreatedAt"]?.ToString() ?? string.Empty,
                 UpdatedAt = reader["UpdatedAt"]?.ToString() ?? string.Empty
             };
+        }
+
+        private static bool HasColumn(SQLiteConnection conn, string tableName, string columnName)
+        {
+            using var cmd = new SQLiteCommand($"PRAGMA table_info({tableName});", conn);
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                var currentName = reader["name"]?.ToString();
+                if (string.Equals(currentName, columnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
