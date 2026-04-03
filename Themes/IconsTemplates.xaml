@@ -29,6 +29,7 @@
     <BitmapImage x:Key="DeleteClose" UriSource="/Assets/Icons/Delete-Close Title.png"/>
     <BitmapImage x:Key="DmgHistory2" UriSource="/Assets/Icons/DmgHistoryTitle.png"/>
     <BitmapImage x:Key="EditAI" UriSource="/Assets/Icons/Edit.png"/>
+    <BitmapImage x:Key="AlbarakaESC" UriSource="/Assets/Icons/ESC-AlBaraka.png"/>
     <BitmapImage x:Key="ESCID1" UriSource="/Assets/Icons/ESC-ID Title.png"/>
     <BitmapImage x:Key="ESCID2" UriSource="/Assets/Icons/ESC-ID Title1.png"/>
     <BitmapImage x:Key="EstimatedCost" UriSource="/Assets/Icons/EstimatedCost.png"/>
@@ -78,5 +79,10 @@
     <BitmapImage x:Key="CharMajor" UriSource="/Assets/Icons/major.png"/>
     <BitmapImage x:Key="CharCritical" UriSource="/Assets/Icons/critical.png"/>
     <BitmapImage x:Key="CharOverdue" UriSource="/Assets/Icons/overdue.png"/>
+    <!-- ================================= Titlebar Icons ================================= -->
+    <BitmapImage x:Key="Minimize" UriSource="/Assets/Icons/TBminimize.png"/>
+    <BitmapImage x:Key="Maximize" UriSource="/Assets/Icons/TBmaximize.png"/>
+    <BitmapImage x:Key="Restore" UriSource="/Assets/Icons/TBrestore.png"/>
+    <BitmapImage x:Key="Close" UriSource="/Assets/Icons/TBclose.png"/>
 
 </ResourceDictionary>
