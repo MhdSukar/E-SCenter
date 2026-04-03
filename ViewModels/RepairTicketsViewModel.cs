@@ -267,6 +267,7 @@ namespace ESCenter.ViewModels
         public ICommand ClearCommand { get; }
         public ICommand CloseCommand { get; }
         public ICommand ReopenCommand { get; }
+        public ICommand ShowCustomerProfileCommand { get; }
         public ICommand AddPartCommand { get; }
         public ICommand AddPartFromInputCommand { get; }
         public ICommand RemovePartCommand { get; }
@@ -293,6 +294,7 @@ namespace ESCenter.ViewModels
             ClearCommand = new RelayCommand(_ => ClearForm());
             CloseCommand = new RelayCommand(_ => CloseTicket(), _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
+            ShowCustomerProfileCommand = new RelayCommand(_ => ShowCustomerProfile(), _ => SelectedTicket != null);
             AddPartCommand = new RelayCommand(param => AddPart(param as string));
             AddPartFromInputCommand = new RelayCommand(_ => AddPart(PartsUsedInput));
             RemovePartCommand = new RelayCommand(param => RemovePart(param as string));
@@ -474,6 +476,45 @@ namespace ESCenter.ViewModels
             {
                 AppLogger.Error($"Failed to delete ticket: {ex.Message}");
             }
+        }
+
+        private void ShowCustomerProfile()
+        {
+            if (SelectedTicket == null)
+            {
+                return;
+            }
+
+            var profile = BuildCustomerProfile(SelectedTicket);
+            if (profile == null || profile.RepairHistory == null || profile.RepairHistory.Count == 0)
+            {
+                System.Windows.MessageBox.Show(
+                    "No repair history was found for this customer.",
+                    "Customer Profile",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+                return;
+            }
+
+            var lines = new List<string>
+            {
+                $"Customer: {profile.CustomerName}",
+                $"Phone: {profile.PhoneNumber}",
+                $"Customer ID: {(profile.CustomerId.HasValue ? profile.CustomerId.Value.ToString() : "-")}",
+                $"Total Repairs: {profile.TotalRepairs} (Open: {profile.OpenRepairs}, Closed: {profile.ClosedRepairs})",
+                $"First Repair: {profile.FirstRepairDate:yyyy-MM-dd}",
+                $"Last Repair: {profile.LastRepairDate:yyyy-MM-dd}",
+                string.Empty,
+                "Full Repair History:"
+            };
+
+            lines.AddRange(BuildCustomerHistoryLines(profile.RepairHistory));
+
+            System.Windows.MessageBox.Show(
+                string.Join(Environment.NewLine, lines),
+                "Customer Profile",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         // =========================================================
@@ -956,8 +997,8 @@ namespace ESCenter.ViewModels
 
         private string BuildDuplicateNotice(RepairTicket candidate)
         {
-            var customerHistory = FindCustomerHistory(candidate);
-            var repeatedCustomer = customerHistory.Count > 0;
+            var customerProfile = BuildCustomerProfile(candidate);
+            var repeatedCustomer = customerProfile != null && customerProfile.TotalRepairs > 1;
 
             var repeatedDevice = !string.IsNullOrWhiteSpace(candidate.SerialIMEI) &&
                                  Tickets.Any(existing =>
@@ -976,13 +1017,17 @@ namespace ESCenter.ViewModels
 
             if (repeatedCustomer)
             {
-                lines.Add($"• Repeated customer detected ({customerHistory.Count} previous ticket(s) found).");
-                lines.AddRange(BuildCustomerHistoryLines(customerHistory));
+                var previousTicketsCount = customerProfile.TotalRepairs - 1;
+                lines.Add($"• Repeated customer detected ({previousTicketsCount} previous ticket(s) found).");
+                lines.Add($"• Profile summary: Total={customerProfile.TotalRepairs}, Open={customerProfile.OpenRepairs}, Closed={customerProfile.ClosedRepairs}.");
+                lines.Add($"• First repair: {customerProfile.FirstRepairDate:yyyy-MM-dd} | Last repair: {customerProfile.LastRepairDate:yyyy-MM-dd}");
+                lines.Add("• Full repair history:");
+                lines.AddRange(BuildCustomerHistoryLines(customerProfile.RepairHistory));
             }
 
             if (repeatedDevice)
             {
-                lines.Add("ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Repeated device detected (Serial/IMEI matched).");
+                lines.Add("• Repeated device detected (Serial/IMEI matched).");
             }
 
             return string.Join(Environment.NewLine, lines);
@@ -1048,7 +1093,6 @@ namespace ESCenter.ViewModels
         private static IEnumerable<string> BuildCustomerHistoryLines(IEnumerable<RepairTicket> history)
         {
             return history
-                .Take(5)
                 .Select(item =>
                     $"  - {item.EscTicketId} | {item.ReceiveDate:yyyy-MM-dd} | {item.DeviceModel} | {item.RepairStatus}");
         }

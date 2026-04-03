@@ -65,6 +65,14 @@
                             </StackPanel>
                         </Button>
 
+                        <Button Command="{Binding ShowCustomerProfileCommand}"
+                                Style="{StaticResource NeonCyanButtonStyle}"
+                                Width="90"
+                                Margin="4,0"
+                                IsEnabled="{Binding SelectedTicket}">
+                            <TextBlock Text="Profile" />
+                        </Button>
+
                         <Button Command="{Binding DeleteCommand}"
                                 Style="{StaticResource NeonRedButtonStyle}"
                                 Width="80"
