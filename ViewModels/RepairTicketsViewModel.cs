@@ -956,11 +956,8 @@ namespace ESCenter.ViewModels
 
         private string BuildDuplicateNotice(RepairTicket candidate)
         {
-            var repeatedCustomer = Tickets.Any(existing =>
-                (candidate.CustomerId.HasValue && existing.CustomerId.HasValue && candidate.CustomerId.Value == existing.CustomerId.Value) ||
-                (!string.IsNullOrWhiteSpace(candidate.CustomerName) &&
-                 !string.IsNullOrWhiteSpace(existing.CustomerName) &&
-                 string.Equals(candidate.CustomerName.Trim(), existing.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)));
+            var customerHistory = FindCustomerHistory(candidate);
+            var repeatedCustomer = customerHistory.Count > 0;
 
             var repeatedDevice = !string.IsNullOrWhiteSpace(candidate.SerialIMEI) &&
                                  Tickets.Any(existing =>
@@ -979,37 +976,121 @@ namespace ESCenter.ViewModels
 
             if (repeatedCustomer)
             {
-                lines.Add("ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Repeated customer detected (Customer ID or Name matched).");
+                lines.Add($"• Repeated customer detected ({customerHistory.Count} previous ticket(s) found).");
+                lines.AddRange(BuildCustomerHistoryLines(customerHistory));
             }
 
             if (repeatedDevice)
             {
-                lines.Add("ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Repeated device detected (Serial/IMEI matched).");
+                lines.Add("• Repeated device detected (Serial/IMEI matched).");
             }
 
             return string.Join(Environment.NewLine, lines);
+        }
+
+        public CustomerRepairProfile BuildCustomerProfile(RepairTicket referenceTicket)
+        {
+            if (referenceTicket == null)
+            {
+                return null;
+            }
+
+            var history = FindCustomerHistory(referenceTicket, includeReferenceWhenPersisted: true);
+            if (history.Count == 0)
+            {
+                history.Add(referenceTicket);
+            }
+
+            var orderedHistory = history
+                .OrderByDescending(ticket => ticket.ReceiveDate)
+                .ToList();
+
+            return new CustomerRepairProfile
+            {
+                CustomerId = referenceTicket.CustomerId,
+                CustomerName = referenceTicket.CustomerName,
+                PhoneNumber = referenceTicket.PhoneNumber,
+                TotalRepairs = orderedHistory.Count,
+                OpenRepairs = orderedHistory.Count(ticket => !ticket.DeliveryDate.HasValue),
+                ClosedRepairs = orderedHistory.Count(ticket => ticket.DeliveryDate.HasValue),
+                FirstRepairDate = orderedHistory.Min(ticket => (DateTime?)ticket.ReceiveDate),
+                LastRepairDate = orderedHistory.Max(ticket => (DateTime?)ticket.ReceiveDate),
+                RepairHistory = orderedHistory
+            };
+        }
+
+        private List<RepairTicket> FindCustomerHistory(RepairTicket candidate, bool includeReferenceWhenPersisted = false)
+        {
+            if (candidate == null)
+            {
+                return new List<RepairTicket>();
+            }
+
+            var normalizedName = candidate.CustomerName?.Trim();
+            var normalizedPhone = candidate.PhoneNumber?.Trim();
+            var normalizedCandidate = new RepairTicket
+            {
+                CustomerId = candidate.CustomerId,
+                CustomerName = normalizedName,
+                PhoneNumber = normalizedPhone
+            };
+
+            return Tickets
+                .Where(existing =>
+                    (includeReferenceWhenPersisted || existing.TicketId != candidate.TicketId) &&
+                    IsSameCustomer(normalizedCandidate, existing))
+                .OrderByDescending(existing => existing.ReceiveDate)
+                .ToList();
+        }
+
+        private static bool IsSameCustomer(RepairTicket left, RepairTicket right)
+        {
+            if (left == null || right == null)
+            {
+                return false;
+            }
+
+            if (left.CustomerId.HasValue && right.CustomerId.HasValue && left.CustomerId.Value == right.CustomerId.Value)
+            {
+                return true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(left.CustomerName) &&
+                !string.IsNullOrWhiteSpace(right.CustomerName) &&
+                string.Equals(left.CustomerName.Trim(), right.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(left.PhoneNumber) &&
+                !string.IsNullOrWhiteSpace(right.PhoneNumber) &&
+                string.Equals(left.PhoneNumber.Trim(), right.PhoneNumber.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<string> BuildCustomerHistoryLines(IEnumerable<RepairTicket> history)
+        {
+            return history
+                .Take(5)
+                .Select(item =>
+                    $"  - {item.EscTicketId} | {item.ReceiveDate:yyyy-MM-dd} | {item.DeviceModel} | {item.RepairStatus}");
         }
 
         private void EvaluateDuplicateMarkers()
         {
             foreach (var ticket in Tickets)
             {
-                var hasCustomerIdMatch = ticket.CustomerId.HasValue &&
-                                         Tickets.Any(other => other.TicketId != ticket.TicketId &&
-                                                              other.CustomerId.HasValue &&
-                                                              other.CustomerId.Value == ticket.CustomerId.Value);
-
-                var hasCustomerNameMatch = !string.IsNullOrWhiteSpace(ticket.CustomerName) &&
-                                           Tickets.Any(other => other.TicketId != ticket.TicketId &&
-                                                                !string.IsNullOrWhiteSpace(other.CustomerName) &&
-                                                                string.Equals(ticket.CustomerName.Trim(), other.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase));
-
+                var hasCustomerMatch = Tickets.Any(other => other.TicketId != ticket.TicketId && IsSameCustomer(ticket, other));
                 var hasDeviceMatch = !string.IsNullOrWhiteSpace(ticket.SerialIMEI) &&
                                      Tickets.Any(other => other.TicketId != ticket.TicketId &&
                                                           !string.IsNullOrWhiteSpace(other.SerialIMEI) &&
                                                           string.Equals(ticket.SerialIMEI.Trim(), other.SerialIMEI.Trim(), StringComparison.OrdinalIgnoreCase));
 
-                ticket.IsRepeatedCustomer = hasCustomerIdMatch || hasCustomerNameMatch;
+                ticket.IsRepeatedCustomer = hasCustomerMatch;
                 ticket.IsRepeatedDevice = hasDeviceMatch;
             }
         }
