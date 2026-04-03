@@ -245,51 +245,15 @@
             <Grid Margin="0,36,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="28"/>
                 </Grid.RowDefinitions>
 
-                <!-- ================= Header ================= -->
+                <!-- ================= Control ================= -->
                 <Border Grid.Row="0"
                         Style="{StaticResource CardBorderStyle}"
-                        Padding="12"
-                        Margin="16,16,16,8">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="180"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0"
-                               Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\Philips E-SCenter Logo.png" 
-                               Height="40" 
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Left"/>
-
-                        <TextBlock Text="E-SCenter"
-                                   FontSize="26"
-                                   FontWeight="Bold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextLogoBrush}"
-                                   Grid.Column="0" Margin="50,0,0,0"/>
-
-                        <TextBlock Text="Electronics Services Center 1"
-                                   Style="{StaticResource CardTitleTextStyle}"
-                                   FontSize="22"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextLogoBrush}"
-                                   Grid.Column="1"
-                                   Margin="0,0,150,0"/>
-                    </Grid>
-                </Border>
-
-                <!-- ================= Control ================= -->
-                <Border Grid.Row="1"
-                        Style="{StaticResource CardBorderStyle}"
                         Padding="8"
-                        Margin="16,0,16,8">
+                        Margin="16,16,16,8">
 
                     <UniformGrid Columns="4" >
 
@@ -695,7 +659,7 @@
                 </Border>
 
                 <!-- ================= Main Content ================= -->
-                <Border Grid.Row="2"
+                <Border Grid.Row="1"
                         Style="{StaticResource CardBorderStyle}"
                         Padding="12"
                         Margin="16,0,16,8">
@@ -707,12 +671,25 @@
                 </Border>
 
                 <!-- ================= Status Bar ================= -->
-                <StatusBar Grid.Row="3"
+                <StatusBar Grid.Row="2"
                            Height="28"
                            Background="{StaticResource DarkCardBrush}"
                            BorderBrush="{StaticResource DarkBorderBrush}"
                            BorderThickness="1,0,0,0"
                            Padding="6,0">
+
+                    <StatusBarItem HorizontalAlignment="Left">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Width="9"
+                                     Height="9"
+                                     Fill="{Binding DatabaseConnectionBrush}"
+                                     Margin="0,0,6,0"/>
+                            <TextBlock Text="{Binding DatabaseConnectionStatusText}"
+                                       Foreground="{Binding DatabaseConnectionBrush}"
+                                       FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </StatusBarItem>
+                    <Separator/>
 
                     <StatusBarItem HorizontalAlignment="Left">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

@@ -109,7 +109,7 @@
                 </StackPanel>
 
                 <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden">
-                    <Grid Margin="0,4">
+                    <Grid Margin="0,6,0,2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="*" />
@@ -123,20 +123,20 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Date:</TextBlock>
-                        <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding Date, Mode=TwoWay, StringFormat=yyyy-MM-dd}" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Date:</TextBlock>
+                        <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding Date, Mode=TwoWay, StringFormat=yyyy-MM-dd}" Margin="0,0,0,10" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Item Name:</TextBlock>
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ItemName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource NeonTextBoxStyle}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Item Name:</TextBlock>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ItemName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource NeonTextBoxStyle}" Margin="0,0,0,10" />
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Price:</TextBlock>
-                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Price:</TextBlock>
+                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBox Width="140" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource NeonTextBoxStyle}" />
                             <ComboBox Width="66" Margin="8,0,0,0" ItemsSource="{Binding Currencies}" SelectedItem="{Binding PriceCurrency}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
                         </StackPanel>
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center">Category:</TextBlock>
-                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Category:</TextBlock>
+                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" Margin="0,0,0,10" />
 
                         <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Account:</TextBlock>
                         <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Accounts}" SelectedItem="{Binding Account}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
