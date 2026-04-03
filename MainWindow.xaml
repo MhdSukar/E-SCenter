@@ -150,64 +150,23 @@
                            Margin="10,0,6,0"
                            VerticalAlignment="Center"/>
 
-                    <!-- ===== Navigation Tabs ===== -->
+                    <!-- App Title + Short Name -->
                     <StackPanel Grid.Column="1"
                                 Orientation="Horizontal"
                                 VerticalAlignment="Center"
-                                Margin="6,0,12,0">
-
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs"
-                                     Command="{Binding ShowDashboardCommand}"
-                                     x:Name="BtnDashboard"
-                                     Width="120"
-                                     IsChecked="{Binding IsDashboardSelected, Mode=TwoWay}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Dashboard}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="(F1) Dashboard"/>
-                            </StackPanel>
-                        </RadioButton>
-
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs" Width="110"
-                                     Command="{Binding ShowRepairTicketsCommand}"
-                                     IsChecked="{Binding IsRepairTicketsSelected, Mode=TwoWay}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Tickets}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="(F2) Tickets"/>
-                            </StackPanel>
-                        </RadioButton>
-
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs" Width="110"
-                                     Command="{Binding ShowPartsControlCommand}"
-                                     IsChecked="{Binding IsPartsControlSelected, Mode=TwoWay}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Parts}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="(F3) Parts"/>
-                            </StackPanel>
-                        </RadioButton>
-
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs" Width="110"
-                                     Command="{Binding ShowInventoryCommand}"
-                                     IsChecked="{Binding IsInventorySelected, Mode=TwoWay}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Inventory}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="(F4) Inventory"/>
-                            </StackPanel>
-                        </RadioButton>
-
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs" Width="110"
-                                     Command="{Binding ShowBoneyardCommand}"
-                                     IsChecked="{Binding IsBoneyardSelected, Mode=TwoWay}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Boneyard}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                <TextBlock Text="(F5) Boneyard"/>
-                            </StackPanel>
-                        </RadioButton>
-
+                                Margin="4,0,0,0">
+                        <TextBlock Text="E-SCenter"
+                                   Foreground="{StaticResource TextLogoBrush}"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Text=" • "
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock Text="Electronics Services Center 1"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"/>
                     </StackPanel>
 
 
@@ -243,53 +202,92 @@
 
             <!-- ================= ORIGINAL UI (UNCHANGED) ================= -->
             <Grid Margin="0,36,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="170"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="28"/>
                 </Grid.RowDefinitions>
 
-                <!-- ================= Header ================= -->
-                <Border Grid.Row="0"
+                <!-- ================= Left Navigation ================= -->
+                <Border Grid.Column="0"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
                         Style="{StaticResource CardBorderStyle}"
-                        Padding="12"
-                        Margin="16,16,16,8">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="180"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0"
-                               Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\Philips E-SCenter Logo.png" 
-                               Height="40" 
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Left"/>
-
-                        <TextBlock Text="E-SCenter"
-                                   FontSize="26"
+                        Padding="8"
+                        Margin="16,16,8,8">
+                    <StackPanel>
+                        <TextBlock Text="Views"
+                                   FontSize="13"
                                    FontWeight="Bold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextLogoBrush}"
-                                   Grid.Column="0" Margin="50,0,0,0"/>
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="8,4,8,8"/>
 
-                        <TextBlock Text="Electronics Services Center 1"
-                                   Style="{StaticResource CardTitleTextStyle}"
-                                   FontSize="22"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Foreground="{StaticResource TextLogoBrush}"
-                                   Grid.Column="1"
-                                   Margin="0,0,150,0"/>
-                    </Grid>
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
+                                     GroupName="MainTabs"
+                                     Command="{Binding ShowDashboardCommand}"
+                                     IsChecked="{Binding IsDashboardSelected, Mode=TwoWay}"
+                                     Margin="0,0,0,6">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="{StaticResource Dashboard}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                <TextBlock Text="(F1) Dashboard"/>
+                            </StackPanel>
+                        </RadioButton>
+
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
+                                     GroupName="MainTabs"
+                                     Command="{Binding ShowRepairTicketsCommand}"
+                                     IsChecked="{Binding IsRepairTicketsSelected, Mode=TwoWay}"
+                                     Margin="0,0,0,6">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="{StaticResource Tickets}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                <TextBlock Text="(F2) Tickets"/>
+                            </StackPanel>
+                        </RadioButton>
+
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
+                                     GroupName="MainTabs"
+                                     Command="{Binding ShowPartsControlCommand}"
+                                     IsChecked="{Binding IsPartsControlSelected, Mode=TwoWay}"
+                                     Margin="0,0,0,6">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="{StaticResource Parts}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                <TextBlock Text="(F3) Parts"/>
+                            </StackPanel>
+                        </RadioButton>
+
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
+                                     GroupName="MainTabs"
+                                     Command="{Binding ShowInventoryCommand}"
+                                     IsChecked="{Binding IsInventorySelected, Mode=TwoWay}"
+                                     Margin="0,0,0,6">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="{StaticResource Inventory}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                <TextBlock Text="(F4) Inventory"/>
+                            </StackPanel>
+                        </RadioButton>
+
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
+                                     GroupName="MainTabs"
+                                     Command="{Binding ShowBoneyardCommand}"
+                                     IsChecked="{Binding IsBoneyardSelected, Mode=TwoWay}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="{StaticResource Boneyard}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                <TextBlock Text="(F5) Boneyard"/>
+                            </StackPanel>
+                        </RadioButton>
+                    </StackPanel>
                 </Border>
 
                 <!-- ================= Control ================= -->
-                <Border Grid.Row="1"
+                <Border Grid.Column="1"
+                        Grid.Row="0"
                         Style="{StaticResource CardBorderStyle}"
                         Padding="8"
-                        Margin="16,0,16,8">
+                        Margin="8,16,16,8">
 
                     <UniformGrid Columns="4" >
 
@@ -695,10 +693,11 @@
                 </Border>
 
                 <!-- ================= Main Content ================= -->
-                <Border Grid.Row="2"
+                <Border Grid.Column="1"
+                        Grid.Row="1"
                         Style="{StaticResource CardBorderStyle}"
                         Padding="12"
-                        Margin="16,0,16,8">
+                        Margin="8,0,16,8">
 
                     <ContentControl x:Name="MainContentHost"
                                     Content="{Binding CurrentView}"
@@ -707,7 +706,8 @@
                 </Border>
 
                 <!-- ================= Status Bar ================= -->
-                <StatusBar Grid.Row="3"
+                <StatusBar Grid.Row="2"
+                           Grid.ColumnSpan="2"
                            Height="28"
                            Background="{StaticResource DarkCardBrush}"
                            BorderBrush="{StaticResource DarkBorderBrush}"
