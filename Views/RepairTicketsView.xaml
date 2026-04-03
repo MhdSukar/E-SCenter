@@ -1169,7 +1169,7 @@
 
                         <!-- ================= CUSTOMER PROFILE ================= -->
                         <GroupBox Header="{Binding CustomerProfileHeader}"
-                                  Grid.Row="23"
+                                  Grid.Row="24"
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
@@ -1219,7 +1219,7 @@
 
                         <!-- ================= ACCESSORIES ================= -->
                         <GroupBox Header="Accessories"
-                                  Grid.Row="24"
+                                  Grid.Row="23"
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
