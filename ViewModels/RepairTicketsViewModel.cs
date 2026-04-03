@@ -1089,6 +1089,7 @@ namespace ESCenter.ViewModels
 
             var matches = Tickets
                 .Where(ticket => IsCustomerMatch(ticket, customerId, normalizedName, normalizedPhone))
+                .Where(ticket => !string.Equals(ticket.RepairStatus, "Cancelled", StringComparison.OrdinalIgnoreCase))
                 .OrderByDescending(ticket => ticket.ReceiveDate)
                 .ToList();
 

@@ -1194,24 +1194,22 @@
                                           MinHeight="140"
                                           MaxHeight="220"
                                           Style="{StaticResource DarkDataGridStyle}"
+                                          RowStyle="{StaticResource CompactDataGridRowStyle}"
+                                          CellStyle="{StaticResource CompactDataGridCellStyle}"
                                           ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
-                                          AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}">
+                                          AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="ESC-ID"
-                                                            Binding="{Binding EscTicketId}"
-                                                            Width="90" />
-                                        <DataGridTextColumn Header="Received"
-                                                            Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}"
-                                                            Width="130" />
-                                        <DataGridTextColumn Header="Model"
-                                                            Binding="{Binding DeviceModel}"
-                                                            Width="130" />
-                                        <DataGridTextColumn Header="Issue"
+                                        <DataGridTextColumn Header="Device Serial"
+                                                            Binding="{Binding SerialIMEI}"
+                                                            Width="170" />
+                                        <DataGridTextColumn Header="Problem Description"
                                                             Binding="{Binding ProblemDescription}"
-                                                            Width="*" />
-                                        <DataGridTextColumn Header="Status"
-                                                            Binding="{Binding RepairStatus}"
-                                                            Width="120" />
+                                                            Width="260" />
+                                        <DataGridTextColumn Header="Damage History"
+                                                            Binding="{Binding DamageHistory}"
+                                                            Width="260" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>
