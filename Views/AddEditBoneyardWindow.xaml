@@ -115,19 +115,22 @@
                                 Orientation="Horizontal">
 
                         <Button Style="{StaticResource TitleBarButtonBase}"
-                                Content="—"
                                 Click="btnMinimize_Click"
-                                x:Name="btnMinimize"/>
+                                x:Name="btnMinimize">
+                            <Image Source="{StaticResource Minimize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
 
                         <Button Style="{StaticResource TitleBarButtonBase}"
-                                Content="□"
                                 x:Name="btnMaximize"
                                 FontSize="17"
-                                Click="btnMaximize_Click"/>
+                                Click="btnMaximize_Click">
+                            <Image Source="{StaticResource Maximize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
 
                         <Button Style="{StaticResource TitleBarCloseButtonStyle}"
-                                Content="✕"
-                                Click="btnClose_Click"/>
+                                Click="btnClose_Click">
+                            <Image Source="{StaticResource Close}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>

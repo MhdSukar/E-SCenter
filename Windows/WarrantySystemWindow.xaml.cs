@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -17,6 +17,7 @@ namespace ESCenter.Windows
         public WarrantySystemWindow()
         {
             InitializeComponent();
+            SetMaximizeButtonIcon("Maximize");
             DataContext = this;
             LoadWarrantyItems();
         }
@@ -51,13 +52,25 @@ namespace ESCenter.Windows
             if (WindowState == WindowState.Maximized)
             {
                 WindowState = WindowState.Normal;
-                btnMaximize.Content = "\\u25A1";
+                SetMaximizeButtonIcon("Maximize");
             }
             else
             {
                 WindowState = WindowState.Maximized;
-                btnMaximize.Content = "\\u25A1";
+                SetMaximizeButtonIcon("Restore");
             }
+        }
+
+
+        private void SetMaximizeButtonIcon(string resourceKey)
+        {
+            btnMaximize.Content = new System.Windows.Controls.Image
+            {
+                Source = (System.Windows.Media.ImageSource)FindResource(resourceKey),
+                Width = 14,
+                Height = 14,
+                Stretch = System.Windows.Media.Stretch.Uniform
+            };
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
