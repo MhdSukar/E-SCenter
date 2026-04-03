@@ -14,12 +14,16 @@
                 <ResourceDictionary Source="/Themes/Brushes.xaml"/>
                 <ResourceDictionary Source="/Themes/Controls.xaml"/>
                 <ResourceDictionary Source="/Themes/IconsTemplates.xaml"/>
+                <ResourceDictionary Source="/Themes/PnLDashboardStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Declare converters -->
             <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <conv:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
             <conv:SeriesKeyToIconConverter x:Key="SeriesKeyToIconConverter"/>
+            <conv:TrendArrowConverter x:Key="TrendArrowConverter"/>
+            <conv:TrendBrushConverter x:Key="TrendBrushConverter"/>
+            <conv:MarginBrushConverter x:Key="MarginBrushConverter"/>
 
             <!-- ================= MVVM View Mappings ================= -->
             <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
@@ -44,6 +48,10 @@
 
             <DataTemplate DataType="{x:Type vm:BoneyardViewModel}">
                 <views:BoneyardView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:PnLDashboardViewModel}">
+                <views:PnLDashboardView/>
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vm:AlBarakaViewModel}">

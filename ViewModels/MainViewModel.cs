@@ -294,7 +294,7 @@ namespace ESCenter.ViewModels
                 IsPartsControlSelected = false;
                 IsInventorySelected = false;
                 IsBoneyardSelected = false;
-                Navigate(new AlBarakaViewModel(), "Al-Baraka loaded");
+                Navigate(new AlBarakaViewModel(new FinancialService()), "Al-Baraka loaded");
             });
 
             ShowInventoryCommand = new RelayCommand(_ =>

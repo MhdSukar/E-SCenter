@@ -956,11 +956,8 @@ namespace ESCenter.ViewModels
 
         private string BuildDuplicateNotice(RepairTicket candidate)
         {
-            var repeatedCustomer = Tickets.Any(existing =>
-                (candidate.CustomerId.HasValue && existing.CustomerId.HasValue && candidate.CustomerId.Value == existing.CustomerId.Value) ||
-                (!string.IsNullOrWhiteSpace(candidate.CustomerName) &&
-                 !string.IsNullOrWhiteSpace(existing.CustomerName) &&
-                 string.Equals(candidate.CustomerName.Trim(), existing.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)));
+            var customerHistory = FindCustomerHistory(candidate);
+            var repeatedCustomer = customerHistory.Count > 0;
 
             var repeatedDevice = !string.IsNullOrWhiteSpace(candidate.SerialIMEI) &&
                                  Tickets.Any(existing =>
@@ -979,7 +976,8 @@ namespace ESCenter.ViewModels
 
             if (repeatedCustomer)
             {
-                lines.Add("ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Repeated customer detected (Customer ID or Name matched).");
+                lines.Add($"• Repeated customer detected ({customerHistory.Count} previous ticket(s) found).");
+                lines.AddRange(BuildCustomerHistoryLines(customerHistory));
             }
 
             if (repeatedDevice)
@@ -988,6 +986,71 @@ namespace ESCenter.ViewModels
             }
 
             return string.Join(Environment.NewLine, lines);
+        }
+
+        public CustomerRepairProfile BuildCustomerProfile(RepairTicket referenceTicket)
+        {
+            if (referenceTicket == null)
+            {
+                return null;
+            }
+
+            var history = FindCustomerHistory(referenceTicket, includeReferenceWhenPersisted: true);
+            if (history.Count == 0)
+            {
+                history.Add(referenceTicket);
+            }
+
+            var orderedHistory = history
+                .OrderByDescending(ticket => ticket.ReceiveDate)
+                .ToList();
+
+            return new CustomerRepairProfile
+            {
+                CustomerId = referenceTicket.CustomerId,
+                CustomerName = referenceTicket.CustomerName,
+                PhoneNumber = referenceTicket.PhoneNumber,
+                TotalRepairs = orderedHistory.Count,
+                OpenRepairs = orderedHistory.Count(ticket => !ticket.DeliveryDate.HasValue),
+                ClosedRepairs = orderedHistory.Count(ticket => ticket.DeliveryDate.HasValue),
+                FirstRepairDate = orderedHistory.Min(ticket => (DateTime?)ticket.ReceiveDate),
+                LastRepairDate = orderedHistory.Max(ticket => (DateTime?)ticket.ReceiveDate),
+                RepairHistory = orderedHistory
+            };
+        }
+
+        private List<RepairTicket> FindCustomerHistory(RepairTicket candidate, bool includeReferenceWhenPersisted = false)
+        {
+            if (candidate == null)
+            {
+                return new List<RepairTicket>();
+            }
+
+            var normalizedName = candidate.CustomerName?.Trim();
+            var normalizedPhone = candidate.PhoneNumber?.Trim();
+
+            return Tickets
+                .Where(existing =>
+                    (includeReferenceWhenPersisted || existing.TicketId != candidate.TicketId) &&
+                    (
+                        (candidate.CustomerId.HasValue && existing.CustomerId.HasValue && candidate.CustomerId.Value == existing.CustomerId.Value) ||
+                        (!string.IsNullOrWhiteSpace(normalizedName) &&
+                         !string.IsNullOrWhiteSpace(existing.CustomerName) &&
+                         string.Equals(normalizedName, existing.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)) ||
+                        (!string.IsNullOrWhiteSpace(normalizedPhone) &&
+                         !string.IsNullOrWhiteSpace(existing.PhoneNumber) &&
+                         string.Equals(normalizedPhone, existing.PhoneNumber.Trim(), StringComparison.OrdinalIgnoreCase))
+                    ))
+                .OrderByDescending(existing => existing.ReceiveDate)
+                .ToList();
+        }
+
+        private static IEnumerable<string> BuildCustomerHistoryLines(IEnumerable<RepairTicket> history)
+        {
+            return history
+                .Take(5)
+                .Select(item =>
+                    $"  - {item.EscTicketId} | {item.ReceiveDate:yyyy-MM-dd} | {item.DeviceModel} | {item.RepairStatus}");
         }
 
         private void EvaluateDuplicateMarkers()

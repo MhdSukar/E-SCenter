@@ -1,0 +1,74 @@
+<UserControl x:Class="ESCenter.Views.PnLDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF">
+    <Grid Background="#0D1117" Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Margin="0,0,0,8">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <Image Source="{StaticResource Baraka}" Width="28" Height="28" Margin="0,0,8,0"/>
+                <TextBlock Text="Al-Baraka" Foreground="#E6EDF3" FontSize="22" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Content="Export PDF" Style="{StaticResource NeonBorderButtonStyle}" Command="{Binding ExportToPdfCommand}" Margin="0,0,8,0"/>
+                <Button Content="Export Excel" Style="{StaticResource NeonBorderButtonStyle}" Command="{Binding ExportToExcelCommand}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <UniformGrid Grid.Row="1" Columns="6" Margin="0,0,0,10">
+            <Border Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Total Revenue" Style="{StaticResource PnLLabelStyle}"/><TextBlock Text="{Binding TotalRevenue, StringFormat={}{0:N2}}" Style="{StaticResource PnLValueStyle}"/><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding RevenueTrendPercent, Converter={StaticResource TrendArrowConverter}}" Foreground="{Binding RevenueTrendPercent, Converter={StaticResource TrendBrushConverter}}" Margin="0,0,4,0"/><TextBlock Text="{Binding RevenueTrendPercent, StringFormat={}{0:+0.##;-0.##;0}%}" Foreground="{Binding RevenueTrendPercent, Converter={StaticResource TrendBrushConverter}}"/></StackPanel></StackPanel></Border>
+            <Border Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Total Parts Cost" Style="{StaticResource PnLLabelStyle}"/><TextBlock Text="{Binding TotalPartsCost, StringFormat={}{0:N2}}" Style="{StaticResource PnLValueStyle}"/><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding PartsTrendPercent, Converter={StaticResource TrendArrowConverter}}" Foreground="{Binding PartsTrendPercent, Converter={StaticResource TrendBrushConverter}}" Margin="0,0,4,0"/><TextBlock Text="{Binding PartsTrendPercent, StringFormat={}{0:+0.##;-0.##;0}%}" Foreground="{Binding PartsTrendPercent, Converter={StaticResource TrendBrushConverter}}"/></StackPanel></StackPanel></Border>
+            <Border Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Total Expenses" Style="{StaticResource PnLLabelStyle}"/><TextBlock Text="{Binding TotalExpenses, StringFormat={}{0:N2}}" Style="{StaticResource PnLValueStyle}"/><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding ExpensesTrendPercent, Converter={StaticResource TrendArrowConverter}}" Foreground="{Binding ExpensesTrendPercent, Converter={StaticResource TrendBrushConverter}}" Margin="0,0,4,0"/><TextBlock Text="{Binding ExpensesTrendPercent, StringFormat={}{0:+0.##;-0.##;0}%}" Foreground="{Binding ExpensesTrendPercent, Converter={StaticResource TrendBrushConverter}}"/></StackPanel></StackPanel></Border>
+            <Border Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Gross Profit" Style="{StaticResource PnLLabelStyle}"/><TextBlock Text="{Binding GrossProfit, StringFormat={}{0:N2}}" Style="{StaticResource PnLValueStyle}"/><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding GrossTrendPercent, Converter={StaticResource TrendArrowConverter}}" Foreground="{Binding GrossTrendPercent, Converter={StaticResource TrendBrushConverter}}" Margin="0,0,4,0"/><TextBlock Text="{Binding GrossTrendPercent, StringFormat={}{0:+0.##;-0.##;0}%}" Foreground="{Binding GrossTrendPercent, Converter={StaticResource TrendBrushConverter}}"/></StackPanel></StackPanel></Border>
+            <Border Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Net Profit" Style="{StaticResource PnLLabelStyle}"/><TextBlock Text="{Binding NetProfit, StringFormat={}{0:N2}}" Style="{StaticResource PnLValueStyle}"/><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding NetTrendPercent, Converter={StaticResource TrendArrowConverter}}" Foreground="{Binding NetTrendPercent, Converter={StaticResource TrendBrushConverter}}" Margin="0,0,4,0"/><TextBlock Text="{Binding NetTrendPercent, StringFormat={}{0:+0.##;-0.##;0}%}" Foreground="{Binding NetTrendPercent, Converter={StaticResource TrendBrushConverter}}"/></StackPanel></StackPanel></Border>
+            <Border Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Profit Margin %" Style="{StaticResource PnLLabelStyle}"/><TextBlock Text="{Binding ProfitMarginPercent, StringFormat={}{0:N2}%}" Style="{StaticResource PnLValueStyle}"/><StackPanel Orientation="Horizontal"><TextBlock Text="{Binding MarginTrendPercent, Converter={StaticResource TrendArrowConverter}}" Foreground="{Binding MarginTrendPercent, Converter={StaticResource TrendBrushConverter}}" Margin="0,0,4,0"/><TextBlock Text="{Binding MarginTrendPercent, StringFormat={}{0:+0.##;-0.##;0}%}" Foreground="{Binding MarginTrendPercent, Converter={StaticResource TrendBrushConverter}}"/></StackPanel></StackPanel></Border>
+        </UniformGrid>
+
+        <Border Grid.Row="2" Style="{StaticResource PnLCardStyle}" Margin="0,0,0,10">
+            <WrapPanel>
+                <TextBlock Text="Period" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <ComboBox Width="140" ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding SelectedPeriod}" Style="{StaticResource NeonDarkCyanComboBoxStyle}"/>
+                <Button Content="Apply" Style="{StaticResource NeonBorderButtonStyle}" Margin="8,0,16,0" Command="{Binding PeriodChangedCommand}"/>
+                <TextBlock Text="From" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <DatePicker SelectedDate="{Binding FromDate}" Width="145"/>
+                <TextBlock Text="To" VerticalAlignment="Center" Margin="12,0,6,0"/>
+                <DatePicker SelectedDate="{Binding ToDate}" Width="145"/>
+            </WrapPanel>
+        </Border>
+
+        <Grid Grid.Row="3" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Style="{StaticResource PnLCardStyle}" Margin="0,0,10,0"><StackPanel><TextBlock Text="Monthly Revenue vs Expenses" Style="{StaticResource PnLChartTitleStyle}"/><lvc:CartesianChart Series="{Binding MonthlyRevenueExpensesSeries}" XAxes="{Binding MonthlyAxisX}" YAxes="{Binding MonthlyAxisY}" Height="240"/></StackPanel></Border>
+            <Border Grid.Column="1" Style="{StaticResource PnLCardStyle}" Margin="0,0,10,0"><StackPanel><TextBlock Text="Net Profit Trend" Style="{StaticResource PnLChartTitleStyle}"/><lvc:CartesianChart Series="{Binding NetProfitTrendSeries}" XAxes="{Binding NetProfitAxisX}" YAxes="{Binding NetProfitAxisY}" Height="240"/></StackPanel></Border>
+            <Border Grid.Column="2" Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Revenue by Brand" Style="{StaticResource PnLChartTitleStyle}"/><lvc:PieChart Series="{Binding RevenueBreakdownSeries}" Height="240"/></StackPanel></Border>
+        </Grid>
+
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="1.4*"/></Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" Margin="0,0,10,0">
+                <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                <Border Grid.Row="0" Style="{StaticResource PnLCardStyle}" Margin="0,0,0,10"><StackPanel><TextBlock Text="Top 5 Most Profitable Repairs" Style="{StaticResource PnLChartTitleStyle}"/><lvc:CartesianChart Series="{Binding TopRepairsSeries}" XAxes="{Binding TopRepairsAxisX}" YAxes="{Binding TopRepairsAxisY}" Height="220"/></StackPanel></Border>
+                <Border Grid.Row="1" Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Warranty Impact" Style="{StaticResource PnLChartTitleStyle}"/><TextBlock Text="{Binding WarrantyRevenueLost, StringFormat=Warranty Cost: {0:N2}}" Foreground="#DC3737" FontSize="20" FontWeight="Bold"/><TextBlock Text="{Binding WarrantyRepairCount, StringFormat=Across {0} repairs}" Foreground="#8B949E" FontSize="15"/></StackPanel></Border>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                <Border Grid.Row="0" Style="{StaticResource PnLCardStyle}" Margin="0,0,0,10"><StackPanel><TextBlock Text="Expenses Breakdown" Style="{StaticResource PnLChartTitleStyle}"/><DataGrid ItemsSource="{Binding ExpenseBreakdown}" AutoGenerateColumns="False" Style="{StaticResource DarkDataGridStyle}" AlternatingRowBackground="#1A2028"><DataGrid.Columns><DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="*"/><DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount, StringFormat={}{0:N2}}" Width="120"/><DataGridTextColumn Header="% of Expenses" Binding="{Binding ExpensePercent, StringFormat={}{0:N2}%}" Width="110"/><DataGridTextColumn Header="Count" Binding="{Binding TransactionCount}" Width="90"/></DataGrid.Columns></DataGrid></StackPanel></Border>
+                <Border Grid.Row="1" Style="{StaticResource PnLCardStyle}"><StackPanel><TextBlock Text="Profit per Ticket" Style="{StaticResource PnLChartTitleStyle}"/><DataGrid ItemsSource="{Binding ProfitPerTicket}" AutoGenerateColumns="False" Style="{StaticResource DarkDataGridStyle}" AlternatingRowBackground="#1A2028"><DataGrid.Columns><DataGridTextColumn Header="Ticket ID" Binding="{Binding EscTicketId}" Width="90"/><DataGridTextColumn Header="Device" Binding="{Binding Device}" Width="120"/><DataGridTextColumn Header="Problem" Binding="{Binding Problem}" Width="120"/><DataGridTextColumn Header="Revenue" Binding="{Binding Revenue, StringFormat={}{0:N2}}" Width="85"/><DataGridTextColumn Header="Parts" Binding="{Binding PartsCost, StringFormat={}{0:N2}}" Width="85"/><DataGridTextColumn Header="Labor" Binding="{Binding LaborCost, StringFormat={}{0:N2}}" Width="85"/><DataGridTextColumn Header="Net Profit" Binding="{Binding NetProfit, StringFormat={}{0:N2}}" Width="90"/><DataGridTextColumn Header="Margin %" Binding="{Binding MarginPercent, StringFormat={}{0:N2}%}" Width="80"><DataGridTextColumn.ElementStyle><Style TargetType="TextBlock"><Setter Property="Foreground" Value="{Binding MarginPercent, Converter={StaticResource MarginBrushConverter}}"/><Setter Property="FontWeight" Value="SemiBold"/></Style></DataGridTextColumn.ElementStyle></DataGridTextColumn></DataGrid.Columns></DataGrid></StackPanel></Border>
+            </Grid>
+        </Grid>
+
+        <Border Background="#880D1117" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="220" Height="10"/>
+                <TextBlock Text="Loading financial data..." Foreground="#E6EDF3" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
