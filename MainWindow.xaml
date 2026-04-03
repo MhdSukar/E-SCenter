@@ -148,7 +148,14 @@
                            Width="18"
                            Height="18"
                            Margin="10,0,6,0"
-                           VerticalAlignment="Center"/>
+                           VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Column="0"
+                               Text="E-SCenter"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Foreground="{StaticResource NeonBlueBrush}"
+                               Margin="34,0,0,0"/>
 
                     <!-- ===== Navigation Tabs ===== -->
                     <StackPanel Grid.Column="1"
