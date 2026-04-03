@@ -414,7 +414,7 @@
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
-                            <TextBlock Text="Phone:"
+                            <TextBlock Text="Phone Number:"
                                        VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -480,7 +480,7 @@
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
-                            <TextBlock Text="Brand:"
+                            <TextBlock Text="Device Brand:"
                                        VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding DeviceBrand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -498,7 +498,7 @@
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
-                            <TextBlock Text="Model:"
+                            <TextBlock Text="Device Model:"
                                        VerticalAlignment="Center" />
                         </StackPanel>
                         <TextBox Text="{Binding DeviceModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

@@ -14,6 +14,7 @@ namespace ESCenter
         private static Mutex? _mutex;
         private NotifyIcon? _trayIcon;
         private TrayPopupWindow? _trayPopup;
+        private BackupService? _backupService;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -32,6 +33,7 @@ namespace ESCenter
             base.OnStartup(e);
 
             InitializeDatabase();
+            StartBackupService();
             SetupTrayIcon();
             ShowMainWindow();
         }
@@ -51,6 +53,13 @@ namespace ESCenter
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
+        }
+
+
+        private void StartBackupService()
+        {
+            _backupService = new BackupService();
+            _backupService.Start();
         }
 
         private void BringExistingInstanceToFront()
@@ -86,6 +95,8 @@ namespace ESCenter
                 _trayIcon.Visible = false;
                 _trayIcon.Dispose();
             }
+
+            _backupService?.Dispose();
 
             Shutdown();
         }
@@ -162,6 +173,8 @@ namespace ESCenter
                 _trayIcon.Visible = false;
                 _trayIcon.Dispose();
             }
+
+            _backupService?.Dispose();
 
             if (_mutex != null)
             {

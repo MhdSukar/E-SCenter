@@ -151,7 +151,7 @@
                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Column="0"
                                Text="E-SCenter"
-                               FontSize="12"
+                               FontSize="22"
                                FontWeight="SemiBold"
                                VerticalAlignment="Center"
                                Foreground="{StaticResource NeonBlueBrush}"
@@ -200,7 +200,7 @@
                                      Command="{Binding ShowInventoryCommand}"
                                      IsChecked="{Binding IsInventorySelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Inventory}" Width="25" Height="25" Margin="0,0,2,0"/>
+                                <Image Source="{StaticResource Inventory}" Width="24" Height="24" Margin="0,0,2,0"/>
                                 <TextBlock Text="(F4) Inventory" Margin="0,2,0,0"/>
                             </StackPanel>
                         </RadioButton>
@@ -465,7 +465,7 @@
                         <GroupBox Width="363" Style="{StaticResource DarkCyanGroupBoxStyle}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="{StaticResource GalaxyAi1}" Width="17" Height="17" Margin="0,0,6,0"/>
+                                    <Image Source="{StaticResource GalaxyAi3}" Width="18" Height="18" Margin="0,0,6,0"/>
                                     <TextBlock Text="мн∂ ѕυкαя" Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
                                 </StackPanel>
                             </GroupBox.Header>
@@ -486,7 +486,7 @@
                                            Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
 
                                 <Image Grid.Column="0" Grid.Row="1"
-                                       Source="{StaticResource Dashboard}"
+                                       Source="{StaticResource GalaxyAi3}"
                                        Width="35"
                                        Height="30"
                                        Margin="0,0,40,0"
@@ -547,7 +547,7 @@
                                     
                                     <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="120" Margin="0,5,-10,0" Style="{StaticResource NeonCheckBoxStyle}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource GalaxyAi2}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                            <Image Source="{StaticResource GalaxyAi4}" Width="18" Height="18" Margin="0,0,6,0"/>
                                             <TextBlock Text="ѕєℓєςт */ף" Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
                                         </StackPanel>
                                     </CheckBox>
