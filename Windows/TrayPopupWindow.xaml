@@ -7,7 +7,7 @@
         Background="Transparent"
         Topmost="True"
         ShowInTaskbar="False"
-        Opacity="1">
+        Opacity="0">
 
     <Window.Resources>
         <DropShadowEffect x:Key="TrayPopupShadow"
@@ -58,11 +58,15 @@
     </Window.Resources>
 
     <Border CornerRadius="14"
+            x:Name="TrayRoot"
             Background="{StaticResource DarkBackgroundBrush}"
             BorderBrush="{StaticResource NeonBlueBrush}"
             BorderThickness="1"
             Padding="12"
             Effect="{StaticResource TrayPopupShadow}">
+        <Border.RenderTransform>
+            <TranslateTransform x:Name="TraySlideTransform" Y="8"/>
+        </Border.RenderTransform>
 
         <Grid>
             <Grid.RowDefinitions>

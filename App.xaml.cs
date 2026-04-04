@@ -1,18 +1,19 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using ESCenter.Models;
 using ESCenter.Services;
 using ESCenter.Windows;
+using Forms = System.Windows.Forms;
 
 namespace ESCenter
 {
     public partial class App : System.Windows.Application
     {
         private static Mutex? _mutex;
-        private NotifyIcon? _trayIcon;
+        private Forms.NotifyIcon? _trayIcon;
         private TrayPopupWindow? _trayPopup;
         private BackupService? _backupService;
 
@@ -105,7 +106,7 @@ namespace ESCenter
         {
             var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Themes", "Philips E-SCenter Icon.ico");
 
-            _trayIcon = new NotifyIcon
+            _trayIcon = new Forms.NotifyIcon
             {
                 Icon = File.Exists(iconPath) ? new System.Drawing.Icon(iconPath) : System.Drawing.SystemIcons.Application,
                 Visible = true,
@@ -113,17 +114,17 @@ namespace ESCenter
             };
 
             _trayIcon.DoubleClick += (_, _) => ShowMainWindow();
-            _trayIcon.MouseUp += (_, args) =>
+            _trayIcon.MouseUp += async (_, args) =>
             {
-                if (args.Button == MouseButtons.Right)
+                if (args.Button == Forms.MouseButtons.Right)
                 {
-                    var cursorPos = Control.MousePosition;
-                    ShowTrayPopupAt(cursorPos.X, cursorPos.Y);
+                    var cursorPos = Forms.Control.MousePosition;
+                    await ShowTrayPopupAtAsync(cursorPos.X, cursorPos.Y);
                 }
             };
         }
 
-        private void ShowTrayPopupAt(int x, int y)
+        private async Task ShowTrayPopupAtAsync(int x, int y)
         {
             if (MainWindow == null)
             {
@@ -139,19 +140,18 @@ namespace ESCenter
 
             if (_trayPopup.IsVisible)
             {
-                _trayPopup.Hide();
+                await _trayPopup.HideAnimatedAsync();
                 return;
             }
 
             _trayPopup.Opacity = 0;
             _trayPopup.Show();
             _trayPopup.UpdateLayout();
-            _trayPopup.Opacity = 1;
 
             var left = x - _trayPopup.ActualWidth + 20;
             var top = y - _trayPopup.ActualHeight - 5;
 
-            var screen = Screen.FromPoint(new System.Drawing.Point(x, y)).WorkingArea;
+            var screen = Forms.Screen.FromPoint(new System.Drawing.Point(x, y)).WorkingArea;
             if (left < screen.Left)
             {
                 left = screen.Left + 5;
@@ -164,6 +164,7 @@ namespace ESCenter
 
             _trayPopup.Left = left;
             _trayPopup.Top = top;
+            _trayPopup.ShowAnimated();
         }
 
         protected override void OnExit(ExitEventArgs e)

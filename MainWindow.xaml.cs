@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using ESCenter.Services;
 using Microsoft.Win32;
@@ -14,6 +16,7 @@ namespace ESCenter
     public partial class MainWindow : Window
     {
         private readonly string _settingsPath;
+        private bool _isWindowTransitionRunning;
 
         public MainWindow()
         {
@@ -59,22 +62,29 @@ namespace ESCenter
 
         private void AnimateCurrentViewTransition()
         {
-            var animation = new DoubleAnimationUsingKeyFrames
+            var opacityAnimation = new DoubleAnimationUsingKeyFrames
             {
-                Duration = TimeSpan.FromMilliseconds(320)
+                Duration = TimeSpan.FromMilliseconds(300)
             };
 
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0))));
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(120)))
+            opacityAnimation.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0))));
+            opacityAnimation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(300)))
             {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
-            });
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(320)))
-            {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
             });
 
-            MainContentHost.BeginAnimation(OpacityProperty, animation);
+            var slideAnimation = new DoubleAnimationUsingKeyFrames
+            {
+                Duration = TimeSpan.FromMilliseconds(300)
+            };
+            slideAnimation.KeyFrames.Add(new EasingDoubleKeyFrame(18, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0))));
+            slideAnimation.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(300)))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            });
+
+            MainContentHost.BeginAnimation(OpacityProperty, opacityAnimation);
+            MainContentTranslateTransform.BeginAnimation(TranslateTransform.YProperty, slideAnimation);
         }
 
         private void MainWindow_SourceInitialized(object? sender, EventArgs e)
@@ -175,19 +185,31 @@ namespace ESCenter
             WindowState = WindowState.Normal;
         }
 
-        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+        private async void btnMinimize_Click(object sender, RoutedEventArgs e)
         {
-            WindowState = WindowState.Minimized;
+            if (await AnimateWindowShellAsync(0.94, 0, 180))
+            {
+                WindowState = WindowState.Minimized;
+                ResetWindowShellVisual();
+            }
         }
 
-        private void btnMaximize_Click(object sender, RoutedEventArgs e)
+        private async void btnMaximize_Click(object sender, RoutedEventArgs e)
         {
-            AdjustWindowSize();
+            if (await AnimateWindowShellAsync(0.97, 0.88, 130))
+            {
+                AdjustWindowSize();
+                ResetWindowShellVisual();
+            }
         }
 
-        private void btnClose_Click(object sender, RoutedEventArgs e)
+        private async void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            if (await AnimateWindowShellAsync(0.92, 0, 180))
+            {
+                Hide();
+                ResetWindowShellVisual();
+            }
         }
 
         private void AdjustWindowSize()
@@ -235,6 +257,39 @@ namespace ESCenter
         {
             e.Cancel = true;
             Hide();
+        }
+
+        private async Task<bool> AnimateWindowShellAsync(double scale, double opacity, int durationMs)
+        {
+            if (_isWindowTransitionRunning)
+            {
+                return false;
+            }
+
+            _isWindowTransitionRunning = true;
+
+            var easing = new CubicEase { EasingMode = EasingMode.EaseInOut };
+            var scaleXAnimation = new DoubleAnimation(scale, TimeSpan.FromMilliseconds(durationMs)) { EasingFunction = easing };
+            var scaleYAnimation = new DoubleAnimation(scale, TimeSpan.FromMilliseconds(durationMs)) { EasingFunction = easing };
+            var opacityAnimation = new DoubleAnimation(opacity, TimeSpan.FromMilliseconds(durationMs)) { EasingFunction = easing };
+
+            WindowShellScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleXAnimation);
+            WindowShellScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleYAnimation);
+            WindowShell.BeginAnimation(OpacityProperty, opacityAnimation);
+
+            await Task.Delay(durationMs + 20);
+            _isWindowTransitionRunning = false;
+            return true;
+        }
+
+        private void ResetWindowShellVisual()
+        {
+            WindowShellScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+            WindowShellScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, null);
+            WindowShell.BeginAnimation(OpacityProperty, null);
+            WindowShellScaleTransform.ScaleX = 1;
+            WindowShellScaleTransform.ScaleY = 1;
+            WindowShell.Opacity = 1;
         }
     }
 

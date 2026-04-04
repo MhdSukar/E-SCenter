@@ -118,11 +118,18 @@
     
 
     <!-- Rounded window shell -->
-    <Border CornerRadius="12"
+    <Border x:Name="WindowShell"
+            CornerRadius="12"
             Background="{StaticResource AppBackgroundBrush}"
             BorderBrush="{StaticResource DarkBorderBrush}"
             BorderThickness="0"
             SnapsToDevicePixels="True">
+        <Border.RenderTransform>
+            <ScaleTransform x:Name="WindowShellScaleTransform"
+                            ScaleX="1"
+                            ScaleY="1"/>
+        </Border.RenderTransform>
+        <Border.RenderTransformOrigin>0.5,0.5</Border.RenderTransformOrigin>
 
         <Grid>
             <!-- ================= Custom Title Bar ================= -->
@@ -677,7 +684,13 @@
                     <ContentControl x:Name="MainContentHost"
                                     Content="{Binding CurrentView}"
                                     HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"/>
+                                    VerticalAlignment="Stretch"
+                                    Opacity="1"
+                                    RenderTransformOrigin="0.5,0.5">
+                        <ContentControl.RenderTransform>
+                            <TranslateTransform x:Name="MainContentTranslateTransform" Y="0"/>
+                        </ContentControl.RenderTransform>
+                    </ContentControl>
                 </Border>
 
                 <!-- ================= Status Bar ================= -->
