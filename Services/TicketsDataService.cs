@@ -45,7 +45,6 @@ namespace ESCenter.Services
         public Task<List<RepairTicket>> GetAllAsync()
             => Task.Run(GetAll);
 
-
         public DashboardSummary GetDashboardSummary(DateTime now, DateTime weekStart, DateTime weekEnd)
         {
             using var conn = new SQLiteConnection(ConnectionString);
@@ -181,7 +180,6 @@ namespace ESCenter.Services
 
         public Task<Dictionary<string, int>> GetOpenPriorityCountsAsync(IEnumerable<string> priorities)
             => Task.Run(() => GetOpenPriorityCounts(priorities));
-
         // ===================== INSERT =====================
         public int Insert(RepairTicket ticket)
         {
@@ -420,5 +418,11 @@ namespace ESCenter.Services
             public int WeeklyFinishedTickets { get; set; }
             public decimal WeeklyIncome { get; set; }
         }
+<<<<<<< HEAD
+=======
+
+        public string GetNextEscTicketId() => GenerateEscTicketId();
+        public Task<string> GetNextEscTicketIdAsync() => Task.Run(GenerateEscTicketId);
+>>>>>>> feat: add async data loading across all repositories and ViewModels
     }
 }
