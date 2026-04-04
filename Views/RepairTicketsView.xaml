@@ -25,11 +25,20 @@
                 <!-- ================= HEADER ================= -->
                 <DockPanel DockPanel.Dock="Top"
                            Margin="0,0,0,8">
-                    <TextBlock Text="Repair Tickets"
-                               FontSize="20"
-                               FontWeight="Bold"
-                               Foreground="{StaticResource NewPrimaryBlueBrush}"
-                               DockPanel.Dock="Left" />
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="0,0,0,4">
+                        <Image Source="{StaticResource Tickets}"
+                               Width="26"
+                               Height="26"
+                               Margin="0,0,6,0" />
+                        <TextBlock Text="Repair Tickets"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource NewPrimaryBlueBrush}"
+                                   DockPanel.Dock="Left" Margin="0,0,0,0"/>
+                    </StackPanel>
+                    
 
                     <StackPanel Orientation="Horizontal"
                                 DockPanel.Dock="Right"

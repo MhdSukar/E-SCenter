@@ -33,11 +33,21 @@
                             VerticalAlignment="Center">
 
                     <!-- Title -->
-                    <TextBlock Text="Parts Control"
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="0,0,24,0">
+                        <Image Source="{StaticResource Parts}"
+                               Width="28"
+                               Height="28"
+                               Margin="0,0,8,0"/>
+                        <TextBlock Text="Parts Control"
                                FontSize="20"
                                FontWeight="Bold"
                                Foreground="{StaticResource NewPrimaryBlueBrush}"
-                               Margin="0,0,16,0"/>
+                               Margin="0,0,8,0"/>
+
+                </StackPanel>
+
 
                     <!-- Search with icon -->
                     <Grid Width="260" Margin="0,0,12,0">

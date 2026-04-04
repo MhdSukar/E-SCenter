@@ -271,7 +271,14 @@ namespace ESCenter.ViewModels
         }
 
         private bool _suppressPartsSync;
-        private List<string> _savedPartsSnapshot = new();
+        private List<PartStockEntry> _savedPartsSnapshot = new();
+
+        private sealed class PartStockEntry
+        {
+            public string Sku { get; set; } = string.Empty;
+            public string Name { get; set; } = string.Empty;
+            public int Quantity { get; set; }
+        }
 
         private string _rootCause = string.Empty;
         public string RootCause { get => _rootCause; set => SetProperty(ref _rootCause, value); }
@@ -488,8 +495,9 @@ namespace ESCenter.ViewModels
                 var duplicateNotice = BuildDuplicateNotice(ticket);
                 ApplyWarrantyRepairSuggestion(ticket);
                 ticket.TicketId = _service.Insert(ticket);
-                ReconcileStock(_savedPartsSnapshot, ExpandPartsForStock(UsedPartLines));
-                _savedPartsSnapshot = ExpandPartsForStock(UsedPartLines);
+                var currentSnapshot = BuildStockSnapshot(UsedPartLines);
+                ReconcileStock(_savedPartsSnapshot, currentSnapshot);
+                _savedPartsSnapshot = currentSnapshot;
 
                 Tickets.Insert(0, ticket);
                 EvaluateDuplicateMarkers();
@@ -516,12 +524,11 @@ namespace ESCenter.ViewModels
             {
                 if (!ValidateForm()) return;
 
-                var currentParts = ExpandPartsForStock(UsedPartLines);
-                ReconcileStock(_savedPartsSnapshot, currentParts);
-                _savedPartsSnapshot = currentParts;
-
                 ApplyFormToTicket(SelectedTicket);
                 _service.Update(SelectedTicket);
+                var currentSnapshot = BuildStockSnapshot(UsedPartLines);
+                ReconcileStock(_savedPartsSnapshot, currentSnapshot);
+                _savedPartsSnapshot = currentSnapshot;
 
                 RefreshTicketInCollection(SelectedTicket);
                 EvaluateDuplicateMarkers();
@@ -546,7 +553,7 @@ namespace ESCenter.ViewModels
 
             try
             {
-                RestoreAllStock(ExpandPartsForStock(UsedPartLines));
+                RestoreAllStock(_savedPartsSnapshot);
                 _service.Delete(SelectedTicket.TicketId);
                 Tickets.Remove(SelectedTicket);
                 EvaluateDuplicateMarkers();
@@ -911,49 +918,69 @@ namespace ESCenter.ViewModels
         // =========================================================
         // PARTS — stock reconciliation
         // =========================================================
-        private List<string> ExpandPartsForStock(IEnumerable<UsedPartLine> lines)
+        private List<PartStockEntry> BuildStockSnapshot(IEnumerable<UsedPartLine> lines)
             => lines
                 .Where(l => !string.IsNullOrWhiteSpace(l.Name) && l.Quantity > 0)
-                .SelectMany(l => Enumerable.Repeat(l.Name.Trim(), l.Quantity))
+                .GroupBy(l => BuildStockKey(l.Sku, l.Name), StringComparer.OrdinalIgnoreCase)
+                .Select(g =>
+                {
+                    var first = g.First();
+                    return new PartStockEntry
+                    {
+                        Sku = first.Sku?.Trim() ?? string.Empty,
+                        Name = first.Name?.Trim() ?? string.Empty,
+                        Quantity = g.Sum(x => Math.Max(0, x.Quantity))
+                    };
+                })
+                .Where(x => x.Quantity > 0)
                 .ToList();
 
-        private void ReconcileStock(IEnumerable<string> oldParts, IEnumerable<string> newParts)
+        private static string BuildStockKey(string sku, string name)
         {
-            var oldCounts = oldParts
-                .Where(p => !string.IsNullOrWhiteSpace(p))
-                .GroupBy(p => p.Trim(), StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+            var normalizedSku = sku?.Trim();
+            if (!string.IsNullOrWhiteSpace(normalizedSku))
+                return $"SKU:{normalizedSku.ToUpperInvariant()}";
+            return $"NAME:{(name ?? string.Empty).Trim().ToUpperInvariant()}";
+        }
 
-            var newCounts = newParts
-                .Where(p => !string.IsNullOrWhiteSpace(p))
-                .GroupBy(p => p.Trim(), StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+        private void ReconcileStock(IEnumerable<PartStockEntry> oldParts, IEnumerable<PartStockEntry> newParts)
+        {
+            var oldMap = oldParts.ToDictionary(
+                p => BuildStockKey(p.Sku, p.Name),
+                p => p,
+                StringComparer.OrdinalIgnoreCase);
 
-            var allNames = oldCounts.Keys
-                .Union(newCounts.Keys, StringComparer.OrdinalIgnoreCase);
+            var newMap = newParts.ToDictionary(
+                p => BuildStockKey(p.Sku, p.Name),
+                p => p,
+                StringComparer.OrdinalIgnoreCase);
 
-            foreach (var name in allNames)
+            var allKeys = oldMap.Keys.Union(newMap.Keys, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var key in allKeys)
             {
-                oldCounts.TryGetValue(name, out var oldQty);
-                newCounts.TryGetValue(name, out var newQty);
+                oldMap.TryGetValue(key, out var oldPart);
+                newMap.TryGetValue(key, out var newPart);
+                var oldQty = oldPart?.Quantity ?? 0;
+                var newQty = newPart?.Quantity ?? 0;
                 var delta = oldQty - newQty;
-                ApplyStockDelta(name, delta);
+                if (delta == 0) continue;
+
+                var refPart = newPart ?? oldPart;
+                if (refPart == null) continue;
+                ApplyStockDelta(refPart.Sku, refPart.Name, delta);
             }
         }
 
-        private void RestoreAllStock(IEnumerable<string> parts)
+        private void RestoreAllStock(IEnumerable<PartStockEntry> parts)
         {
-            var grouped = parts
-                .Where(p => !string.IsNullOrWhiteSpace(p))
-                .GroupBy(p => p.Trim(), StringComparer.OrdinalIgnoreCase);
-
-            foreach (var g in grouped)
-                ApplyStockDelta(g.Key, g.Count());
+            foreach (var part in parts.Where(p => p.Quantity > 0))
+                ApplyStockDelta(part.Sku, part.Name, part.Quantity);
         }
 
-        private void ApplyStockDelta(string name, int delta)
+        private void ApplyStockDelta(string sku, string name, int delta)
         {
-            if (string.IsNullOrWhiteSpace(name) || delta == 0) return;
+            if (delta == 0 || string.IsNullOrWhiteSpace(name)) return;
 
             try
             {
@@ -962,19 +989,25 @@ namespace ESCenter.ViewModels
 
                 if (delta > 0)
                 {
-                    partsRepo.RestoreQuantityBySku(name, delta);
+                    if (!string.IsNullOrWhiteSpace(sku))
+                        partsRepo.RestoreQuantityBySku(sku, delta);
+                    else
+                        partsRepo.RestoreQuantityBySku(name, delta);
                     inventoryRepo.RestoreQuantityByName(name, delta);
                 }
                 else
                 {
                     var qty = -delta;
-                    partsRepo.DecrementQuantityBySku(name, qty);
+                    if (!string.IsNullOrWhiteSpace(sku))
+                        partsRepo.DecrementQuantityBySku(sku, qty);
+                    else
+                        partsRepo.DecrementQuantityBySku(name, qty);
                     inventoryRepo.DecrementQuantityByName(name, qty);
                 }
             }
             catch (Exception ex)
             {
-                AppLogger.Error($"Failed to reconcile stock for '{name}': {ex.Message}");
+                AppLogger.Error($"Failed to reconcile stock for '{name}' (SKU: {sku}): {ex.Message}");
             }
         }
 
@@ -1165,7 +1198,7 @@ namespace ESCenter.ViewModels
             UsedPartLines.Clear();
             _suppressPartsSync = false;
             _partsUsed = string.Empty;
-            _savedPartsSnapshot = new List<string>();
+            _savedPartsSnapshot = new List<PartStockEntry>();
 
             PartsUsedInput          = string.Empty;
             IsPartsSuggestionOpen   = false;
@@ -1223,7 +1256,7 @@ namespace ESCenter.ViewModels
 
             // Load parts — setter triggers SyncLinesFromJson
             PartsUsed = ticket.PartsUsed ?? string.Empty;
-            _savedPartsSnapshot = ExpandPartsForStock(UsedPartLines);
+            _savedPartsSnapshot = BuildStockSnapshot(UsedPartLines);
 
             PartsUsedInput          = string.Empty;
             IsPartsSuggestionOpen   = false;
