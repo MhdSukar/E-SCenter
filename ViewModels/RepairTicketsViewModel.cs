@@ -271,6 +271,14 @@ namespace ESCenter.ViewModels
         }
 
         private bool _suppressPartsSync;
+        private List<PartStockEntry> _savedPartsSnapshot = new();
+
+        private sealed class PartStockEntry
+        {
+            public string Sku { get; set; } = string.Empty;
+            public string Name { get; set; } = string.Empty;
+            public int Quantity { get; set; }
+        }
 
         private string _rootCause = string.Empty;
         public string RootCause { get => _rootCause; set => SetProperty(ref _rootCause, value); }
@@ -487,6 +495,9 @@ namespace ESCenter.ViewModels
                 var duplicateNotice = BuildDuplicateNotice(ticket);
                 ApplyWarrantyRepairSuggestion(ticket);
                 ticket.TicketId = _service.Insert(ticket);
+                var currentSnapshot = BuildStockSnapshot(UsedPartLines);
+                ReconcileStock(_savedPartsSnapshot, currentSnapshot);
+                _savedPartsSnapshot = currentSnapshot;
 
                 Tickets.Insert(0, ticket);
                 EvaluateDuplicateMarkers();
@@ -515,6 +526,9 @@ namespace ESCenter.ViewModels
 
                 ApplyFormToTicket(SelectedTicket);
                 _service.Update(SelectedTicket);
+                var currentSnapshot = BuildStockSnapshot(UsedPartLines);
+                ReconcileStock(_savedPartsSnapshot, currentSnapshot);
+                _savedPartsSnapshot = currentSnapshot;
 
                 RefreshTicketInCollection(SelectedTicket);
                 EvaluateDuplicateMarkers();
@@ -539,6 +553,7 @@ namespace ESCenter.ViewModels
 
             try
             {
+                RestoreAllStock(_savedPartsSnapshot);
                 _service.Delete(SelectedTicket.TicketId);
                 Tickets.Remove(SelectedTicket);
                 EvaluateDuplicateMarkers();
@@ -717,13 +732,13 @@ namespace ESCenter.ViewModels
         private void MoveSuggestionDown()
         {
             if (!IsPartsSuggestionOpen || PartsSuggestions.Count == 0) return;
-            SelectedSuggestionIndex = Math.Min(SelectedSuggestionIndex + 1, PartsSuggestions.Count - 1);
+            SelectedSuggestionIndex = FindNextSelectableSuggestionIndex(SelectedSuggestionIndex + 1, +1);
         }
 
         private void MoveSuggestionUp()
         {
             if (!IsPartsSuggestionOpen || PartsSuggestions.Count == 0) return;
-            SelectedSuggestionIndex = Math.Max(SelectedSuggestionIndex - 1, -1);
+            SelectedSuggestionIndex = FindNextSelectableSuggestionIndex(SelectedSuggestionIndex - 1, -1);
         }
 
         private void CloseSuggestions()
@@ -735,7 +750,15 @@ namespace ESCenter.ViewModels
         private void AcceptSuggestion()
         {
             if (SelectedSuggestionIndex >= 0 && SelectedSuggestionIndex < PartsSuggestions.Count)
-                AddPartFromSuggestion(PartsSuggestions[SelectedSuggestionIndex]);
+            {
+                var suggestion = PartsSuggestions[SelectedSuggestionIndex];
+                if (!CanSelectSuggestion(suggestion))
+                {
+                    AppLogger.Warning($"'{suggestion.Name}' is out of stock and cannot be selected.");
+                    return;
+                }
+                AddPartFromSuggestion(suggestion);
+            }
             else if (!string.IsNullOrWhiteSpace(PartsUsedInput))
                 AddPartByName(PartsUsedInput);
         }
@@ -743,9 +766,26 @@ namespace ESCenter.ViewModels
         private void AddPartFromInput()
         {
             if (SelectedSuggestionIndex >= 0 && SelectedSuggestionIndex < PartsSuggestions.Count)
-                AddPartFromSuggestion(PartsSuggestions[SelectedSuggestionIndex]);
+                AcceptSuggestion();
             else
                 AddPartByName(PartsUsedInput);
+        }
+
+        private bool CanSelectSuggestion(PartSuggestionItem suggestion)
+            => suggestion != null && !suggestion.IsOutOfStock && suggestion.StockQty > 0;
+
+        private int FindNextSelectableSuggestionIndex(int startIndex, int step)
+        {
+            if (PartsSuggestions.Count == 0 || step == 0)
+                return -1;
+
+            for (var i = startIndex; i >= 0 && i < PartsSuggestions.Count; i += step)
+            {
+                if (CanSelectSuggestion(PartsSuggestions[i]))
+                    return i;
+            }
+
+            return -1;
         }
 
         // =========================================================
@@ -767,11 +807,12 @@ namespace ESCenter.ViewModels
 
             if (existing != null)
             {
-                // Increment existing chip
+                if (existing.Quantity >= suggestion.StockQty)
+                {
+                    AppLogger.Warning($"Cannot add more '{suggestion.Name}'. Maximum available is {suggestion.StockQty}.");
+                    return;
+                }
                 existing.Quantity++;
-                existing.DeductedQtyInSession++;
-                DeductStock(suggestion.Sku, suggestion.Name, 1);
-                AdjustCatalogStock(suggestion.Sku, suggestion.Name, -1);
             }
             else
             {
@@ -783,13 +824,10 @@ namespace ESCenter.ViewModels
                     IsCustom            = false,
                     IsOutOfStock        = suggestion.IsOutOfStock,
                     IsLowStock          = suggestion.IsLowStock,
-                    Quantity            = 1,
-                    DeductedQtyInSession = 1
+                    Quantity            = 1
                 };
                 line.PropertyChanged += (_, __) => SyncJsonFromLines();
                 UsedPartLines.Add(line);
-                DeductStock(suggestion.Sku, suggestion.Name, 1);
-                AdjustCatalogStock(suggestion.Sku, suggestion.Name, -1);
             }
 
             ClearPartsInput();
@@ -830,8 +868,6 @@ namespace ESCenter.ViewModels
                 };
                 line.PropertyChanged += (_, __) => SyncJsonFromLines();
                 UsedPartLines.Add(line);
-                // Still attempt stock deduction by name (covers edge case where name = SKU)
-                DeductStock(string.Empty, normalized, 1);
             }
 
             ClearPartsInput();
@@ -840,12 +876,6 @@ namespace ESCenter.ViewModels
         private void RemovePart(UsedPartLine line)
         {
             if (line == null) return;
-            // Restock whatever was deducted this session
-            if (line.DeductedQtyInSession > 0)
-            {
-                RestoreStock(line.Sku, line.Name, line.DeductedQtyInSession);
-                AdjustCatalogStock(line.Sku, line.Name, line.DeductedQtyInSession);
-            }
             UsedPartLines.Remove(line);
         }
 
@@ -858,14 +888,13 @@ namespace ESCenter.ViewModels
                 AppLogger.Warning($"No stock available for '{line.Name}'.");
                 return;
             }
+            if (line.Quantity >= available)
+            {
+                AppLogger.Warning($"Cannot add more '{line.Name}'. Maximum available is {available}.");
+                return;
+            }
 
             line.Quantity++;
-            if (!line.IsCustom)
-            {
-                line.DeductedQtyInSession++;
-                DeductStock(line.Sku, line.Name, 1);
-                AdjustCatalogStock(line.Sku, line.Name, -1);
-            }
         }
 
         private void DecrementPart(UsedPartLine line)
@@ -877,12 +906,6 @@ namespace ESCenter.ViewModels
                 return;
             }
             line.Quantity--;
-            if (!line.IsCustom && line.DeductedQtyInSession > 0)
-            {
-                line.DeductedQtyInSession--;
-                RestoreStock(line.Sku, line.Name, 1);
-                AdjustCatalogStock(line.Sku, line.Name, +1);
-            }
         }
 
         private void ClearPartsInput()
@@ -893,64 +916,105 @@ namespace ESCenter.ViewModels
         }
 
         // =========================================================
-        // PARTS — stock management
+        // PARTS — stock reconciliation
         // =========================================================
-        private void DeductStock(string sku, string name, int qty)
-        {
-            if (qty <= 0) return;
-            try
-            {
-                var partsRepo = new PartsRepository();
-                if (!string.IsNullOrWhiteSpace(sku))
-                    partsRepo.DecrementQuantityBySku(sku, qty);
-                else if (!string.IsNullOrWhiteSpace(name))
-                    partsRepo.DecrementQuantityBySku(name, qty); // try name-as-SKU
+        private List<PartStockEntry> BuildStockSnapshot(IEnumerable<UsedPartLine> lines)
+            => lines
+                .Where(l => !string.IsNullOrWhiteSpace(l.Name) && l.Quantity > 0)
+                .GroupBy(l => BuildStockKey(l.Sku, l.Name), StringComparer.OrdinalIgnoreCase)
+                .Select(g =>
+                {
+                    var first = g.First();
+                    return new PartStockEntry
+                    {
+                        Sku = first.Sku?.Trim() ?? string.Empty,
+                        Name = first.Name?.Trim() ?? string.Empty,
+                        Quantity = g.Sum(x => Math.Max(0, x.Quantity))
+                    };
+                })
+                .Where(x => x.Quantity > 0)
+                .ToList();
 
-                var inventoryRepo = new InventoryRepository();
-                inventoryRepo.DecrementQuantityByName(name, qty);
-            }
-            catch (Exception ex) { AppLogger.Error($"Failed to deduct stock for '{name}': {ex.Message}"); }
+        private static string BuildStockKey(string sku, string name)
+        {
+            var normalizedSku = sku?.Trim();
+            if (!string.IsNullOrWhiteSpace(normalizedSku))
+                return $"SKU:{normalizedSku.ToUpperInvariant()}";
+            return $"NAME:{(name ?? string.Empty).Trim().ToUpperInvariant()}";
         }
 
-        private void RestoreStock(string sku, string name, int qty)
+        private void ReconcileStock(IEnumerable<PartStockEntry> oldParts, IEnumerable<PartStockEntry> newParts)
         {
-            if (qty <= 0) return;
+            var oldMap = oldParts.ToDictionary(
+                p => BuildStockKey(p.Sku, p.Name),
+                p => p,
+                StringComparer.OrdinalIgnoreCase);
+
+            var newMap = newParts.ToDictionary(
+                p => BuildStockKey(p.Sku, p.Name),
+                p => p,
+                StringComparer.OrdinalIgnoreCase);
+
+            var allKeys = oldMap.Keys.Union(newMap.Keys, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var key in allKeys)
+            {
+                oldMap.TryGetValue(key, out var oldPart);
+                newMap.TryGetValue(key, out var newPart);
+                var oldQty = oldPart?.Quantity ?? 0;
+                var newQty = newPart?.Quantity ?? 0;
+                var delta = oldQty - newQty;
+                if (delta == 0) continue;
+
+                var refPart = newPart ?? oldPart;
+                if (refPart == null) continue;
+                ApplyStockDelta(refPart.Sku, refPart.Name, delta);
+            }
+        }
+
+        private void RestoreAllStock(IEnumerable<PartStockEntry> parts)
+        {
+            foreach (var part in parts.Where(p => p.Quantity > 0))
+                ApplyStockDelta(part.Sku, part.Name, part.Quantity);
+        }
+
+        private void ApplyStockDelta(string sku, string name, int delta)
+        {
+            if (delta == 0 || string.IsNullOrWhiteSpace(name)) return;
+
             try
             {
                 var partsRepo = new PartsRepository();
-                if (!string.IsNullOrWhiteSpace(sku))
-                    partsRepo.RestoreQuantityBySku(sku, qty);
-                else if (!string.IsNullOrWhiteSpace(name))
-                    partsRepo.RestoreQuantityBySku(name, qty);
-
                 var inventoryRepo = new InventoryRepository();
-                inventoryRepo.RestoreQuantityByName(name, qty);
+
+                if (delta > 0)
+                {
+                    if (!string.IsNullOrWhiteSpace(sku))
+                        partsRepo.RestoreQuantityBySku(sku, delta);
+                    else
+                        partsRepo.RestoreQuantityBySku(name, delta);
+                    inventoryRepo.RestoreQuantityByName(name, delta);
+                }
+                else
+                {
+                    var qty = -delta;
+                    if (!string.IsNullOrWhiteSpace(sku))
+                        partsRepo.DecrementQuantityBySku(sku, qty);
+                    else
+                        partsRepo.DecrementQuantityBySku(name, qty);
+                    inventoryRepo.DecrementQuantityByName(name, qty);
+                }
             }
-            catch (Exception ex) { AppLogger.Error($"Failed to restore stock for '{name}': {ex.Message}"); }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to reconcile stock for '{name}' (SKU: {sku}): {ex.Message}");
+            }
         }
 
         private int GetAvailableStock(string sku, string name)
         {
             var item = ResolveCatalogItem(sku, name);
             return item?.StockQty ?? 0;
-        }
-
-        private void AdjustCatalogStock(string sku, string name, int delta)
-        {
-            if (delta == 0) return;
-
-            var item = ResolveCatalogItem(sku, name);
-            if (item == null) return;
-
-            item.StockQty = Math.Max(0, item.StockQty + delta);
-            foreach (var line in UsedPartLines.Where(l =>
-                         string.Equals(l.Name, item.Name, StringComparison.OrdinalIgnoreCase)))
-            {
-                line.IsOutOfStock = item.IsOutOfStock;
-                line.IsLowStock = item.IsLowStock;
-            }
-
-            UpdatePartsSuggestions();
         }
 
         private PartSuggestionItem ResolveCatalogItem(string sku, string name)
@@ -1134,6 +1198,7 @@ namespace ESCenter.ViewModels
             UsedPartLines.Clear();
             _suppressPartsSync = false;
             _partsUsed = string.Empty;
+            _savedPartsSnapshot = new List<PartStockEntry>();
 
             PartsUsedInput          = string.Empty;
             IsPartsSuggestionOpen   = false;
@@ -1191,6 +1256,7 @@ namespace ESCenter.ViewModels
 
             // Load parts — setter triggers SyncLinesFromJson
             PartsUsed = ticket.PartsUsed ?? string.Empty;
+            _savedPartsSnapshot = BuildStockSnapshot(UsedPartLines);
 
             PartsUsedInput          = string.Empty;
             IsPartsSuggestionOpen   = false;
