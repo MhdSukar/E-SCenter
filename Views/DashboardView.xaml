@@ -13,17 +13,24 @@
 
         <!-- Header -->
         <DockPanel Grid.Row="0" Margin="0,0,0,12">
-            <TextBlock Text="Operations Dashboard"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Foreground="{StaticResource NewPrimaryBlueBrush}"
-                       DockPanel.Dock="Left"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0">
+                <Image Source="{StaticResource Dashboard}"
+                       Width="28"
+                       Height="28"
+                       Margin="0,0,8,0"/>
+                <TextBlock Text="Operations Dashboard"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource NewPrimaryBlueBrush}"
+                           DockPanel.Dock="Left"/>
+            </StackPanel>
+            
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
                 <Button Command="{Binding RefreshCommand}" Style="{StaticResource NeonCyanButtonStyle}" Width="80" Margin="20,0">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Image Source="{StaticResource Refresh}" Width="16" Height="16" Margin="0,0,8,0" />
-                        <TextBlock Text="Refresh" />
+                        <Image Source="{StaticResource Refresh}" Width="23" Height="23" Margin="0,0,8,0" />
+                        <TextBlock Text="Refresh" Margin="0,2,0,0" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -97,7 +104,7 @@
                 <!-- Parts Risk Counter (replaces Priority Distribution) -->
                 <GroupBox Grid.Row="0"
                           Header="Parts Risk Counter"
-                          Style="{StaticResource DarkBlueGroupBoxStyle}"
+                          Style="{StaticResource DarkRedGroupBoxStyle}"
                           Margin="0,0,0,12">
                     <Grid>
                         <Grid.RowDefinitions>
