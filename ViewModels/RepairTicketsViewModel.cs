@@ -243,6 +243,7 @@ namespace ESCenter.ViewModels
         public ObservableCollection<PartSuggestionItem> PartsSuggestions { get; } = new();
 
         private readonly List<PartSuggestionItem> _catalogItems = new();
+        private bool _isCatalogRefreshInFlight;
 
         private string _partsUsedInput = string.Empty;
         public string PartsUsedInput
@@ -251,7 +252,7 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _partsUsedInput, value))
-                    UpdatePartsSuggestions();
+                    _ = RefreshCatalogAndSuggestionsAsync();
             }
         }
 
@@ -613,8 +614,20 @@ namespace ESCenter.ViewModels
         // =========================================================
         private void LoadPartsCatalog() => _ = LoadPartsCatalogAsync();
 
+        private async Task RefreshCatalogAndSuggestionsAsync()
+        {
+            if (_isCatalogRefreshInFlight)
+            {
+                UpdatePartsSuggestions();
+                return;
+            }
+
+            await LoadPartsCatalogAsync();
+        }
+
         private async Task LoadPartsCatalogAsync()
         {
+            _isCatalogRefreshInFlight = true;
             _catalogItems.Clear();
             try
             {
@@ -661,6 +674,10 @@ namespace ESCenter.ViewModels
             catch (Exception ex)
             {
                 AppLogger.Error($"Failed to load parts catalog: {ex.Message}");
+            }
+            finally
+            {
+                _isCatalogRefreshInFlight = false;
             }
 
             UpdatePartsSuggestions();
@@ -739,6 +756,11 @@ namespace ESCenter.ViewModels
         private void AddPartFromSuggestion(PartSuggestionItem suggestion)
         {
             if (suggestion == null) return;
+            if (suggestion.StockQty <= 0)
+            {
+                AppLogger.Warning($"'{suggestion.Name}' is out of stock and cannot be added.");
+                return;
+            }
 
             var existing = UsedPartLines.FirstOrDefault(l =>
                 string.Equals(l.Name, suggestion.Name, StringComparison.OrdinalIgnoreCase));
@@ -749,6 +771,7 @@ namespace ESCenter.ViewModels
                 existing.Quantity++;
                 existing.DeductedQtyInSession++;
                 DeductStock(suggestion.Sku, suggestion.Name, 1);
+                AdjustCatalogStock(suggestion.Sku, suggestion.Name, -1);
             }
             else
             {
@@ -766,6 +789,7 @@ namespace ESCenter.ViewModels
                 line.PropertyChanged += (_, __) => SyncJsonFromLines();
                 UsedPartLines.Add(line);
                 DeductStock(suggestion.Sku, suggestion.Name, 1);
+                AdjustCatalogStock(suggestion.Sku, suggestion.Name, -1);
             }
 
             ClearPartsInput();
@@ -818,18 +842,29 @@ namespace ESCenter.ViewModels
             if (line == null) return;
             // Restock whatever was deducted this session
             if (line.DeductedQtyInSession > 0)
+            {
                 RestoreStock(line.Sku, line.Name, line.DeductedQtyInSession);
+                AdjustCatalogStock(line.Sku, line.Name, line.DeductedQtyInSession);
+            }
             UsedPartLines.Remove(line);
         }
 
         private void IncrementPart(UsedPartLine line)
         {
             if (line == null) return;
+            var available = GetAvailableStock(line.Sku, line.Name);
+            if (available <= 0)
+            {
+                AppLogger.Warning($"No stock available for '{line.Name}'.");
+                return;
+            }
+
             line.Quantity++;
             if (!line.IsCustom)
             {
                 line.DeductedQtyInSession++;
                 DeductStock(line.Sku, line.Name, 1);
+                AdjustCatalogStock(line.Sku, line.Name, -1);
             }
         }
 
@@ -846,6 +881,7 @@ namespace ESCenter.ViewModels
             {
                 line.DeductedQtyInSession--;
                 RestoreStock(line.Sku, line.Name, 1);
+                AdjustCatalogStock(line.Sku, line.Name, +1);
             }
         }
 
@@ -891,6 +927,43 @@ namespace ESCenter.ViewModels
                 inventoryRepo.RestoreQuantityByName(name, qty);
             }
             catch (Exception ex) { AppLogger.Error($"Failed to restore stock for '{name}': {ex.Message}"); }
+        }
+
+        private int GetAvailableStock(string sku, string name)
+        {
+            var item = ResolveCatalogItem(sku, name);
+            return item?.StockQty ?? 0;
+        }
+
+        private void AdjustCatalogStock(string sku, string name, int delta)
+        {
+            if (delta == 0) return;
+
+            var item = ResolveCatalogItem(sku, name);
+            if (item == null) return;
+
+            item.StockQty = Math.Max(0, item.StockQty + delta);
+            foreach (var line in UsedPartLines.Where(l =>
+                         string.Equals(l.Name, item.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                line.IsOutOfStock = item.IsOutOfStock;
+                line.IsLowStock = item.IsLowStock;
+            }
+
+            UpdatePartsSuggestions();
+        }
+
+        private PartSuggestionItem ResolveCatalogItem(string sku, string name)
+        {
+            if (!string.IsNullOrWhiteSpace(sku))
+            {
+                var bySku = _catalogItems.FirstOrDefault(c =>
+                    string.Equals(c.Sku, sku, StringComparison.OrdinalIgnoreCase));
+                if (bySku != null) return bySku;
+            }
+
+            return _catalogItems.FirstOrDefault(c =>
+                string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase));
         }
 
         // =========================================================
