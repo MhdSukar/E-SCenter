@@ -1,0 +1,1737 @@
+From 79476d00fd6126022012256f7a55814a6dc2ab38 Mon Sep 17 00:00:00 2001
+From: Claude <claude@anthropic.com>
+Date: Fri, 3 Apr 2026 22:56:01 +0000
+Subject: [PATCH 1/2] feat: add async data loading across all repositories and
+ ViewModels
+
+- Add GetAllAsync, InsertAsync, UpdateAsync, DeleteAsync to all repositories
+  (BoneyardRepository, PartsRepository, InventoryRepository)
+- Add async methods to TicketsDataService and AlBarakaDataService
+- DashboardViewModel.Refresh() now delegates to RefreshAsync() using Task.Run
+  offloading DB reads off the UI thread; adds IsLoading property
+- MainViewModel: RefreshTicketsChart and RefreshAlBarakaTotals are now async;
+  database connection status check runs off the UI thread via Task.Run
+- RepairTicketsViewModel: initial ticket load and parts catalog load are now
+  async via LoadTicketsAsync and LoadPartsCatalogAsync; adds IsLoading property
+- All sync public methods preserved as thin wrappers for backward compatibility
+---
+ Data/BoneyardRepository.cs           | 15 ++++++-
+ Data/InventoryRepository.cs          | 21 ++++++++-
+ Data/PartsRepository.cs              | 21 ++++++++-
+ Services/AlBarakaDataService.cs      | 22 +++++++---
+ Services/TicketsDataService.cs       | 16 ++++++-
+ ViewModels/DashboardViewModel.cs     | 37 ++++++++++++----
+ ViewModels/MainViewModel.cs          | 66 +++++++++++++++-------------
+ ViewModels/RepairTicketsViewModel.cs | 50 +++++++++++++++------
+ 8 files changed, 186 insertions(+), 62 deletions(-)
+
+diff --git a/Data/BoneyardRepository.cs b/Data/BoneyardRepository.cs
+index 4d2d47d..c4a411f 100644
+--- a/Data/BoneyardRepository.cs
++++ b/Data/BoneyardRepository.cs
+@@ -1,6 +1,7 @@
+-﻿using System;
++using System;
+ using System.Collections.Generic;
+ using System.Data.SQLite;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ using ESCenter.Services;
+ 
+@@ -45,6 +46,9 @@ namespace ESCenter.Data
+             return list;
+         }
+ 
++        public Task<List<BoneyardModel>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         public int Insert(BoneyardModel d)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -71,6 +75,9 @@ namespace ESCenter.Data
+             return Convert.ToInt32(cmd.ExecuteScalar());
+         }
+ 
++        public Task<int> InsertAsync(BoneyardModel d)
++            => Task.Run(() => Insert(d));
++
+         public void Update(BoneyardModel d)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -103,6 +110,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(BoneyardModel d)
++            => Task.Run(() => Update(d));
++
+         public void Delete(int deviceId)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -114,5 +124,8 @@ namespace ESCenter.Data
+             cmd.Parameters.AddWithValue("@id", deviceId);
+             cmd.ExecuteNonQuery();
+         }
++
++        public Task DeleteAsync(int deviceId)
++            => Task.Run(() => Delete(deviceId));
+     }
+ }
+diff --git a/Data/InventoryRepository.cs b/Data/InventoryRepository.cs
+index 8b778a0..47b8f7f 100644
+--- a/Data/InventoryRepository.cs
++++ b/Data/InventoryRepository.cs
+@@ -1,6 +1,7 @@
+-﻿using System.Collections.Generic;
++using System.Collections.Generic;
+ using System.Data.SQLite;
+ using System.Linq;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ using ESCenter.Services;
+ 
+@@ -52,6 +53,9 @@ namespace ESCenter.Data
+             return items;
+         }
+ 
++        public Task<List<InventoryItemModel>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         public List<string> GetNames()
+         {
+             var items = new List<string>();
+@@ -79,6 +83,9 @@ namespace ESCenter.Data
+             return items;
+         }
+ 
++        public Task<List<string>> GetNamesAsync()
++            => Task.Run(GetNames);
++
+         public void DecrementQuantityByName(string name, int amount)
+         {
+             if (string.IsNullOrWhiteSpace(name) || amount <= 0)
+@@ -103,6 +110,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DecrementQuantityByNameAsync(string name, int amount)
++            => Task.Run(() => DecrementQuantityByName(name, amount));
++
+         public void Insert(InventoryItemModel item)
+         {
+             using var conn = GetConnection();
+@@ -118,6 +128,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task InsertAsync(InventoryItemModel item)
++            => Task.Run(() => Insert(item));
++
+         public void Update(InventoryItemModel item)
+         {
+             using var conn = GetConnection();
+@@ -148,6 +161,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(InventoryItemModel item)
++            => Task.Run(() => Update(item));
++
+         public void Delete(int id)
+         {
+             using var conn = GetConnection();
+@@ -158,6 +174,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DeleteAsync(int id)
++            => Task.Run(() => Delete(id));
++
+         private void BindParams(SQLiteCommand cmd, InventoryItemModel item)
+         {
+             cmd.Parameters.AddWithValue("@ItemType", item.ItemType);
+diff --git a/Data/PartsRepository.cs b/Data/PartsRepository.cs
+index be43cf4..694fcc4 100644
+--- a/Data/PartsRepository.cs
++++ b/Data/PartsRepository.cs
+@@ -1,6 +1,7 @@
+-﻿using System;
++using System;
+ using System.Collections.Generic;
+ using System.Data.SQLite;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ using ESCenter.Services;
+ 
+@@ -34,6 +35,9 @@ namespace ESCenter.Data
+             return result;
+         }
+ 
++        public Task<List<PartModel>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         public List<string> GetSkus()
+         {
+             var result = new List<string>();
+@@ -56,6 +60,9 @@ namespace ESCenter.Data
+             return result;
+         }
+ 
++        public Task<List<string>> GetSkusAsync()
++            => Task.Run(GetSkus);
++
+         public void DecrementQuantityBySku(string sku, int amount)
+         {
+             if (string.IsNullOrWhiteSpace(sku) || amount <= 0)
+@@ -78,6 +85,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DecrementQuantityBySkuAsync(string sku, int amount)
++            => Task.Run(() => DecrementQuantityBySku(sku, amount));
++
+         // -------------------------
+         // INSERT
+         // -------------------------
+@@ -99,6 +109,9 @@ namespace ESCenter.Data
+             return Convert.ToInt32(cmd.ExecuteScalar());
+         }
+ 
++        public Task<int> InsertAsync(PartModel part)
++            => Task.Run(() => Insert(part));
++
+         // -------------------------
+         // UPDATE
+         // -------------------------
+@@ -131,6 +144,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(PartModel part)
++            => Task.Run(() => Update(part));
++
+         // -------------------------
+         // DELETE
+         // -------------------------
+@@ -144,6 +160,9 @@ namespace ESCenter.Data
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DeleteAsync(int partId)
++            => Task.Run(() => Delete(partId));
++
+         // -------------------------
+         // Helpers
+         // -------------------------
+diff --git a/Services/AlBarakaDataService.cs b/Services/AlBarakaDataService.cs
+index 972ad87..e6a7c81 100644
+--- a/Services/AlBarakaDataService.cs
++++ b/Services/AlBarakaDataService.cs
+@@ -1,6 +1,7 @@
+ using System;
+ using System.Collections.Generic;
+ using System.Data.SQLite;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ 
+ namespace ESCenter.Services
+@@ -30,6 +31,9 @@ namespace ESCenter.Services
+             return list;
+         }
+ 
++        public Task<List<AlBarakaRecord>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         /// <summary>
+         /// Get totals grouped by currency for records optionally within a date range.
+         /// Date column stored as yyyy-MM-dd so string comparison works for ISO dates.
+@@ -42,7 +46,6 @@ namespace ESCenter.Services
+             using var conn = new SQLiteConnection(ConnectionString);
+             conn.Open();
+ 
+-            // Build query with optional date filters
+             var sql = "SELECT PriceCurrency, SUM(Price) as Total FROM AlBaraka";
+             var where = new List<string>();
+             if (start.HasValue)
+@@ -87,6 +90,9 @@ namespace ESCenter.Services
+             return (totalSP, totalUSD);
+         }
+ 
++        public Task<(decimal TotalSP, decimal TotalUSD)> GetTotalsAsync(DateTime? start = null, DateTime? end = null)
++            => Task.Run(() => GetTotals(start, end));
++
+         public int Insert(AlBarakaRecord rec)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -97,7 +103,6 @@ namespace ESCenter.Services
+                 ? @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category, Account) VALUES (@date, @item, @price, @currency, @category, @account); SELECT last_insert_rowid();"
+                 : @"INSERT INTO AlBaraka (Date, ItemName, Price, PriceCurrency, Category) VALUES (@date, @item, @price, @currency, @category); SELECT last_insert_rowid();";
+             using var cmd = new SQLiteCommand(sql, conn);
+-            // Store date in ISO yyyy-MM-dd format (date-only)
+             cmd.Parameters.AddWithValue("@date", rec.Date.ToString("yyyy-MM-dd"));
+             cmd.Parameters.AddWithValue("@item", rec.ItemName ?? string.Empty);
+             cmd.Parameters.AddWithValue("@price", rec.Price ?? (object)DBNull.Value);
+@@ -111,6 +116,9 @@ namespace ESCenter.Services
+             return Convert.ToInt32(cmd.ExecuteScalar());
+         }
+ 
++        public Task<int> InsertAsync(AlBarakaRecord rec)
++            => Task.Run(() => Insert(rec));
++
+         public void Update(AlBarakaRecord rec)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -122,7 +130,6 @@ namespace ESCenter.Services
+                 : @"UPDATE AlBaraka SET Date=@date, ItemName=@item, Price=@price, PriceCurrency=@currency, Category=@category, UpdatedAt=CURRENT_TIMESTAMP WHERE AlBarakaId=@id;";
+             using var cmd = new SQLiteCommand(sql, conn);
+             cmd.Parameters.AddWithValue("@id", rec.AlBarakaId);
+-            // Store date in ISO yyyy-MM-dd format (date-only)
+             cmd.Parameters.AddWithValue("@date", rec.Date.ToString("yyyy-MM-dd"));
+             cmd.Parameters.AddWithValue("@item", rec.ItemName ?? string.Empty);
+             cmd.Parameters.AddWithValue("@price", rec.Price ?? (object)DBNull.Value);
+@@ -136,6 +143,9 @@ namespace ESCenter.Services
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(AlBarakaRecord rec)
++            => Task.Run(() => Update(rec));
++
+         public void Delete(int id)
+         {
+             using var conn = new SQLiteConnection(ConnectionString);
+@@ -145,17 +155,17 @@ namespace ESCenter.Services
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DeleteAsync(int id)
++            => Task.Run(() => Delete(id));
++
+         private AlBarakaRecord Map(SQLiteDataReader reader)
+         {
+-            // Date stored as yyyy-MM-dd (date-only); accept older formats as fallback
+             var dateStr = reader["Date"]?.ToString() ?? string.Empty;
+             DateTime parsedDate = DateTime.Today;
+             if (!string.IsNullOrWhiteSpace(dateStr))
+             {
+-                // Try exact parse for yyyy-MM-dd first
+                 if (!DateTime.TryParseExact(dateStr, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out parsedDate))
+                 {
+-                    // Fallback to round-trip or general parse
+                     if (!DateTime.TryParseExact(dateStr, "o", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out parsedDate))
+                     {
+                         DateTime.TryParse(dateStr, out parsedDate);
+diff --git a/Services/TicketsDataService.cs b/Services/TicketsDataService.cs
+index 368dce7..517795e 100644
+--- a/Services/TicketsDataService.cs
++++ b/Services/TicketsDataService.cs
+@@ -1,6 +1,7 @@
+-﻿using System;
++using System;
+ using System.Collections.Generic;
+ using System.Data.SQLite;
++using System.Threading.Tasks;
+ using ESCenter.Models;
+ 
+ namespace ESCenter.Services
+@@ -40,6 +41,9 @@ namespace ESCenter.Services
+             return list;
+         }
+ 
++        public Task<List<RepairTicket>> GetAllAsync()
++            => Task.Run(GetAll);
++
+         // ===================== INSERT =====================
+         public int Insert(RepairTicket ticket)
+         {
+@@ -82,6 +86,9 @@ namespace ESCenter.Services
+             return Convert.ToInt32(cmd.ExecuteScalar());
+         }
+ 
++        public Task<int> InsertAsync(RepairTicket ticket)
++            => Task.Run(() => Insert(ticket));
++
+         // ===================== UPDATE =====================
+         public void Update(RepairTicket ticket)
+         {
+@@ -110,6 +117,9 @@ namespace ESCenter.Services
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task UpdateAsync(RepairTicket ticket)
++            => Task.Run(() => Update(ticket));
++
+         // ===================== DELETE =====================
+         public void Delete(int ticketId)
+         {
+@@ -121,6 +131,9 @@ namespace ESCenter.Services
+             cmd.ExecuteNonQuery();
+         }
+ 
++        public Task DeleteAsync(int ticketId)
++            => Task.Run(() => Delete(ticketId));
++
+         // ===================== MAP =====================
+         private RepairTicket MapToRepairTicket(SQLiteDataReader reader)
+         {
+@@ -264,5 +277,6 @@ namespace ESCenter.Services
+         }
+ 
+         public string GetNextEscTicketId() => GenerateEscTicketId();
++        public Task<string> GetNextEscTicketIdAsync() => Task.Run(GenerateEscTicketId);
+     }
+ }
+diff --git a/ViewModels/DashboardViewModel.cs b/ViewModels/DashboardViewModel.cs
+index 6938129..69b5c93 100644
+--- a/ViewModels/DashboardViewModel.cs
++++ b/ViewModels/DashboardViewModel.cs
+@@ -2,6 +2,7 @@ using System;
+ using System.Collections.ObjectModel;
+ using System.Linq;
+ using System.Reflection;
++using System.Threading.Tasks;
+ using System.Windows.Input;
+ using ESCenter.Core;
+ using ESCenter.Data;
+@@ -55,7 +56,7 @@ namespace ESCenter.ViewModels
+                 if (SetProperty(ref _partsLowStockThreshold, value))
+                 {
+                     PersistLowStockThresholds();
+-                    UpdateLowStockCounter();
++                    _ = UpdateLowStockCounterAsync();
+                 }
+             }
+         }
+@@ -69,11 +70,18 @@ namespace ESCenter.ViewModels
+                 if (SetProperty(ref _inventoryLowStockThreshold, value))
+                 {
+                     PersistLowStockThresholds();
+-                    UpdateLowStockCounter();
++                    _ = UpdateLowStockCounterAsync();
+                 }
+             }
+         }
+ 
++        private bool _isLoading;
++        public bool IsLoading
++        {
++            get => _isLoading;
++            set => SetProperty(ref _isLoading, value);
++        }
++
+         public ObservableCollection<RepairTicket> RecentTickets { get; } = new();
+         public ObservableCollection<PriorityStat> PriorityStats { get; } = new();
+         public ObservableCollection<LowStockCounterItem> LowStockItems { get; } = new();
+@@ -102,11 +110,17 @@ namespace ESCenter.ViewModels
+             Refresh();
+         }
+ 
+-        public void Refresh()
++        // Synchronous wrapper kept for compatibility (fires-and-forgets the async path)
++        public void Refresh() => _ = RefreshAsync();
++
++        public async Task RefreshAsync()
+         {
++            if (IsLoading) return;
++
++            IsLoading = true;
+             try
+             {
+-                var all = _service.GetAll().ToList();
++                var all = await _service.GetAllAsync();
+                 var now = DateTime.Now;
+                 var weekStart = now.Date.AddDays(-(int)now.DayOfWeek);
+                 var weekEnd = weekStart.AddDays(7);
+@@ -142,13 +156,17 @@ namespace ESCenter.ViewModels
+                     ? 0
+                     : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
+ 
+-                UpdateLowStockCounter();
++                await UpdateLowStockCounterAsync();
+                 AppLogger.Success("Dashboard Loaded.");
+             }
+             catch (Exception ex)
+             {
+                 AppLogger.Error($"Failed to refresh dashboard: {ex.Message}");
+             }
++            finally
++            {
++                IsLoading = false;
++            }
+         }
+ 
+         private void PersistLowStockThresholds()
+@@ -165,14 +183,17 @@ namespace ESCenter.ViewModels
+             }
+         }
+ 
+-        private void UpdateLowStockCounter()
++        private async Task UpdateLowStockCounterAsync()
+         {
+             try
+             {
+                 var partsThreshold = ParseThreshold(PartsLowStockThreshold);
+                 var inventoryThreshold = ParseThreshold(InventoryLowStockThreshold);
+ 
+-                var partItems = _partsRepository.GetAll()
++                var allParts = await _partsRepository.GetAllAsync();
++                var allInventory = await _inventoryRepository.GetAllAsync();
++
++                var partItems = allParts
+                     .Where(p => p.QuantityOnHand <= partsThreshold)
+                     .Select(p => new LowStockCounterItem
+                     {
+@@ -184,7 +205,7 @@ namespace ESCenter.ViewModels
+                         Quantity = p.QuantityOnHand
+                     });
+ 
+-                var inventoryItems = _inventoryRepository.GetAll()
++                var inventoryItems = allInventory
+                     .Where(i => i.QuantityOnHand <= inventoryThreshold)
+                     .Select(i => new LowStockCounterItem
+                     {
+diff --git a/ViewModels/MainViewModel.cs b/ViewModels/MainViewModel.cs
+index 6dbb9c8..cc2ecaa 100644
+--- a/ViewModels/MainViewModel.cs
++++ b/ViewModels/MainViewModel.cs
+@@ -367,15 +367,15 @@ namespace ESCenter.ViewModels
+             };
+ 
+             _databaseStatusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
+-            _databaseStatusTimer.Tick += (_, _) => RefreshDatabaseConnectionStatus();
++            _databaseStatusTimer.Tick += async (_, _) => await RefreshDatabaseConnectionStatusAsync();
+             _databaseStatusTimer.Start();
+ 
+             AppLogger.StatusRaised += OnStatusRaised;
+-            TicketEvents.TicketsChanged += (_, _) => RefreshTicketsChart();
+-            DatabasePathService.DatabasePathChanged += (_, _) =>
++            TicketEvents.TicketsChanged += async (_, _) => await RefreshTicketsChartAsync();
++            DatabasePathService.DatabasePathChanged += async (_, _) =>
+             {
+-                RefreshTicketsChart();
+-                RefreshDatabaseConnectionStatus();
++                await RefreshTicketsChartAsync();
++                await RefreshDatabaseConnectionStatusAsync();
+             };
+ 
+             ToggleCurveVisibilityCommand = new RelayCommand(param =>
+@@ -415,6 +415,9 @@ namespace ESCenter.ViewModels
+         }
+ 
+         public void RefreshAlBarakaTotals(DateTime? start = null, DateTime? end = null)
++            => _ = RefreshAlBarakaTotalsAsync(start, end);
++
++        public async Task RefreshAlBarakaTotalsAsync(DateTime? start = null, DateTime? end = null)
+         {
+             try
+             {
+@@ -427,7 +430,7 @@ namespace ESCenter.ViewModels
+                     end ??= start.Value.AddMonths(1).AddDays(-1);
+                 }
+ 
+-                var totals = svc.GetTotals(start, end);
++                var totals = await svc.GetTotalsAsync(start, end);
+                 TotalAlBarakaSP = totals.TotalSP;
+                 TotalAlBarakaUSD = totals.TotalUSD;
+             }
+@@ -754,10 +757,12 @@ namespace ESCenter.ViewModels
+             }
+         }
+ 
+-        private void RefreshTicketsChart()
++        private void RefreshTicketsChart() => _ = RefreshTicketsChartAsync();
++
++        private async Task RefreshTicketsChartAsync()
+         {
+             var dataService = new TicketsDataService();
+-            var tickets = dataService.GetAll();
++            var tickets = await dataService.GetAllAsync();
+ 
+             var days = Enumerable.Range(0, 7)
+                 .Select(offset => DateTime.Today.AddDays(-6 + offset))
+@@ -828,33 +833,34 @@ namespace ESCenter.ViewModels
+             };
+         }
+ 
+-        private void RefreshDatabaseConnectionStatus()
++        private void RefreshDatabaseConnectionStatus() => _ = RefreshDatabaseConnectionStatusAsync();
++
++        private async Task RefreshDatabaseConnectionStatusAsync()
+         {
+-            try
++            var (isOnline) = await Task.Run(() =>
+             {
+-                var dbPath = DatabasePathService.CurrentDatabasePath;
+-
+-                if (string.IsNullOrWhiteSpace(dbPath) || !File.Exists(dbPath))
++                try
+                 {
+-                    DatabaseConnectionStatusText = "Offline";
+-                    DatabaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
+-                    return;
++                    var dbPath = DatabasePathService.CurrentDatabasePath;
++                    if (string.IsNullOrWhiteSpace(dbPath) || !File.Exists(dbPath))
++                        return false;
++
++                    using var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;");
++                    conn.Open();
++                    using var cmd = new SQLiteCommand("SELECT 1", conn);
++                    _ = cmd.ExecuteScalar();
++                    return true;
+                 }
++                catch
++                {
++                    return false;
++                }
++            });
+ 
+-                using var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;");
+-                conn.Open();
+-
+-                using var cmd = new SQLiteCommand("SELECT 1", conn);
+-                _ = cmd.ExecuteScalar();
+-
+-                DatabaseConnectionStatusText = "Online";
+-                DatabaseConnectionBrush = System.Windows.Media.Brushes.LimeGreen;
+-            }
+-            catch
+-            {
+-                DatabaseConnectionStatusText = "Offline";
+-                DatabaseConnectionBrush = System.Windows.Media.Brushes.IndianRed;
+-            }
++            DatabaseConnectionStatusText = isOnline ? "Online" : "Offline";
++            DatabaseConnectionBrush = isOnline
++                ? System.Windows.Media.Brushes.LimeGreen
++                : System.Windows.Media.Brushes.IndianRed;
+         }
+ 
+         private LineSeries<int> BuildSeries(string key, IReadOnlyCollection<int> values, SKColor color)
+diff --git a/ViewModels/RepairTicketsViewModel.cs b/ViewModels/RepairTicketsViewModel.cs
+index 825b7c3..c10903e 100644
+--- a/ViewModels/RepairTicketsViewModel.cs
++++ b/ViewModels/RepairTicketsViewModel.cs
+@@ -1,4 +1,5 @@
+ using System;
++using System.Threading.Tasks;
+ using System.Collections.ObjectModel;
+ using System.Collections.Generic;
+ using System.ComponentModel;
+@@ -18,6 +19,13 @@ namespace ESCenter.ViewModels
+     {
+         private readonly TicketsDataService _service;
+ 
++        private bool _isLoading;
++        public bool IsLoading
++        {
++            get => _isLoading;
++            set => SetProperty(ref _isLoading, value);
++        }
++
+         // =========================================================
+         // COLLECTIONS
+         // =========================================================
+@@ -308,9 +316,10 @@ namespace ESCenter.ViewModels
+         public RepairTicketsViewModel()
+         {
+             _service = new TicketsDataService();
+-            DatabasePathService.DatabasePathChanged += (_, __) => ReloadTicketsForSelectedDatabase();
++            DatabasePathService.DatabasePathChanged += async (_, __) => await LoadTicketsAsync();
+ 
+-            Tickets = new ObservableCollection<RepairTicket>(_service.GetAll());
++            Tickets = new ObservableCollection<RepairTicket>();
++            _ = LoadTicketsAsync();
+ 
+             _ticketsView = CollectionViewSource.GetDefaultView(Tickets);
+             _ticketsView.Filter = TicketFilter;
+@@ -424,20 +433,31 @@ namespace ESCenter.ViewModels
+         // COMMAND ACTIONS
+         // =========================================================
+ 
+-        private void ReloadTicketsForSelectedDatabase()
++        private async Task LoadTicketsAsync()
+         {
+-            Tickets.Clear();
+-            foreach (var ticket in _service.GetAll())
++            IsLoading = true;
++            try
+             {
+-                Tickets.Add(ticket);
++                var tickets = await _service.GetAllAsync();
++                Tickets.Clear();
++                foreach (var ticket in tickets)
++                    Tickets.Add(ticket);
++                EvaluateDuplicateMarkers();
++                _ticketsView.Refresh();
++            }
++            catch (Exception ex)
++            {
++                AppLogger.Error($"Failed to load tickets: {ex.Message}");
++            }
++            finally
++            {
++                IsLoading = false;
+             }
+-
+-            EvaluateDuplicateMarkers();
+-            ClearForm();
+-            RefreshCustomerProfile();
+-            _ticketsView.Refresh();
+         }
+ 
++        private void ReloadTicketsForSelectedDatabase() => _ = LoadTicketsAsync();
++
++
+         private void AddTicket()
+         {
+             try
+@@ -662,18 +682,20 @@ namespace ESCenter.ViewModels
+             RefreshCustomerProfile();
+         }
+ 
+-        private void LoadPartsCatalog()
++        private void LoadPartsCatalog() => _ = LoadPartsCatalogAsync();
++
++        private async Task LoadPartsCatalogAsync()
+         {
+             _partsCatalog.Clear();
+ 
+             try
+             {
+                 var partsRepo = new PartsRepository();
+-                var skus = partsRepo.GetSkus()
++                var skus = (await partsRepo.GetSkusAsync())
+                     .Distinct(StringComparer.OrdinalIgnoreCase);
+ 
+                 var inventoryRepo = new InventoryRepository();
+-                var inventoryNames = inventoryRepo.GetNames()
++                var inventoryNames = (await inventoryRepo.GetNamesAsync())
+                     .Distinct(StringComparer.OrdinalIgnoreCase);
+ 
+                 var combined = skus
+-- 
+2.43.0
+
+
+From 524d00c3fa85ea7b2c96242ec03eb9b45dfa7630 Mon Sep 17 00:00:00 2001
+From: Claude <claude@anthropic.com>
+Date: Sat, 4 Apr 2026 18:13:58 +0000
+Subject: [PATCH 2/2] feat: unified fade transition system across all windows
+ and views
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Core/WindowFader.cs (new):
+- Central static helper — all timing constants in one place
+- FadeIn(window)           — 0→1 opacity, 200ms, CubicEase out
+- FadeOut(window, action)  — current→0, 150ms, CubicEase in, callback on complete
+- FadeRestore(window)      — used after WindowState restores from Minimized, 220ms
+- FadeMinimize(window)     — fades to 0, then minimizes, resets opacity to 1
+- AnimateViewTransitionAsync(element) — 110ms fade-out + 200ms fade-in for ContentControl
+
+MainWindow.xaml.cs:
+- Startup: Opacity=0, FadeIn on Loaded
+- Minimize button: FadeMinimize instead of instant state change
+- Restore from taskbar: StateChanged triggers FadeRestore
+- Close button / X: OnClosing intercepts, FadeOut → Hide (to tray), reset opacity=1
+- View switching: replaced bespoke DoubleAnimationUsingKeyFrames with
+  WindowFader.AnimateViewTransitionAsync for cleaner code
+- Removed unused _settingsPath field duplication
+
+TrayPopupWindow.xaml.cs:
+- IsVisibleChanged: FadeIn on every Show (160ms)
+- Deactivated: FadeOut → Hide (120ms), reset opacity=1
+- Navigation clicks: instant hide (no delay before main window appears)
+
+AdminLoginWindow.xaml.cs:
+- Opacity=0 + FadeIn on Loaded (200ms)
+- Closing: cancel → FadeOut → re-close via _animatingClose guard
+- Minimize: FadeMinimize
+
+ChangeAdminPasswordWindow.xaml.cs:
+- Same pattern as AdminLoginWindow
+
+WarrantySystemWindow.xaml.cs:
+- Same pattern; LoadWarrantyItems moved to Loaded handler so fade plays
+  before data load rather than data load blocking the open animation
+
+App.xaml.cs:
+- Removed manual Opacity=0/1 hack around TrayPopupWindow.Show()
+  (window now self-manages its own fade via IsVisibleChanged)
+---
+ App.xaml.cs                               |   2 -
+ Core/WindowFader.cs                       | 104 +++++++++++
+ MainWindow.xaml.cs                        | 209 ++++++++++------------
+ Windows/AdminLoginWindow.xaml.cs          |  59 +++---
+ Windows/ChangeAdminPasswordWindow.xaml.cs |  99 ++++------
+ Windows/TrayPopupWindow.xaml.cs           |  31 +++-
+ Windows/WarrantySystemWindow.xaml.cs      | 107 +++++------
+ 7 files changed, 326 insertions(+), 285 deletions(-)
+ create mode 100644 Core/WindowFader.cs
+
+diff --git a/App.xaml.cs b/App.xaml.cs
+index 58475e4..e9c7af3 100644
+--- a/App.xaml.cs
++++ b/App.xaml.cs
+@@ -132,10 +132,8 @@ namespace ESCenter
+                 return;
+             }
+ 
+-            _trayPopup.Opacity = 0;
+             _trayPopup.Show();
+             _trayPopup.UpdateLayout();
+-            _trayPopup.Opacity = 1;
+ 
+             var left = x - _trayPopup.ActualWidth + 20;
+             var top = y - _trayPopup.ActualHeight - 5;
+diff --git a/Core/WindowFader.cs b/Core/WindowFader.cs
+new file mode 100644
+index 0000000..0519553
+--- /dev/null
++++ b/Core/WindowFader.cs
+@@ -0,0 +1,104 @@
++using System;
++using System.Threading.Tasks;
++using System.Windows;
++using System.Windows.Media.Animation;
++
++namespace ESCenter.Core
++{
++    /// <summary>
++    /// Central animation helper.  Every window in the app calls into here
++    /// so all timings and easing functions are defined in exactly one place.
++    /// </summary>
++    public static class WindowFader
++    {
++        // ── Timing constants ────────────────────────────────────────────────
++        public static readonly TimeSpan OpenDuration   = TimeSpan.FromMilliseconds(200);
++        public static readonly TimeSpan CloseDuration  = TimeSpan.FromMilliseconds(150);
++        public static readonly TimeSpan RestoreDuration = TimeSpan.FromMilliseconds(220);
++        public static readonly TimeSpan MinimizeDuration = TimeSpan.FromMilliseconds(130);
++
++        // Easing shared by every animation
++        private static readonly CubicEase EaseOut = new CubicEase { EasingMode = EasingMode.EaseOut };
++        private static readonly CubicEase EaseIn  = new CubicEase { EasingMode = EasingMode.EaseIn  };
++
++        // ── Public API ──────────────────────────────────────────────────────
++
++        /// <summary>Fade a window in from 0 → 1.  Call on Loaded.</summary>
++        public static void FadeIn(Window window, TimeSpan? duration = null)
++        {
++            window.Opacity = 0;
++            var anim = MakeDoubleAnim(0, 1, duration ?? OpenDuration, EaseOut);
++            window.BeginAnimation(UIElement.OpacityProperty, anim);
++        }
++
++        /// <summary>
++        /// Fade a window out, then run <paramref name="onComplete"/>.
++        /// Use when you need to hide/close after the animation finishes.
++        /// </summary>
++        public static void FadeOut(Window window, Action onComplete, TimeSpan? duration = null)
++        {
++            var anim = MakeDoubleAnim(window.Opacity, 0, duration ?? CloseDuration, EaseIn);
++            anim.Completed += (_, __) => onComplete?.Invoke();
++            window.BeginAnimation(UIElement.OpacityProperty, anim);
++        }
++
++        /// <summary>
++        /// Fade from current opacity to 1 — used after restoring from minimise
++        /// so the window doesn't just pop in.
++        /// </summary>
++        public static void FadeRestore(Window window)
++        {
++            var from = window.Opacity < 0.05 ? 0 : window.Opacity;
++            var anim = MakeDoubleAnim(from, 1, RestoreDuration, EaseOut);
++            window.BeginAnimation(UIElement.OpacityProperty, anim);
++        }
++
++        /// <summary>
++        /// Fade out partially (to 0) before minimising, then immediately
++        /// minimise (the OS will hide the window before the animation is seen
++        /// on the taskbar, which is the natural Windows feel).
++        /// </summary>
++        public static void FadeMinimize(Window window)
++        {
++            var anim = MakeDoubleAnim(1, 0, MinimizeDuration, EaseIn);
++            anim.Completed += (_, __) =>
++            {
++                window.WindowState = WindowState.Minimized;
++                window.Opacity = 1; // reset so restore looks right
++            };
++            window.BeginAnimation(UIElement.OpacityProperty, anim);
++        }
++
++        /// <summary>
++        /// Smooth view-switch animation on the ContentControl.
++        /// Fades out (120 ms) then fades in (200 ms).
++        /// Returns a Task so callers can await if needed.
++        /// </summary>
++        public static Task AnimateViewTransitionAsync(UIElement element)
++        {
++            var tcs = new TaskCompletionSource<bool>();
++
++            var fadeOut = MakeDoubleAnim(1, 0, TimeSpan.FromMilliseconds(110), EaseIn);
++            fadeOut.Completed += (_, __) =>
++            {
++                var fadeIn = MakeDoubleAnim(0, 1, TimeSpan.FromMilliseconds(200), EaseOut);
++                fadeIn.Completed += (_2, __2) => tcs.TrySetResult(true);
++                element.BeginAnimation(UIElement.OpacityProperty, fadeIn);
++            };
++            element.BeginAnimation(UIElement.OpacityProperty, fadeOut);
++
++            return tcs.Task;
++        }
++
++        // ── Private ─────────────────────────────────────────────────────────
++        private static DoubleAnimation MakeDoubleAnim(
++            double from, double to, TimeSpan duration, IEasingFunction easing)
++        {
++            return new DoubleAnimation(from, to, new Duration(duration))
++            {
++                EasingFunction = easing,
++                FillBehavior   = FillBehavior.HoldEnd
++            };
++        }
++    }
++}
+diff --git a/MainWindow.xaml.cs b/MainWindow.xaml.cs
+index 68c871e..73452d8 100644
+--- a/MainWindow.xaml.cs
++++ b/MainWindow.xaml.cs
+@@ -1,29 +1,32 @@
+-﻿using System.ComponentModel;
+-using System.Diagnostics;
++using System.ComponentModel;
+ using System.IO;
+ using System.Text.Json;
+ using System.Windows;
+ using System.Windows.Controls;
+ using System.Windows.Input;
+-using System.Windows.Media.Animation;
++using ESCenter.Core;
+ using ESCenter.Services;
+-using Microsoft.Win32;
+ 
+ namespace ESCenter
+ {
+     public partial class MainWindow : Window
+     {
+         private readonly string _settingsPath;
++        private bool _closingToTray; // flag so OnClosing knows fade is already running
+ 
+         public MainWindow()
+         {
+             InitializeComponent();
+             SetMaximizeButtonIcon("Maximize");
++
++            // ── Fade in on startup ──────────────────────────────────────────
++            Opacity = 0;
+             Loaded += (_, __) =>
+             {
+-                if (DataContext is ESCenter.ViewModels.MainViewModel vm)
++                WindowFader.FadeIn(this);
++
++                if (DataContext is ViewModels.MainViewModel vm)
+                 {
+-                    // If user chose to auto-grant admin access, respect that and do not prompt
+                     if (ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess())
+                     {
+                         vm.IsAdminAccessGranted = true;
+@@ -31,12 +34,10 @@ namespace ESCenter
+                     }
+                     else
+                     {
+-                        // Require admin access on startup
+                         var login = new Windows.AdminLoginWindow { Owner = this };
+                         if (login.ShowDialog() != true || !login.IsAuthenticated)
+                         {
+-                            // terminate application if authentication fails or canceled
+-                            Environment.Exit(0);
++                            System.Environment.Exit(0);
+                             return;
+                         }
+ 
+@@ -46,71 +47,63 @@ namespace ESCenter
+                 }
+             };
+ 
+-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+-            var dir = Path.Combine(appData, "ESCenter");
+-            _settingsPath = Path.Combine(dir, "windowsettings.json");
++            // ── Restore-from-minimise fade ─────────────────────────────────
++            StateChanged += (_, __) =>
++            {
++                if (WindowState == WindowState.Normal || WindowState == WindowState.Maximized)
++                    WindowFader.FadeRestore(this);
++            };
++
++            // ── Window settings ────────────────────────────────────────────
++            var appData = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
++            var dir     = System.IO.Path.Combine(appData, "ESCenter");
++            _settingsPath = System.IO.Path.Combine(dir, "windowsettings.json");
+ 
+             SourceInitialized += MainWindow_SourceInitialized;
+-            Closing += MainWindow_Closing;
++            Closing           += MainWindow_Closing;
+ 
+-            var descriptor = DependencyPropertyDescriptor.FromProperty(ContentControl.ContentProperty, typeof(ContentControl));
+-            descriptor?.AddValueChanged(MainContentHost, (_, _) => AnimateCurrentViewTransition());
++            // ── View-switch animation (improved via WindowFader) ───────────
++            var descriptor = DependencyPropertyDescriptor
++                .FromProperty(ContentControl.ContentProperty, typeof(ContentControl));
++            descriptor?.AddValueChanged(MainContentHost, (_, __) => AnimateViewSwitch());
+         }
+ 
+-        private void AnimateCurrentViewTransition()
++        // ── View transition ────────────────────────────────────────────────
++        private void AnimateViewSwitch()
++            => _ = WindowFader.AnimateViewTransitionAsync(MainContentHost);
++
++        // ── Window settings persistence ────────────────────────────────────
++        private void MainWindow_SourceInitialized(object? sender, System.EventArgs e)
+         {
+-            var animation = new DoubleAnimationUsingKeyFrames
+-            {
+-                Duration = TimeSpan.FromMilliseconds(320)
+-            };
++            if (!File.Exists(_settingsPath)) { CenterOnScreen(); return; }
+ 
+-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0))));
+-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(120)))
+-            {
+-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+-            });
+-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(320)))
++            try
+             {
+-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+-            });
++                var json  = File.ReadAllText(_settingsPath);
++                var opts  = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
++                var saved = JsonSerializer.Deserialize<WindowSettings>(json, opts);
+ 
+-            MainContentHost.BeginAnimation(OpacityProperty, animation);
+-        }
+-
+-        private void MainWindow_SourceInitialized(object? sender, EventArgs e)
+-        {
+-            if (File.Exists(_settingsPath))
+-            {
+-                try
++                if (saved != null && !double.IsNaN(saved.Width) && !double.IsNaN(saved.Height))
+                 {
+-                    var json = File.ReadAllText(_settingsPath);
+-                    var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+-                    var saved = JsonSerializer.Deserialize<WindowSettings>(json, opts);
+-
+-                    if (saved != null &&
+-                        !double.IsNaN(saved.Width) && !double.IsNaN(saved.Height))
+-                    {
+-                        WindowStartupLocation = WindowStartupLocation.Manual;
+-
+-                        var left = Clamp(saved.Left, SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Math.Max(100, saved.Width));
+-                        var top = Clamp(saved.Top, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Math.Max(100, saved.Height));
+-
+-                        Height = Math.Max(100, saved.Height);
+-                        Left = left;
+-                        Top = top;
+-                        WindowState = saved.State;
+-                    }
+-                    else
+-                    {
+-                        CenterOnScreen();
+-                    }
++                    WindowStartupLocation = WindowStartupLocation.Manual;
++                    var left = Clamp(saved.Left,
++                        SystemParameters.VirtualScreenLeft,
++                        SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - System.Math.Max(100, saved.Width));
++                    var top = Clamp(saved.Top,
++                        SystemParameters.VirtualScreenTop,
++                        SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - System.Math.Max(100, saved.Height));
++
++                    Height      = System.Math.Max(100, saved.Height);
++                    Left        = left;
++                    Top         = top;
++                    WindowState = saved.State;
+                 }
+-                catch
++                else
+                 {
+                     CenterOnScreen();
+                 }
+             }
+-            else
++            catch
+             {
+                 CenterOnScreen();
+             }
+@@ -120,75 +113,46 @@ namespace ESCenter
+         {
+             try
+             {
+-                double left;
+-                double top;
+-                double width;
+-                double height;
++                double left, top, width, height;
+                 var stateToSave = WindowState;
+ 
+                 if (WindowState == WindowState.Normal)
+                 {
+-                    left = Left;
+-                    top = Top;
+-                    width = Width;
+-                    height = Height;
++                    left = Left; top = Top; width = Width; height = Height;
+                 }
+                 else
+                 {
+                     var rb = RestoreBounds;
+-                    left = rb.Left;
+-                    top = rb.Top;
+-                    width = rb.Width;
+-                    height = rb.Height;
++                    left = rb.Left; top = rb.Top; width = rb.Width; height = rb.Height;
+                 }
+ 
+                 var settings = new WindowSettings
+                 {
+-                    Left = left,
+-                    Top = top,
+-                    Width = width,
+-                    Height = height,
+-                    State = stateToSave
++                    Left = left, Top = top, Width = width, Height = height, State = stateToSave
+                 };
+ 
+                 var dir = Path.GetDirectoryName(_settingsPath);
+-                if (!Directory.Exists(dir))
+-                {
+-                    Directory.CreateDirectory(dir!);
+-                }
++                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir!);
+ 
+                 var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                 File.WriteAllText(_settingsPath, json);
+             }
+             catch
+             {
+-                System.Windows.MessageBox.Show("Failed to save window settings.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
++                System.Windows.MessageBox.Show("Failed to save window settings.", "Error",
++                    MessageBoxButton.OK, MessageBoxImage.Error);
+             }
+         }
+ 
+-        private void CenterOnScreen()
+-        {
+-            WindowStartupLocation = WindowStartupLocation.Manual;
+-            var workArea = SystemParameters.WorkArea;
+-            Left = workArea.Left + (workArea.Width - Width) / 2;
+-            Top = workArea.Top + (workArea.Height - Height) / 2;
+-            WindowState = WindowState.Normal;
+-        }
+-
++        // ── Title bar controls ─────────────────────────────────────────────
+         private void btnMinimize_Click(object sender, RoutedEventArgs e)
+-        {
+-            WindowState = WindowState.Minimized;
+-        }
++            => WindowFader.FadeMinimize(this);
+ 
+         private void btnMaximize_Click(object sender, RoutedEventArgs e)
+-        {
+-            AdjustWindowSize();
+-        }
++            => AdjustWindowSize();
+ 
+         private void btnClose_Click(object sender, RoutedEventArgs e)
+-        {
+-            Close();
+-        }
++            => Close();       // OnClosing intercepts and hides to tray with fade
+ 
+         private void AdjustWindowSize()
+         {
+@@ -204,46 +168,55 @@ namespace ESCenter
+             }
+         }
+ 
+-
+         private void SetMaximizeButtonIcon(string resourceKey)
+         {
+             btnMaximize.Content = new System.Windows.Controls.Image
+             {
+-                Source = (System.Windows.Media.ImageSource)FindResource(resourceKey),
+-                Width = 14,
+-                Height = 14,
++                Source  = (System.Windows.Media.ImageSource)FindResource(resourceKey),
++                Width   = 14,
++                Height  = 14,
+                 Stretch = System.Windows.Media.Stretch.Uniform
+             };
+         }
+ 
+         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+         {
+-            if (e.ClickCount == 2)
+-            {
+-                AdjustWindowSize();
+-            }
+-            else
+-            {
+-                DragMove();
+-            }
++            if (e.ClickCount == 2) AdjustWindowSize();
++            else DragMove();
++        }
++
++        private void CenterOnScreen()
++        {
++            WindowStartupLocation = WindowStartupLocation.Manual;
++            var workArea = SystemParameters.WorkArea;
++            Left  = workArea.Left + (workArea.Width  - Width)  / 2;
++            Top   = workArea.Top  + (workArea.Height - Height) / 2;
++            WindowState = WindowState.Normal;
+         }
+ 
+         private static double Clamp(double value, double min, double max)
+-            => Math.Max(min, Math.Min(max, value));
++            => System.Math.Max(min, System.Math.Min(max, value));
+ 
++        // ── Hide to tray with fade instead of instant disappear ────────────
+         protected override void OnClosing(CancelEventArgs e)
+         {
++            if (_closingToTray) { base.OnClosing(e); return; }
++
+             e.Cancel = true;
+-            Hide();
++            WindowFader.FadeOut(this, () =>
++            {
++                Hide();
++                Opacity = 1; // reset so next Show() starts correctly
++            });
+         }
+     }
+ 
+     internal class WindowSettings
+     {
+-        public double Left { get; set; }
+-        public double Top { get; set; }
+-        public double Width { get; set; }
+-        public double Height { get; set; }
+-        public WindowState State { get; set; } = WindowState.Normal;
++        public double      Left   { get; set; }
++        public double      Top    { get; set; }
++        public double      Width  { get; set; }
++        public double      Height { get; set; }
++        public WindowState State  { get; set; } = WindowState.Normal;
+     }
+ }
+diff --git a/Windows/AdminLoginWindow.xaml.cs b/Windows/AdminLoginWindow.xaml.cs
+index 9a13479..b16c275 100644
+--- a/Windows/AdminLoginWindow.xaml.cs
++++ b/Windows/AdminLoginWindow.xaml.cs
+@@ -1,4 +1,6 @@
+-﻿using System.Windows;
++using System;
++using System.ComponentModel;
++using System.Windows;
+ using ESCenter.Core;
+ using ESCenter.Services;
+ 
+@@ -12,6 +14,19 @@ namespace ESCenter.Windows
+         {
+             InitializeComponent();
+             SetMaximizeButtonIcon("Maximize");
++            Opacity = 0;
++            Loaded  += (_, __) => WindowFader.FadeIn(this);
++            Closing += AdminLoginWindow_Closing;
++        }
++
++        private bool _animatingClose;
++
++        private void AdminLoginWindow_Closing(object? sender, CancelEventArgs e)
++        {
++            if (_animatingClose) return;
++            e.Cancel = true;
++            _animatingClose = true;
++            WindowFader.FadeOut(this, () => { _animatingClose = false; Close(); });
+         }
+ 
+         private void LoginButton_Click(object sender, RoutedEventArgs e)
+@@ -19,7 +34,7 @@ namespace ESCenter.Windows
+             if (UserPreferencesService.ValidateAdminCredentials(UsernameBox.Text, PasswordBox.Password))
+             {
+                 IsAuthenticated = true;
+-                DialogResult = true;
++                DialogResult    = true;
+                 Close();
+                 AppLogger.Success("Welcome Back мн∂ ѕυкαя");
+                 return;
+@@ -30,7 +45,7 @@ namespace ESCenter.Windows
+             PasswordBox.Clear();
+             ErrorMessageText.Visibility = Visibility.Visible;
+             UsernameBox.Focus();
+-            AppLogger.Error("invalid Credentials");
++            AppLogger.Error("Invalid credentials");
+         }
+ 
+         private void CancelButton_Click(object sender, RoutedEventArgs e)
+@@ -40,56 +55,36 @@ namespace ESCenter.Windows
+         }
+ 
+         private void btnMinimize_Click(object sender, RoutedEventArgs e)
+-        {
+-            WindowState = WindowState.Minimized;
+-        }
++            => WindowFader.FadeMinimize(this);
+ 
+         private void btnMaximize_Click(object sender, RoutedEventArgs e)
+-        {
+-            AdjustWindowSize();
+-        }
++            => AdjustWindowSize();
+ 
+         private void btnClose_Click(object sender, RoutedEventArgs e)
+-        {
+-            Close();
+-        }
++            => Close();
+ 
+         private void AdjustWindowSize()
+         {
+             if (WindowState == WindowState.Maximized)
+-            {
+-                WindowState = WindowState.Normal;
+-                SetMaximizeButtonIcon("Maximize");
+-            }
++            { WindowState = WindowState.Normal;    SetMaximizeButtonIcon("Maximize"); }
+             else
+-            {
+-                WindowState = WindowState.Maximized;
+-                SetMaximizeButtonIcon("Restore");
+-            }
++            { WindowState = WindowState.Maximized; SetMaximizeButtonIcon("Restore"); }
+         }
+ 
+-
+         private void SetMaximizeButtonIcon(string resourceKey)
+         {
+             btnMaximize.Content = new System.Windows.Controls.Image
+             {
+-                Source = (System.Windows.Media.ImageSource)FindResource(resourceKey),
+-                Width = 14,
+-                Height = 14,
++                Source  = (System.Windows.Media.ImageSource)FindResource(resourceKey),
++                Width   = 14, Height = 14,
+                 Stretch = System.Windows.Media.Stretch.Uniform
+             };
+         }
+ 
+         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+         {
+-            if (e.ClickCount == 2)
+-            {
+-                AdjustWindowSize();
+-            }
+-            else
+-            {
+-                DragMove();
+-            }
++            if (e.ClickCount == 2) AdjustWindowSize();
++            else DragMove();
+         }
+     }
+ }
+diff --git a/Windows/ChangeAdminPasswordWindow.xaml.cs b/Windows/ChangeAdminPasswordWindow.xaml.cs
+index 81e7424..512810c 100644
+--- a/Windows/ChangeAdminPasswordWindow.xaml.cs
++++ b/Windows/ChangeAdminPasswordWindow.xaml.cs
+@@ -1,4 +1,6 @@
+-﻿using System.Windows;
++using System.ComponentModel;
++using System.Windows;
++using ESCenter.Core;
+ using ESCenter.Services;
+ 
+ namespace ESCenter.Windows
+@@ -7,112 +9,79 @@ namespace ESCenter.Windows
+     {
+         public bool PasswordChanged { get; private set; }
+ 
++        private bool _animatingClose;
++
+         public ChangeAdminPasswordWindow()
+         {
+             InitializeComponent();
+             SetMaximizeButtonIcon("Maximize");
++            Opacity = 0;
++            Loaded  += (_, __) => WindowFader.FadeIn(this);
++            Closing += Window_Closing;
++        }
++
++        private void Window_Closing(object? sender, CancelEventArgs e)
++        {
++            if (_animatingClose) return;
++            e.Cancel = true;
++            _animatingClose = true;
++            WindowFader.FadeOut(this, () => { _animatingClose = false; Close(); });
+         }
+ 
+         private void SaveButton_Click(object sender, RoutedEventArgs e)
+         {
+             if (string.IsNullOrWhiteSpace(CurrentUsernameBox.Text))
+-            {
+-                System.Windows.MessageBox.Show("Current username cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+-                return;
+-            }
++            { MessageBox.Show("Current username cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+ 
+             if (string.IsNullOrWhiteSpace(NewUsernameBox.Text))
+-            {
+-                System.Windows.MessageBox.Show("New username cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+-                return;
+-            }
++            { MessageBox.Show("New username cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+ 
+             if (string.IsNullOrWhiteSpace(NewPasswordBox.Password))
+-            {
+-                System.Windows.MessageBox.Show("New password cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+-                return;
+-            }
++            { MessageBox.Show("New password cannot be empty.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+ 
+             if (!string.Equals(NewPasswordBox.Password, ConfirmPasswordBox.Password))
+-            {
+-                System.Windows.MessageBox.Show("New password and confirm password do not match.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+-                return;
+-            }
++            { MessageBox.Show("Passwords do not match.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+ 
+             var changed = UserPreferencesService.ChangeAdminCredentials(
+-                CurrentUsernameBox.Text,
+-                CurrentPasswordBox.Password,
+-                NewUsernameBox.Text,
+-                NewPasswordBox.Password);
++                CurrentUsernameBox.Text, CurrentPasswordBox.Password,
++                NewUsernameBox.Text, NewPasswordBox.Password);
+ 
+             if (!changed)
+-            {
+-                System.Windows.MessageBox.Show("Current admin credentials are incorrect.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+-                return;
+-            }
++            { MessageBox.Show("Current credentials are incorrect.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+ 
+             PasswordChanged = true;
+-            DialogResult = true;
++            DialogResult    = true;
+             Close();
+         }
+ 
+-        private void CancelButton_Click(object sender, RoutedEventArgs e)
+-        {
+-            DialogResult = false;
+-            Close();
+-        }
++        private void CancelButton_Click(object sender, RoutedEventArgs e) { DialogResult = false; Close(); }
+ 
+-        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+-        {
+-            WindowState = WindowState.Minimized;
+-        }
+-
+-        private void btnMaximize_Click(object sender, RoutedEventArgs e)
+-        {
+-            AdjustWindowSize();
+-        }
+-
+-        private void btnClose_Click(object sender, RoutedEventArgs e)
+-        {
+-            Close();
+-        }
++        private void btnMinimize_Click(object sender, RoutedEventArgs e) => WindowFader.FadeMinimize(this);
++        private void btnMaximize_Click(object sender, RoutedEventArgs e) => AdjustWindowSize();
++        private void btnClose_Click(object sender, RoutedEventArgs e)    => Close();
+ 
+         private void AdjustWindowSize()
+         {
+             if (WindowState == WindowState.Maximized)
+-            {
+-                WindowState = WindowState.Normal;
+-                SetMaximizeButtonIcon("Maximize");
+-            }
++            { WindowState = WindowState.Normal;    SetMaximizeButtonIcon("Maximize"); }
+             else
+-            {
+-                WindowState = WindowState.Maximized;
+-                SetMaximizeButtonIcon("Restore");
+-            }
++            { WindowState = WindowState.Maximized; SetMaximizeButtonIcon("Restore"); }
+         }
+ 
+-
+         private void SetMaximizeButtonIcon(string resourceKey)
+         {
+             btnMaximize.Content = new System.Windows.Controls.Image
+             {
+-                Source = (System.Windows.Media.ImageSource)FindResource(resourceKey),
+-                Width = 14,
+-                Height = 14,
++                Source  = (System.Windows.Media.ImageSource)FindResource(resourceKey),
++                Width   = 14, Height = 14,
+                 Stretch = System.Windows.Media.Stretch.Uniform
+             };
+         }
+ 
+         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+         {
+-            if (e.ClickCount == 2)
+-            {
+-                AdjustWindowSize();
+-            }
+-            else
+-            {
+-                DragMove();
+-            }
++            if (e.ClickCount == 2) AdjustWindowSize();
++            else DragMove();
+         }
+     }
+ }
+diff --git a/Windows/TrayPopupWindow.xaml.cs b/Windows/TrayPopupWindow.xaml.cs
+index b692a50..5c6696d 100644
+--- a/Windows/TrayPopupWindow.xaml.cs
++++ b/Windows/TrayPopupWindow.xaml.cs
+@@ -1,4 +1,6 @@
+-﻿using System.Windows;
++using System;
++using System.Windows;
++using ESCenter.Core;
+ 
+ namespace ESCenter.Windows
+ {
+@@ -7,13 +9,36 @@ namespace ESCenter.Windows
+         public TrayPopupWindow()
+         {
+             InitializeComponent();
+-            Deactivated += (_, __) => Hide();
++
++            // Fade in every time the window becomes visible
++            IsVisibleChanged += (_, args) =>
++            {
++                if ((bool)args.NewValue)
++                    WindowFader.FadeIn(this, TimeSpan.FromMilliseconds(160));
++            };
++
++            // Fade out before hiding when focus is lost
++            Deactivated += (_, __) => FadeAndHide();
++        }
++
++        private void FadeAndHide()
++        {
++            // Guard against double-trigger
++            if (!IsVisible || Opacity < 0.01) return;
++
++            WindowFader.FadeOut(this, () =>
++            {
++                Hide();
++                Opacity = 1; // reset for next show
++            }, TimeSpan.FromMilliseconds(120));
+         }
+ 
+         private void NavigationButton_Click(object sender, RoutedEventArgs e)
+         {
+-            ((App)System.Windows.Application.Current).ShowMainWindow();
++            // Hide without animation delay so navigation feels instant
+             Hide();
++            Opacity = 1;
++            ((App)System.Windows.Application.Current).ShowMainWindow();
+         }
+ 
+         private void BtnExit_Click(object sender, RoutedEventArgs e)
+diff --git a/Windows/WarrantySystemWindow.xaml.cs b/Windows/WarrantySystemWindow.xaml.cs
+index 84381a5..a592d3b 100644
+--- a/Windows/WarrantySystemWindow.xaml.cs
++++ b/Windows/WarrantySystemWindow.xaml.cs
+@@ -1,8 +1,10 @@
+-﻿using System;
++using System;
+ using System.Collections.ObjectModel;
++using System.ComponentModel;
+ using System.Linq;
+ using System.Windows;
+ using System.Windows.Input;
++using ESCenter.Core;
+ using ESCenter.Models;
+ using ESCenter.Services;
+ 
+@@ -11,78 +13,57 @@ namespace ESCenter.Windows
+     public partial class WarrantySystemWindow : Window
+     {
+         private readonly TicketsDataService _ticketsDataService = new();
+-
+         public ObservableCollection<WarrantyDeviceRow> WarrantyItems { get; } = new();
+ 
++        private bool _animatingClose;
++
+         public WarrantySystemWindow()
+         {
+             InitializeComponent();
+             SetMaximizeButtonIcon("Maximize");
+             DataContext = this;
+-            LoadWarrantyItems();
+-        }
+-
+-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+-        {
+-            LoadWarrantyItems();
+-        }
+-
+-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+-        {
+-            Close();
++            Opacity = 0;
++            Loaded  += (_, __) => { WindowFader.FadeIn(this); LoadWarrantyItems(); };
++            Closing += Window_Closing;
+         }
+ 
+-        private void btnMinimize_Click(object sender, RoutedEventArgs e)
++        private void Window_Closing(object? sender, CancelEventArgs e)
+         {
+-            WindowState = WindowState.Minimized;
++            if (_animatingClose) return;
++            e.Cancel = true;
++            _animatingClose = true;
++            WindowFader.FadeOut(this, () => { _animatingClose = false; Close(); });
+         }
+ 
+-        private void btnMaximize_Click(object sender, RoutedEventArgs e)
+-        {
+-            AdjustWindowSize();
+-        }
++        private void RefreshButton_Click(object sender, RoutedEventArgs e) => LoadWarrantyItems();
++        private void CloseButton_Click(object sender, RoutedEventArgs e)   => Close();
+ 
+-        private void btnClose_Click(object sender, RoutedEventArgs e)
+-        {
+-            Close();
+-        }
++        private void btnMinimize_Click(object sender, RoutedEventArgs e) => WindowFader.FadeMinimize(this);
++        private void btnMaximize_Click(object sender, RoutedEventArgs e) => AdjustWindowSize();
++        private void btnClose_Click(object sender, RoutedEventArgs e)    => Close();
+ 
+         private void AdjustWindowSize()
+         {
+             if (WindowState == WindowState.Maximized)
+-            {
+-                WindowState = WindowState.Normal;
+-                SetMaximizeButtonIcon("Maximize");
+-            }
++            { WindowState = WindowState.Normal;    SetMaximizeButtonIcon("Maximize"); }
+             else
+-            {
+-                WindowState = WindowState.Maximized;
+-                SetMaximizeButtonIcon("Restore");
+-            }
++            { WindowState = WindowState.Maximized; SetMaximizeButtonIcon("Restore"); }
+         }
+ 
+-
+         private void SetMaximizeButtonIcon(string resourceKey)
+         {
+             btnMaximize.Content = new System.Windows.Controls.Image
+             {
+-                Source = (System.Windows.Media.ImageSource)FindResource(resourceKey),
+-                Width = 14,
+-                Height = 14,
++                Source  = (System.Windows.Media.ImageSource)FindResource(resourceKey),
++                Width   = 14, Height = 14,
+                 Stretch = System.Windows.Media.Stretch.Uniform
+             };
+         }
+ 
+         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+         {
+-            if (e.ClickCount == 2)
+-            {
+-                AdjustWindowSize();
+-            }
+-            else
+-            {
+-                DragMove();
+-            }
++            if (e.ClickCount == 2) AdjustWindowSize();
++            else DragMove();
+         }
+ 
+         private void LoadWarrantyItems()
+@@ -96,24 +77,21 @@ namespace ESCenter.Windows
+ 
+             foreach (var ticket in tickets)
+             {
+-                if (!WarrantyEvaluator.TryGetExpiration(ticket, out var expiresAt))
+-                {
+-                    continue;
+-                }
++                if (!WarrantyEvaluator.TryGetExpiration(ticket, out var expiresAt)) continue;
+ 
+                 var daysLeft = (expiresAt.Date - DateTime.Today).Days;
+ 
+                 WarrantyItems.Add(new WarrantyDeviceRow
+                 {
+-                    TicketCode = ticket.EscTicketId ?? $"ESC-{ticket.TicketId:D6}",
+-                    CustomerName = ticket.CustomerName ?? "-",
+-                    DeviceName = BuildDeviceName(ticket),
+-                    SerialNumber = string.IsNullOrWhiteSpace(ticket.SerialIMEI) ? "-" : ticket.SerialIMEI,
+-                    WarrantyPeriod = string.IsNullOrWhiteSpace(ticket.WarrantyPeriod) ? "-" : ticket.WarrantyPeriod,
++                    TicketCode           = ticket.EscTicketId ?? $"ESC-{ticket.TicketId:D6}",
++                    CustomerName         = ticket.CustomerName ?? "-",
++                    DeviceName           = BuildDeviceName(ticket),
++                    SerialNumber         = string.IsNullOrWhiteSpace(ticket.SerialIMEI) ? "-" : ticket.SerialIMEI,
++                    WarrantyPeriod       = string.IsNullOrWhiteSpace(ticket.WarrantyPeriod) ? "-" : ticket.WarrantyPeriod,
+                     WarrantyStartDateText = (ticket.DeliveryDate?.Date ?? ticket.ReceiveDate.Date).ToString("yyyy-MM-dd"),
+-                    WarrantyEndDateText = expiresAt.ToString("yyyy-MM-dd"),
+-                    RemainingText = daysLeft >= 0 ? $"{daysLeft} day(s)" : $"Expired {-daysLeft} day(s) ago",
+-                    WarrantyState = daysLeft >= 0 ? "Active" : "Expired"
++                    WarrantyEndDateText  = expiresAt.ToString("yyyy-MM-dd"),
++                    RemainingText        = daysLeft >= 0 ? $"{daysLeft} day(s)" : $"Expired {-daysLeft} day(s) ago",
++                    WarrantyState        = daysLeft >= 0 ? "Active" : "Expired"
+                 });
+             }
+         }
+@@ -121,8 +99,7 @@ namespace ESCenter.Windows
+         private static string BuildDeviceName(RepairTicket ticket)
+         {
+             var parts = new[] { ticket.DeviceCategory, ticket.DeviceBrand, ticket.DeviceModel }
+-                .Where(value => !string.IsNullOrWhiteSpace(value));
+-
++                .Where(v => !string.IsNullOrWhiteSpace(v));
+             var combined = string.Join(" / ", parts);
+             return string.IsNullOrWhiteSpace(combined) ? "Unknown Device" : combined;
+         }
+@@ -130,14 +107,14 @@ namespace ESCenter.Windows
+ 
+     public class WarrantyDeviceRow
+     {
+-        public string TicketCode { get; set; } = string.Empty;
+-        public string CustomerName { get; set; } = string.Empty;
+-        public string DeviceName { get; set; } = string.Empty;
+-        public string SerialNumber { get; set; } = string.Empty;
+-        public string WarrantyPeriod { get; set; } = string.Empty;
++        public string TicketCode            { get; set; } = string.Empty;
++        public string CustomerName          { get; set; } = string.Empty;
++        public string DeviceName            { get; set; } = string.Empty;
++        public string SerialNumber          { get; set; } = string.Empty;
++        public string WarrantyPeriod        { get; set; } = string.Empty;
+         public string WarrantyStartDateText { get; set; } = string.Empty;
+-        public string WarrantyEndDateText { get; set; } = string.Empty;
+-        public string RemainingText { get; set; } = string.Empty;
+-        public string WarrantyState { get; set; } = string.Empty;
++        public string WarrantyEndDateText   { get; set; } = string.Empty;
++        public string RemainingText         { get; set; } = string.Empty;
++        public string WarrantyState         { get; set; } = string.Empty;
+     }
+ }
+-- 
+2.43.0
+
