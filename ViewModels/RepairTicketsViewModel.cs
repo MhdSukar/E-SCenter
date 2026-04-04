@@ -725,13 +725,13 @@ namespace ESCenter.ViewModels
         private void MoveSuggestionDown()
         {
             if (!IsPartsSuggestionOpen || PartsSuggestions.Count == 0) return;
-            SelectedSuggestionIndex = Math.Min(SelectedSuggestionIndex + 1, PartsSuggestions.Count - 1);
+            SelectedSuggestionIndex = FindNextSelectableSuggestionIndex(SelectedSuggestionIndex + 1, +1);
         }
 
         private void MoveSuggestionUp()
         {
             if (!IsPartsSuggestionOpen || PartsSuggestions.Count == 0) return;
-            SelectedSuggestionIndex = Math.Max(SelectedSuggestionIndex - 1, -1);
+            SelectedSuggestionIndex = FindNextSelectableSuggestionIndex(SelectedSuggestionIndex - 1, -1);
         }
 
         private void CloseSuggestions()
@@ -743,7 +743,15 @@ namespace ESCenter.ViewModels
         private void AcceptSuggestion()
         {
             if (SelectedSuggestionIndex >= 0 && SelectedSuggestionIndex < PartsSuggestions.Count)
-                AddPartFromSuggestion(PartsSuggestions[SelectedSuggestionIndex]);
+            {
+                var suggestion = PartsSuggestions[SelectedSuggestionIndex];
+                if (!CanSelectSuggestion(suggestion))
+                {
+                    AppLogger.Warning($"'{suggestion.Name}' is out of stock and cannot be selected.");
+                    return;
+                }
+                AddPartFromSuggestion(suggestion);
+            }
             else if (!string.IsNullOrWhiteSpace(PartsUsedInput))
                 AddPartByName(PartsUsedInput);
         }
@@ -751,9 +759,26 @@ namespace ESCenter.ViewModels
         private void AddPartFromInput()
         {
             if (SelectedSuggestionIndex >= 0 && SelectedSuggestionIndex < PartsSuggestions.Count)
-                AddPartFromSuggestion(PartsSuggestions[SelectedSuggestionIndex]);
+                AcceptSuggestion();
             else
                 AddPartByName(PartsUsedInput);
+        }
+
+        private bool CanSelectSuggestion(PartSuggestionItem suggestion)
+            => suggestion != null && !suggestion.IsOutOfStock && suggestion.StockQty > 0;
+
+        private int FindNextSelectableSuggestionIndex(int startIndex, int step)
+        {
+            if (PartsSuggestions.Count == 0 || step == 0)
+                return -1;
+
+            for (var i = startIndex; i >= 0 && i < PartsSuggestions.Count; i += step)
+            {
+                if (CanSelectSuggestion(PartsSuggestions[i]))
+                    return i;
+            }
+
+            return -1;
         }
 
         // =========================================================
@@ -775,6 +800,11 @@ namespace ESCenter.ViewModels
 
             if (existing != null)
             {
+                if (existing.Quantity >= suggestion.StockQty)
+                {
+                    AppLogger.Warning($"Cannot add more '{suggestion.Name}'. Maximum available is {suggestion.StockQty}.");
+                    return;
+                }
                 existing.Quantity++;
             }
             else
@@ -849,6 +879,11 @@ namespace ESCenter.ViewModels
             if (available <= 0)
             {
                 AppLogger.Warning($"No stock available for '{line.Name}'.");
+                return;
+            }
+            if (line.Quantity >= available)
+            {
+                AppLogger.Warning($"Cannot add more '{line.Name}'. Maximum available is {available}.");
                 return;
             }
 
