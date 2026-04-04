@@ -143,10 +143,8 @@ namespace ESCenter
                 return;
             }
 
-            _trayPopup.Opacity = 0;
             _trayPopup.Show();
             _trayPopup.UpdateLayout();
-            _trayPopup.Opacity = 1;
 
             var left = x - _trayPopup.ActualWidth + 20;
             var top = y - _trayPopup.ActualHeight - 5;

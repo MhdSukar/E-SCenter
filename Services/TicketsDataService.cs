@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
 using System.Threading.Tasks;
 using ESCenter.Models;
 
@@ -45,141 +44,6 @@ namespace ESCenter.Services
         public Task<List<RepairTicket>> GetAllAsync()
             => Task.Run(GetAll);
 
-        public DashboardSummary GetDashboardSummary(DateTime now, DateTime weekStart, DateTime weekEnd)
-        {
-            using var conn = new SQLiteConnection(ConnectionString);
-            conn.Open();
-
-            var overdueCutoff = now.AddDays(-2).ToString("o");
-            var weekStartValue = weekStart.ToString("o");
-            var weekEndValue = weekEnd.ToString("o");
-
-            const string sql = @"
-                SELECT
-                    COUNT(*) AS TotalTickets,
-                    SUM(CASE WHEN DeliveryDate IS NULL THEN 1 ELSE 0 END) AS OpenTickets,
-                    SUM(CASE WHEN DeliveryDate IS NOT NULL THEN 1 ELSE 0 END) AS ClosedTickets,
-                    SUM(CASE WHEN DeliveryDate IS NULL AND IFNULL(IsReadyForPickup, 0) = 1 THEN 1 ELSE 0 END) AS ReadyForPickupTickets,
-                    SUM(CASE WHEN DeliveryDate IS NULL AND LOWER(IFNULL(PriorityLevel, '')) = 'critical' THEN 1 ELSE 0 END) AS CriticalOpenTickets,
-                    SUM(CASE WHEN DeliveryDate IS NULL AND ReceiveDate < @overdueCutoff THEN 1 ELSE 0 END) AS OverdueTickets,
-                    SUM(CASE WHEN ReceiveDate >= @weekStart AND ReceiveDate < @weekEnd THEN 1 ELSE 0 END) AS WeeklyTotalTickets,
-                    SUM(CASE WHEN DeliveryDate IS NOT NULL AND DeliveryDate >= @weekStart AND DeliveryDate < @weekEnd THEN 1 ELSE 0 END) AS WeeklyFinishedTickets,
-                    SUM(CASE WHEN DeliveryDate IS NOT NULL AND DeliveryDate >= @weekStart AND DeliveryDate < @weekEnd THEN IFNULL(FinalCost, 0) ELSE 0 END) AS WeeklyIncome
-                FROM TicketsDB;";
-
-            using var cmd = new SQLiteCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@overdueCutoff", overdueCutoff);
-            cmd.Parameters.AddWithValue("@weekStart", weekStartValue);
-            cmd.Parameters.AddWithValue("@weekEnd", weekEndValue);
-
-            using var reader = cmd.ExecuteReader();
-            if (!reader.Read())
-            {
-                return new DashboardSummary();
-            }
-
-            return new DashboardSummary
-            {
-                TotalTickets = reader["TotalTickets"] != DBNull.Value ? Convert.ToInt32(reader["TotalTickets"]) : 0,
-                OpenTickets = reader["OpenTickets"] != DBNull.Value ? Convert.ToInt32(reader["OpenTickets"]) : 0,
-                ClosedTickets = reader["ClosedTickets"] != DBNull.Value ? Convert.ToInt32(reader["ClosedTickets"]) : 0,
-                ReadyForPickupTickets = reader["ReadyForPickupTickets"] != DBNull.Value ? Convert.ToInt32(reader["ReadyForPickupTickets"]) : 0,
-                CriticalOpenTickets = reader["CriticalOpenTickets"] != DBNull.Value ? Convert.ToInt32(reader["CriticalOpenTickets"]) : 0,
-                OverdueTickets = reader["OverdueTickets"] != DBNull.Value ? Convert.ToInt32(reader["OverdueTickets"]) : 0,
-                WeeklyTotalTickets = reader["WeeklyTotalTickets"] != DBNull.Value ? Convert.ToInt32(reader["WeeklyTotalTickets"]) : 0,
-                WeeklyFinishedTickets = reader["WeeklyFinishedTickets"] != DBNull.Value ? Convert.ToInt32(reader["WeeklyFinishedTickets"]) : 0,
-                WeeklyIncome = reader["WeeklyIncome"] != DBNull.Value ? Convert.ToDecimal(reader["WeeklyIncome"]) : 0m
-            };
-        }
-
-        public Task<DashboardSummary> GetDashboardSummaryAsync(DateTime now, DateTime weekStart, DateTime weekEnd)
-            => Task.Run(() => GetDashboardSummary(now, weekStart, weekEnd));
-
-        public List<RepairTicket> GetRecentOpenTickets(int limit)
-        {
-            var list = new List<RepairTicket>();
-
-            using var conn = new SQLiteConnection(ConnectionString);
-            conn.Open();
-
-            var sql = @"
-                SELECT TicketId, EscTicketId, CustomerId, CustomerName, PhoneNumber, ContactMethod,
-                       DeviceCategory, DeviceBrand, DeviceModel, SerialIMEI, DamageHistory, BoardModifications,
-                       ProblemDescription, Notes, RepairStatus, PriorityLevel, TicketType,
-                       EstimatedCost, EstimatedCostCurrency,
-                       FinalCost, FinalCostCurrency,
-                       RootCause, PartsUsed,
-                       HasWarranty, WarrantyPeriod, IsWarrantyRepair, IsReadyForPickup,
-                       ReceiveDate, DeliveryDate, DeviceChecklistJson, AccessoriesJson
-                FROM TicketsDB
-                WHERE DeliveryDate IS NULL
-                ORDER BY ReceiveDate DESC
-                LIMIT @limit;";
-
-            using var cmd = new SQLiteCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@limit", Math.Max(1, limit));
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                list.Add(MapToRepairTicket(reader));
-            }
-
-            return list;
-        }
-
-        public Task<List<RepairTicket>> GetRecentOpenTicketsAsync(int limit)
-            => Task.Run(() => GetRecentOpenTickets(limit));
-
-        public Dictionary<string, int> GetOpenPriorityCounts(IEnumerable<string> priorities)
-        {
-            var normalizedPriorities = priorities
-                .Where(priority => !string.IsNullOrWhiteSpace(priority))
-                .Select(priority => priority.Trim())
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            var counts = normalizedPriorities.ToDictionary(priority => priority, _ => 0, StringComparer.OrdinalIgnoreCase);
-            if (normalizedPriorities.Count == 0)
-            {
-                return counts;
-            }
-
-            using var conn = new SQLiteConnection(ConnectionString);
-            conn.Open();
-
-            var placeholders = normalizedPriorities.Select((_, index) => $"@p{index}").ToArray();
-            var sql = $@"
-                SELECT PriorityLevel, COUNT(*) AS Count
-                FROM TicketsDB
-                WHERE DeliveryDate IS NULL
-                  AND LOWER(IFNULL(PriorityLevel, '')) IN ({string.Join(",", placeholders.Select(p => $"LOWER({p})"))})
-                GROUP BY LOWER(IFNULL(PriorityLevel, ''));";
-
-            using var cmd = new SQLiteCommand(sql, conn);
-            for (var i = 0; i < normalizedPriorities.Count; i++)
-            {
-                cmd.Parameters.AddWithValue($"@p{i}", normalizedPriorities[i]);
-            }
-
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                var priority = reader["PriorityLevel"]?.ToString() ?? string.Empty;
-                var count = reader["Count"] != DBNull.Value ? Convert.ToInt32(reader["Count"]) : 0;
-
-                var key = normalizedPriorities.FirstOrDefault(p => string.Equals(p, priority, StringComparison.OrdinalIgnoreCase));
-                if (key != null)
-                {
-                    counts[key] = count;
-                }
-            }
-
-            return counts;
-        }
-
-        public Task<Dictionary<string, int>> GetOpenPriorityCountsAsync(IEnumerable<string> priorities)
-            => Task.Run(() => GetOpenPriorityCounts(priorities));
         // ===================== INSERT =====================
         public int Insert(RepairTicket ticket)
         {
@@ -370,53 +234,49 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            const string sql = @"
-                WITH RECURSIVE seq(n) AS (
-                    SELECT 1
-                    UNION ALL
-                    SELECT n + 1
-                    FROM seq
-                    WHERE n < (
-                        SELECT COALESCE(MAX(CAST(SUBSTR(EscTicketId, 5) AS INTEGER)), 0) + 1
-                        FROM TicketsDB
-                        WHERE EscTicketId GLOB 'ESC-[0-9][0-9][0-9][0-9][0-9][0-9]'
-                    )
-                )
-                SELECT n
-                FROM seq
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM TicketsDB t
-                    WHERE t.EscTicketId = printf('ESC-%06d', seq.n)
-                )
-                ORDER BY n
-                LIMIT 1;";
+            using var cmd = new SQLiteCommand("SELECT EscTicketId FROM TicketsDB WHERE EscTicketId IS NOT NULL AND TRIM(EscTicketId) <> '';", conn);
+            using var reader = cmd.ExecuteReader();
 
-            using var cmd = new SQLiteCommand(sql, conn);
-            var result = cmd.ExecuteScalar();
+            var allocatedNumbers = new HashSet<int>();
 
-            var nextNumber = result != null && result != DBNull.Value
-                ? Convert.ToInt32(result)
-                : 1;
+            while (reader.Read())
+            {
+                var escId = reader["EscTicketId"]?.ToString();
+                if (TryParseEscIdNumber(escId, out var parsedNumber) && parsedNumber > 0)
+                {
+                    allocatedNumbers.Add(parsedNumber);
+                }
+            }
+
+            var nextNumber = 1;
+            while (allocatedNumbers.Contains(nextNumber))
+            {
+                nextNumber++;
+            }
 
             return $"ESC-{nextNumber:D6}";
         }
 
+        private static bool TryParseEscIdNumber(string escId, out int number)
+        {
+            number = 0;
+
+            if (string.IsNullOrWhiteSpace(escId))
+            {
+                return false;
+            }
+
+            var normalized = escId.Trim();
+            const string prefix = "ESC-";
+            if (!normalized.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return int.TryParse(normalized.Substring(prefix.Length), out number);
+        }
 
         public string GetNextEscTicketId() => GenerateEscTicketId();
         public Task<string> GetNextEscTicketIdAsync() => Task.Run(GenerateEscTicketId);
-
-        public sealed class DashboardSummary
-        {
-            public int TotalTickets { get; set; }
-            public int OpenTickets { get; set; }
-            public int ClosedTickets { get; set; }
-            public int ReadyForPickupTickets { get; set; }
-            public int CriticalOpenTickets { get; set; }
-            public int OverdueTickets { get; set; }
-            public int WeeklyTotalTickets { get; set; }
-            public int WeeklyFinishedTickets { get; set; }
-            public decimal WeeklyIncome { get; set; }
-        }
     }
 }

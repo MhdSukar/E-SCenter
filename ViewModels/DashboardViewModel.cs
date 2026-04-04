@@ -16,7 +16,6 @@ namespace ESCenter.ViewModels
         private readonly TicketsDataService _service;
         private readonly PartsRepository _partsRepository;
         private readonly InventoryRepository _inventoryRepository;
-        private readonly Action<object?>? _navigateToRepairTickets;
 
         private int _totalTickets;
         public int TotalTickets { get => _totalTickets; set => SetProperty(ref _totalTickets, value); }
@@ -91,9 +90,8 @@ namespace ESCenter.ViewModels
         public ICommand OpenTicketsCommand { get; }
         public ICommand ClosedTicketsCommand { get; }
 
-        public DashboardViewModel(Action<object?>? navigateToRepairTickets = null)
+        public DashboardViewModel()
         {
-            _navigateToRepairTickets = navigateToRepairTickets;
             _service = new TicketsDataService();
             _partsRepository = new PartsRepository();
             _inventoryRepository = new InventoryRepository();
@@ -122,40 +120,37 @@ namespace ESCenter.ViewModels
             IsLoading = true;
             try
             {
+                var all = await _service.GetAllAsync();
                 var now = DateTime.Now;
                 var weekStart = now.Date.AddDays(-(int)now.DayOfWeek);
                 var weekEnd = weekStart.AddDays(7);
 
-                var summaryTask = _service.GetDashboardSummaryAsync(now, weekStart, weekEnd);
-                var recentTicketsTask = _service.GetRecentOpenTicketsAsync(10);
-                var priorityCountsTask = _service.GetOpenPriorityCountsAsync(new[] { "Critical", "Major", "Normal", "Minor" });
-
-                await Task.WhenAll(summaryTask, recentTicketsTask, priorityCountsTask);
-
-                var summary = summaryTask.Result;
-                TotalTickets = summary.TotalTickets;
-                OpenTickets = summary.OpenTickets;
-                ClosedTickets = summary.ClosedTickets;
-                ReadyForPickupTickets = summary.ReadyForPickupTickets;
-                CriticalOpenTickets = summary.CriticalOpenTickets;
-                OverdueTickets = summary.OverdueTickets;
-                WeeklyTotalTickets = summary.WeeklyTotalTickets;
-                WeeklyFinishedTickets = summary.WeeklyFinishedTickets;
-                WeeklyIncome = summary.WeeklyIncome;
+                TotalTickets = all.Count;
+                ClosedTickets = all.Count(t => t.DeliveryDate.HasValue);
+                OpenTickets = TotalTickets - ClosedTickets;
+                ReadyForPickupTickets = all.Count(t => t.IsReadyForPickup && !t.DeliveryDate.HasValue);
 
                 RecentTickets.Clear();
-                foreach (var ticket in recentTicketsTask.Result)
+                foreach (var ticket in all.Where(t => !t.DeliveryDate.HasValue).OrderByDescending(t => t.ReceiveDate).Take(10))
                 {
                     RecentTickets.Add(ticket);
                 }
 
                 PriorityStats.Clear();
-                var priorityCounts = priorityCountsTask.Result;
                 foreach (var priority in new[] { "Critical", "Major", "Normal", "Minor" })
                 {
-                    priorityCounts.TryGetValue(priority, out var count);
+                    var count = all.Count(t => string.Equals(t.PriorityLevel, priority, StringComparison.OrdinalIgnoreCase) && !t.DeliveryDate.HasValue);
                     PriorityStats.Add(new PriorityStat { Priority = priority, Count = count });
                 }
+
+                CriticalOpenTickets = all.Count(t => string.Equals(t.PriorityLevel, "Critical", StringComparison.OrdinalIgnoreCase) && !t.DeliveryDate.HasValue);
+                OverdueTickets = all.Count(t => !t.DeliveryDate.HasValue && (now - t.ReceiveDate).TotalDays > 2);
+
+                WeeklyTotalTickets = all.Count(t => t.ReceiveDate >= weekStart && t.ReceiveDate < weekEnd);
+                WeeklyFinishedTickets = all.Count(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value >= weekStart && t.DeliveryDate.Value < weekEnd);
+                WeeklyIncome = all
+                    .Where(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value >= weekStart && t.DeliveryDate.Value < weekEnd)
+                    .Sum(t => t.FinalCost);
 
                 WeeklyCompletionPercent = WeeklyTotalTickets == 0
                     ? 0
@@ -255,11 +250,22 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                _navigateToRepairTickets?.Invoke(parameter);
+                var mainVm = System.Windows.Application.Current?.MainWindow?.DataContext;
+                if (mainVm == null)
+                {
+                    return;
+                }
+
+                var property = mainVm.GetType().GetProperty("ShowRepairTicketsCommand", BindingFlags.Public | BindingFlags.Instance);
+                var command = property?.GetValue(mainVm) as ICommand;
+                if (command != null && command.CanExecute(parameter))
+                {
+                    command.Execute(parameter);
+                }
             }
             catch (Exception ex)
             {
-                AppLogger.Warning($"Failed to navigate to repair tickets: {ex.Message}");
+                AppLogger.Warning($"Failed to forward navigation command: {ex.Message}");
             }
         }
 
