@@ -1071,8 +1071,26 @@
                                                             Background="Transparent"
                                                             BorderThickness="0"
                                                             Padding="6,5"
+                                                            Focusable="False"
                                                             HorizontalAlignment="Stretch"
                                                             HorizontalContentAlignment="Stretch">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button">
+                                                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <ContentPresenter />
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsOutOfStock}" Value="True">
+                                                                        <Setter Property="IsEnabled" Value="False" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
                                                         <Grid HorizontalAlignment="Stretch">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="*" />
