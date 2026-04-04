@@ -341,7 +341,14 @@ namespace ESCenter.ViewModels
 
                 try
                 {
-                    part.SKU = SkuGenerator.Generate(part.PartType, part.UnitValue1.ToString(), part.UnitCode1, part.UnitValue2.ToString(), part.UnitCode2);
+                    part.SKU = SkuGenerator.Generate(
+                        part.PartType,
+                        part.UnitValue1.ToString(),
+                        part.UnitCode1,
+                        part.UnitValue2.ToString(),
+                        part.UnitCode2,
+                        part.PartCode,
+                        part.ChipPartNumber);
                     AppLogger.Info($"Generated SKU for new part: {part.SKU}");
                 }
                 catch (Exception ex)

@@ -1,10 +1,11 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -19,6 +20,9 @@ namespace ESCenter.ViewModels
     {
         private readonly TicketsDataService _service;
 
+        // =========================================================
+        // LOADING FLAG
+        // =========================================================
         private bool _isLoading;
         public bool IsLoading
         {
@@ -29,7 +33,6 @@ namespace ESCenter.ViewModels
         // =========================================================
         // COLLECTIONS
         // =========================================================
-
         public ObservableCollection<RepairTicket> Tickets { get; }
 
         private readonly ICollectionView _ticketsView;
@@ -38,7 +41,6 @@ namespace ESCenter.ViewModels
         // =========================================================
         // SELECTION
         // =========================================================
-
         private RepairTicket _selectedTicket;
         public RepairTicket SelectedTicket
         {
@@ -56,7 +58,6 @@ namespace ESCenter.ViewModels
         // =========================================================
         // SEARCH & FILTER
         // =========================================================
-
         private string _searchQuery = string.Empty;
         public string SearchQuery
         {
@@ -106,16 +107,13 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _showReadyPickupsOnly, value))
-                {
                     _ticketsView.Refresh();
-                }
             }
         }
 
         // =========================================================
         // CURRENCY
         // =========================================================
-
         public ObservableCollection<string> Currencies { get; } =
             new ObservableCollection<string> { "S.P", "USD", "EUR", "RON", "GBP", "CHF", "CAD" };
 
@@ -136,7 +134,6 @@ namespace ESCenter.ViewModels
         // =========================================================
         // EDIT BUFFER (FORM STATE)
         // =========================================================
-
         private string _escTicketId = string.Empty;
         public string EscTicketId { get => _escTicketId; set => SetProperty(ref _escTicketId, value); }
 
@@ -147,9 +144,7 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _customerIdText, value))
-                {
                     RefreshCustomerProfile();
-                }
             }
         }
 
@@ -160,9 +155,7 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _customerName, value))
-                {
                     RefreshCustomerProfile();
-                }
             }
         }
 
@@ -173,9 +166,7 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _phoneNumber, value))
-                {
                     RefreshCustomerProfile();
-                }
             }
         }
 
@@ -233,24 +224,25 @@ namespace ESCenter.ViewModels
         private TimeSpan? _deliveryTime;
         public TimeSpan? DeliveryTime { get => _deliveryTime; set => SetProperty(ref _deliveryTime, value); }
 
+        // ── Parts Used ─────────────────────────────────────────────────────
         private string _partsUsed = string.Empty;
         public string PartsUsed
         {
             get => _partsUsed;
             set
             {
-                if (SetProperty(ref _partsUsed, value) && !_suppressPartsUsedSync)
-                {
-                    SyncPartsCollectionFromJson();
-                }
+                if (SetProperty(ref _partsUsed, value) && !_suppressPartsSync)
+                    SyncLinesFromJson();
             }
         }
 
-        public ObservableCollection<string> SelectedPartsUsed { get; } = new ObservableCollection<string>();
+        /// <summary>Rich lines shown as chips in the UI (source of truth for editing).</summary>
+        public ObservableCollection<UsedPartLine> UsedPartLines { get; } = new();
 
-        public ObservableCollection<string> PartsSuggestions { get; } = new ObservableCollection<string>();
+        /// <summary>Autocomplete suggestions shown in the dropdown.</summary>
+        public ObservableCollection<PartSuggestionItem> PartsSuggestions { get; } = new();
 
-        private readonly List<string> _partsCatalog = new List<string>();
+        private readonly List<PartSuggestionItem> _catalogItems = new();
 
         private string _partsUsedInput = string.Empty;
         public string PartsUsedInput
@@ -259,9 +251,7 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _partsUsedInput, value))
-                {
                     UpdatePartsSuggestions();
-                }
             }
         }
 
@@ -272,7 +262,14 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _isPartsSuggestionOpen, value);
         }
 
-        private bool _suppressPartsUsedSync;
+        private int _selectedSuggestionIndex = -1;
+        public int SelectedSuggestionIndex
+        {
+            get => _selectedSuggestionIndex;
+            set => SetProperty(ref _selectedSuggestionIndex, value);
+        }
+
+        private bool _suppressPartsSync;
 
         private string _rootCause = string.Empty;
         public string RootCause { get => _rootCause; set => SetProperty(ref _rootCause, value); }
@@ -298,21 +295,27 @@ namespace ESCenter.ViewModels
         // =========================================================
         // COMMANDS
         // =========================================================
+        public ICommand AddCommand             { get; }
+        public ICommand SaveCommand            { get; }
+        public ICommand DeleteCommand          { get; }
+        public ICommand ClearCommand           { get; }
+        public ICommand CloseCommand           { get; }
+        public ICommand ReopenCommand          { get; }
 
-        public ICommand AddCommand { get; }
-        public ICommand SaveCommand { get; }
-        public ICommand DeleteCommand { get; }
-        public ICommand ClearCommand { get; }
-        public ICommand CloseCommand { get; }
-        public ICommand ReopenCommand { get; }
-        public ICommand AddPartCommand { get; }
-        public ICommand AddPartFromInputCommand { get; }
-        public ICommand RemovePartCommand { get; }
+        // Parts commands
+        public ICommand AddPartCommand            { get; }
+        public ICommand AddPartFromInputCommand   { get; }
+        public ICommand RemovePartCommand         { get; }
+        public ICommand IncrementPartCommand      { get; }
+        public ICommand DecrementPartCommand      { get; }
+        public ICommand SuggestionMoveDownCommand { get; }
+        public ICommand SuggestionMoveUpCommand   { get; }
+        public ICommand CloseSuggestionsCommand   { get; }
+        public ICommand AcceptSuggestionCommand   { get; }
 
         // =========================================================
         // CONSTRUCTOR
         // =========================================================
-
         public RepairTicketsViewModel()
         {
             _service = new TicketsDataService();
@@ -324,25 +327,48 @@ namespace ESCenter.ViewModels
             _ticketsView = CollectionViewSource.GetDefaultView(Tickets);
             _ticketsView.Filter = TicketFilter;
 
-            EvaluateDuplicateMarkers();
-
-            AddCommand = new RelayCommand(_ => AddTicket(), _ => SelectedTicket == null);
-            SaveCommand = new RelayCommand(_ => SaveTicket(), _ => SelectedTicket != null);
+            // Ticket commands
+            AddCommand    = new RelayCommand(_ => AddTicket(),    _ => SelectedTicket == null);
+            SaveCommand   = new RelayCommand(_ => SaveTicket(),   _ => SelectedTicket != null);
             DeleteCommand = new RelayCommand(_ => DeleteTicket(), _ => SelectedTicket != null);
-            ClearCommand = new RelayCommand(_ => ClearForm());
-            CloseCommand = new RelayCommand(_ => CloseTicket(), _ => CanCloseTicket());
+            ClearCommand  = new RelayCommand(_ => ClearForm());
+            CloseCommand  = new RelayCommand(_ => CloseTicket(),  _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
-            AddPartCommand = new RelayCommand(param => AddPart(param as string));
-            AddPartFromInputCommand = new RelayCommand(_ => AddPart(PartsUsedInput));
-            RemovePartCommand = new RelayCommand(param => RemovePart(param as string));
+
+            // Parts commands
+            AddPartCommand = new RelayCommand(param =>
+            {
+                if (param is PartSuggestionItem suggestion) AddPartFromSuggestion(suggestion);
+                else if (param is string name)              AddPartByName(name);
+            });
+            AddPartFromInputCommand   = new RelayCommand(_ => AddPartFromInput());
+            RemovePartCommand         = new RelayCommand(param => RemovePart(param as UsedPartLine));
+            IncrementPartCommand      = new RelayCommand(param => IncrementPart(param as UsedPartLine));
+            DecrementPartCommand      = new RelayCommand(param => DecrementPart(param as UsedPartLine));
+            SuggestionMoveDownCommand = new RelayCommand(_ => MoveSuggestionDown());
+            SuggestionMoveUpCommand   = new RelayCommand(_ => MoveSuggestionUp());
+            CloseSuggestionsCommand   = new RelayCommand(_ => CloseSuggestions());
+            AcceptSuggestionCommand   = new RelayCommand(_ => AcceptSuggestion());
+
+            // Sync UsedPartLines → PartsUsed JSON whenever a line's Quantity changes
+            UsedPartLines.CollectionChanged += (_, __) => SyncJsonFromLines();
 
             ClearForm();
+            _ = LoadPartsCatalogAsync();
 
-            LoadPartsCatalog();
-
-            SelectedPartsUsed.CollectionChanged += (_, __) => SyncPartsUsedFromCollection();
+            SelectedPartsUsed.CollectionChanged += (_, __) => { /* kept for compat, no-op */ };
         }
 
+        // =========================================================
+        // COMPAT: keep SelectedPartsUsed as a forwarding alias
+        //         so any code not yet migrated doesn't crash
+        // =========================================================
+        private readonly ObservableCollection<string> _selectedPartsUsed = new();
+        public ObservableCollection<string> SelectedPartsUsed => _selectedPartsUsed;
+
+        // =========================================================
+        // PUBLIC INTEGRATION HELPERS
+        // =========================================================
         public void PrepareNewTicketFromIntegration()
         {
             ShowReadyPickupsOnly = false;
@@ -365,7 +391,7 @@ namespace ESCenter.ViewModels
             ShowReadyPickupsOnly = true;
         }
 
-        public ObservableCollection<RepairTicket> CustomerProfileHistory { get; } = new ObservableCollection<RepairTicket>();
+        public ObservableCollection<RepairTicket> CustomerProfileHistory { get; } = new();
 
         private string _customerProfileHeader = "Customer Profile";
         public string CustomerProfileHeader
@@ -389,50 +415,8 @@ namespace ESCenter.ViewModels
         }
 
         // =========================================================
-        // FILTER LOGIC
+        // TICKET LOADING
         // =========================================================
-
-        private bool TicketFilter(object obj)
-        {
-            if (obj is not RepairTicket t)
-                return false;
-
-            if (SelectedStatusFilter == "Open" && t.DeliveryDate.HasValue)
-                return false;
-
-            if (SelectedStatusFilter == "Closed" && !t.DeliveryDate.HasValue)
-                return false;
-
-            if (SelectedPriorityFilter != "All" &&
-                !string.Equals(t.PriorityLevel, SelectedPriorityFilter, StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            if (ShowReadyPickupsOnly && !t.IsReadyForPickup)
-                return false;
-
-            if (!string.IsNullOrWhiteSpace(SearchQuery))
-            {
-                var q = SearchQuery.Trim();
-
-                var match =
-                    (t.CustomerName?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                    (t.PhoneNumber?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                    (t.DeviceModel?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                    (t.DeviceCategory?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                    (t.SerialIMEI?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                    (t.EscTicketId?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                if (!match)
-                    return false;
-            }
-
-            return true;
-        }
-
-        // =========================================================
-        // COMMAND ACTIONS
-        // =========================================================
-
         private async Task LoadTicketsAsync()
         {
             IsLoading = true;
@@ -440,9 +424,11 @@ namespace ESCenter.ViewModels
             {
                 var tickets = await _service.GetAllAsync();
                 Tickets.Clear();
-                foreach (var ticket in tickets)
-                    Tickets.Add(ticket);
+                foreach (var t in tickets)
+                    Tickets.Add(t);
                 EvaluateDuplicateMarkers();
+                ClearForm();
+                RefreshCustomerProfile();
                 _ticketsView.Refresh();
             }
             catch (Exception ex)
@@ -455,15 +441,46 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private void ReloadTicketsForSelectedDatabase() => _ = LoadTicketsAsync();
+        // =========================================================
+        // FILTER
+        // =========================================================
+        private bool TicketFilter(object obj)
+        {
+            if (obj is not RepairTicket t) return false;
 
+            if (SelectedStatusFilter == "Open"   && t.DeliveryDate.HasValue)    return false;
+            if (SelectedStatusFilter == "Closed" && !t.DeliveryDate.HasValue)   return false;
 
+            if (SelectedPriorityFilter != "All" &&
+                !string.Equals(t.PriorityLevel, SelectedPriorityFilter, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            if (ShowReadyPickupsOnly && !t.IsReadyForPickup) return false;
+
+            if (!string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                var q = SearchQuery.Trim();
+                var match =
+                    (t.CustomerName?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                    (t.PhoneNumber?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                    (t.DeviceModel?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                    (t.DeviceCategory?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                    (t.SerialIMEI?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                    (t.EscTicketId?.IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0);
+                if (!match) return false;
+            }
+
+            return true;
+        }
+
+        // =========================================================
+        // COMMAND ACTIONS — TICKETS
+        // =========================================================
         private void AddTicket()
         {
             try
             {
-                if (!ValidateForm())
-                    return;
+                if (!ValidateForm()) return;
 
                 var ticket = BuildTicketFromForm();
                 var duplicateNotice = BuildDuplicateNotice(ticket);
@@ -474,32 +491,26 @@ namespace ESCenter.ViewModels
                 EvaluateDuplicateMarkers();
 
                 if (!string.IsNullOrWhiteSpace(duplicateNotice))
-                {
-                    System.Windows.MessageBox.Show(duplicateNotice, "Repeated Customer / Device", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                    MessageBox.Show(duplicateNotice, "Repeated Customer / Device",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+
                 RefreshCustomerProfile();
                 _ticketsView.Refresh();
-
                 ClearForm();
+
                 AppLogger.Success("Ticket added successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Failed to add ticket: {ex.Message}");
-            }
+            catch (Exception ex) { AppLogger.Error($"Failed to add ticket: {ex.Message}"); }
         }
 
         private void SaveTicket()
         {
-            if (SelectedTicket == null)
-                return;
-
+            if (SelectedTicket == null) return;
             try
             {
-                if (!ValidateForm())
-                    return;
+                if (!ValidateForm()) return;
 
                 ApplyFormToTicket(SelectedTicket);
                 _service.Update(SelectedTicket);
@@ -510,199 +521,142 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket updated successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Failed to save ticket: {ex.Message}");
-            }
+            catch (Exception ex) { AppLogger.Error($"Failed to save ticket: {ex.Message}"); }
         }
 
         private void DeleteTicket()
         {
-            if (SelectedTicket == null)
-                return;
+            if (SelectedTicket == null) return;
 
-            var result = System.Windows.MessageBox.Show(
+            var result = MessageBox.Show(
                 $"Delete ticket '{SelectedTicket.CustomerName}' (ESC-ID: {SelectedTicket.EscTicketId})?",
-                "Confirm Delete",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-            if (result != MessageBoxResult.Yes)
-                return;
+                "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result != MessageBoxResult.Yes) return;
 
             try
             {
                 _service.Delete(SelectedTicket.TicketId);
                 Tickets.Remove(SelectedTicket);
-
                 EvaluateDuplicateMarkers();
                 ClearForm();
                 RefreshCustomerProfile();
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket deleted successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Failed to delete ticket: {ex.Message}");
-            }
+            catch (Exception ex) { AppLogger.Error($"Failed to delete ticket: {ex.Message}"); }
         }
 
         // =========================================================
         // CLOSE / REOPEN
         // =========================================================
-
-        private bool CanCloseTicket() =>
-            SelectedTicket != null && !SelectedTicket.DeliveryDate.HasValue;
+        private bool CanCloseTicket()  => SelectedTicket != null && !SelectedTicket.DeliveryDate.HasValue;
+        private bool CanReopenTicket() => SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue;
 
         private void CloseTicket()
         {
-            if (!CanCloseTicket())
-                return;
+            if (!CanCloseTicket()) return;
 
-            var result = System.Windows.MessageBox.Show(
+            var result = MessageBox.Show(
                 $"Close ticket '{SelectedTicket.CustomerName}' (ESC-ID: {SelectedTicket.EscTicketId})?",
-                "Confirm Close",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result != MessageBoxResult.Yes)
-                return;
+                "Confirm Close", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result != MessageBoxResult.Yes) return;
 
             try
             {
-                var now = DateTime.Now;
-
-                SelectedTicket.DeliveryDate = now;
+                SelectedTicket.DeliveryDate = DateTime.Now;
                 SelectedTicket.RepairStatus = "Completed";
-
                 _service.Update(SelectedTicket);
                 RefreshTicketInCollection(SelectedTicket);
-
                 LoadFromTicket(SelectedTicket);
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket closed successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Failed to close ticket: {ex.Message}");
-            }
+            catch (Exception ex) { AppLogger.Error($"Failed to close ticket: {ex.Message}"); }
         }
-
-        private bool CanReopenTicket() =>
-            SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue;
 
         private void ReopenTicket()
         {
-            if (!CanReopenTicket())
-                return;
+            if (!CanReopenTicket()) return;
 
-            var result = System.Windows.MessageBox.Show(
+            var result = MessageBox.Show(
                 $"Reopen ticket '{SelectedTicket.CustomerName}' (ESC-ID: {SelectedTicket.EscTicketId})?",
-                "Confirm Reopen",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result != MessageBoxResult.Yes)
-                return;
+                "Confirm Reopen", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result != MessageBoxResult.Yes) return;
 
             try
             {
                 SelectedTicket.DeliveryDate = null;
                 SelectedTicket.RepairStatus = "In Repair";
-
                 _service.Update(SelectedTicket);
                 RefreshTicketInCollection(SelectedTicket);
-
                 LoadFromTicket(SelectedTicket);
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket reopened successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Failed to reopen ticket: {ex.Message}");
-            }
+            catch (Exception ex) { AppLogger.Error($"Failed to reopen ticket: {ex.Message}"); }
         }
 
         // =========================================================
-        // FORM ENGINE
+        // PARTS — catalog loading
         // =========================================================
-
-        private void ClearForm()
-        {
-            SelectedTicket = null;
-
-            EscTicketId = _service.GetNextEscTicketId();
-            CustomerIdText = string.Empty;
-            CustomerName = string.Empty;
-            PhoneNumber = string.Empty;
-            ContactMethod = "Call";
-            DeviceCategory = string.Empty;
-            DeviceBrand = string.Empty;
-            DeviceModel = string.Empty;
-            SerialIMEI = string.Empty;
-            DamageHistory = string.Empty;
-            BoardModifications = string.Empty;
-            ProblemDescription = string.Empty;
-            Notes = string.Empty;
-            RepairStatus = "Received";
-            PriorityLevel = "Normal";
-            TicketType = "Normal";
-            EstimatedCost = null;
-            FinalCost = null;
-            EstimatedCostCurrency = "S.P";
-            FinalCostCurrency = "S.P";
-            RootCause = string.Empty;
-            PartsUsed = string.Empty;
-            PartsUsedInput = string.Empty;
-            IsPartsSuggestionOpen = false;
-            HasWarranty = false;
-            WarrantyPeriod = string.Empty;
-            IsWarrantyRepair = false;
-            IsReadyForPickup = false;
-
-            ReceiveDate = DateTime.Today;
-            ReceiveTime = DateTime.Now.TimeOfDay;
-            DeliveryDate = null;
-            DeliveryTime = null;
-
-            DeviceChecklist = new DeviceChecklist();
-            Accessories = new Accessories();
-            RefreshCustomerProfile();
-        }
-
         private void LoadPartsCatalog() => _ = LoadPartsCatalogAsync();
 
         private async Task LoadPartsCatalogAsync()
         {
-            _partsCatalog.Clear();
-
+            _catalogItems.Clear();
             try
             {
-                var partsRepo = new PartsRepository();
-                var skus = (await partsRepo.GetSkusAsync())
-                    .Distinct(StringComparer.OrdinalIgnoreCase);
-
+                var partsRepo     = new PartsRepository();
                 var inventoryRepo = new InventoryRepository();
-                var inventoryNames = (await inventoryRepo.GetNamesAsync())
-                    .Distinct(StringComparer.OrdinalIgnoreCase);
 
-                var combined = skus
-                    .Concat(inventoryNames)
-                    .OrderBy(name => name);
+                var parts     = await partsRepo.GetAllAsync();
+                var inventory = await inventoryRepo.GetAllAsync();
 
-                _partsCatalog.AddRange(combined);
+                var partItems = parts
+                    .Where(p => !string.IsNullOrWhiteSpace(p.PartCode) || !string.IsNullOrWhiteSpace(p.SKU))
+                    .Select(p => new PartSuggestionItem
+                    {
+                        Name     = (!string.IsNullOrWhiteSpace(p.PartCode) ? p.PartCode : p.SKU)!.Trim(),
+                        Sku      = p.SKU?.Trim() ?? string.Empty,
+                        StockQty = p.QuantityOnHand,
+                        Price    = p.Price,
+                        Source   = "Parts"
+                    });
+
+                var inventoryItems = inventory
+                    .Select(i =>
+                    {
+                        var name = !string.IsNullOrWhiteSpace(i.Description) ? i.Description.Trim() :
+                            string.Join(" ", new[] { i.ItemType, i.Brand, i.Model }
+                                .Where(s => !string.IsNullOrWhiteSpace(s))).Trim();
+                        return new PartSuggestionItem
+                        {
+                            Name     = name,
+                            Sku      = string.Empty,
+                            StockQty = i.QuantityOnHand,
+                            Price    = i.Price,
+                            Source   = "Inventory"
+                        };
+                    })
+                    .Where(i => !string.IsNullOrWhiteSpace(i.Name));
+
+                _catalogItems.AddRange(
+                    partItems.Concat(inventoryItems)
+                        .GroupBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+                        .Select(g => g.OrderByDescending(x => x.Source == "Parts").First())
+                        .OrderBy(x => x.Name));
             }
             catch (Exception ex)
             {
@@ -712,178 +666,436 @@ namespace ESCenter.ViewModels
             UpdatePartsSuggestions();
         }
 
-        private void AddPart(string part)
-        {
-            var normalized = NormalizePart(part);
-            if (string.IsNullOrWhiteSpace(normalized))
-            {
-                return;
-            }
-
-            if (SelectedPartsUsed.Any(p => string.Equals(p, normalized, StringComparison.OrdinalIgnoreCase)))
-            {
-                PartsUsedInput = string.Empty;
-                IsPartsSuggestionOpen = false;
-                return;
-            }
-
-            if (_partsCatalog.All(part => !string.Equals(part, normalized, StringComparison.OrdinalIgnoreCase)))
-            {
-                _partsCatalog.Add(normalized);
-            }
-
-            SelectedPartsUsed.Add(normalized);
-            DeductPartFromStock(normalized);
-            PartsUsedInput = string.Empty;
-            IsPartsSuggestionOpen = false;
-        }
-
-        private void DeductPartFromStock(string partName)
-        {
-            try
-            {
-                var partsRepo = new PartsRepository();
-                partsRepo.DecrementQuantityBySku(partName, 1);
-
-                var inventoryRepo = new InventoryRepository();
-                inventoryRepo.DecrementQuantityByName(partName, 1);
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Failed to deduct stock for part '{partName}': {ex.Message}");
-            }
-        }
-
-        private void RemovePart(string part)
-        {
-            if (string.IsNullOrWhiteSpace(part))
-            {
-                return;
-            }
-
-            var existing = SelectedPartsUsed.FirstOrDefault(p => string.Equals(p, part, StringComparison.OrdinalIgnoreCase));
-            if (existing != null)
-            {
-                SelectedPartsUsed.Remove(existing);
-            }
-        }
-
+        // =========================================================
+        // PARTS — suggestions
+        // =========================================================
         private void UpdatePartsSuggestions()
         {
             PartsSuggestions.Clear();
-
             var query = PartsUsedInput?.Trim();
+
             if (string.IsNullOrWhiteSpace(query))
             {
                 IsPartsSuggestionOpen = false;
+                SelectedSuggestionIndex = -1;
                 return;
             }
 
-            var matches = _partsCatalog
-                .Where(part => part.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
-                .Where(part => SelectedPartsUsed.All(selected => !string.Equals(selected, part, StringComparison.OrdinalIgnoreCase)))
-                .Take(8);
+            var matches = _catalogItems
+                .Where(c => c.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+                // Ranking: prefix match first, then in-stock before out-of-stock, then alpha
+                .OrderByDescending(c => c.Name.StartsWith(query, StringComparison.OrdinalIgnoreCase))
+                .ThenBy(c => c.IsOutOfStock)
+                .ThenBy(c => c.IsLowStock ? 1 : 0)
+                .ThenBy(c => c.Name)
+                .Take(10);
 
-            foreach (var match in matches)
-            {
-                PartsSuggestions.Add(match);
-            }
+            foreach (var m in matches)
+                PartsSuggestions.Add(m);
 
             IsPartsSuggestionOpen = PartsSuggestions.Count > 0;
+            SelectedSuggestionIndex = -1; // user navigates with arrows; -1 = use typed text on Enter
         }
 
-        private void SyncPartsUsedFromCollection()
+        private void MoveSuggestionDown()
         {
-            if (_suppressPartsUsedSync)
+            if (!IsPartsSuggestionOpen || PartsSuggestions.Count == 0) return;
+            SelectedSuggestionIndex = Math.Min(SelectedSuggestionIndex + 1, PartsSuggestions.Count - 1);
+        }
+
+        private void MoveSuggestionUp()
+        {
+            if (!IsPartsSuggestionOpen || PartsSuggestions.Count == 0) return;
+            SelectedSuggestionIndex = Math.Max(SelectedSuggestionIndex - 1, -1);
+        }
+
+        private void CloseSuggestions()
+        {
+            IsPartsSuggestionOpen = false;
+            SelectedSuggestionIndex = -1;
+        }
+
+        private void AcceptSuggestion()
+        {
+            if (SelectedSuggestionIndex >= 0 && SelectedSuggestionIndex < PartsSuggestions.Count)
+                AddPartFromSuggestion(PartsSuggestions[SelectedSuggestionIndex]);
+            else if (!string.IsNullOrWhiteSpace(PartsUsedInput))
+                AddPartByName(PartsUsedInput);
+        }
+
+        private void AddPartFromInput()
+        {
+            if (SelectedSuggestionIndex >= 0 && SelectedSuggestionIndex < PartsSuggestions.Count)
+                AddPartFromSuggestion(PartsSuggestions[SelectedSuggestionIndex]);
+            else
+                AddPartByName(PartsUsedInput);
+        }
+
+        // =========================================================
+        // PARTS — add / remove / increment / decrement
+        // =========================================================
+
+        /// <summary>Add from suggestion (catalog item with stock info).</summary>
+        private void AddPartFromSuggestion(PartSuggestionItem suggestion)
+        {
+            if (suggestion == null) return;
+
+            var existing = UsedPartLines.FirstOrDefault(l =>
+                string.Equals(l.Name, suggestion.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (existing != null)
             {
+                // Increment existing chip
+                existing.Quantity++;
+                existing.DeductedQtyInSession++;
+                DeductStock(suggestion.Sku, suggestion.Name, 1);
+            }
+            else
+            {
+                var line = new UsedPartLine
+                {
+                    Name                = suggestion.Name,
+                    Sku                 = suggestion.Sku,
+                    UnitPrice           = suggestion.Price,
+                    IsCustom            = false,
+                    IsOutOfStock        = suggestion.IsOutOfStock,
+                    IsLowStock          = suggestion.IsLowStock,
+                    Quantity            = 1,
+                    DeductedQtyInSession = 1
+                };
+                line.PropertyChanged += (_, __) => SyncJsonFromLines();
+                UsedPartLines.Add(line);
+                DeductStock(suggestion.Sku, suggestion.Name, 1);
+            }
+
+            ClearPartsInput();
+        }
+
+        /// <summary>Add by name — looks up catalog first; falls back to custom.</summary>
+        private void AddPartByName(string name)
+        {
+            var normalized = name?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(normalized)) return;
+
+            // Try catalog match first
+            var catalogItem = _catalogItems.FirstOrDefault(c =>
+                string.Equals(c.Name, normalized, StringComparison.OrdinalIgnoreCase));
+
+            if (catalogItem != null)
+            {
+                AddPartFromSuggestion(catalogItem);
                 return;
             }
 
-            _suppressPartsUsedSync = true;
-            PartsUsed = JsonSerializer.Serialize(SelectedPartsUsed);
-            _suppressPartsUsedSync = false;
+            // Custom part not in catalog
+            var existing = UsedPartLines.FirstOrDefault(l =>
+                string.Equals(l.Name, normalized, StringComparison.OrdinalIgnoreCase));
+
+            if (existing != null)
+            {
+                // Just increment — custom parts don't have tracked stock
+                existing.Quantity++;
+            }
+            else
+            {
+                var line = new UsedPartLine
+                {
+                    Name     = normalized,
+                    IsCustom = true,
+                    Quantity = 1
+                };
+                line.PropertyChanged += (_, __) => SyncJsonFromLines();
+                UsedPartLines.Add(line);
+                // Still attempt stock deduction by name (covers edge case where name = SKU)
+                DeductStock(string.Empty, normalized, 1);
+            }
+
+            ClearPartsInput();
         }
 
-        private void SyncPartsCollectionFromJson()
+        private void RemovePart(UsedPartLine line)
         {
-            if (_suppressPartsUsedSync)
+            if (line == null) return;
+            // Restock whatever was deducted this session
+            if (line.DeductedQtyInSession > 0)
+                RestoreStock(line.Sku, line.Name, line.DeductedQtyInSession);
+            UsedPartLines.Remove(line);
+        }
+
+        private void IncrementPart(UsedPartLine line)
+        {
+            if (line == null) return;
+            line.Quantity++;
+            if (!line.IsCustom)
             {
+                line.DeductedQtyInSession++;
+                DeductStock(line.Sku, line.Name, 1);
+            }
+        }
+
+        private void DecrementPart(UsedPartLine line)
+        {
+            if (line == null) return;
+            if (line.Quantity <= 1)
+            {
+                RemovePart(line);
                 return;
             }
-
-            _suppressPartsUsedSync = true;
-            SelectedPartsUsed.Clear();
-            foreach (var part in ParsePartsUsedJson(PartsUsed))
+            line.Quantity--;
+            if (!line.IsCustom && line.DeductedQtyInSession > 0)
             {
-                SelectedPartsUsed.Add(part);
+                line.DeductedQtyInSession--;
+                RestoreStock(line.Sku, line.Name, 1);
             }
-            _suppressPartsUsedSync = false;
-            UpdatePartsSuggestions();
         }
 
-        private static IEnumerable<string> ParsePartsUsedJson(string json)
+        private void ClearPartsInput()
         {
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                return Array.Empty<string>();
-            }
+            PartsUsedInput = string.Empty;
+            IsPartsSuggestionOpen = false;
+            SelectedSuggestionIndex = -1;
+        }
 
+        // =========================================================
+        // PARTS — stock management
+        // =========================================================
+        private void DeductStock(string sku, string name, int qty)
+        {
+            if (qty <= 0) return;
             try
             {
-                var parts = JsonSerializer.Deserialize<List<string>>(json);
-                if (parts != null)
-                {
-                    return parts
-                        .Where(part => !string.IsNullOrWhiteSpace(part))
-                        .Select(part => part.Trim());
-                }
-            }
-            catch (JsonException)
-            {
-            }
+                var partsRepo = new PartsRepository();
+                if (!string.IsNullOrWhiteSpace(sku))
+                    partsRepo.DecrementQuantityBySku(sku, qty);
+                else if (!string.IsNullOrWhiteSpace(name))
+                    partsRepo.DecrementQuantityBySku(name, qty); // try name-as-SKU
 
-            return json
-                .Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(part => part.Trim());
+                var inventoryRepo = new InventoryRepository();
+                inventoryRepo.DecrementQuantityByName(name, qty);
+            }
+            catch (Exception ex) { AppLogger.Error($"Failed to deduct stock for '{name}': {ex.Message}"); }
         }
 
-        private static string NormalizePart(string part)
+        private void RestoreStock(string sku, string name, int qty)
         {
-            return string.IsNullOrWhiteSpace(part) ? string.Empty : part.Trim();
+            if (qty <= 0) return;
+            try
+            {
+                var partsRepo = new PartsRepository();
+                if (!string.IsNullOrWhiteSpace(sku))
+                    partsRepo.RestoreQuantityBySku(sku, qty);
+                else if (!string.IsNullOrWhiteSpace(name))
+                    partsRepo.RestoreQuantityBySku(name, qty);
+
+                var inventoryRepo = new InventoryRepository();
+                inventoryRepo.RestoreQuantityByName(name, qty);
+            }
+            catch (Exception ex) { AppLogger.Error($"Failed to restore stock for '{name}': {ex.Message}"); }
+        }
+
+        // =========================================================
+        // PARTS — JSON serialization (bidirectional sync)
+        // =========================================================
+
+        /// <summary>Compact DTO for serialization — kept internal to this class.</summary>
+        private class PartDto
+        {
+            [JsonPropertyName("n")] public string Name     { get; set; } = string.Empty;
+            [JsonPropertyName("s")] public string Sku      { get; set; } = string.Empty;
+            [JsonPropertyName("q")] public int    Qty      { get; set; } = 1;
+            [JsonPropertyName("p")] public double Price    { get; set; }
+            [JsonPropertyName("c")] public bool   Custom   { get; set; }
+        }
+
+        private void SyncJsonFromLines()
+        {
+            if (_suppressPartsSync) return;
+            _suppressPartsSync = true;
+            try
+            {
+                var dtos = UsedPartLines.Select(l => new PartDto
+                {
+                    Name  = l.Name,
+                    Sku   = l.Sku,
+                    Qty   = l.Quantity,
+                    Price = l.UnitPrice,
+                    Custom = l.IsCustom
+                }).ToList();
+                PartsUsed = dtos.Count > 0
+                    ? JsonSerializer.Serialize(dtos)
+                    : string.Empty;
+            }
+            finally { _suppressPartsSync = false; }
+        }
+
+        private void SyncLinesFromJson()
+        {
+            if (_suppressPartsSync) return;
+            _suppressPartsSync = true;
+            try
+            {
+                UsedPartLines.Clear();
+                var lines = ParsePartsJson(PartsUsed);
+                foreach (var line in lines)
+                {
+                    // Resolve live stock info from catalog
+                    var catalogItem = _catalogItems.FirstOrDefault(c =>
+                        string.Equals(c.Name, line.Name, StringComparison.OrdinalIgnoreCase) ||
+                        (!string.IsNullOrWhiteSpace(line.Sku) &&
+                         string.Equals(c.Sku, line.Sku, StringComparison.OrdinalIgnoreCase)));
+
+                    if (catalogItem != null)
+                    {
+                        line.IsOutOfStock = catalogItem.IsOutOfStock;
+                        line.IsLowStock   = catalogItem.IsLowStock;
+                        line.IsCustom     = false;
+                    }
+
+                    line.PropertyChanged += (_, __) => SyncJsonFromLines();
+                    UsedPartLines.Add(line);
+                }
+            }
+            finally { _suppressPartsSync = false; }
+        }
+
+        private List<UsedPartLine> ParsePartsJson(string json)
+        {
+            var result = new List<UsedPartLine>();
+            if (string.IsNullOrWhiteSpace(json)) return result;
+
+            // Try new DTO format: [{n,s,q,p,c}]
+            try
+            {
+                var dtos = JsonSerializer.Deserialize<List<PartDto>>(json);
+                if (dtos != null && dtos.Count > 0 && dtos[0].Name != null)
+                {
+                    result.AddRange(dtos.Select(d => new UsedPartLine
+                    {
+                        Name      = d.Name,
+                        Sku       = d.Sku,
+                        Quantity  = Math.Max(1, d.Qty),
+                        UnitPrice = d.Price,
+                        IsCustom  = d.Custom
+                        // DeductedQtyInSession stays 0 — loaded from DB, not a fresh deduction
+                    }));
+                    return result;
+                }
+            }
+            catch { /* fall through */ }
+
+            // Backward compat: old format ["part1","part1","part2"] — group duplicates
+            try
+            {
+                var strings = JsonSerializer.Deserialize<List<string>>(json);
+                if (strings != null)
+                {
+                    result.AddRange(
+                        strings
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                            .GroupBy(s => s.Trim(), StringComparer.OrdinalIgnoreCase)
+                            .Select(g => new UsedPartLine
+                            {
+                                Name     = g.Key,
+                                Quantity = g.Count(),
+                                IsCustom = !_catalogItems.Any(c =>
+                                    string.Equals(c.Name, g.Key, StringComparison.OrdinalIgnoreCase))
+                            }));
+                    return result;
+                }
+            }
+            catch { /* fall through */ }
+
+            // Final fallback: comma/semicolon separated plain text
+            result.AddRange(
+                json.Split(new[] { ',', ';', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(p => p.Trim())
+                    .Where(p => !string.IsNullOrWhiteSpace(p))
+                    .Select(p => new UsedPartLine { Name = p, IsCustom = true }));
+
+            return result;
+        }
+
+        // =========================================================
+        // FORM ENGINE
+        // =========================================================
+        private void ClearForm()
+        {
+            SelectedTicket = null;
+
+            EscTicketId        = _service.GetNextEscTicketId();
+            CustomerIdText     = string.Empty;
+            CustomerName       = string.Empty;
+            PhoneNumber        = string.Empty;
+            ContactMethod      = "Call";
+            DeviceCategory     = string.Empty;
+            DeviceBrand        = string.Empty;
+            DeviceModel        = string.Empty;
+            SerialIMEI         = string.Empty;
+            DamageHistory      = string.Empty;
+            BoardModifications = string.Empty;
+            ProblemDescription = string.Empty;
+            Notes              = string.Empty;
+            RepairStatus       = "Received";
+            PriorityLevel      = "Normal";
+            TicketType         = "Normal";
+            EstimatedCost      = null;
+            FinalCost          = null;
+            EstimatedCostCurrency = "S.P";
+            FinalCostCurrency     = "S.P";
+            RootCause          = string.Empty;
+            HasWarranty        = false;
+            WarrantyPeriod     = string.Empty;
+            IsWarrantyRepair   = false;
+            IsReadyForPickup   = false;
+
+            ReceiveDate  = DateTime.Today;
+            ReceiveTime  = DateTime.Now.TimeOfDay;
+            DeliveryDate = null;
+            DeliveryTime = null;
+
+            DeviceChecklist = new DeviceChecklist();
+            Accessories     = new Accessories();
+
+            // Clear parts (suppress sync to avoid empty JSON write)
+            _suppressPartsSync = true;
+            UsedPartLines.Clear();
+            _suppressPartsSync = false;
+            _partsUsed = string.Empty;
+
+            PartsUsedInput          = string.Empty;
+            IsPartsSuggestionOpen   = false;
+            SelectedSuggestionIndex = -1;
+
+            RefreshCustomerProfile();
         }
 
         private void LoadFromTicket(RepairTicket ticket)
         {
-            if (ticket == null)
-            {
-                ClearForm();
-                return;
-            }
+            if (ticket == null) { ClearForm(); return; }
 
-            EscTicketId = ticket.EscTicketId;
-            CustomerIdText = ticket.CustomerId?.ToString() ?? string.Empty;
-            CustomerName = ticket.CustomerName ?? string.Empty;
-            PhoneNumber = ticket.PhoneNumber ?? string.Empty;
-            ContactMethod = ticket.ContactMethod ?? "Call";
-            DeviceCategory = ticket.DeviceCategory ?? string.Empty;
-            DeviceBrand = ticket.DeviceBrand ?? string.Empty;
-            DeviceModel = ticket.DeviceModel ?? string.Empty;
-            SerialIMEI = ticket.SerialIMEI ?? string.Empty;
-            DamageHistory = ticket.DamageHistory ?? string.Empty;
+            EscTicketId        = ticket.EscTicketId;
+            CustomerIdText     = ticket.CustomerId?.ToString() ?? string.Empty;
+            CustomerName       = ticket.CustomerName ?? string.Empty;
+            PhoneNumber        = ticket.PhoneNumber  ?? string.Empty;
+            ContactMethod      = ticket.ContactMethod ?? "Call";
+            DeviceCategory     = ticket.DeviceCategory ?? string.Empty;
+            DeviceBrand        = ticket.DeviceBrand    ?? string.Empty;
+            DeviceModel        = ticket.DeviceModel    ?? string.Empty;
+            SerialIMEI         = ticket.SerialIMEI     ?? string.Empty;
+            DamageHistory      = ticket.DamageHistory  ?? string.Empty;
             BoardModifications = ticket.BoardModifications ?? string.Empty;
             ProblemDescription = ticket.ProblemDescription ?? string.Empty;
-            Notes = ticket.Notes ?? string.Empty;
-            RepairStatus = ticket.RepairStatus ?? "Received";
-            PriorityLevel = ticket.PriorityLevel ?? "Normal";
-            TicketType = ticket.TicketType ?? "Normal";
-            EstimatedCost = ticket.EstimatedCost;
-            FinalCost = ticket.FinalCost;
+            Notes              = ticket.Notes ?? string.Empty;
+            RepairStatus       = ticket.RepairStatus  ?? "Received";
+            PriorityLevel      = ticket.PriorityLevel ?? "Normal";
+            TicketType         = ticket.TicketType    ?? "Normal";
+            EstimatedCost         = ticket.EstimatedCost;
+            FinalCost             = ticket.FinalCost;
             EstimatedCostCurrency = ticket.EstimatedCostCurrency ?? "S.P";
-            FinalCostCurrency = ticket.FinalCostCurrency ?? "S.P";
-            RootCause = ticket.RootCause ?? string.Empty;
-            PartsUsed = ticket.PartsUsed ?? string.Empty;
-            HasWarranty = ticket.HasWarranty;
-            WarrantyPeriod = ticket.WarrantyPeriod ?? string.Empty;
+            FinalCostCurrency     = ticket.FinalCostCurrency     ?? "S.P";
+            RootCause        = ticket.RootCause     ?? string.Empty;
+            HasWarranty      = ticket.HasWarranty;
+            WarrantyPeriod   = ticket.WarrantyPeriod ?? string.Empty;
             IsWarrantyRepair = ticket.IsWarrantyRepair;
             IsReadyForPickup = ticket.IsReadyForPickup;
 
@@ -902,131 +1114,115 @@ namespace ESCenter.ViewModels
             }
 
             DeviceChecklist = ticket.DeviceChecklist ?? new DeviceChecklist();
-            Accessories = ticket.Accessories ?? new Accessories();
+            Accessories     = ticket.Accessories     ?? new Accessories();
+
+            // Load parts — setter triggers SyncLinesFromJson
+            PartsUsed = ticket.PartsUsed ?? string.Empty;
+
+            PartsUsedInput          = string.Empty;
+            IsPartsSuggestionOpen   = false;
+            SelectedSuggestionIndex = -1;
+
             RefreshCustomerProfile();
         }
 
         private RepairTicket BuildTicketFromForm()
         {
             var receiveDateTime = ReceiveDate.Date.Add(ReceiveTime);
-
             return new RepairTicket
             {
-                EscTicketId = EscTicketId,
-                CustomerId = long.TryParse(CustomerIdText, out var id) ? id : null,
-                CustomerName = CustomerName,
-                PhoneNumber = PhoneNumber,
-                ContactMethod = ContactMethod,
-                DeviceCategory = DeviceCategory,
-                DeviceBrand = DeviceBrand,
-                DeviceModel = DeviceModel,
-                SerialIMEI = SerialIMEI,
-                DamageHistory = DamageHistory,
+                EscTicketId        = EscTicketId,
+                CustomerId         = long.TryParse(CustomerIdText, out var id) ? id : null,
+                CustomerName       = CustomerName,
+                PhoneNumber        = PhoneNumber,
+                ContactMethod      = ContactMethod,
+                DeviceCategory     = DeviceCategory,
+                DeviceBrand        = DeviceBrand,
+                DeviceModel        = DeviceModel,
+                SerialIMEI         = SerialIMEI,
+                DamageHistory      = DamageHistory,
                 BoardModifications = BoardModifications,
                 ProblemDescription = ProblemDescription,
-                Notes = Notes,
-                RepairStatus = RepairStatus,
-                PriorityLevel = PriorityLevel,
-                TicketType = TicketType,
-                EstimatedCost = EstimatedCost,
+                Notes              = Notes,
+                RepairStatus       = RepairStatus,
+                PriorityLevel      = PriorityLevel,
+                TicketType         = TicketType,
+                EstimatedCost         = EstimatedCost,
                 EstimatedCostCurrency = EstimatedCostCurrency,
-                FinalCost = FinalCost,
-                FinalCostCurrency = FinalCostCurrency,
-                RootCause = RootCause,
-                PartsUsed = PartsUsed,
-                HasWarranty = HasWarranty,
-                WarrantyPeriod = WarrantyPeriod,
+                FinalCost             = FinalCost,
+                FinalCostCurrency     = FinalCostCurrency,
+                RootCause        = RootCause,
+                PartsUsed        = PartsUsed,
+                HasWarranty      = HasWarranty,
+                WarrantyPeriod   = WarrantyPeriod,
                 IsWarrantyRepair = IsWarrantyRepair,
                 IsReadyForPickup = IsReadyForPickup,
-                ReceiveDate = receiveDateTime,
+                ReceiveDate  = receiveDateTime,
                 DeliveryDate = DeliveryDate.HasValue && DeliveryTime.HasValue
-                    ? DeliveryDate.Value.Date.Add(DeliveryTime.Value)
-                    : null,
+                    ? DeliveryDate.Value.Date.Add(DeliveryTime.Value) : null,
                 DeviceChecklist = DeviceChecklist,
-                Accessories = Accessories
+                Accessories     = Accessories
             };
         }
 
         private void ApplyFormToTicket(RepairTicket ticket)
         {
             var receiveDateTime = ReceiveDate.Date.Add(ReceiveTime);
-
-            ticket.EscTicketId = EscTicketId;
-            ticket.CustomerId = long.TryParse(CustomerIdText, out var id) ? id : null;
-            ticket.CustomerName = CustomerName;
-            ticket.PhoneNumber = PhoneNumber;
-            ticket.ContactMethod = ContactMethod;
-            ticket.DeviceCategory = DeviceCategory;
-            ticket.DeviceBrand = DeviceBrand;
-            ticket.DeviceModel = DeviceModel;
-            ticket.SerialIMEI = SerialIMEI;
-            ticket.DamageHistory = DamageHistory;
+            ticket.EscTicketId        = EscTicketId;
+            ticket.CustomerId         = long.TryParse(CustomerIdText, out var id) ? id : null;
+            ticket.CustomerName       = CustomerName;
+            ticket.PhoneNumber        = PhoneNumber;
+            ticket.ContactMethod      = ContactMethod;
+            ticket.DeviceCategory     = DeviceCategory;
+            ticket.DeviceBrand        = DeviceBrand;
+            ticket.DeviceModel        = DeviceModel;
+            ticket.SerialIMEI         = SerialIMEI;
+            ticket.DamageHistory      = DamageHistory;
             ticket.BoardModifications = BoardModifications;
             ticket.ProblemDescription = ProblemDescription;
-            ticket.Notes = Notes;
-            ticket.RepairStatus = RepairStatus;
-            ticket.PriorityLevel = PriorityLevel;
-            ticket.TicketType = TicketType;
-            ticket.EstimatedCost = EstimatedCost;
+            ticket.Notes              = Notes;
+            ticket.RepairStatus       = RepairStatus;
+            ticket.PriorityLevel      = PriorityLevel;
+            ticket.TicketType         = TicketType;
+            ticket.EstimatedCost         = EstimatedCost;
             ticket.EstimatedCostCurrency = EstimatedCostCurrency;
-            ticket.FinalCost = FinalCost;
-            ticket.FinalCostCurrency = FinalCostCurrency;
-            ticket.RootCause = RootCause;
-            ticket.PartsUsed = PartsUsed;
-            ticket.HasWarranty = HasWarranty;
-            ticket.WarrantyPeriod = WarrantyPeriod;
+            ticket.FinalCost             = FinalCost;
+            ticket.FinalCostCurrency     = FinalCostCurrency;
+            ticket.RootCause        = RootCause;
+            ticket.PartsUsed        = PartsUsed;
+            ticket.HasWarranty      = HasWarranty;
+            ticket.WarrantyPeriod   = WarrantyPeriod;
             ticket.IsWarrantyRepair = IsWarrantyRepair;
             ticket.IsReadyForPickup = IsReadyForPickup;
-            ticket.ReceiveDate = receiveDateTime;
+            ticket.ReceiveDate  = receiveDateTime;
             ticket.DeliveryDate = DeliveryDate.HasValue && DeliveryTime.HasValue
-                ? DeliveryDate.Value.Date.Add(DeliveryTime.Value)
-                : null;
+                ? DeliveryDate.Value.Date.Add(DeliveryTime.Value) : null;
             ticket.DeviceChecklist = DeviceChecklist;
-            ticket.Accessories = Accessories;
+            ticket.Accessories     = Accessories;
         }
+
         private void ApplyWarrantyRepairSuggestion(RepairTicket ticket)
         {
-            if (ticket == null)
-            {
-                return;
-            }
+            if (ticket == null) return;
+            var match = FindActiveWarrantyMatch(ticket);
+            if (match == null) return;
 
-            var matchingWarrantyRecord = FindActiveWarrantyMatch(ticket);
-            if (matchingWarrantyRecord == null)
-            {
-                return;
-            }
+            var result = MessageBox.Show(
+                $"This device has an active warranty from ticket {match.EscTicketId}.\nMark this as a warranty repair?",
+                "Active Warranty Found", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            var prompt =
-                $"This device has an active warranty from ticket {matchingWarrantyRecord.EscTicketId}." + Environment.NewLine +
-                "Do you want to set this new ticket as a warranty repair?";
-
-            var result = System.Windows.MessageBox.Show(
-                prompt,
-                "Active Warranty Found",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result != MessageBoxResult.Yes)
-            {
-                return;
-            }
-
+            if (result != MessageBoxResult.Yes) return;
             ticket.IsWarrantyRepair = true;
             IsWarrantyRepair = true;
         }
 
         private RepairTicket FindActiveWarrantyMatch(RepairTicket candidate)
         {
-            if (candidate == null ||
-                !candidate.CustomerId.HasValue ||
+            if (candidate == null || !candidate.CustomerId.HasValue ||
                 string.IsNullOrWhiteSpace(candidate.SerialIMEI))
-            {
                 return null;
-            }
 
             var normalizedSerial = candidate.SerialIMEI.Trim();
-
             return Tickets.FirstOrDefault(existing =>
                 existing.CustomerId.HasValue &&
                 existing.CustomerId.Value == candidate.CustomerId.Value &&
@@ -1037,40 +1233,22 @@ namespace ESCenter.ViewModels
 
         private string BuildDuplicateNotice(RepairTicket candidate)
         {
-            var repeatedCustomer = Tickets.Any(existing =>
-                (candidate.CustomerId.HasValue && existing.CustomerId.HasValue && candidate.CustomerId.Value == existing.CustomerId.Value) ||
-                (!string.IsNullOrWhiteSpace(candidate.CustomerName) &&
-                 !string.IsNullOrWhiteSpace(existing.CustomerName) &&
-                 string.Equals(candidate.CustomerName.Trim(), existing.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)) ||
-                (!string.IsNullOrWhiteSpace(candidate.PhoneNumber) &&
-                 !string.IsNullOrWhiteSpace(existing.PhoneNumber) &&
-                 string.Equals(candidate.PhoneNumber.Trim(), existing.PhoneNumber.Trim(), StringComparison.OrdinalIgnoreCase)));
+            var repeatedCustomer = Tickets.Any(e =>
+                (candidate.CustomerId.HasValue && e.CustomerId.HasValue && candidate.CustomerId.Value == e.CustomerId.Value) ||
+                (!string.IsNullOrWhiteSpace(candidate.CustomerName) && !string.IsNullOrWhiteSpace(e.CustomerName) &&
+                 string.Equals(candidate.CustomerName.Trim(), e.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrWhiteSpace(candidate.PhoneNumber) && !string.IsNullOrWhiteSpace(e.PhoneNumber) &&
+                 string.Equals(candidate.PhoneNumber.Trim(), e.PhoneNumber.Trim(), StringComparison.OrdinalIgnoreCase)));
 
             var repeatedDevice = !string.IsNullOrWhiteSpace(candidate.SerialIMEI) &&
-                                 Tickets.Any(existing =>
-                                     !string.IsNullOrWhiteSpace(existing.SerialIMEI) &&
-                                     string.Equals(candidate.SerialIMEI.Trim(), existing.SerialIMEI.Trim(), StringComparison.OrdinalIgnoreCase));
+                Tickets.Any(e => !string.IsNullOrWhiteSpace(e.SerialIMEI) &&
+                    string.Equals(candidate.SerialIMEI.Trim(), e.SerialIMEI.Trim(), StringComparison.OrdinalIgnoreCase));
 
-            if (!repeatedCustomer && !repeatedDevice)
-            {
-                return string.Empty;
-            }
+            if (!repeatedCustomer && !repeatedDevice) return string.Empty;
 
-            var lines = new List<string>
-            {
-                "This ticket matches existing records:"
-            };
-
-            if (repeatedCustomer)
-            {
-                lines.Add("• Repeated customer detected (Customer ID, Name, or Phone matched).");
-            }
-
-            if (repeatedDevice)
-            {
-                lines.Add("• Repeated device detected (Serial/IMEI matched).");
-            }
-
+            var lines = new List<string> { "This ticket matches existing records:" };
+            if (repeatedCustomer) lines.Add("• Repeated customer (ID, Name, or Phone matched).");
+            if (repeatedDevice)   lines.Add("• Repeated device (Serial/IMEI matched).");
             return string.Join(Environment.NewLine, lines);
         }
 
@@ -1078,138 +1256,76 @@ namespace ESCenter.ViewModels
         {
             foreach (var ticket in Tickets)
             {
-                var hasCustomerIdMatch = ticket.CustomerId.HasValue &&
-                                         Tickets.Any(other => other.TicketId != ticket.TicketId &&
-                                                              other.CustomerId.HasValue &&
-                                                              other.CustomerId.Value == ticket.CustomerId.Value);
+                ticket.IsRepeatedCustomer =
+                    (ticket.CustomerId.HasValue && Tickets.Any(o => o.TicketId != ticket.TicketId && o.CustomerId.HasValue && o.CustomerId.Value == ticket.CustomerId.Value)) ||
+                    (!string.IsNullOrWhiteSpace(ticket.CustomerName) && Tickets.Any(o => o.TicketId != ticket.TicketId && !string.IsNullOrWhiteSpace(o.CustomerName) && string.Equals(ticket.CustomerName.Trim(), o.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase))) ||
+                    (!string.IsNullOrWhiteSpace(ticket.PhoneNumber) && Tickets.Any(o => o.TicketId != ticket.TicketId && !string.IsNullOrWhiteSpace(o.PhoneNumber) && string.Equals(ticket.PhoneNumber.Trim(), o.PhoneNumber.Trim(), StringComparison.OrdinalIgnoreCase)));
 
-                var hasCustomerNameMatch = !string.IsNullOrWhiteSpace(ticket.CustomerName) &&
-                                           Tickets.Any(other => other.TicketId != ticket.TicketId &&
-                                                                !string.IsNullOrWhiteSpace(other.CustomerName) &&
-                                                                string.Equals(ticket.CustomerName.Trim(), other.CustomerName.Trim(), StringComparison.OrdinalIgnoreCase));
-
-                var hasCustomerPhoneMatch = !string.IsNullOrWhiteSpace(ticket.PhoneNumber) &&
-                                            Tickets.Any(other => other.TicketId != ticket.TicketId &&
-                                                                 !string.IsNullOrWhiteSpace(other.PhoneNumber) &&
-                                                                 string.Equals(ticket.PhoneNumber.Trim(), other.PhoneNumber.Trim(), StringComparison.OrdinalIgnoreCase));
-
-                var hasDeviceMatch = !string.IsNullOrWhiteSpace(ticket.SerialIMEI) &&
-                                     Tickets.Any(other => other.TicketId != ticket.TicketId &&
-                                                          !string.IsNullOrWhiteSpace(other.SerialIMEI) &&
-                                                          string.Equals(ticket.SerialIMEI.Trim(), other.SerialIMEI.Trim(), StringComparison.OrdinalIgnoreCase));
-
-                ticket.IsRepeatedCustomer = hasCustomerIdMatch || hasCustomerNameMatch || hasCustomerPhoneMatch;
-                ticket.IsRepeatedDevice = hasDeviceMatch;
+                ticket.IsRepeatedDevice =
+                    !string.IsNullOrWhiteSpace(ticket.SerialIMEI) &&
+                    Tickets.Any(o => o.TicketId != ticket.TicketId && !string.IsNullOrWhiteSpace(o.SerialIMEI) &&
+                        string.Equals(ticket.SerialIMEI.Trim(), o.SerialIMEI.Trim(), StringComparison.OrdinalIgnoreCase));
             }
         }
 
         private void RefreshCustomerProfile()
         {
-            var customerId = long.TryParse(CustomerIdText, out var parsedId) ? parsedId : (long?)null;
+            var customerId     = long.TryParse(CustomerIdText, out var pid) ? pid : (long?)null;
             var normalizedName = NormalizeLookup(CustomerName);
             var normalizedPhone = NormalizeLookup(PhoneNumber);
 
             var matches = Tickets
-                .Where(ticket => IsCustomerMatch(ticket, customerId, normalizedName, normalizedPhone))
-                .Where(ticket => !string.Equals(ticket.RepairStatus, "Cancelled", StringComparison.OrdinalIgnoreCase))
-                .OrderByDescending(ticket => ticket.ReceiveDate)
+                .Where(t => IsCustomerMatch(t, customerId, normalizedName, normalizedPhone))
+                .Where(t => !string.Equals(t.RepairStatus, "Cancelled", StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(t => t.ReceiveDate)
                 .ToList();
 
             CustomerProfileHistory.Clear();
-            foreach (var match in matches)
-            {
-                CustomerProfileHistory.Add(match);
-            }
+            foreach (var m in matches) CustomerProfileHistory.Add(m);
 
-            CustomerProfileRepeatCount = CustomerProfileHistory.Count;
-            HasCustomerProfileHistory = CustomerProfileRepeatCount > 0;
+            CustomerProfileRepeatCount  = CustomerProfileHistory.Count;
+            HasCustomerProfileHistory   = CustomerProfileRepeatCount > 0;
             CustomerProfileHeader = BuildCustomerProfileHeader(customerId, normalizedName, normalizedPhone, CustomerProfileRepeatCount);
         }
 
-        private static bool IsCustomerMatch(RepairTicket ticket, long? customerId, string normalizedName, string normalizedPhone)
+        private static bool IsCustomerMatch(RepairTicket ticket, long? customerId, string name, string phone)
         {
-            var hasCustomerIdMatch = customerId.HasValue &&
-                                     ticket.CustomerId.HasValue &&
-                                     ticket.CustomerId.Value == customerId.Value;
-
-            var hasCustomerNameMatch = !string.IsNullOrWhiteSpace(normalizedName) &&
-                                       string.Equals(NormalizeLookup(ticket.CustomerName), normalizedName, StringComparison.OrdinalIgnoreCase);
-
-            var hasPhoneMatch = !string.IsNullOrWhiteSpace(normalizedPhone) &&
-                                string.Equals(NormalizeLookup(ticket.PhoneNumber), normalizedPhone, StringComparison.OrdinalIgnoreCase);
-
-            return hasCustomerIdMatch || hasCustomerNameMatch || hasPhoneMatch;
+            var idMatch    = customerId.HasValue && ticket.CustomerId.HasValue && ticket.CustomerId.Value == customerId.Value;
+            var nameMatch  = !string.IsNullOrWhiteSpace(name)  && string.Equals(NormalizeLookup(ticket.CustomerName), name,  StringComparison.OrdinalIgnoreCase);
+            var phoneMatch = !string.IsNullOrWhiteSpace(phone) && string.Equals(NormalizeLookup(ticket.PhoneNumber),  phone, StringComparison.OrdinalIgnoreCase);
+            return idMatch || nameMatch || phoneMatch;
         }
 
-        private static string NormalizeLookup(string value)
-        {
-            return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
-        }
+        private static string NormalizeLookup(string value) =>
+            string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
 
-        private static string BuildCustomerProfileHeader(long? customerId, string normalizedName, string normalizedPhone, int historyCount)
+        private static string BuildCustomerProfileHeader(long? customerId, string name, string phone, int count)
         {
-            if (!customerId.HasValue && string.IsNullOrWhiteSpace(normalizedName) && string.IsNullOrWhiteSpace(normalizedPhone))
-            {
+            if (!customerId.HasValue && string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(phone))
                 return "Customer Profile";
-            }
-
-            if (historyCount == 0)
-            {
-                return "Customer Profile - New Customer";
-            }
-
-            return $"Customer Profile - {historyCount} repair record(s)";
+            return count == 0 ? "Customer Profile - New Customer" : $"Customer Profile - {count} repair record(s)";
         }
 
         // =========================================================
         // VALIDATION
         // =========================================================
-
         private bool ValidateForm()
         {
-            if (string.IsNullOrWhiteSpace(CustomerName))
-            {
-                AppLogger.Error("Customer Name is required.");
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(PhoneNumber))
-            {
-                AppLogger.Error("Phone Number is required.");
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(ContactMethod))
-            {
-                AppLogger.Error("Contact Method is required.");
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(DeviceCategory))
-            {
-                AppLogger.Error("Device Category is required.");
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(DeviceModel))
-            {
-                AppLogger.Error("Device Model is required.");
-                return false;
-            }
-
+            if (string.IsNullOrWhiteSpace(CustomerName))   { AppLogger.Error("Customer Name is required.");   return false; }
+            if (string.IsNullOrWhiteSpace(PhoneNumber))    { AppLogger.Error("Phone Number is required.");    return false; }
+            if (string.IsNullOrWhiteSpace(ContactMethod))  { AppLogger.Error("Contact Method is required.");  return false; }
+            if (string.IsNullOrWhiteSpace(DeviceCategory)) { AppLogger.Error("Device Category is required."); return false; }
+            if (string.IsNullOrWhiteSpace(DeviceModel))    { AppLogger.Error("Device Model is required.");    return false; }
             return true;
         }
 
         // =========================================================
         // COLLECTION HELPERS
         // =========================================================
-
         private void RefreshTicketInCollection(RepairTicket ticket)
         {
             var index = Tickets.IndexOf(ticket);
-            if (index < 0)
-                return;
-
+            if (index < 0) return;
             Tickets.RemoveAt(index);
             Tickets.Insert(index, ticket);
         }
