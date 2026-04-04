@@ -491,7 +491,7 @@ namespace ESCenter.ViewModels
                 EvaluateDuplicateMarkers();
 
                 if (!string.IsNullOrWhiteSpace(duplicateNotice))
-                    MessageBox.Show(duplicateNotice, "Repeated Customer / Device",
+                    System.Windows.MessageBox.Show(duplicateNotice, "Repeated Customer / Device",
                         MessageBoxButton.OK, MessageBoxImage.Information);
 
                 RefreshCustomerProfile();
@@ -499,7 +499,7 @@ namespace ESCenter.ViewModels
                 ClearForm();
 
                 AppLogger.Success("Ticket added successfully!");
-                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to add ticket: {ex.Message}"); }
@@ -521,7 +521,7 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket updated successfully!");
-                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to save ticket: {ex.Message}"); }
@@ -531,7 +531,7 @@ namespace ESCenter.ViewModels
         {
             if (SelectedTicket == null) return;
 
-            var result = MessageBox.Show(
+            var result = System.Windows.MessageBox.Show(
                 $"Delete ticket '{SelectedTicket.CustomerName}' (ESC-ID: {SelectedTicket.EscTicketId})?",
                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (result != MessageBoxResult.Yes) return;
@@ -546,7 +546,7 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket deleted successfully!");
-                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to delete ticket: {ex.Message}"); }
@@ -562,7 +562,7 @@ namespace ESCenter.ViewModels
         {
             if (!CanCloseTicket()) return;
 
-            var result = MessageBox.Show(
+            var result = System.Windows.MessageBox.Show(
                 $"Close ticket '{SelectedTicket.CustomerName}' (ESC-ID: {SelectedTicket.EscTicketId})?",
                 "Confirm Close", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result != MessageBoxResult.Yes) return;
@@ -577,7 +577,7 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket closed successfully!");
-                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to close ticket: {ex.Message}"); }
@@ -587,7 +587,7 @@ namespace ESCenter.ViewModels
         {
             if (!CanReopenTicket()) return;
 
-            var result = MessageBox.Show(
+            var result = System.Windows.MessageBox.Show(
                 $"Reopen ticket '{SelectedTicket.CustomerName}' (ESC-ID: {SelectedTicket.EscTicketId})?",
                 "Confirm Reopen", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result != MessageBoxResult.Yes) return;
@@ -602,7 +602,7 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket reopened successfully!");
-                ((MainViewModel)Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to reopen ticket: {ex.Message}"); }
@@ -1207,7 +1207,7 @@ namespace ESCenter.ViewModels
             var match = FindActiveWarrantyMatch(ticket);
             if (match == null) return;
 
-            var result = MessageBox.Show(
+            var result = System.Windows.MessageBox.Show(
                 $"This device has an active warranty from ticket {match.EscTicketId}.\nMark this as a warranty repair?",
                 "Active Warranty Found", MessageBoxButton.YesNo, MessageBoxImage.Question);
 

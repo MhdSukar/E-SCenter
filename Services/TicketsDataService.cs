@@ -418,11 +418,5 @@ namespace ESCenter.Services
             public int WeeklyFinishedTickets { get; set; }
             public decimal WeeklyIncome { get; set; }
         }
-<<<<<<< HEAD
-=======
-
-        public string GetNextEscTicketId() => GenerateEscTicketId();
-        public Task<string> GetNextEscTicketIdAsync() => Task.Run(GenerateEscTicketId);
->>>>>>> feat: add async data loading across all repositories and ViewModels
     }
 }

@@ -1037,6 +1037,8 @@
                                                             <ControlTemplate TargetType="ListBoxItem">
                                                                 <Border x:Name="Bd"
                                                                         Background="{TemplateBinding Background}"
+                                                                        BorderBrush="Transparent"
+                                                                        BorderThickness="1"
                                                                         CornerRadius="4"
                                                                         Padding="2">
                                                                     <ContentPresenter />
@@ -1046,7 +1048,15 @@
                                                                         <Setter TargetName="Bd" Property="Background" Value="{StaticResource NewPrimaryBlueBrush}" />
                                                                     </Trigger>
                                                                     <Trigger Property="IsMouseOver"  Value="True">
-                                                                        <Setter TargetName="Bd" Property="Background" Value="#22FFFFFF" />
+                                                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource NewPrimaryBlueBrush}" />
+                                                                        <Setter TargetName="Bd" Property="Effect">
+                                                                            <Setter.Value>
+                                                                                <DropShadowEffect BlurRadius="10"
+                                                                                                  ShadowDepth="0"
+                                                                                                  Opacity="0.75"
+                                                                                                  Color="#5AA7FF" />
+                                                                            </Setter.Value>
+                                                                        </Setter>
                                                                     </Trigger>
                                                                 </ControlTemplate.Triggers>
                                                             </ControlTemplate>

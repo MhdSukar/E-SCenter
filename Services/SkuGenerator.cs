@@ -4,8 +4,22 @@ namespace ESCenter.Services
 {
     public static class SkuGenerator
     {
-        public static string Generate(string partType, string unit1Value, string unit1Code, string unit2Value, string unit2Code)
+        public static string Generate(
+            string partType,
+            string unit1Value,
+            string unit1Code,
+            string unit2Value,
+            string unit2Code,
+            string partCode = null,
+            string chipPartNumber = null)
         {
+            if (string.Equals(partType, "ICs", StringComparison.OrdinalIgnoreCase))
+            {
+                var icPartCode = SanitizeSegment(partCode, "NA");
+                var icChipPn = SanitizeSegment(chipPartNumber, "NA");
+                return $"IC-{icPartCode}-{icChipPn}";
+            }
+
             // Prefix based on part type
             var prefix = partType switch
             {
@@ -26,6 +40,16 @@ namespace ESCenter.Services
             var unit2 = string.IsNullOrWhiteSpace(unit2Value) ? "NA" : $"{unit2Value}{unit2Code}";
 
             return $"{prefix}-{unit1}-{unit2}";
+        }
+
+        private static string SanitizeSegment(string value, string fallback)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return fallback;
+            }
+
+            return value.Trim().Replace(" ", string.Empty);
         }
     }
 }
