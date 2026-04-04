@@ -42,11 +42,21 @@ namespace ESCenter.ViewModels
         // SELECTION
         // =========================================================
         private RepairTicket _selectedTicket;
+        private bool _suppressTicketSwitchPrompt;
         public RepairTicket SelectedTicket
         {
             get => _selectedTicket;
             set
             {
+                if (ReferenceEquals(_selectedTicket, value))
+                    return;
+
+                if (!_suppressTicketSwitchPrompt && !CanSwitchSelectedTicket(value))
+                {
+                    OnPropertyChanged(nameof(SelectedTicket));
+                    return;
+                }
+
                 if (SetProperty(ref _selectedTicket, value))
                 {
                     LoadFromTicket(value);
@@ -340,7 +350,7 @@ namespace ESCenter.ViewModels
             AddCommand    = new RelayCommand(_ => AddTicket(),    _ => SelectedTicket == null);
             SaveCommand   = new RelayCommand(_ => SaveTicket(),   _ => SelectedTicket != null);
             DeleteCommand = new RelayCommand(_ => DeleteTicket(), _ => SelectedTicket != null);
-            ClearCommand  = new RelayCommand(_ => ClearForm());
+            ClearCommand  = new RelayCommand(_ => ClearFormWithWarning());
             CloseCommand  = new RelayCommand(_ => CloseTicket(),  _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
 
@@ -1157,7 +1167,9 @@ namespace ESCenter.ViewModels
         // =========================================================
         private void ClearForm()
         {
+            _suppressTicketSwitchPrompt = true;
             SelectedTicket = null;
+            _suppressTicketSwitchPrompt = false;
 
             EscTicketId        = _service.GetNextEscTicketId();
             CustomerIdText     = string.Empty;
@@ -1205,6 +1217,72 @@ namespace ESCenter.ViewModels
             SelectedSuggestionIndex = -1;
 
             RefreshCustomerProfile();
+        }
+
+        private void ClearFormWithWarning()
+        {
+            if (!CanSwitchSelectedTicket(null))
+                return;
+
+            ClearForm();
+        }
+
+        private bool CanSwitchSelectedTicket(RepairTicket nextTicket)
+        {
+            if (_selectedTicket == null)
+                return true;
+
+            if (!HasUnsavedChangesOnSelectedTicket())
+                return true;
+
+            var result = System.Windows.MessageBox.Show(
+                "You have unsaved changes for this ticket. Discard changes and continue?",
+                "Unsaved Ticket Changes",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            return result == MessageBoxResult.Yes;
+        }
+
+        private bool HasUnsavedChangesOnSelectedTicket()
+        {
+            if (_selectedTicket == null)
+                return false;
+
+            var current = BuildTicketFromForm();
+            var selected = _selectedTicket;
+
+            return
+                !string.Equals(selected.EscTicketId, current.EscTicketId, StringComparison.Ordinal) ||
+                selected.CustomerId != current.CustomerId ||
+                !string.Equals(selected.CustomerName, current.CustomerName, StringComparison.Ordinal) ||
+                !string.Equals(selected.PhoneNumber, current.PhoneNumber, StringComparison.Ordinal) ||
+                !string.Equals(selected.ContactMethod, current.ContactMethod, StringComparison.Ordinal) ||
+                !string.Equals(selected.DeviceCategory, current.DeviceCategory, StringComparison.Ordinal) ||
+                !string.Equals(selected.DeviceBrand, current.DeviceBrand, StringComparison.Ordinal) ||
+                !string.Equals(selected.DeviceModel, current.DeviceModel, StringComparison.Ordinal) ||
+                !string.Equals(selected.SerialIMEI, current.SerialIMEI, StringComparison.Ordinal) ||
+                !string.Equals(selected.DamageHistory, current.DamageHistory, StringComparison.Ordinal) ||
+                !string.Equals(selected.BoardModifications, current.BoardModifications, StringComparison.Ordinal) ||
+                !string.Equals(selected.ProblemDescription, current.ProblemDescription, StringComparison.Ordinal) ||
+                !string.Equals(selected.Notes, current.Notes, StringComparison.Ordinal) ||
+                !string.Equals(selected.RepairStatus, current.RepairStatus, StringComparison.Ordinal) ||
+                !string.Equals(selected.PriorityLevel, current.PriorityLevel, StringComparison.Ordinal) ||
+                !string.Equals(selected.TicketType, current.TicketType, StringComparison.Ordinal) ||
+                selected.EstimatedCost != current.EstimatedCost ||
+                !string.Equals(selected.EstimatedCostCurrency, current.EstimatedCostCurrency, StringComparison.Ordinal) ||
+                selected.FinalCost != current.FinalCost ||
+                !string.Equals(selected.FinalCostCurrency, current.FinalCostCurrency, StringComparison.Ordinal) ||
+                !string.Equals(selected.RootCause, current.RootCause, StringComparison.Ordinal) ||
+                !string.Equals(selected.PartsUsed, current.PartsUsed, StringComparison.Ordinal) ||
+                selected.HasWarranty != current.HasWarranty ||
+                !string.Equals(selected.WarrantyPeriod, current.WarrantyPeriod, StringComparison.Ordinal) ||
+                selected.IsWarrantyRepair != current.IsWarrantyRepair ||
+                selected.IsReadyForPickup != current.IsReadyForPickup ||
+                selected.ReceiveDate != current.ReceiveDate ||
+                selected.DeliveryDate != current.DeliveryDate ||
+                !string.Equals(selected.DeviceChecklistJson, current.DeviceChecklistJson, StringComparison.Ordinal) ||
+                !string.Equals(selected.AccessoriesJson, current.AccessoriesJson, StringComparison.Ordinal);
         }
 
         private void LoadFromTicket(RepairTicket ticket)
