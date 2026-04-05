@@ -229,15 +229,6 @@
                 <!-- Header -->
                 <DockPanel Grid.Row="0"
                            Margin="0,0,0,12">
-                    <Button Content="⚙ Rates"
-                            Command="{Binding OpenExchangeRatesCommand}"
-                            Style="{StaticResource NeonBorderButtonStyle}"
-                            Height="22"
-                            Width="64"
-                            FontSize="10"
-                            Margin="6,0,0,0"
-                            HorizontalAlignment="Right"
-                            DockPanel.Dock="Right"/>
                     <TextBlock Text="Ticket Details"
                                FontSize="18"
                                FontWeight="Bold"

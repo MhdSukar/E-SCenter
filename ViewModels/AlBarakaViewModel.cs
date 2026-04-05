@@ -82,6 +82,7 @@ namespace ESCenter.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand DeleteCommand { get; }
         public ICommand RefreshCommand { get; }
+        public ICommand OpenExchangeRatesCommand { get; }
 
         public AlBarakaViewModel()
         {
@@ -89,6 +90,7 @@ namespace ESCenter.ViewModels
             SaveCommand = new RelayCommand(_ => Save(), _ => CanSave());
             DeleteCommand = new RelayCommand(_ => Delete(), _ => SelectedRecord != null);
             RefreshCommand = new RelayCommand(_ => Refresh());
+            OpenExchangeRatesCommand = new RelayCommand(_ => OpenExchangeRates());
 
             // default filters: beginning and end of current month
             var today = DateTime.Today;
@@ -254,6 +256,19 @@ namespace ESCenter.ViewModels
             // Raise can execute changed by recreating commands or using a RelayCommand with canExecute notifications.
             // Simplest: notify properties that commands depend on
             OnPropertyChanged(nameof(SelectedRecord));
+        }
+
+        private void OpenExchangeRates()
+        {
+            var window = new Windows.ExchangeRatesWindow
+            {
+                Owner = System.Windows.Application.Current?.MainWindow
+            };
+
+            if (window.ShowDialog() == true)
+            {
+                AppLogger.Success("Exchange rates updated.");
+            }
         }
     }
 }

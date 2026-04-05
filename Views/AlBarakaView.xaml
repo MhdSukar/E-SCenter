@@ -19,6 +19,14 @@
                     <Image Source="{StaticResource Baraka}" Width="28" Height="28" Margin="0,0,8,0" VerticalAlignment="Center" DockPanel.Dock="Left" />
                     <TextBlock Text="Accounts Records" FontSize="20" FontWeight="Bold" Foreground="{StaticResource NeonOrangeBrush}" DockPanel.Dock="Left" VerticalAlignment="Center" />
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
+                        <Button Content="⚙ Rates"
+                                Command="{Binding OpenExchangeRatesCommand}"
+                                Style="{StaticResource NeonBorderButtonStyle}"
+                                Height="22"
+                                Width="64"
+                                FontSize="10"
+                                Margin="4,0"/>
+
                         <Button Command="{Binding RefreshCommand}" Style="{StaticResource NeonOrangeButtonStyle}" Width="80" Margin="4,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Refresh}" Width="16" Height="16" Margin="0,0,6,0" />

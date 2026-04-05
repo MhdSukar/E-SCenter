@@ -365,7 +365,6 @@ namespace ESCenter.ViewModels
         public ICommand ClearCommand           { get; }
         public ICommand CloseCommand           { get; }
         public ICommand ReopenCommand          { get; }
-        public ICommand OpenExchangeRatesCommand { get; }
 
         // Parts commands
         public ICommand AddPartCommand            { get; }
@@ -399,7 +398,6 @@ namespace ESCenter.ViewModels
             ClearCommand  = new RelayCommand(_ => ClearForm());
             CloseCommand  = new RelayCommand(_ => CloseTicket(),  _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
-            OpenExchangeRatesCommand = new RelayCommand(_ => OpenExchangeRates());
 
             // Parts commands
             AddPartCommand = new RelayCommand(param =>
@@ -1400,19 +1398,6 @@ namespace ESCenter.ViewModels
 
             var spEquivalent = amount.Value * rate;
             return $"≈ {spEquivalent:N0} S.P";
-        }
-
-        private void OpenExchangeRates()
-        {
-            var win = new Windows.ExchangeRatesWindow
-            {
-                Owner = System.Windows.Application.Current.MainWindow
-            };
-
-            if (win.ShowDialog() == true)
-            {
-                RefreshCostEquivalents();
-            }
         }
 
         private async Task LoadStatusHistoryAsync(int ticketId)
