@@ -77,7 +77,7 @@ namespace ESCenter.Windows
             catch (Exception ex)
             {
                 AppLogger.Error(ex.Message);
-                MessageBox.Show(ex.Message, "Invalid Rate", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show(ex.Message, "Invalid Rate", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
