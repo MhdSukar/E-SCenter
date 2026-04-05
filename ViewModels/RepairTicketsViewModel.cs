@@ -528,7 +528,7 @@ namespace ESCenter.ViewModels
                 ClearForm();
 
                 AppLogger.Success("Ticket added successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                AppEvents.RequestDashboardRefresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to add ticket: {ex.Message}"); }
@@ -567,7 +567,7 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket updated successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                AppEvents.RequestDashboardRefresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to save ticket: {ex.Message}"); }
@@ -593,7 +593,7 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket deleted successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                AppEvents.RequestDashboardRefresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to delete ticket: {ex.Message}"); }
@@ -634,7 +634,7 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket closed successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                AppEvents.RequestDashboardRefresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to close ticket: {ex.Message}"); }
@@ -669,7 +669,7 @@ namespace ESCenter.ViewModels
                 _ticketsView.Refresh();
 
                 AppLogger.Success("Ticket reopened successfully!");
-                ((MainViewModel)System.Windows.Application.Current.MainWindow.DataContext).Dashboard.Refresh();
+                AppEvents.RequestDashboardRefresh();
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to reopen ticket: {ex.Message}"); }

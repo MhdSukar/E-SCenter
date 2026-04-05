@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ESCenter.Core;
@@ -16,7 +15,6 @@ namespace ESCenter.ViewModels
         private readonly TicketsDataService _service;
         private readonly PartsRepository _partsRepository;
         private readonly InventoryRepository _inventoryRepository;
-        private readonly Action<object?>? _navigateToRepairTickets;
 
         private int _totalTickets;
         public int TotalTickets { get => _totalTickets; set => SetProperty(ref _totalTickets, value); }
@@ -91,9 +89,8 @@ namespace ESCenter.ViewModels
         public ICommand OpenTicketsCommand { get; }
         public ICommand ClosedTicketsCommand { get; }
 
-        public DashboardViewModel(Action<object?>? navigateToRepairTickets = null)
+        public DashboardViewModel()
         {
-            _navigateToRepairTickets = navigateToRepairTickets;
             _service = new TicketsDataService();
             _partsRepository = new PartsRepository();
             _inventoryRepository = new InventoryRepository();
@@ -255,7 +252,7 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                _navigateToRepairTickets?.Invoke(parameter);
+                AppEvents.RequestNavigateToTickets();
             }
             catch (Exception ex)
             {

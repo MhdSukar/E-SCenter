@@ -235,7 +235,7 @@ namespace ESCenter.ViewModels
 
         public MainViewModel()
         {
-            Dashboard = new DashboardViewModel(NavigateToRepairTicketsFromDashboard);
+            Dashboard = new DashboardViewModel();
             // Load persisted preference for auto-granting admin access on startup
             _autoGrantAdminAccess = ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess();
             if (_autoGrantAdminAccess)
@@ -308,6 +308,8 @@ namespace ESCenter.ViewModels
             OpenInventoryCommand = ShowInventoryCommand;
             OpenBoneyardCommand = ShowBoneyardCommand;
             OpenWarrantySystemCommand = ShowWarrantySystemCommand;
+            AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
+            AppEvents.NavigateToTicketsRequested += () => ShowRepairTicketsCommand.Execute(null);
 
             CurrentView = Dashboard;
             SetStatus("System Ready", StatusLevel.Info);
