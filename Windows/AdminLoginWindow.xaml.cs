@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
+using System.Windows.Media;
 using ESCenter.Core;
 using ESCenter.Services;
 
@@ -6,12 +8,38 @@ namespace ESCenter.Windows
 {
     public partial class AdminLoginWindow : Window
     {
+        private bool _animatingClose;
+
         public bool IsAuthenticated { get; private set; }
 
         public AdminLoginWindow()
         {
             InitializeComponent();
             SetMaximizeButtonIcon("Maximize");
+            Loaded += (_, __) => WindowFader.SlideIn(this);
+            Closing += Window_Closing;
+        }
+
+        private void Window_Closing(object? sender, CancelEventArgs e)
+        {
+            if (_animatingClose)
+            {
+                return;
+            }
+
+            e.Cancel = true;
+            _animatingClose = true;
+            WindowFader.SlideOut(this, () =>
+            {
+                Hide();
+                if (Content is UIElement c)
+                {
+                    c.RenderTransform = Transform.Identity;
+                }
+
+                Opacity = 1;
+                Close();
+            });
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)

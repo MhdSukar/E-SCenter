@@ -5,7 +5,9 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
+using ESCenter.Core;
 using ESCenter.Services;
 using Microsoft.Win32;
 
@@ -14,6 +16,8 @@ namespace ESCenter
     public partial class MainWindow : Window
     {
         private readonly string _settingsPath;
+        private bool _animatingClose;
+        private int _closeAnimationVersion;
 
         public MainWindow()
         {
@@ -52,6 +56,7 @@ namespace ESCenter
 
             SourceInitialized += MainWindow_SourceInitialized;
             Closing += MainWindow_Closing;
+            Loaded += (_, __) => WindowFader.SlideIn(this);
 
             var descriptor = DependencyPropertyDescriptor.FromProperty(ContentControl.ContentProperty, typeof(ContentControl));
             descriptor?.AddValueChanged(MainContentHost, (_, _) => AnimateCurrentViewTransition());
@@ -231,10 +236,56 @@ namespace ESCenter
         private static double Clamp(double value, double min, double max)
             => Math.Max(min, Math.Min(max, value));
 
+        public void ShowFromTray()
+        {
+            _closeAnimationVersion++;
+            _animatingClose = false;
+
+            BeginAnimation(UIElement.OpacityProperty, null);
+
+            if (Content is UIElement content)
+            {
+                if (content.RenderTransform is TranslateTransform translateTransform)
+                {
+                    translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
+                }
+
+                content.RenderTransform = Transform.Identity;
+            }
+
+            Opacity = 1;
+            Show();
+            WindowState = WindowState.Normal;
+            Activate();
+        }
+
         protected override void OnClosing(CancelEventArgs e)
         {
+            if (_animatingClose)
+            {
+                return;
+            }
+
             e.Cancel = true;
-            Hide();
+            _animatingClose = true;
+            var animationVersion = ++_closeAnimationVersion;
+
+            WindowFader.SlideOut(this, () =>
+            {
+                if (animationVersion != _closeAnimationVersion)
+                {
+                    return;
+                }
+
+                Hide();
+                if (Content is UIElement c)
+                {
+                    c.RenderTransform = Transform.Identity;
+                }
+
+                Opacity = 1;
+                _animatingClose = false;
+            });
         }
     }
 
