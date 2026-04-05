@@ -308,6 +308,8 @@ namespace ESCenter.ViewModels
         private Accessories _accessories = new Accessories();
         public Accessories Accessories { get => _accessories; set => SetProperty(ref _accessories, value); }
 
+        public event Action? FocusCustomerNameRequested;
+
         // =========================================================
         // COMMANDS
         // =========================================================
@@ -1206,7 +1208,7 @@ namespace ESCenter.ViewModels
         // =========================================================
         // FORM ENGINE
         // =========================================================
-        private void ClearForm()
+        public void ClearForm()
         {
             SelectedTicket = null;
             _lastKnownStatus = "Received";
@@ -1259,6 +1261,7 @@ namespace ESCenter.ViewModels
             StatusHistory.Clear();
 
             RefreshCustomerProfile();
+            FocusCustomerNameRequested?.Invoke();
         }
 
         private void LoadFromTicket(RepairTicket ticket)

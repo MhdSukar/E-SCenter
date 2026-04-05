@@ -10,6 +10,14 @@
              Height="Auto"
              Width="Auto">
 
+    <UserControl.Resources>
+
+        <Style TargetType="GroupBox">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="IsTabStop" Value="False" />
+        </Style>
+    </UserControl.Resources>
+
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2.2*" />
@@ -209,7 +217,8 @@
         <!-- ================= RIGHT: DETAIL INSPECTOR ================= -->
         <Border Grid.Column="1"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="12">
+                Padding="12"
+                KeyboardNavigation.TabNavigation="Cycle">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -235,7 +244,9 @@
                     <Button Command="{Binding AddCommand}"
                             Style="{StaticResource NeonGreenButtonStyle}"
                             Width="80"
-                            Margin="4,0">
+                            Margin="4,0"
+                            TabIndex="22"
+                            IsDefault="False">
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center">
                             <Image Source="{StaticResource Add}"
@@ -249,7 +260,9 @@
                     <Button Command="{Binding SaveCommand}"
                             Style="{StaticResource NeonCyanButtonStyle}"
                             Width="100"
-                            Margin="4,0">
+                            Margin="4,0"
+                            TabIndex="23"
+                            IsDefault="False">
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center">
                             <Image Source="{StaticResource Save}"
@@ -263,7 +276,9 @@
                     <Button Command="{Binding ClearCommand}"
                             Style="{StaticResource NeonOrangeButtonStyle}"
                             Width="80"
-                            Margin="4,0">
+                            Margin="4,0"
+                            TabIndex="24"
+                            IsDefault="False">
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center">
                             <Image Source="{StaticResource Clear}"
@@ -357,7 +372,9 @@
                                   Grid.Row="0"
                                   Grid.Column="1"
                                   Margin="4"
-                                  Style="{StaticResource NeonCheckBoxStyle}" />
+                                  Style="{StaticResource NeonCheckBoxStyle}"
+                                  TabIndex="21"
+                                  KeyDown="SaveOrAddOnEnter" />
 
                         <!-- ================= UNIQUE ESC ID ================= -->
                         <StackPanel Orientation="Horizontal"
@@ -378,7 +395,8 @@
                                  Margin="4"
                                  Style="{StaticResource NeonTextBoxStyle}"
                                  ToolTip="Format: ESC-000001"
-                                 Focusable="False" />
+                                 Focusable="False"
+                                 IsTabStop="False" />
 
                         <StackPanel Orientation="Horizontal"
                                     Grid.Row="2"
@@ -396,7 +414,9 @@
                                  Grid.Row="2"
                                  Grid.Column="1"
                                  Margin="4"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="1"
+                                 KeyDown="SingleLineTextBox_KeyDown" />
 
                         <StackPanel Orientation="Horizontal"
                                     Grid.Row="3"
@@ -410,11 +430,14 @@
                             <TextBlock Text="Customer Name:"
                                        VerticalAlignment="Center" />
                         </StackPanel>
-                        <TextBox Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox x:Name="CustomerNameBox"
+                                 Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Grid.Row="3"
                                  Grid.Column="1"
                                  Margin="4"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="2"
+                                 KeyDown="SingleLineTextBox_KeyDown" />
 
                         <StackPanel Orientation="Horizontal"
                                     Grid.Row="4"
@@ -432,7 +455,9 @@
                                  Grid.Row="4"
                                  Grid.Column="1"
                                  Margin="4"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="3"
+                                 KeyDown="SingleLineTextBox_KeyDown" />
 
                         <StackPanel Orientation="Horizontal"
                                     Grid.Row="5"
@@ -450,7 +475,8 @@
                                   Grid.Row="5"
                                   Grid.Column="1"
                                   Margin="4"
-                                  Style="{StaticResource NeonComboBoxStyle}">
+                                  Style="{StaticResource NeonComboBoxStyle}"
+                                  TabIndex="4">
                             <ComboBox.ItemsSource>
                                 <x:Array Type="{x:Type sys:String}"
                                          xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -480,7 +506,9 @@
                                  Grid.Row="6"
                                  Grid.Column="1"
                                  Margin="4"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="5"
+                                 KeyDown="SingleLineTextBox_KeyDown" />
 
                         <StackPanel Orientation="Horizontal"
                                     Grid.Row="7"
@@ -498,7 +526,9 @@
                                  Grid.Row="7"
                                  Grid.Column="1"
                                  Margin="4"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="6"
+                                 KeyDown="SingleLineTextBox_KeyDown" />
 
                         <StackPanel Orientation="Horizontal"
                                     Grid.Row="8"
@@ -516,7 +546,9 @@
                                  Grid.Row="8"
                                  Grid.Column="1"
                                  Margin="4"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="7"
+                                 KeyDown="SingleLineTextBox_KeyDown" />
 
                         <!-- ================= DAMAGE HISTORY ================= -->
                         <StackPanel Orientation="Horizontal"
@@ -556,7 +588,9 @@
                                  Grid.Row="10"
                                  Grid.Column="1"
                                  Margin="4"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="8"
+                                 KeyDown="SingleLineTextBox_KeyDown" />
 
                         <!-- ================= DESCRIPTION & NOTES ================= -->
                         <StackPanel Orientation="Horizontal"
@@ -578,7 +612,8 @@
                                  Height="60"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="9" />
 
                         <StackPanel Orientation="Horizontal"
                                     Grid.Row="12"
@@ -602,7 +637,8 @@
                                  Height="60"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"
-                                 Style="{StaticResource NeonTextBoxStyle}" />
+                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 TabIndex="10" />
 
                         <!-- ================= BOARD MODIFICATIONS ================= -->
                         <StackPanel Orientation="Horizontal"
@@ -643,7 +679,8 @@
                                   Grid.Row="14"
                                   Grid.Column="1"
                                   Margin="4"
-                                  Style="{StaticResource NeonComboBoxStyle}">
+                                  Style="{StaticResource NeonComboBoxStyle}"
+                                  TabIndex="11">
                             <ComboBox.ItemsSource>
                                 <x:Array Type="{x:Type sys:String}"
                                          xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -679,7 +716,8 @@
                             <ComboBox SelectedItem="{Binding PriorityLevel, Mode=TwoWay}"
                                       Width="130"
                                       Margin="0,0,6,0"
-                                      Style="{StaticResource NeonComboBoxStyle}">
+                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      TabIndex="12">
                                 <ComboBox.ItemsSource>
                                     <x:Array Type="{x:Type sys:String}"
                                              xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -694,7 +732,8 @@
                             <ComboBox Width="130"
                                       SelectedItem="{Binding TicketType, Mode=TwoWay}"
                                       Style="{StaticResource NeonComboBoxStyle}"
-                                      ItemsSource="{Binding TicketTypeOptions}" />
+                                      ItemsSource="{Binding TicketTypeOptions}"
+                                      TabIndex="13" />
                         </StackPanel>
 
                         <!-- ================= COST ================= -->
@@ -718,7 +757,9 @@
                             <TextBox Text="{Binding EstimatedCost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
                                      Width="120"
                                      Margin="0,0,6,0"
-                                     Style="{StaticResource NeonTextBoxStyle}" />
+                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     TabIndex="14"
+                                     KeyDown="SingleLineTextBox_KeyDown" />
 
                             <ComboBox Width="80"
                                       SelectedItem="{Binding EstimatedCostCurrency, Mode=TwoWay}"
@@ -756,7 +797,9 @@
                             <TextBox Text="{Binding FinalCost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
                                      Width="120"
                                      Margin="0,0,6,0"
-                                     Style="{StaticResource NeonTextBoxStyle}" />
+                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     TabIndex="15"
+                                     KeyDown="SingleLineTextBox_KeyDown" />
 
                             <ComboBox Width="80"
                                       SelectedItem="{Binding FinalCostCurrency, Mode=TwoWay}"
@@ -793,11 +836,13 @@
                                     Margin="4">
                             <CheckBox IsChecked="{Binding HasWarranty}"
                                       Style="{StaticResource NeonCheckBoxStyle}"
-                                      Margin="0,0,8,0" />
+                                      Margin="0,0,8,0"
+                                      TabIndex="18" />
                             <ComboBox Width="160"
                                       IsEnabled="{Binding HasWarranty}"
                                       SelectedItem="{Binding WarrantyPeriod, Mode=TwoWay}"
-                                      Style="{StaticResource NeonComboBoxStyle}">
+                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      TabIndex="19">
                                 <ComboBox.ItemsSource>
                                     <x:Array Type="{x:Type sys:String}"
                                              xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -830,7 +875,8 @@
                                   Grid.Row="19"
                                   Grid.Column="1"
                                   Margin="4"
-                                  Style="{StaticResource NeonCheckBoxStyle}" />
+                                  Style="{StaticResource NeonCheckBoxStyle}"
+                                  TabIndex="20" />
 
                         <!-- ================= ROOT CAUSE ================= -->
                         <StackPanel Orientation="Horizontal"
@@ -849,7 +895,8 @@
                                   Grid.Row="20"
                                   Grid.Column="1"
                                   Margin="4"
-                                  Style="{StaticResource NeonComboBoxStyle}">
+                                  Style="{StaticResource NeonComboBoxStyle}"
+                                  TabIndex="16">
                             <ComboBox.ItemsSource>
                                 <x:Array Type="{x:Type sys:String}"
                                          xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -1011,7 +1058,8 @@
                                 <TextBox x:Name="PartsUsedInputBox"
                                          Text="{Binding PartsUsedInput, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource NeonTextBoxStyle}"
-                                         ToolTip="Type to search • ↑↓ navigate • Enter/Tab to add • Esc to close">
+                                         ToolTip="Type to search • ↑↓ navigate • Enter/Tab to add • Esc to close"
+                                         TabIndex="17">
                                     <TextBox.InputBindings>
                                         <KeyBinding Key="Enter"  Command="{Binding AddPartFromInputCommand}" />
                                         <KeyBinding Key="Tab"    Command="{Binding AcceptSuggestionCommand}" />

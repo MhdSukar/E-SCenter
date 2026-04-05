@@ -114,6 +114,9 @@
 
         <!-- F7 = Warranty Window -->
         <KeyBinding Key="F7" Command="{Binding OpenWarrantySystemCommand}" />
+
+        <!-- Ctrl+N = New Ticket -->
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewTicketCommand}" />
     </Window.InputBindings>
     
 
