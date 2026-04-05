@@ -93,6 +93,7 @@ namespace ESCenter.ViewModels
 
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
+        public ICommand NewTicketCommand { get; }
         // Commands bound from MainWindow input bindings (F-keys)
         public ICommand OpenDashboardCommand { get; }
         public ICommand OpenRepairTicketsCommand { get; }
@@ -261,6 +262,12 @@ namespace ESCenter.ViewModels
             {
                 ActiveSection = NavSection.RepairTickets;
                 Navigate(GetOrCreateRepairTicketsViewModel(), "Tickets loaded");
+            });
+
+            NewTicketCommand = new RelayCommand(_ =>
+            {
+                ShowRepairTicketsCommand.Execute(null);
+                _repairTicketsViewModel?.ClearForm();
             });
 
             ShowPartsControlCommand = new RelayCommand(_ =>
