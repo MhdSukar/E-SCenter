@@ -229,6 +229,15 @@
                 <!-- Header -->
                 <DockPanel Grid.Row="0"
                            Margin="0,0,0,12">
+                    <Button Content="⚙ Rates"
+                            Command="{Binding OpenExchangeRatesCommand}"
+                            Style="{StaticResource NeonBorderButtonStyle}"
+                            Height="22"
+                            Width="64"
+                            FontSize="10"
+                            Margin="6,0,0,0"
+                            HorizontalAlignment="Right"
+                            DockPanel.Dock="Right"/>
                     <TextBlock Text="Ticket Details"
                                FontSize="18"
                                FontWeight="Bold"
@@ -763,18 +772,14 @@
 
                             <ComboBox Width="80"
                                       SelectedItem="{Binding EstimatedCostCurrency, Mode=TwoWay}"
-                                      Style="{StaticResource NeonComboBoxStyle}">
-                                <ComboBox.ItemsSource>
-                                    <x:Array Type="{x:Type sys:String}"
-                                             xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                        <sys:String>S.P</sys:String>
-                                        <sys:String>USD</sys:String>
-                                        <sys:String>EUR</sys:String>
-                                        <sys:String>RON</sys:String>
-                                        <sys:String>GBP</sys:String>
-                                    </x:Array>
-                                </ComboBox.ItemsSource>
-                            </ComboBox>
+                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      ItemsSource="{Binding Currencies}"/>
+
+                            <TextBlock Text="{Binding EstimatedCostEquivalent}"
+                                       Foreground="#FFD54A"
+                                       FontSize="11"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal"
@@ -803,18 +808,14 @@
 
                             <ComboBox Width="80"
                                       SelectedItem="{Binding FinalCostCurrency, Mode=TwoWay}"
-                                      Style="{StaticResource NeonComboBoxStyle}">
-                                <ComboBox.ItemsSource>
-                                    <x:Array Type="{x:Type sys:String}"
-                                             xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                        <sys:String>S.P</sys:String>
-                                        <sys:String>USD</sys:String>
-                                        <sys:String>EUR</sys:String>
-                                        <sys:String>RON</sys:String>
-                                        <sys:String>GBP</sys:String>
-                                    </x:Array>
-                                </ComboBox.ItemsSource>
-                            </ComboBox>
+                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      ItemsSource="{Binding Currencies}"/>
+
+                            <TextBlock Text="{Binding FinalCostEquivalent}"
+                                       Foreground="#FFD54A"
+                                       FontSize="11"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"/>
                         </StackPanel>
 
                         <!-- ================= WARRANTY ================= -->

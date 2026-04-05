@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -66,6 +68,50 @@ namespace ESCenter.Services
             var preferences = Load();
             preferences.PartsLowStockThreshold = Math.Max(0, partsThreshold);
             preferences.InventoryLowStockThreshold = Math.Max(0, inventoryThreshold);
+            Save(preferences);
+        }
+
+        public static Dictionary<string, decimal> GetExchangeRates()
+        {
+            var defaults = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["USD"] = 13000m,
+                ["EUR"] = 14000m,
+                ["RON"] = 2900m,
+                ["GBP"] = 16500m,
+                ["CHF"] = 14500m,
+                ["CAD"] = 9600m
+            };
+
+            var preferences = Load();
+            var stored = preferences.ExchangeRates ?? new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var kvp in stored)
+            {
+                if (string.IsNullOrWhiteSpace(kvp.Key))
+                {
+                    continue;
+                }
+
+                defaults[kvp.Key.Trim().ToUpperInvariant()] = kvp.Value;
+            }
+
+            return defaults;
+        }
+
+        public static void SetExchangeRates(Dictionary<string, decimal> rates)
+        {
+            var preferences = Load();
+            preferences.ExchangeRates = rates == null
+                ? new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase)
+                : new Dictionary<string, decimal>(
+                    rates
+                        .Where(kvp => !string.IsNullOrWhiteSpace(kvp.Key))
+                        .ToDictionary(
+                            kvp => kvp.Key.Trim().ToUpperInvariant(),
+                            kvp => kvp.Value),
+                    StringComparer.OrdinalIgnoreCase);
+
             Save(preferences);
         }
 
@@ -196,6 +242,7 @@ namespace ESCenter.Services
 
             normalized.PreferredDatabasePath ??= string.Empty;
             normalized.LastCustomDatabasePath ??= string.Empty;
+            normalized.ExchangeRates ??= new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
 
             // Ensure new preference exists when migrating from older settings
             // Default value is false (do not auto-grant admin access)
@@ -248,6 +295,7 @@ namespace ESCenter.Services
             public string AdminPasswordHash { get; set; } = DefaultAdminPasswordHash;
             public bool AutoGrantAdminAccess { get; set; } = false;
             public bool LaunchAtWindowsStartup { get; set; } = false;
+            public Dictionary<string, decimal> ExchangeRates { get; set; } = new(StringComparer.OrdinalIgnoreCase);
         }
 
         private sealed class LegacyDatabaseSettings

@@ -119,20 +119,46 @@ namespace ESCenter.ViewModels
         // CURRENCY
         // =========================================================
         public ObservableCollection<string> Currencies { get; } =
-            new ObservableCollection<string> { "S.P", "USD", "EUR", "RON", "GBP", "CHF", "CAD" };
+            new ObservableCollection<string> { "S.P", "USD", "EUR", "RON", "GBP", "CHF", "CAD", "TRY" };
 
         private string _estimatedCostCurrency = "S.P";
         public string EstimatedCostCurrency
         {
             get => _estimatedCostCurrency;
-            set => SetProperty(ref _estimatedCostCurrency, value);
+            set
+            {
+                if (SetProperty(ref _estimatedCostCurrency, value))
+                {
+                    RefreshCostEquivalents();
+                }
+            }
         }
 
         private string _finalCostCurrency = "S.P";
         public string FinalCostCurrency
         {
             get => _finalCostCurrency;
-            set => SetProperty(ref _finalCostCurrency, value);
+            set
+            {
+                if (SetProperty(ref _finalCostCurrency, value))
+                {
+                    RefreshCostEquivalents();
+                }
+            }
+        }
+
+        private string _estimatedCostEquivalent = string.Empty;
+        public string EstimatedCostEquivalent
+        {
+            get => _estimatedCostEquivalent;
+            set => SetProperty(ref _estimatedCostEquivalent, value);
+        }
+
+        private string _finalCostEquivalent = string.Empty;
+        public string FinalCostEquivalent
+        {
+            get => _finalCostEquivalent;
+            set => SetProperty(ref _finalCostEquivalent, value);
         }
 
         // =========================================================
@@ -214,10 +240,30 @@ namespace ESCenter.ViewModels
         public string TicketType { get => _ticketType; set => SetProperty(ref _ticketType, value); }
 
         private decimal? _estimatedCost;
-        public decimal? EstimatedCost { get => _estimatedCost; set => SetProperty(ref _estimatedCost, value); }
+        public decimal? EstimatedCost
+        {
+            get => _estimatedCost;
+            set
+            {
+                if (SetProperty(ref _estimatedCost, value))
+                {
+                    RefreshCostEquivalents();
+                }
+            }
+        }
 
         private decimal? _finalCost;
-        public decimal? FinalCost { get => _finalCost; set => SetProperty(ref _finalCost, value); }
+        public decimal? FinalCost
+        {
+            get => _finalCost;
+            set
+            {
+                if (SetProperty(ref _finalCost, value))
+                {
+                    RefreshCostEquivalents();
+                }
+            }
+        }
 
         private DateTime _receiveDate = DateTime.Today;
         public DateTime ReceiveDate { get => _receiveDate; set => SetProperty(ref _receiveDate, value); }
@@ -319,6 +365,7 @@ namespace ESCenter.ViewModels
         public ICommand ClearCommand           { get; }
         public ICommand CloseCommand           { get; }
         public ICommand ReopenCommand          { get; }
+        public ICommand OpenExchangeRatesCommand { get; }
 
         // Parts commands
         public ICommand AddPartCommand            { get; }
@@ -352,6 +399,7 @@ namespace ESCenter.ViewModels
             ClearCommand  = new RelayCommand(_ => ClearForm());
             CloseCommand  = new RelayCommand(_ => CloseTicket(),  _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
+            OpenExchangeRatesCommand = new RelayCommand(_ => OpenExchangeRates());
 
             // Parts commands
             AddPartCommand = new RelayCommand(param =>
@@ -1261,6 +1309,7 @@ namespace ESCenter.ViewModels
             StatusHistory.Clear();
 
             RefreshCustomerProfile();
+            RefreshCostEquivalents();
             FocusCustomerNameRequested?.Invoke();
         }
 
@@ -1322,6 +1371,48 @@ namespace ESCenter.ViewModels
             _ = LoadStatusHistoryAsync(ticket.TicketId);
 
             RefreshCustomerProfile();
+            RefreshCostEquivalents();
+        }
+
+        private void RefreshCostEquivalents()
+        {
+            var rates = UserPreferencesService.GetExchangeRates();
+            EstimatedCostEquivalent = ComputeEquivalent(EstimatedCost, EstimatedCostCurrency, rates);
+            FinalCostEquivalent = ComputeEquivalent(FinalCost, FinalCostCurrency, rates);
+        }
+
+        private static string ComputeEquivalent(decimal? amount, string currency, Dictionary<string, decimal> rates)
+        {
+            if (amount == null || amount == 0)
+            {
+                return string.Empty;
+            }
+
+            if (currency == "S.P")
+            {
+                return string.Empty;
+            }
+
+            if (!rates.TryGetValue(currency ?? string.Empty, out var rate) || rate == 0)
+            {
+                return string.Empty;
+            }
+
+            var spEquivalent = amount.Value * rate;
+            return $"≈ {spEquivalent:N0} S.P";
+        }
+
+        private void OpenExchangeRates()
+        {
+            var win = new Windows.ExchangeRatesWindow
+            {
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+
+            if (win.ShowDialog() == true)
+            {
+                RefreshCostEquivalents();
+            }
         }
 
         private async Task LoadStatusHistoryAsync(int ticketId)
