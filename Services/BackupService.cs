@@ -8,7 +8,7 @@ namespace ESCenter.Services
     public sealed class BackupService : IDisposable
     {
         private const string BackupFolderName = "ESCenter Backups";
-        private static readonly TimeSpan BackupInterval = TimeSpan.FromHours(1);
+        private static readonly TimeSpan BackupInterval = TimeSpan.FromHours(6);
 
         private readonly DispatcherTimer _timer;
 

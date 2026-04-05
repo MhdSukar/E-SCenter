@@ -187,20 +187,6 @@ namespace ESCenter.ViewModels
 
         public DashboardViewModel Dashboard { get; }
 
-        private decimal _totalAlBarakaSP;
-        public decimal TotalAlBarakaSP
-        {
-            get => _totalAlBarakaSP;
-            set => SetProperty(ref _totalAlBarakaSP, value);
-        }
-
-        private decimal _totalAlBarakaUSD;
-        public decimal TotalAlBarakaUSD
-        {
-            get => _totalAlBarakaUSD;
-            set => SetProperty(ref _totalAlBarakaUSD, value);
-        }
-
         public ObservableCollection<CurveSeries> TicketStatusCurves { get; } = new();
 
         private ISeries[] _ticketsSeries = Array.Empty<ISeries>();
@@ -361,9 +347,6 @@ namespace ESCenter.ViewModels
             });
 
             RefreshTicketsChart();
-
-            // Load Al-Baraka totals for current month
-            RefreshAlBarakaTotals();
             RefreshDatabaseConnectionStatus();
         }
 
@@ -388,32 +371,6 @@ namespace ESCenter.ViewModels
             }
 
             return parameters.TryGetValue(key, out var value) ? value : null;
-        }
-
-        public void RefreshAlBarakaTotals(DateTime? start = null, DateTime? end = null)
-            => _ = RefreshAlBarakaTotalsAsync(start, end);
-
-        public async Task RefreshAlBarakaTotalsAsync(DateTime? start = null, DateTime? end = null)
-        {
-            try
-            {
-                var svc = new AlBarakaDataService();
-                // default to current month when not specified
-                if (!start.HasValue || !end.HasValue)
-                {
-                    var today = DateTime.Today;
-                    start ??= new DateTime(today.Year, today.Month, 1);
-                    end ??= start.Value.AddMonths(1).AddDays(-1);
-                }
-
-                var totals = await svc.GetTotalsAsync(start, end);
-                TotalAlBarakaSP = totals.TotalSP;
-                TotalAlBarakaUSD = totals.TotalUSD;
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Error($"Failed to refresh Al-Baraka totals: {ex.Message}");
-            }
         }
 
         private void Navigate(object viewModel, string successMessage)
