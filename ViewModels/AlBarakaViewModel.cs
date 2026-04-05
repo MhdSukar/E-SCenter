@@ -29,12 +29,73 @@ namespace ESCenter.ViewModels
         }
 
         // Form fields
-        public DateTime Date { get; set; } = DateTime.Today;
-        public string ItemName { get; set; } = string.Empty;
-        public decimal? Price { get; set; }
-        public string PriceCurrency { get; set; } = "S.P";
-        public string Category { get; set; } = "Consumable";
-        public string Account { get; set; } = string.Empty;
+        private DateTime _date = DateTime.Today;
+        public DateTime Date
+        {
+            get => _date;
+            set => SetProperty(ref _date, value);
+        }
+
+        private string _itemName = string.Empty;
+        public string ItemName
+        {
+            get => _itemName;
+            set
+            {
+                if (SetProperty(ref _itemName, value))
+                {
+                    UpdateCommandStates();
+                }
+            }
+        }
+
+        private decimal? _price;
+        public decimal? Price
+        {
+            get => _price;
+            set
+            {
+                if (SetProperty(ref _price, value))
+                {
+                    RefreshPriceEquivalent();
+                    UpdateCommandStates();
+                }
+            }
+        }
+
+        private string _priceCurrency = "S.P";
+        public string PriceCurrency
+        {
+            get => _priceCurrency;
+            set
+            {
+                if (SetProperty(ref _priceCurrency, value))
+                {
+                    RefreshPriceEquivalent();
+                }
+            }
+        }
+
+        private string _category = "Consumable";
+        public string Category
+        {
+            get => _category;
+            set => SetProperty(ref _category, value);
+        }
+
+        private string _account = string.Empty;
+        public string Account
+        {
+            get => _account;
+            set => SetProperty(ref _account, value);
+        }
+
+        private string _priceEquivalent = string.Empty;
+        public string PriceEquivalent
+        {
+            get => _priceEquivalent;
+            set => SetProperty(ref _priceEquivalent, value);
+        }
 
         // Filters
         private DateTime? _filterStart;
@@ -126,6 +187,7 @@ namespace ESCenter.ViewModels
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(Price));
             OnPropertyChanged(nameof(PriceCurrency));
+            OnPropertyChanged(nameof(PriceEquivalent));
             OnPropertyChanged(nameof(Category));
             OnPropertyChanged(nameof(Account));
         }
@@ -141,6 +203,7 @@ namespace ESCenter.ViewModels
             PriceCurrency = "S.P";
             Category = "Consumable";
             Account = string.Empty;
+            RefreshPriceEquivalent();
             NotifyAllProperties();
             UpdateCommandStates();
         }
@@ -258,6 +321,33 @@ namespace ESCenter.ViewModels
             OnPropertyChanged(nameof(SelectedRecord));
         }
 
+        private void RefreshPriceEquivalent()
+        {
+            var rates = UserPreferencesService.GetExchangeRates();
+            PriceEquivalent = ComputeEquivalent(Price, PriceCurrency, rates);
+        }
+
+        private static string ComputeEquivalent(decimal? amount, string currency, System.Collections.Generic.Dictionary<string, decimal> rates)
+        {
+            if (amount == null || amount == 0)
+            {
+                return string.Empty;
+            }
+
+            if (currency == "S.P")
+            {
+                return string.Empty;
+            }
+
+            if (!rates.TryGetValue(currency ?? string.Empty, out var rate) || rate == 0)
+            {
+                return string.Empty;
+            }
+
+            var spEquivalent = amount.Value * rate;
+            return $"≈ {spEquivalent:N0} S.P";
+        }
+
         private void OpenExchangeRates()
         {
             var window = new Windows.ExchangeRatesWindow
@@ -267,6 +357,7 @@ namespace ESCenter.ViewModels
 
             if (window.ShowDialog() == true)
             {
+                RefreshPriceEquivalent();
                 AppLogger.Success("Exchange rates updated.");
             }
         }
