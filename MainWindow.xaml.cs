@@ -17,6 +17,7 @@ namespace ESCenter
     {
         private readonly string _settingsPath;
         private bool _animatingClose;
+        private int _closeAnimationVersion;
 
         public MainWindow()
         {
@@ -235,6 +236,29 @@ namespace ESCenter
         private static double Clamp(double value, double min, double max)
             => Math.Max(min, Math.Min(max, value));
 
+        public void ShowFromTray()
+        {
+            _closeAnimationVersion++;
+            _animatingClose = false;
+
+            BeginAnimation(UIElement.OpacityProperty, null);
+
+            if (Content is UIElement content)
+            {
+                if (content.RenderTransform is TranslateTransform translateTransform)
+                {
+                    translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
+                }
+
+                content.RenderTransform = Transform.Identity;
+            }
+
+            Opacity = 1;
+            Show();
+            WindowState = WindowState.Normal;
+            Activate();
+        }
+
         protected override void OnClosing(CancelEventArgs e)
         {
             if (_animatingClose)
@@ -244,9 +268,15 @@ namespace ESCenter
 
             e.Cancel = true;
             _animatingClose = true;
+            var animationVersion = ++_closeAnimationVersion;
 
             WindowFader.SlideOut(this, () =>
             {
+                if (animationVersion != _closeAnimationVersion)
+                {
+                    return;
+                }
+
                 Hide();
                 if (Content is UIElement c)
                 {

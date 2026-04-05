@@ -83,6 +83,12 @@ namespace ESCenter
                 MainWindow = new MainWindow();
             }
 
+            if (MainWindow is ESCenter.MainWindow main)
+            {
+                main.ShowFromTray();
+                return;
+            }
+
             MainWindow.Show();
             MainWindow.WindowState = WindowState.Normal;
             MainWindow.Activate();

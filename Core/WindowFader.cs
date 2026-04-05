@@ -125,7 +125,7 @@ namespace ESCenter.Core
             if (content != null)
             {
                 var scale = new ScaleTransform(0.92, 0.92);
-                content.RenderTransformOrigin = new Point(1.0, 1.0);
+                content.RenderTransformOrigin = new System.Windows.Point(1.0, 1.0);
                 content.RenderTransform = scale;
 
                 var sx = new DoubleAnimation(0.92, 1.0,
@@ -160,7 +160,7 @@ namespace ESCenter.Core
             {
                 var scale = content.RenderTransform as ScaleTransform
                             ?? new ScaleTransform(1, 1);
-                content.RenderTransformOrigin = new Point(1.0, 1.0);
+                content.RenderTransformOrigin = new System.Windows.Point(1.0, 1.0);
                 content.RenderTransform = scale;
 
                 var sx = new DoubleAnimation(1.0, 0.94,
