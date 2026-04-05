@@ -46,6 +46,15 @@ namespace ESCenter.ViewModels
         private double _weeklyCompletionPercent;
         public double WeeklyCompletionPercent { get => _weeklyCompletionPercent; set => SetProperty(ref _weeklyCompletionPercent, value); }
 
+        private int _todayReceived;
+        public int TodayReceived { get => _todayReceived; set => SetProperty(ref _todayReceived, value); }
+
+        private int _todayDelivered;
+        public int TodayDelivered { get => _todayDelivered; set => SetProperty(ref _todayDelivered, value); }
+
+        private decimal _todayIncome;
+        public decimal TodayIncome { get => _todayIncome; set => SetProperty(ref _todayIncome, value); }
+
         private string _partsLowStockThreshold = "3";
         public string PartsLowStockThreshold
         {
@@ -126,8 +135,9 @@ namespace ESCenter.ViewModels
                 var summaryTask = _service.GetDashboardSummaryAsync(now, weekStart, weekEnd);
                 var recentTicketsTask = _service.GetRecentOpenTicketsAsync(10);
                 var priorityCountsTask = _service.GetOpenPriorityCountsAsync(new[] { "Critical", "Major", "Normal", "Minor" });
+                var allTicketsTask = _service.GetAllAsync();
 
-                await Task.WhenAll(summaryTask, recentTicketsTask, priorityCountsTask);
+                await Task.WhenAll(summaryTask, recentTicketsTask, priorityCountsTask, allTicketsTask);
 
                 var summary = summaryTask.Result;
                 TotalTickets = summary.TotalTickets;
@@ -157,6 +167,14 @@ namespace ESCenter.ViewModels
                 WeeklyCompletionPercent = WeeklyTotalTickets == 0
                     ? 0
                     : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
+
+                var all = allTicketsTask.Result;
+                var today = DateTime.Today;
+                TodayReceived = all.Count(t => t.ReceiveDate.Date == today);
+                TodayDelivered = all.Count(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value.Date == today);
+                TodayIncome = all
+                    .Where(t => t.DeliveryDate.HasValue && t.DeliveryDate.Value.Date == today)
+                    .Sum(t => t.FinalCost ?? 0);
 
                 await UpdateLowStockCounterAsync();
                 AppLogger.Success("Dashboard Loaded.");

@@ -447,19 +447,27 @@
                                            Margin="0,8,0,0"
                                            HorizontalAlignment="Center"/>
 
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" Margin="0,20,0,0">
-                                    <Image Source="{StaticResource Baraka}" Width="10" Height="10" Margin="0,0,3,0"/>
-                                    <TextBlock Text="Expanses:" Foreground="{StaticResource NeonDarkCyanBrush}" FontSize="10"/>
-                                </StackPanel>
-                                
-                                
+                                <TextBlock Grid.Column="0" Grid.Row="2"
+                                           Text="Today:" Foreground="{StaticResource NeonDarkCyanBrush}"
+                                           FontSize="10" Margin="0,21,0,0" HorizontalAlignment="Center"/>
 
-                                <!-- Al-Baraka totals: S.P in 3rd column, USD in 5th column -->
-                                <TextBlock Grid.Column="1" Grid.Row="2" Text="Total (S.P):" Foreground="{StaticResource NeonYellowBrush}" FontSize="10" Margin="0,21,0,0" HorizontalAlignment="Center"/>
-                                <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding TotalAlBarakaSP, StringFormat=N2}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource NeonYellowBrush}" Margin="0,20,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Grid.Row="2"
+                                           Text="Rcvd:" Foreground="{StaticResource TextSecondaryBrush}"
+                                           FontSize="10" Margin="0,21,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Grid.Row="2"
+                                           Text="{Binding Dashboard.TodayReceived}"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{StaticResource NeonGreenBrush}"
+                                           Margin="0,20,0,0" HorizontalAlignment="Center"/>
 
-                                <TextBlock Grid.Column="3" Grid.Row="2" Text="Total (USD):" Foreground="{StaticResource NeonGreenBrush}" FontSize="10" Margin="0,21,0,0" HorizontalAlignment="Center"/>
-                                <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding TotalAlBarakaUSD, StringFormat=N2}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource NeonGreenBrush}" Margin="0,20,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="3" Grid.Row="2"
+                                           Text="Done:" Foreground="{StaticResource TextSecondaryBrush}"
+                                           FontSize="10" Margin="0,21,0,0" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="4" Grid.Row="2"
+                                           Text="{Binding Dashboard.TodayDelivered}"
+                                           FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{StaticResource NeonBlueBrush}"
+                                           Margin="0,20,0,0" HorizontalAlignment="Center"/>
 
                             </Grid>
                         </GroupBox>
