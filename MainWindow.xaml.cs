@@ -18,6 +18,7 @@ namespace ESCenter
         private readonly string _settingsPath;
         private bool _animatingClose;
         private int _closeAnimationVersion;
+        private bool _wasMinimized;
 
         public MainWindow()
         {
@@ -56,6 +57,7 @@ namespace ESCenter
 
             SourceInitialized += MainWindow_SourceInitialized;
             Closing += MainWindow_Closing;
+            StateChanged += MainWindow_StateChanged;
             Loaded += (_, __) => WindowFader.SlideIn(this);
 
             var descriptor = DependencyPropertyDescriptor.FromProperty(ContentControl.ContentProperty, typeof(ContentControl));
@@ -64,22 +66,46 @@ namespace ESCenter
 
         private void AnimateCurrentViewTransition()
         {
-            var animation = new DoubleAnimationUsingKeyFrames
+            if (MainContentHost == null)
             {
-                Duration = TimeSpan.FromMilliseconds(320)
+                return;
+            }
+
+            if (MainContentHost.RenderTransform is not TransformGroup group ||
+                group.Children.Count < 2 ||
+                group.Children[0] is not ScaleTransform scale ||
+                group.Children[1] is not TranslateTransform translate)
+            {
+                scale = new ScaleTransform(0.985, 0.985);
+                translate = new TranslateTransform(0, 14);
+                group = new TransformGroup();
+                group.Children.Add(scale);
+                group.Children.Add(translate);
+                MainContentHost.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
+                MainContentHost.RenderTransform = group;
+            }
+
+            var fade = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(280)))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
             };
 
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(0))));
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(120)))
+            var slide = new DoubleAnimation(14, 0, new Duration(TimeSpan.FromMilliseconds(280)))
             {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
-            });
-            animation.KeyFrames.Add(new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(320)))
-            {
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
-            });
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
 
-            MainContentHost.BeginAnimation(OpacityProperty, animation);
+            var scaleX = new DoubleAnimation(0.985, 1, new Duration(TimeSpan.FromMilliseconds(280)))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            var scaleY = scaleX.Clone();
+
+            MainContentHost.BeginAnimation(UIElement.OpacityProperty, fade);
+            translate.BeginAnimation(TranslateTransform.YProperty, slide);
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleX);
+            scale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleY);
         }
 
         private void MainWindow_SourceInitialized(object? sender, EventArgs e)
@@ -182,7 +208,7 @@ namespace ESCenter
 
         private void btnMinimize_Click(object sender, RoutedEventArgs e)
         {
-            WindowState = WindowState.Minimized;
+            WindowFader.FadeMinimize(this);
         }
 
         private void btnMaximize_Click(object sender, RoutedEventArgs e)
@@ -235,6 +261,21 @@ namespace ESCenter
 
         private static double Clamp(double value, double min, double max)
             => Math.Max(min, Math.Min(max, value));
+
+        private void MainWindow_StateChanged(object? sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                _wasMinimized = true;
+                return;
+            }
+
+            if (_wasMinimized && WindowState == WindowState.Normal)
+            {
+                _wasMinimized = false;
+                WindowFader.FadeRestore(this);
+            }
+        }
 
         public void ShowFromTray()
         {

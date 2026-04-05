@@ -190,6 +190,19 @@ namespace ESCenter.Core
                 return;
             }
 
+            var content = window.Content as UIElement;
+            if (content != null)
+            {
+                var transform = content.RenderTransform as TranslateTransform ?? new TranslateTransform(0, 0);
+                content.RenderTransform = transform;
+
+                var slide = new DoubleAnimation(0, 12, new Duration(TimeSpan.FromMilliseconds(120)))
+                {
+                    EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
+                };
+                transform.BeginAnimation(TranslateTransform.YProperty, slide);
+            }
+
             var fade = new DoubleAnimation(0.9, 0, new Duration(TimeSpan.FromMilliseconds(120)))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
@@ -198,6 +211,11 @@ namespace ESCenter.Core
             fade.Completed += (_, __) =>
             {
                 window.WindowState = WindowState.Minimized;
+                if (content != null)
+                {
+                    content.RenderTransform = Transform.Identity;
+                }
+
                 window.Opacity = 1;
             };
 
@@ -212,9 +230,29 @@ namespace ESCenter.Core
             }
 
             window.Opacity = 0;
+            var content = window.Content as UIElement;
+            if (content != null)
+            {
+                var transform = new TranslateTransform(0, 18);
+                content.RenderTransform = transform;
+
+                var slide = new DoubleAnimation(18, 0, new Duration(TimeSpan.FromMilliseconds(200)))
+                {
+                    EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+                };
+                transform.BeginAnimation(TranslateTransform.YProperty, slide);
+            }
+
             var fade = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(200)))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
+            fade.Completed += (_, __) =>
+            {
+                if (content != null)
+                {
+                    content.RenderTransform = Transform.Identity;
+                }
             };
             window.BeginAnimation(UIElement.OpacityProperty, fade);
         }

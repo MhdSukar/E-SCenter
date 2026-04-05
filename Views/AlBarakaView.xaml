@@ -8,7 +8,7 @@
 
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2.8*" />
+            <ColumnDefinition Width="2.5*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -82,7 +82,8 @@
         </Border>
 
         <!-- RIGHT: FORM -->
-        <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Padding="12" Width="360">
+        <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" 
+                Padding="12" Width="380">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -92,7 +93,7 @@
 
                 <TextBlock Text="Add / Edit Record" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,12">
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,12">
                     <Button Command="{Binding AddNewCommand}" Style="{StaticResource NeonGreenButtonStyle}" Width="80" Margin="4,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource Add}" Width="16" Height="16" Margin="0,0,6,0" />
@@ -128,6 +129,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Date:</TextBlock>
@@ -140,13 +142,28 @@
                         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBox Width="140" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource NeonTextBoxStyle}" />
                             <ComboBox Width="66" Margin="8,0,0,0" ItemsSource="{Binding Currencies}" SelectedItem="{Binding PriceCurrency}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
+                            
                         </StackPanel>
+                        <TextBlock Grid.Row="3" Grid.Column="0"
+                                   Text="Exchange Rate (S.P):"
+                                   Foreground="#FFD54A"
+                                   FontSize="11"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,0,10">
 
-                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Category:</TextBlock>
-                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" Margin="0,0,0,10" />
+                        </TextBlock>
+                        <TextBlock Text="{Binding PriceEquivalent}"
+                                   Foreground="#FFD54A"
+                                   FontSize="11"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,0,10"
+                                   Grid.Row="3" Grid.Column="1"/>
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center">Account:</TextBlock>
-                        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Accounts}" SelectedItem="{Binding Account}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Category:</TextBlock>
+                        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" Margin="0,0,0,10" />
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Account:</TextBlock>
+                        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding Accounts}" SelectedItem="{Binding Account}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
 
                     </Grid>
                 </ScrollViewer>
