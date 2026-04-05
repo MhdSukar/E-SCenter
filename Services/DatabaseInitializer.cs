@@ -48,6 +48,7 @@ namespace ESCenter.Services
             var reports = new List<string>
             {
                 EnsureTicketsTable(conn),
+                EnsureTicketStatusHistoryTable(conn),
                 EnsurePartsTable(conn),
                 EnsureInventoryTable(conn),
                 EnsureBoneyardTable(conn),
@@ -142,6 +143,23 @@ namespace ESCenter.Services
                 ["ChipPartNumber"] = "TEXT",
                 ["Category"] = "TEXT",
                 ["Description"] = "TEXT"
+            };
+
+            return EnsureTable(conn, tableName, expectedColumns);
+        }
+
+        private string EnsureTicketStatusHistoryTable(SQLiteConnection conn)
+        {
+            const string tableName = "TicketStatusHistory";
+
+            var expectedColumns = new Dictionary<string, string>
+            {
+                ["HistoryId"] = "INTEGER PRIMARY KEY AUTOINCREMENT",
+                ["TicketId"] = "INTEGER NOT NULL",
+                ["OldStatus"] = "TEXT",
+                ["NewStatus"] = "TEXT NOT NULL",
+                ["Note"] = "TEXT",
+                ["ChangedAt"] = "TEXT NOT NULL"
             };
 
             return EnsureTable(conn, tableName, expectedColumns);
