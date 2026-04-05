@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Media;
 using ESCenter.Core;
 using ESCenter.Services;
 
@@ -19,11 +20,11 @@ namespace ESCenter.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            WindowFader.FadeIn(this);
+            WindowFader.SlideIn(this);
             LoadRates();
         }
 
-        private async void Window_Closing(object? sender, CancelEventArgs e)
+        private void Window_Closing(object? sender, CancelEventArgs e)
         {
             if (_animatingClose)
             {
@@ -32,8 +33,17 @@ namespace ESCenter.Windows
 
             e.Cancel = true;
             _animatingClose = true;
-            await WindowFader.FadeOut(this);
-            Close();
+            WindowFader.SlideOut(this, () =>
+            {
+                Hide();
+                if (Content is UIElement c)
+                {
+                    c.RenderTransform = Transform.Identity;
+                }
+
+                Opacity = 1;
+                Close();
+            });
         }
 
         private void LoadRates()

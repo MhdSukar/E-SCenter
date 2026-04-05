@@ -139,14 +139,11 @@ namespace ESCenter
 
             if (_trayPopup.IsVisible)
             {
-                _trayPopup.Hide();
+                _trayPopup.FadeAndHide();
                 return;
             }
 
-            _trayPopup.Opacity = 0;
-            _trayPopup.Show();
-            _trayPopup.UpdateLayout();
-            _trayPopup.Opacity = 1;
+            _trayPopup.ShowWithAnimation();
 
             var left = x - _trayPopup.ActualWidth + 20;
             var top = y - _trayPopup.ActualHeight - 5;

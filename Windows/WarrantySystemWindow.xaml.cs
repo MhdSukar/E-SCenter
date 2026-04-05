@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using ESCenter.Core;
 using ESCenter.Models;
 using ESCenter.Services;
 
@@ -11,6 +14,7 @@ namespace ESCenter.Windows
     public partial class WarrantySystemWindow : Window
     {
         private readonly TicketsDataService _ticketsDataService = new();
+        private bool _animatingClose;
 
         public ObservableCollection<WarrantyDeviceRow> WarrantyItems { get; } = new();
 
@@ -19,7 +23,31 @@ namespace ESCenter.Windows
             InitializeComponent();
             SetMaximizeButtonIcon("Maximize");
             DataContext = this;
+            Loaded += (_, __) => WindowFader.SlideIn(this);
+            Closing += Window_Closing;
             LoadWarrantyItems();
+        }
+
+        private void Window_Closing(object? sender, CancelEventArgs e)
+        {
+            if (_animatingClose)
+            {
+                return;
+            }
+
+            e.Cancel = true;
+            _animatingClose = true;
+            WindowFader.SlideOut(this, () =>
+            {
+                Hide();
+                if (Content is UIElement c)
+                {
+                    c.RenderTransform = Transform.Identity;
+                }
+
+                Opacity = 1;
+                Close();
+            });
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
