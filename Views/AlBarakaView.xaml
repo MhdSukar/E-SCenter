@@ -8,7 +8,7 @@
 
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2.5*" />
+            <ColumnDefinition Width="2.7*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -83,7 +83,7 @@
 
         <!-- RIGHT: FORM -->
         <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" 
-                Padding="12" Width="380">
+                Padding="12" Width="400">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
