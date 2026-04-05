@@ -258,6 +258,7 @@
             <Grid Margin="0,36,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="28"/>
                 </Grid.RowDefinitions>
@@ -671,8 +672,48 @@
                     </UniformGrid>
                 </Border>
 
-                <!-- ================= Main Content ================= -->
+                <!-- Low-stock alert banner -->
                 <Border Grid.Row="1"
+                        Margin="16,0,16,6"
+                        Padding="12,8"
+                        CornerRadius="6"
+                        BorderThickness="1">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="Background" Value="#1A2A00"/>
+                            <Setter Property="BorderBrush" Value="#FFD54A"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowLowStockAlert}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left"
+                                   Text="⚠"
+                                   Foreground="#FFD54A"
+                                   FontSize="14"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,10,0"/>
+                        <Button DockPanel.Dock="Right"
+                                Content="Dismiss"
+                                Command="{Binding DismissLowStockAlertCommand}"
+                                Style="{StaticResource NeonOrangeButtonStyle}"
+                                Width="70"
+                                Height="22"
+                                FontSize="11"/>
+                        <TextBlock Text="{Binding LowStockAlertSummary}"
+                                   Foreground="#FFD54A"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                    </DockPanel>
+                </Border>
+
+                <!-- ================= Main Content ================= -->
+                <Border Grid.Row="2"
                         Style="{StaticResource CardBorderStyle}"
                         Padding="12"
                         Margin="16,0,16,8">
@@ -684,7 +725,7 @@
                 </Border>
 
                 <!-- ================= Status Bar ================= -->
-                <StatusBar Grid.Row="2"
+                <StatusBar Grid.Row="3"
                            Height="28"
                            Background="{StaticResource DarkCardBrush}"
                            BorderBrush="{StaticResource DarkBorderBrush}"

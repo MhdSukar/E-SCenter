@@ -187,6 +187,22 @@ namespace ESCenter.ViewModels
 
         public DashboardViewModel Dashboard { get; }
 
+        private bool _showLowStockAlert;
+        public bool ShowLowStockAlert
+        {
+            get => _showLowStockAlert;
+            set => SetProperty(ref _showLowStockAlert, value);
+        }
+
+        private string _lowStockAlertSummary = string.Empty;
+        public string LowStockAlertSummary
+        {
+            get => _lowStockAlertSummary;
+            set => SetProperty(ref _lowStockAlertSummary, value);
+        }
+
+        public ICommand DismissLowStockAlertCommand { get; }
+
         private decimal _totalAlBarakaSP;
         public decimal TotalAlBarakaSP
         {
@@ -315,6 +331,7 @@ namespace ESCenter.ViewModels
             OpenInventoryCommand = ShowInventoryCommand;
             OpenBoneyardCommand = ShowBoneyardCommand;
             OpenWarrantySystemCommand = ShowWarrantySystemCommand;
+            DismissLowStockAlertCommand = new RelayCommand(_ => ShowLowStockAlert = false);
             AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
             AppEvents.NavigateToTicketsRequested += () => ShowRepairTicketsCommand.Execute(null);
 
@@ -365,6 +382,28 @@ namespace ESCenter.ViewModels
             // Load Al-Baraka totals for current month
             RefreshAlBarakaTotals();
             RefreshDatabaseConnectionStatus();
+        }
+
+        public void CheckAndShowLowStockAlert()
+        {
+            var items = Dashboard.LowStockItems;
+            if (items.Count == 0)
+            {
+                ShowLowStockAlert = false;
+                return;
+            }
+
+            var partsCount = items.Count(i => i.Source == "Parts");
+            var inventoryCount = items.Count(i => i.Source == "Inventory");
+
+            var parts = partsCount > 0 ? $"{partsCount} part(s)" : null;
+            var inv = inventoryCount > 0 ? $"{inventoryCount} inventory item(s)" : null;
+
+            LowStockAlertSummary = string.Join(" and ", new[] { parts, inv }
+                .Where(s => s != null)) + " are low on stock.";
+
+            ShowLowStockAlert = true;
+            AppLogger.Warning($"Low stock alert: {LowStockAlertSummary}");
         }
 
 

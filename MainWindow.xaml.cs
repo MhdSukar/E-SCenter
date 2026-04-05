@@ -19,7 +19,7 @@ namespace ESCenter
         {
             InitializeComponent();
             SetMaximizeButtonIcon("Maximize");
-            Loaded += (_, __) =>
+            Loaded += async (_, __) =>
             {
                 if (DataContext is ESCenter.ViewModels.MainViewModel vm)
                 {
@@ -27,7 +27,8 @@ namespace ESCenter
                     if (ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess())
                     {
                         vm.IsAdminAccessGranted = true;
-                        vm.Dashboard.Refresh();
+                        await vm.Dashboard.RefreshAsync();
+                        vm.CheckAndShowLowStockAlert();
                     }
                     else
                     {
@@ -41,7 +42,8 @@ namespace ESCenter
                         }
 
                         vm.IsAdminAccessGranted = true;
-                        vm.Dashboard.Refresh();
+                        await vm.Dashboard.RefreshAsync();
+                        vm.CheckAndShowLowStockAlert();
                     }
                 }
             };
