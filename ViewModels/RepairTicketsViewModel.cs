@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -19,6 +20,8 @@ namespace ESCenter.ViewModels
     public class RepairTicketsViewModel : ObservableObject
     {
         private readonly TicketsDataService _service;
+        private readonly TicketStatusHistoryRepository _statusHistoryRepository = new();
+        private string _lastKnownStatus = "Received";
 
         // =========================================================
         // LOADING FLAG
@@ -34,6 +37,7 @@ namespace ESCenter.ViewModels
         // COLLECTIONS
         // =========================================================
         public ObservableCollection<RepairTicket> Tickets { get; }
+        public ObservableCollection<TicketStatusEntry> StatusHistory { get; } = new();
 
         private readonly ICollectionView _ticketsView;
         public ICollectionView TicketsView => _ticketsView;
@@ -199,6 +203,9 @@ namespace ESCenter.ViewModels
 
         private string _repairStatus = "Received";
         public string RepairStatus { get => _repairStatus; set => SetProperty(ref _repairStatus, value); }
+
+        private string _statusChangeNote = string.Empty;
+        public string StatusChangeNote { get => _statusChangeNote; set => SetProperty(ref _statusChangeNote, value); }
 
         private string _priorityLevel = "Normal";
         public string PriorityLevel { get => _priorityLevel; set => SetProperty(ref _priorityLevel, value); }
@@ -495,6 +502,16 @@ namespace ESCenter.ViewModels
                 var duplicateNotice = BuildDuplicateNotice(ticket);
                 ApplyWarrantyRepairSuggestion(ticket);
                 ticket.TicketId = _service.Insert(ticket);
+                _statusHistoryRepository.Insert(new TicketStatusEntry
+                {
+                    TicketId = ticket.TicketId,
+                    OldStatus = null,
+                    NewStatus = "Received",
+                    Note = string.IsNullOrWhiteSpace(StatusChangeNote) ? null : StatusChangeNote.Trim(),
+                    ChangedAt = DateTime.Parse(DateTime.Now.ToString("o"), null, DateTimeStyles.RoundtripKind)
+                });
+                _ = LoadStatusHistoryAsync(ticket.TicketId);
+                StatusChangeNote = string.Empty;
                 var currentSnapshot = BuildStockSnapshot(UsedPartLines);
                 ReconcileStock(_savedPartsSnapshot, currentSnapshot);
                 _savedPartsSnapshot = currentSnapshot;
@@ -526,6 +543,20 @@ namespace ESCenter.ViewModels
 
                 ApplyFormToTicket(SelectedTicket);
                 _service.Update(SelectedTicket);
+                if (!string.Equals(RepairStatus, _lastKnownStatus, StringComparison.Ordinal))
+                {
+                    _statusHistoryRepository.Insert(new TicketStatusEntry
+                    {
+                        TicketId = SelectedTicket.TicketId,
+                        OldStatus = _lastKnownStatus,
+                        NewStatus = RepairStatus,
+                        Note = string.IsNullOrWhiteSpace(StatusChangeNote) ? null : StatusChangeNote.Trim(),
+                        ChangedAt = DateTime.Parse(DateTime.Now.ToString("o"), null, DateTimeStyles.RoundtripKind)
+                    });
+                    _lastKnownStatus = RepairStatus;
+                    _ = LoadStatusHistoryAsync(SelectedTicket.TicketId);
+                    StatusChangeNote = string.Empty;
+                }
                 var currentSnapshot = BuildStockSnapshot(UsedPartLines);
                 ReconcileStock(_savedPartsSnapshot, currentSnapshot);
                 _savedPartsSnapshot = currentSnapshot;
@@ -585,9 +616,19 @@ namespace ESCenter.ViewModels
 
             try
             {
+                var oldStatus = SelectedTicket.RepairStatus;
                 SelectedTicket.DeliveryDate = DateTime.Now;
                 SelectedTicket.RepairStatus = "Completed";
                 _service.Update(SelectedTicket);
+                _statusHistoryRepository.Insert(new TicketStatusEntry
+                {
+                    TicketId = SelectedTicket.TicketId,
+                    OldStatus = oldStatus,
+                    NewStatus = "Completed",
+                    Note = string.IsNullOrWhiteSpace(StatusChangeNote) ? null : StatusChangeNote.Trim(),
+                    ChangedAt = DateTime.Parse(DateTime.Now.ToString("o"), null, DateTimeStyles.RoundtripKind)
+                });
+                StatusChangeNote = string.Empty;
                 RefreshTicketInCollection(SelectedTicket);
                 LoadFromTicket(SelectedTicket);
                 _ticketsView.Refresh();
@@ -610,9 +651,19 @@ namespace ESCenter.ViewModels
 
             try
             {
+                var oldStatus = SelectedTicket.RepairStatus;
                 SelectedTicket.DeliveryDate = null;
                 SelectedTicket.RepairStatus = "In Repair";
                 _service.Update(SelectedTicket);
+                _statusHistoryRepository.Insert(new TicketStatusEntry
+                {
+                    TicketId = SelectedTicket.TicketId,
+                    OldStatus = oldStatus,
+                    NewStatus = "In Repair",
+                    Note = string.IsNullOrWhiteSpace(StatusChangeNote) ? null : StatusChangeNote.Trim(),
+                    ChangedAt = DateTime.Parse(DateTime.Now.ToString("o"), null, DateTimeStyles.RoundtripKind)
+                });
+                StatusChangeNote = string.Empty;
                 RefreshTicketInCollection(SelectedTicket);
                 LoadFromTicket(SelectedTicket);
                 _ticketsView.Refresh();
@@ -1158,6 +1209,7 @@ namespace ESCenter.ViewModels
         private void ClearForm()
         {
             SelectedTicket = null;
+            _lastKnownStatus = "Received";
 
             EscTicketId        = _service.GetNextEscTicketId();
             CustomerIdText     = string.Empty;
@@ -1173,6 +1225,7 @@ namespace ESCenter.ViewModels
             ProblemDescription = string.Empty;
             Notes              = string.Empty;
             RepairStatus       = "Received";
+            StatusChangeNote   = string.Empty;
             PriorityLevel      = "Normal";
             TicketType         = "Normal";
             EstimatedCost      = null;
@@ -1203,6 +1256,7 @@ namespace ESCenter.ViewModels
             PartsUsedInput          = string.Empty;
             IsPartsSuggestionOpen   = false;
             SelectedSuggestionIndex = -1;
+            StatusHistory.Clear();
 
             RefreshCustomerProfile();
         }
@@ -1225,6 +1279,7 @@ namespace ESCenter.ViewModels
             ProblemDescription = ticket.ProblemDescription ?? string.Empty;
             Notes              = ticket.Notes ?? string.Empty;
             RepairStatus       = ticket.RepairStatus  ?? "Received";
+            _lastKnownStatus   = RepairStatus;
             PriorityLevel      = ticket.PriorityLevel ?? "Normal";
             TicketType         = ticket.TicketType    ?? "Normal";
             EstimatedCost         = ticket.EstimatedCost;
@@ -1261,8 +1316,27 @@ namespace ESCenter.ViewModels
             PartsUsedInput          = string.Empty;
             IsPartsSuggestionOpen   = false;
             SelectedSuggestionIndex = -1;
+            _ = LoadStatusHistoryAsync(ticket.TicketId);
 
             RefreshCustomerProfile();
+        }
+
+        private async Task LoadStatusHistoryAsync(int ticketId)
+        {
+            try
+            {
+                var history = await _statusHistoryRepository.GetByTicketIdAsync(ticketId);
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    StatusHistory.Clear();
+                    foreach (var entry in history)
+                        StatusHistory.Add(entry);
+                });
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to load status history: {ex.Message}");
+            }
         }
 
         private RepairTicket BuildTicketFromForm()
