@@ -15,6 +15,7 @@ namespace ESCenter.Windows
     {
         private readonly TicketsDataService _ticketsDataService = new();
         private bool _animatingClose;
+        private bool _wasMinimized;
 
         public ObservableCollection<WarrantyDeviceRow> WarrantyItems { get; } = new();
 
@@ -25,6 +26,7 @@ namespace ESCenter.Windows
             DataContext = this;
             Loaded += (_, __) => WindowFader.SlideIn(this);
             Closing += Window_Closing;
+            StateChanged += Window_StateChanged;
             LoadWarrantyItems();
         }
 
@@ -62,7 +64,22 @@ namespace ESCenter.Windows
 
         private void btnMinimize_Click(object sender, RoutedEventArgs e)
         {
-            WindowState = WindowState.Minimized;
+            WindowFader.FadeMinimize(this);
+        }
+
+        private void Window_StateChanged(object? sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                _wasMinimized = true;
+                return;
+            }
+
+            if (_wasMinimized && WindowState == WindowState.Normal)
+            {
+                _wasMinimized = false;
+                WindowFader.FadeRestore(this);
+            }
         }
 
         private void btnMaximize_Click(object sender, RoutedEventArgs e)
