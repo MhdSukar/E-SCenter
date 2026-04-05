@@ -1,16 +1,48 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Media;
+using ESCenter.Core;
 using ESCenter.Services;
 
 namespace ESCenter.Windows
 {
     public partial class ChangeAdminPasswordWindow : Window
     {
+        private bool _animatingClose;
+        private bool _wasMinimized;
+
         public bool PasswordChanged { get; private set; }
 
         public ChangeAdminPasswordWindow()
         {
             InitializeComponent();
             SetMaximizeButtonIcon("Maximize");
+            Loaded += (_, __) => WindowFader.SlideIn(this);
+            Closing += Window_Closing;
+            StateChanged += Window_StateChanged;
+        }
+
+        private void Window_Closing(object? sender, CancelEventArgs e)
+        {
+            if (_animatingClose)
+            {
+                return;
+            }
+
+            e.Cancel = true;
+            _animatingClose = true;
+            WindowFader.SlideOut(this, () =>
+            {
+                Hide();
+                if (Content is UIElement c)
+                {
+                    c.RenderTransform = Transform.Identity;
+                }
+
+                Opacity = 1;
+                Close();
+            });
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -64,7 +96,22 @@ namespace ESCenter.Windows
 
         private void btnMinimize_Click(object sender, RoutedEventArgs e)
         {
-            WindowState = WindowState.Minimized;
+            WindowFader.FadeMinimize(this);
+        }
+
+        private void Window_StateChanged(object? sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                _wasMinimized = true;
+                return;
+            }
+
+            if (_wasMinimized && WindowState == WindowState.Normal)
+            {
+                _wasMinimized = false;
+                WindowFader.FadeRestore(this);
+            }
         }
 
         private void btnMaximize_Click(object sender, RoutedEventArgs e)
