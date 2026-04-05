@@ -140,6 +140,11 @@
                         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBox Width="140" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource NeonTextBoxStyle}" />
                             <ComboBox Width="66" Margin="8,0,0,0" ItemsSource="{Binding Currencies}" SelectedItem="{Binding PriceCurrency}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
+                            <TextBlock Text="{Binding PriceEquivalent}"
+                                       Foreground="#FFD54A"
+                                       FontSize="11"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"/>
                         </StackPanel>
 
                         <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Category:</TextBlock>

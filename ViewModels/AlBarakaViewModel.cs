@@ -29,12 +29,66 @@ namespace ESCenter.ViewModels
         }
 
         // Form fields
-        public DateTime Date { get; set; } = DateTime.Today;
-        public string ItemName { get; set; } = string.Empty;
-        public decimal? Price { get; set; }
-        public string PriceCurrency { get; set; } = "S.P";
-        public string Category { get; set; } = "Consumable";
-        public string Account { get; set; } = string.Empty;
+        private DateTime _date = DateTime.Today;
+        public DateTime Date
+        {
+            get => _date;
+            set => SetProperty(ref _date, value);
+        }
+
+        private string _itemName = string.Empty;
+        public string ItemName
+        {
+            get => _itemName;
+            set => SetProperty(ref _itemName, value);
+        }
+
+        private decimal? _price;
+        public decimal? Price
+        {
+            get => _price;
+            set
+            {
+                if (SetProperty(ref _price, value))
+                {
+                    RefreshPriceEquivalent();
+                }
+            }
+        }
+
+        private string _priceCurrency = "S.P";
+        public string PriceCurrency
+        {
+            get => _priceCurrency;
+            set
+            {
+                if (SetProperty(ref _priceCurrency, value))
+                {
+                    RefreshPriceEquivalent();
+                }
+            }
+        }
+
+        private string _category = "Consumable";
+        public string Category
+        {
+            get => _category;
+            set => SetProperty(ref _category, value);
+        }
+
+        private string _account = string.Empty;
+        public string Account
+        {
+            get => _account;
+            set => SetProperty(ref _account, value);
+        }
+
+        private string _priceEquivalent = string.Empty;
+        public string PriceEquivalent
+        {
+            get => _priceEquivalent;
+            set => SetProperty(ref _priceEquivalent, value);
+        }
 
         // Filters
         private DateTime? _filterStart;
@@ -117,17 +171,7 @@ namespace ESCenter.ViewModels
                 ClearForm(preserveDate: true);
             }
 
-            NotifyAllProperties();
-        }
-
-        private void NotifyAllProperties()
-        {
-            OnPropertyChanged(nameof(Date));
-            OnPropertyChanged(nameof(ItemName));
-            OnPropertyChanged(nameof(Price));
-            OnPropertyChanged(nameof(PriceCurrency));
-            OnPropertyChanged(nameof(Category));
-            OnPropertyChanged(nameof(Account));
+            RefreshPriceEquivalent();
         }
 
         private void ClearForm(bool preserveDate = false)
@@ -141,8 +185,26 @@ namespace ESCenter.ViewModels
             PriceCurrency = "S.P";
             Category = "Consumable";
             Account = string.Empty;
-            NotifyAllProperties();
+            RefreshPriceEquivalent();
             UpdateCommandStates();
+        }
+
+        private void RefreshPriceEquivalent()
+        {
+            if (Price == null || Price == 0 || PriceCurrency == "S.P")
+            {
+                PriceEquivalent = string.Empty;
+                return;
+            }
+
+            var rates = UserPreferencesService.GetExchangeRates();
+            if (!rates.TryGetValue(PriceCurrency, out var rate) || rate == 0)
+            {
+                PriceEquivalent = string.Empty;
+                return;
+            }
+
+            PriceEquivalent = $"≈ {Price.Value * rate:N0} S.P";
         }
 
         private bool CanSave()
