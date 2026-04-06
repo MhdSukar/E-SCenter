@@ -82,12 +82,9 @@ namespace ESCenter.ViewModels
         }
 
         public ObservableCollection<RepairTicket> RecentTickets { get; } = new();
-        public ObservableCollection<PriorityStat> PriorityStats { get; } = new();
         public ObservableCollection<LowStockCounterItem> LowStockItems { get; } = new();
 
         public ICommand RefreshCommand { get; }
-        public ICommand OpenTicketsCommand { get; }
-        public ICommand ClosedTicketsCommand { get; }
 
         public DashboardViewModel()
         {
@@ -100,8 +97,6 @@ namespace ESCenter.ViewModels
             _inventoryLowStockThreshold = thresholds.InventoryThreshold.ToString();
 
             RefreshCommand = new RelayCommand(_ => Refresh());
-            OpenTicketsCommand = new RelayCommand(param => ExecuteShowRepairTickets(param));
-            ClosedTicketsCommand = new RelayCommand(param => ExecuteShowRepairTickets(param));
 
             TicketEvents.TicketsChanged += (_, _) => Refresh();
             DatabasePathService.DatabasePathChanged += (_, _) => Refresh();
@@ -145,15 +140,6 @@ namespace ESCenter.ViewModels
                 {
                     RecentTickets.Add(ticket);
                 }
-
-                PriorityStats.Clear();
-                var priorityCounts = priorityCountsTask.Result;
-                foreach (var priority in new[] { "Critical", "Major", "Normal", "Minor" })
-                {
-                    priorityCounts.TryGetValue(priority, out var count);
-                    PriorityStats.Add(new PriorityStat { Priority = priority, Count = count });
-                }
-
                 WeeklyCompletionPercent = WeeklyTotalTickets == 0
                     ? 0
                     : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
@@ -246,24 +232,6 @@ namespace ESCenter.ViewModels
             }
 
             return Math.Max(0, parsedValue);
-        }
-
-        private void ExecuteShowRepairTickets(object parameter)
-        {
-            try
-            {
-                AppEvents.RequestNavigateToTickets();
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Warning($"Failed to navigate to repair tickets: {ex.Message}");
-            }
-        }
-
-        public class PriorityStat
-        {
-            public string Priority { get; set; } = string.Empty;
-            public int Count { get; set; }
         }
 
         public class LowStockCounterItem

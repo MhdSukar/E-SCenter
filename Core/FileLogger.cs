@@ -22,11 +22,11 @@ namespace ESCenter.Core
         /// </summary>
         public static void Initialize()
         {
-            if (_initialized) return;
-            _initialized = true;
-
             try
             {
+                if (_initialized) return;
+                _initialized = true;
+
                 _logDirectory = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     "ESCenter", "Logs");
@@ -42,11 +42,25 @@ namespace ESCenter.Core
             }
 
             // Subscribe to AppLogger's internal hook
-            AppLogger.LogEntryRaised += (message, level) =>
-                _ = WriteAsync(message, level);
+            try
+            {
+                AppLogger.LogEntryRaised += (message, level) =>
+                    _ = WriteAsync(message, level);
+            }
+            catch
+            {
+                // Best-effort: if event hook fails, keep app running.
+            }
 
             // Clean up log files older than 7 days — fire and forget
-            _ = Task.Run(CleanOldLogs);
+            try
+            {
+                _ = Task.Run(CleanOldLogs);
+            }
+            catch
+            {
+                // Best-effort: cleanup should never affect application flow.
+            }
         }
 
         /// <summary>
@@ -57,9 +71,16 @@ namespace ESCenter.Core
         {
             get
             {
-                if (string.IsNullOrEmpty(_logDirectory)) return null;
-                return Path.Combine(_logDirectory,
-                    $"escenter-{DateTime.Today:yyyy-MM-dd}.log");
+                try
+                {
+                    if (string.IsNullOrEmpty(_logDirectory)) return null;
+                    return Path.Combine(_logDirectory,
+                        $"escenter-{DateTime.Today:yyyy-MM-dd}.log");
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
 
@@ -67,37 +88,56 @@ namespace ESCenter.Core
         /// The directory where log files are stored.
         /// Null if not initialized or creation failed.
         /// </summary>
-        public static string? LogDirectory =>
-            string.IsNullOrEmpty(_logDirectory) ? null : _logDirectory;
+        public static string? LogDirectory
+        {
+            get
+            {
+                try
+                {
+                    return string.IsNullOrEmpty(_logDirectory) ? null : _logDirectory;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
 
         // ── Private helpers ───────────────────────────────────────────────
 
         private static async Task WriteAsync(string message, StatusLevel level)
         {
-            if (string.IsNullOrEmpty(_logDirectory)) return;
-
-            var timestamp = DateTime.Now;
-            var fileName  = $"escenter-{timestamp:yyyy-MM-dd}.log";
-            var filePath  = Path.Combine(_logDirectory, fileName);
-
-            // Format: [HH:mm:ss.fff] [LEVEL  ] message
-            var levelPadded = level.ToString().ToUpperInvariant().PadRight(7);
-            var line = $"[{timestamp:HH:mm:ss.fff}] [{levelPadded}] {message}{Environment.NewLine}";
-
-            await Task.Run(() =>
+            try
             {
-                try
+                if (string.IsNullOrEmpty(_logDirectory)) return;
+
+                var timestamp = DateTime.Now;
+                var fileName  = $"escenter-{timestamp:yyyy-MM-dd}.log";
+                var filePath  = Path.Combine(_logDirectory, fileName);
+
+                // Format: [HH:mm:ss.fff] [LEVEL  ] message
+                var levelPadded = level.ToString().ToUpperInvariant().PadRight(7);
+                var line = $"[{timestamp:HH:mm:ss.fff}] [{levelPadded}] {message}{Environment.NewLine}";
+
+                await Task.Run(() =>
                 {
-                    lock (_writeLock)
+                    try
                     {
-                        File.AppendAllText(filePath, line, Encoding.UTF8);
+                        lock (_writeLock)
+                        {
+                            File.AppendAllText(filePath, line, Encoding.UTF8);
+                        }
                     }
-                }
-                catch
-                {
-                    // Never propagate logging exceptions to the UI thread.
-                }
-            });
+                    catch
+                    {
+                        // Never propagate logging exceptions to the UI thread.
+                    }
+                });
+            }
+            catch
+            {
+                // Never propagate logging exceptions to the caller.
+            }
         }
 
         private static void CleanOldLogs()
