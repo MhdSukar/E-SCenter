@@ -99,6 +99,7 @@ namespace ESCenter.ViewModels
         public ICommand ShowBoneyardCommand { get; }
         public ICommand ShowWarrantySystemCommand { get; }
         public ICommand ShowUserProfileCommand { get; }
+        public ICommand OpenLogFolderCommand { get; }
 
         private object _currentView;
         public object CurrentView
@@ -288,6 +289,7 @@ namespace ESCenter.ViewModels
             });
 
             ShowUserProfileCommand = new RelayCommand(_ => ShowUserProfile());
+            OpenLogFolderCommand = new RelayCommand(_ => OpenLogFolder());
 
             // F-key bindings use these commands (declared separately so XAML can bind by name)
             AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
@@ -670,6 +672,37 @@ namespace ESCenter.ViewModels
                     "Error",
                     System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Error);
+            }
+        }
+
+
+        private void OpenLogFolder()
+        {
+            try
+            {
+                var logDir = Core.FileLogger.LogDirectory;
+                if (string.IsNullOrEmpty(logDir) || !Directory.Exists(logDir))
+                {
+                    AppLogger.Warning("Log folder not found or logging is disabled.");
+                    return;
+                }
+
+                var todayLog = Core.FileLogger.TodayLogPath;
+                if (todayLog != null && File.Exists(todayLog))
+                {
+                    // Open Explorer with today's log file selected
+                    System.Diagnostics.Process.Start("explorer.exe",
+                        $"/select,\"{todayLog}\"");
+                }
+                else
+                {
+                    // Just open the folder
+                    System.Diagnostics.Process.Start("explorer.exe", logDir);
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to open log folder: {ex.Message}");
             }
         }
 
