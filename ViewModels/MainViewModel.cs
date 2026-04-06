@@ -98,6 +98,7 @@ namespace ESCenter.ViewModels
         public ICommand ShowInventoryCommand { get; }
         public ICommand ShowBoneyardCommand { get; }
         public ICommand ShowWarrantySystemCommand { get; }
+        public ICommand ShowUserProfileCommand { get; }
 
         private object _currentView;
         public object CurrentView
@@ -210,6 +211,7 @@ namespace ESCenter.ViewModels
         private readonly DispatcherTimer _statusResetTimer;
         private readonly DispatcherTimer _databaseStatusTimer;
         private RepairTicketsViewModel? _repairTicketsViewModel;
+        private UserProfileWindow? _userProfileWindow;
 
         public MainViewModel()
         {
@@ -285,6 +287,8 @@ namespace ESCenter.ViewModels
                 ShowWarrantySystem();
             });
 
+            ShowUserProfileCommand = new RelayCommand(_ => ShowUserProfile());
+
             // F-key bindings use these commands (declared separately so XAML can bind by name)
             AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
             AppEvents.NavigateToTicketsRequested += () => ShowRepairTicketsCommand.Execute(null);
@@ -347,6 +351,33 @@ namespace ESCenter.ViewModels
 
         private RepairTicketsViewModel GetOrCreateRepairTicketsViewModel()
             => _repairTicketsViewModel ??= new RepairTicketsViewModel();
+
+        private void ShowUserProfile()
+        {
+            // If already open, close it (toggle behaviour)
+            if (_userProfileWindow != null && _userProfileWindow.IsVisible)
+            {
+                _userProfileWindow.Close();
+                _userProfileWindow = null;
+                return;
+            }
+
+            _userProfileWindow = new UserProfileWindow(CurrentUser);
+            _userProfileWindow.Closed += (_, _) => _userProfileWindow = null;
+
+            // Position just below the title bar username button.
+            // We'll position it in code-behind after the button click
+            // provides screen coordinates. For now, position near top-right.
+            var mainWindow = System.Windows.Application.Current.MainWindow;
+            if (mainWindow != null)
+            {
+                _userProfileWindow.Left = mainWindow.Left + mainWindow.ActualWidth
+                                          - _userProfileWindow.Width - 60;
+                _userProfileWindow.Top = mainWindow.Top + 38;
+            }
+
+            _userProfileWindow.Show();
+        }
 
         private void Navigate(object viewModel, string successMessage)
         {
