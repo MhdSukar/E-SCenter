@@ -463,6 +463,11 @@
                                    Margin="0,0,6,0" />
                             <TextBlock Text="Customer Name:"
                                        VerticalAlignment="Center" />
+                            <TextBlock Text=" *"
+                                       Foreground="#FF5A5A"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       FontSize="13" />
                         </StackPanel>
                         <TextBox x:Name="CustomerNameBox"
                                  Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -484,6 +489,11 @@
                                    Margin="0,0,6,0" />
                             <TextBlock Text="Phone Number:"
                                        VerticalAlignment="Center" />
+                            <TextBlock Text=" *"
+                                       Foreground="#FF5A5A"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       FontSize="13" />
                         </StackPanel>
                         <TextBox Text="{Binding PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Grid.Row="4"
@@ -535,6 +545,11 @@
                                    Margin="0,0,6,0" />
                             <TextBlock Text="Device Category:"
                                        VerticalAlignment="Center" />
+                            <TextBlock Text=" *"
+                                       Foreground="#FF5A5A"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       FontSize="13" />
                         </StackPanel>
                         <TextBox Text="{Binding DeviceCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Grid.Row="6"
@@ -555,6 +570,11 @@
                                    Margin="0,0,6,0" />
                             <TextBlock Text="Device Brand:"
                                        VerticalAlignment="Center" />
+                            <TextBlock Text=" *"
+                                       Foreground="#FF5A5A"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       FontSize="13" />
                         </StackPanel>
                         <TextBox Text="{Binding DeviceBrand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Grid.Row="7"
@@ -617,6 +637,11 @@
                                    Margin="0,0,6,0" />
                             <TextBlock Text="Serial / IMEI:"
                                        VerticalAlignment="Center" />
+                            <TextBlock Text=" *"
+                                       Foreground="#FF5A5A"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       FontSize="13" />
                         </StackPanel>
                         <TextBox Text="{Binding SerialIMEI, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  Grid.Row="10"

@@ -656,6 +656,7 @@ namespace ESCenter.ViewModels
             try
             {
                 if (!ValidateForm()) return;
+                ApplyNaDefaults();
 
                 var ticket = BuildTicketFromForm();
                 var duplicateNotice = BuildDuplicateNotice(ticket);
@@ -699,6 +700,7 @@ namespace ESCenter.ViewModels
             try
             {
                 if (!ValidateForm()) return;
+                ApplyNaDefaults();
 
                 ApplyFormToTicket(SelectedTicket);
                 _service.Update(SelectedTicket);
@@ -1746,12 +1748,45 @@ namespace ESCenter.ViewModels
         // =========================================================
         private bool ValidateForm()
         {
-            if (string.IsNullOrWhiteSpace(CustomerName))   { AppLogger.Error("Customer Name is required.");   return false; }
-            if (string.IsNullOrWhiteSpace(PhoneNumber))    { AppLogger.Error("Phone Number is required.");    return false; }
-            if (string.IsNullOrWhiteSpace(ContactMethod))  { AppLogger.Error("Contact Method is required.");  return false; }
-            if (string.IsNullOrWhiteSpace(DeviceCategory)) { AppLogger.Error("Device Category is required."); return false; }
-            if (string.IsNullOrWhiteSpace(DeviceModel))    { AppLogger.Error("Device Model is required.");    return false; }
+            if (string.IsNullOrWhiteSpace(CustomerName))
+            {
+                AppLogger.Error("Customer Name is required.");
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(PhoneNumber))
+            {
+                AppLogger.Error("Phone Number is required.");
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(DeviceCategory))
+            {
+                AppLogger.Error("Device Category is required.");
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(DeviceBrand))
+            {
+                AppLogger.Error("Device Brand is required.");
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(SerialIMEI))
+            {
+                AppLogger.Error("Serial / IMEI is required.");
+                return false;
+            }
             return true;
+        }
+
+        private void ApplyNaDefaults()
+        {
+            // Apply "N/A" to optional text fields that are empty.
+            // Required fields and structured fields are excluded.
+            if (string.IsNullOrWhiteSpace(ContactMethod)) ContactMethod = "N/A";
+            if (string.IsNullOrWhiteSpace(DeviceModel)) DeviceModel = "N/A";
+            if (string.IsNullOrWhiteSpace(DamageHistory)) DamageHistory = "N/A";
+            if (string.IsNullOrWhiteSpace(BoardModifications)) BoardModifications = "N/A";
+            if (string.IsNullOrWhiteSpace(ProblemDescription)) ProblemDescription = "N/A";
+            if (string.IsNullOrWhiteSpace(Notes)) Notes = "N/A";
+            if (string.IsNullOrWhiteSpace(RootCause)) RootCause = "N/A";
         }
 
         // =========================================================
