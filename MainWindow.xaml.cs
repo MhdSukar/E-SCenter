@@ -23,6 +23,19 @@ namespace ESCenter
         public MainWindow()
         {
             InitializeComponent();
+
+            // Ctrl+F focuses the global search box from anywhere in the window
+            KeyDown += (_, e) =>
+            {
+                if (e.Key == Key.F &&
+                    (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                {
+                    GlobalSearchBox.Focus();
+                    GlobalSearchBox.SelectAll();
+                    e.Handled = true;
+                }
+            };
+
             SetMaximizeButtonIcon("Maximize");
             Loaded += (_, __) =>
             {
