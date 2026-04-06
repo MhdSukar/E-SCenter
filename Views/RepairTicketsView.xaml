@@ -195,10 +195,6 @@
                                             Binding="{Binding PriorityLevel}"
                                             Width="75"
                                             CellStyle="{StaticResource PriorityCellStyle}" />
-                        <DataGridTextColumn Header="Ticket Type"
-                                            Binding="{Binding TicketType}"
-                                            Width="90"
-                                            CellStyle="{StaticResource TicketTypeCellStyle}" />
                         <DataGridTextColumn Header="Received"
                                             Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}"
                                             Width="100" />
@@ -706,18 +702,16 @@
                                    Width="16"
                                    Height="16"
                                    Margin="0,0,6,0" />
-                            <TextBlock Text="Priority / Type:"
+                            <TextBlock Text="Priority:"
                                        VerticalAlignment="Center" />
                         </StackPanel>
-                        <StackPanel Grid.Row="15"
-                                    Grid.Column="1"
-                                    Orientation="Horizontal"
-                                    Margin="4">
-                            <ComboBox SelectedItem="{Binding PriorityLevel, Mode=TwoWay}"
-                                      Width="130"
-                                      Margin="0,0,6,0"
-                                      Style="{StaticResource NeonComboBoxStyle}"
-                                      TabIndex="12">
+                        <ComboBox SelectedItem="{Binding PriorityLevel, Mode=TwoWay}"
+                                  Grid.Row="15"
+                                  Grid.Column="1"
+                                  Width="130"
+                                  Margin="4"
+                                  Style="{StaticResource NeonComboBoxStyle}"
+                                  TabIndex="12">
                                 <ComboBox.ItemsSource>
                                     <x:Array Type="{x:Type sys:String}"
                                              xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -727,14 +721,7 @@
                                         <sys:String>Critical</sys:String>
                                     </x:Array>
                                 </ComboBox.ItemsSource>
-                            </ComboBox>
-
-                            <ComboBox Width="130"
-                                      SelectedItem="{Binding TicketType, Mode=TwoWay}"
-                                      Style="{StaticResource NeonComboBoxStyle}"
-                                      ItemsSource="{Binding TicketTypeOptions}"
-                                      TabIndex="13" />
-                        </StackPanel>
+                        </ComboBox>
 
                         <!-- ================= COST ================= -->
                         <StackPanel Orientation="Horizontal"

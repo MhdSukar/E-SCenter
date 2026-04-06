@@ -22,7 +22,7 @@ namespace ESCenter.Services
             var sql = @"
                 SELECT TicketId, EscTicketId, CustomerId, CustomerName, PhoneNumber, ContactMethod,
                        DeviceCategory, DeviceBrand, DeviceModel, SerialIMEI, DamageHistory, BoardModifications,
-                       ProblemDescription, Notes, RepairStatus, PriorityLevel, TicketType,
+                       ProblemDescription, Notes, RepairStatus, PriorityLevel,
                        EstimatedCost, EstimatedCostCurrency,
                        FinalCost, FinalCostCurrency,
                        RootCause, PartsUsed,
@@ -105,7 +105,7 @@ namespace ESCenter.Services
             var sql = @"
                 SELECT TicketId, EscTicketId, CustomerId, CustomerName, PhoneNumber, ContactMethod,
                        DeviceCategory, DeviceBrand, DeviceModel, SerialIMEI, DamageHistory, BoardModifications,
-                       ProblemDescription, Notes, RepairStatus, PriorityLevel, TicketType,
+                       ProblemDescription, Notes, RepairStatus, PriorityLevel,
                        EstimatedCost, EstimatedCostCurrency,
                        FinalCost, FinalCostCurrency,
                        RootCause, PartsUsed,
@@ -199,7 +199,7 @@ namespace ESCenter.Services
                 INSERT INTO TicketsDB 
                 (EscTicketId, CustomerId, CustomerName, PhoneNumber, ContactMethod,
                  DeviceCategory, DeviceBrand, DeviceModel, SerialIMEI, DamageHistory, BoardModifications,
-                 ProblemDescription, Notes, RepairStatus, PriorityLevel, TicketType,
+                 ProblemDescription, Notes, RepairStatus, PriorityLevel,
                  EstimatedCost, EstimatedCostCurrency,
                  FinalCost, FinalCostCurrency,
                  RootCause, PartsUsed,
@@ -208,7 +208,7 @@ namespace ESCenter.Services
                 VALUES
                 (@escTicketId, @customerId, @name, @phone, @contact,
                  @cat, @brand, @model, @serial, @damageHistory, @boardMod,
-                 @problem, @notes, @status, @priority, @ticketType,
+                 @problem, @notes, @status, @priority,
                  @est, @estCur,
                  @final, @finalCur,
                  @rootCause, @parts,
@@ -236,7 +236,7 @@ namespace ESCenter.Services
                 SET EscTicketId=@escTicketId, CustomerId=@customerId, CustomerName=@name, PhoneNumber=@phone, 
                     ContactMethod=@contact, DeviceCategory=@cat, DeviceBrand=@brand, DeviceModel=@model, 
                     SerialIMEI=@serial, DamageHistory=@damageHistory, BoardModifications=@boardMod,
-                    ProblemDescription=@problem, Notes=@notes, RepairStatus=@status, PriorityLevel=@priority, TicketType=@ticketType,
+                    ProblemDescription=@problem, Notes=@notes, RepairStatus=@status, PriorityLevel=@priority,
                     EstimatedCost=@est, EstimatedCostCurrency=@estCur,
                     FinalCost=@final, FinalCostCurrency=@finalCur,
                     RootCause=@rootCause, PartsUsed=@parts,
@@ -294,7 +294,6 @@ namespace ESCenter.Services
 
                 RepairStatus = reader["RepairStatus"]?.ToString(),
                 PriorityLevel = reader["PriorityLevel"]?.ToString(),
-                TicketType = reader["TicketType"]?.ToString() ?? "Normal",
 
                 EstimatedCost = reader["EstimatedCost"] != DBNull.Value ? Convert.ToDecimal(reader["EstimatedCost"]) : (decimal?)null,
                 EstimatedCostCurrency = reader["EstimatedCostCurrency"]?.ToString() ?? "S.P",
@@ -341,7 +340,6 @@ namespace ESCenter.Services
 
             cmd.Parameters.AddWithValue("@status", ticket.RepairStatus ?? "Received");
             cmd.Parameters.AddWithValue("@priority", ticket.PriorityLevel ?? "Normal");
-            cmd.Parameters.AddWithValue("@ticketType", ticket.TicketType ?? "Normal");
 
             cmd.Parameters.AddWithValue("@est", ticket.EstimatedCost ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@estCur", ticket.EstimatedCostCurrency ?? "S.P");

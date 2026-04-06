@@ -33,7 +33,6 @@ namespace ESCenter.Models
         // ================= STATUS =================
         public string RepairStatus { get; set; }
         public string PriorityLevel { get; set; }
-        public string TicketType { get; set; } = "Normal";
 
         // ================= COST =================
         public decimal? EstimatedCost { get; set; }

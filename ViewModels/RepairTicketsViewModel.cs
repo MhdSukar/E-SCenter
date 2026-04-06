@@ -90,9 +90,6 @@ namespace ESCenter.ViewModels
         public ObservableCollection<string> PriorityFilters { get; } =
             new ObservableCollection<string> { "All", "Minor", "Normal", "Major", "Critical" };
 
-        public ObservableCollection<string> TicketTypeOptions { get; } =
-            new ObservableCollection<string> { "Normal", "Basic", "Advanced", "Premium" };
-
         private string _selectedPriorityFilter = "All";
         public string SelectedPriorityFilter
         {
@@ -235,9 +232,6 @@ namespace ESCenter.ViewModels
 
         private string _priorityLevel = "Normal";
         public string PriorityLevel { get => _priorityLevel; set => SetProperty(ref _priorityLevel, value); }
-
-        private string _ticketType = "Normal";
-        public string TicketType { get => _ticketType; set => SetProperty(ref _ticketType, value); }
 
         private decimal? _estimatedCost;
         public decimal? EstimatedCost
@@ -1289,7 +1283,6 @@ namespace ESCenter.ViewModels
             RepairStatus       = "Received";
             StatusChangeNote   = string.Empty;
             PriorityLevel      = "Normal";
-            TicketType         = "Normal";
             EstimatedCost      = null;
             FinalCost          = null;
             EstimatedCostCurrency = "S.P";
@@ -1345,7 +1338,6 @@ namespace ESCenter.ViewModels
             RepairStatus       = ticket.RepairStatus  ?? "Received";
             _lastKnownStatus   = RepairStatus;
             PriorityLevel      = ticket.PriorityLevel ?? "Normal";
-            TicketType         = ticket.TicketType    ?? "Normal";
             EstimatedCost         = ticket.EstimatedCost;
             FinalCost             = ticket.FinalCost;
             EstimatedCostCurrency = ticket.EstimatedCostCurrency ?? "S.P";
@@ -1452,7 +1444,6 @@ namespace ESCenter.ViewModels
                 Notes              = Notes,
                 RepairStatus       = RepairStatus,
                 PriorityLevel      = PriorityLevel,
-                TicketType         = TicketType,
                 EstimatedCost         = EstimatedCost,
                 EstimatedCostCurrency = EstimatedCostCurrency,
                 FinalCost             = FinalCost,
@@ -1489,7 +1480,6 @@ namespace ESCenter.ViewModels
             ticket.Notes              = Notes;
             ticket.RepairStatus       = RepairStatus;
             ticket.PriorityLevel      = PriorityLevel;
-            ticket.TicketType         = TicketType;
             ticket.EstimatedCost         = EstimatedCost;
             ticket.EstimatedCostCurrency = EstimatedCostCurrency;
             ticket.FinalCost             = FinalCost;
