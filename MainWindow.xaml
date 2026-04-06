@@ -537,10 +537,120 @@
                                        Margin="0,0,40,0"
                                        VerticalAlignment="Top"/>
 
-                                <TextBox Grid.Column="1" Grid.Row="0"
+                                <TextBox x:Name="GlobalSearchBox"
+                                         Grid.Column="1" Grid.Row="0"
                                          Height="22"
                                          VerticalAlignment="Top"
-                                         Style="{StaticResource NeonDarkCyanTextBoxStyle}"/>
+                                         Style="{StaticResource NeonDarkCyanTextBoxStyle}"
+                                         Text="{Binding GlobalSearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Search everywhere (Ctrl+F) — min 2 characters">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Down" Command="{Binding GlobalSearchMoveDownCommand}"/>
+                                        <KeyBinding Key="Up" Command="{Binding GlobalSearchMoveUpCommand}"/>
+                                        <KeyBinding Key="Enter" Command="{Binding GlobalSearchAcceptCommand}"/>
+                                        <KeyBinding Key="Escape" Command="{Binding CloseGlobalSearchCommand}"/>
+                                    </TextBox.InputBindings>
+                                </TextBox>
+
+                                <Popup IsOpen="{Binding IsGlobalSearchOpen}"
+                                       PlacementTarget="{Binding ElementName=GlobalSearchBox}"
+                                       Placement="Bottom"
+                                       StaysOpen="False"
+                                       AllowsTransparency="True"
+                                       MinWidth="320">
+                                    <Border Background="{StaticResource CardBackgroundBrush}"
+                                            BorderBrush="{StaticResource BorderDarkBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="6"
+                                            Padding="4">
+                                        <ListBox ItemsSource="{Binding GlobalSearchResults}"
+                                                 SelectedIndex="{Binding GlobalSearchSelectedIndex, Mode=TwoWay}"
+                                                 MaxHeight="220"
+                                                 Background="Transparent"
+                                                 BorderThickness="0">
+                                            <ListBox.ItemContainerStyle>
+                                                <Style TargetType="ListBoxItem">
+                                                    <Setter Property="Padding" Value="0"/>
+                                                    <Setter Property="Margin" Value="0,1"/>
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ListBoxItem">
+                                                                <Border x:Name="Bd"
+                                                                        Background="{TemplateBinding Background}"
+                                                                        CornerRadius="4"
+                                                                        Padding="2">
+                                                                    <ContentPresenter/>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsSelected" Value="True">
+                                                                        <Setter TargetName="Bd"
+                                                                                Property="Background"
+                                                                                Value="{StaticResource NewPrimaryBlueBrush}"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="Bd"
+                                                                                Property="Background"
+                                                                                Value="#22FFFFFF"/>
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ListBox.ItemContainerStyle>
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.NavigateToResultCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Background="Transparent"
+                                                            BorderThickness="0"
+                                                            Padding="8,5"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Stretch">
+                                                        <Grid HorizontalAlignment="Stretch">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Border Grid.Column="0"
+                                                                    Background="#1A5AA7FF"
+                                                                    CornerRadius="3"
+                                                                    Padding="5,2"
+                                                                    Margin="0,0,8,0">
+                                                                <TextBlock Text="{Binding Identifier}"
+                                                                           Foreground="#5AA7FF"
+                                                                           FontSize="11"
+                                                                           FontWeight="SemiBold"
+                                                                           FontFamily="Consolas"/>
+                                                            </Border>
+
+                                                            <TextBlock Grid.Column="1"
+                                                                       Text="{Binding Name}"
+                                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                                       FontSize="12"
+                                                                       VerticalAlignment="Center"
+                                                                       TextTrimming="CharacterEllipsis"/>
+
+                                                            <Border Grid.Column="2"
+                                                                    Background="#1A334455"
+                                                                    CornerRadius="3"
+                                                                    Padding="5,2"
+                                                                    Margin="8,0,0,0">
+                                                                <TextBlock Text="{Binding Source}"
+                                                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                                                           FontSize="10"/>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Border>
+                                </Popup>
 
                                 <ComboBox Grid.Column="1" Grid.Row="1"
                                           Padding="8,0,25,0"
