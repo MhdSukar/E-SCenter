@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using ESCenter.Core;
 using ESCenter.Models;
 using ESCenter.Services;
 using ESCenter.Windows;
@@ -18,6 +19,8 @@ namespace ESCenter
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            FileLogger.Initialize();
+
             const string appName = "ESCenterUniqueAppName";
             var createdNew = false;
 
@@ -31,6 +34,10 @@ namespace ESCenter
             }
 
             base.OnStartup(e);
+
+            AppLogger.Success(
+                $"E-SCenter started — v{System.Reflection.Assembly
+                    .GetExecutingAssembly().GetName().Version}");
 
             InitializeDatabase();
             StartBackupService();
@@ -184,6 +191,8 @@ namespace ESCenter
                 _mutex.ReleaseMutex();
                 _mutex.Dispose();
             }
+
+            AppLogger.Success("E-SCenter shutting down.");
 
             base.OnExit(e);
         }

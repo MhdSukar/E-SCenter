@@ -715,6 +715,14 @@
                                             <TextBlock Text="Reset DB"/>
                                         </StackPanel>
                                     </Button>
+
+                                    <Button Style="{StaticResource NeonBorderButtonStyle}" Width="145" FontSize="12" Margin="0,5,6,0"
+                                            Command="{Binding OpenLogFolderCommand}">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Image Source="{StaticResource DBReport}" Width="20" Height="20" Margin="0,0,6,0"/>
+                                            <TextBlock Text="Open Logs"/>
+                                        </StackPanel>
+                                    </Button>
                                 </UniformGrid>
                             </Grid>
                         </GroupBox>
