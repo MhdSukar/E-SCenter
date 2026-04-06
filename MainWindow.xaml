@@ -154,7 +154,7 @@
                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Column="0"
                                Text="E-SCenter"
-                               FontSize="22"
+                               FontSize="20"
                                FontWeight="SemiBold"
                                VerticalAlignment="Center"
                                Foreground="{StaticResource NeonBlueBrush}"
@@ -307,15 +307,7 @@
                                 </Grid.RowDefinitions>
 
                                 <Grid Grid.Row="0" Margin="0,0,0,6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-
-
-                                    <lvc:CartesianChart Grid.Column="1"
-                                                        Margin="0"
+                                    <lvc:CartesianChart Margin="0"
                                                         Series="{Binding TicketsSeries}"
                                                         XAxes="{Binding TicketsXAxis}"
                                                         YAxes="{Binding TicketsYAxis}"
