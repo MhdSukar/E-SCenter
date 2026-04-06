@@ -74,7 +74,7 @@ namespace ESCenter.ViewModels
         }
 
         public ObservableCollection<string> StatusFilters { get; } =
-            new ObservableCollection<string> { "All", "Open", "Closed" };
+            new ObservableCollection<string> { "All", "Open", "Closed", "Overdue" };
 
         private string _selectedStatusFilter = "All";
         public string SelectedStatusFilter
@@ -455,6 +455,13 @@ namespace ESCenter.ViewModels
             ShowReadyPickupsOnly = true;
         }
 
+        public void ShowOverdueFromIntegration()
+        {
+            SearchQuery = string.Empty;
+            ShowReadyPickupsOnly = false;
+            SelectedStatusFilter = "Overdue";
+        }
+
         public ObservableCollection<RepairTicket> CustomerProfileHistory { get; } = new();
 
         private string _customerProfileHeader = "Customer Profile";
@@ -514,6 +521,13 @@ namespace ESCenter.ViewModels
 
             if (SelectedStatusFilter == "Open"   && t.DeliveryDate.HasValue)    return false;
             if (SelectedStatusFilter == "Closed" && !t.DeliveryDate.HasValue)   return false;
+            if (SelectedStatusFilter == "Overdue")
+            {
+                // Must be open (no delivery date)
+                if (t.DeliveryDate.HasValue) return false;
+                // Must be older than 2 days
+                if ((DateTime.Now - t.ReceiveDate).TotalDays <= 2) return false;
+            }
 
             if (SelectedPriorityFilter != "All" &&
                 !string.Equals(t.PriorityLevel, SelectedPriorityFilter, StringComparison.OrdinalIgnoreCase))
