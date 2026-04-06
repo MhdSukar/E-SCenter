@@ -559,6 +559,14 @@ namespace ESCenter.ViewModels
             SelectedStatusFilter = "Overdue";
         }
 
+        public void ShowCriticalFromIntegration()
+        {
+            SearchQuery = string.Empty;
+            ShowReadyPickupsOnly = false;
+            SelectedStatusFilter = "Open";
+            SelectedPriorityFilter = "Critical";
+        }
+
         public ObservableCollection<RepairTicket> CustomerProfileHistory { get; } = new();
 
         private string _customerProfileHeader = "Customer Profile";

@@ -478,7 +478,7 @@
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"/>
                                 <Button Grid.Column="2" Grid.Row="2"
-                                        Command="{Binding ShowRepairTicketsCommand}"
+                                        Command="{Binding ShowCriticalTicketsCommand}"
                                         Background="Transparent"
                                         BorderThickness="0"
                                         Cursor="Hand"
@@ -499,7 +499,7 @@
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"/>
                                 <Button Grid.Column="4" Grid.Row="2"
-                                        Command="{Binding ShowRepairTicketsCommand}"
+                                        Command="{Binding ShowOverdueTicketsCommand}"
                                         Background="Transparent"
                                         BorderThickness="0"
                                         Cursor="Hand"

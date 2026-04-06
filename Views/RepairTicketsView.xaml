@@ -140,6 +140,9 @@
                                      Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" />
 
                             <!-- Status filter -->
+                            <TextBlock Text="Ticket Status:"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,4,0" Foreground="{StaticResource NeonYellowBrush}"/>
                             <ComboBox Width="140"
                                       Margin="0,0,10,0"
                                       Style="{StaticResource NeonComboBoxStyle}"
@@ -147,6 +150,9 @@
                                       SelectedItem="{Binding SelectedStatusFilter}" />
 
                             <!-- Priority filter -->
+                            <TextBlock Text="Ticket Priority:"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,4,0" Foreground="{StaticResource NeonRedBrush}"/>
                             <ComboBox Width="140"
                                       Style="{StaticResource NeonComboBoxStyle}"
                                       ItemsSource="{Binding PriorityFilters}"
