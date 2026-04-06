@@ -710,6 +710,7 @@
                                   Grid.Column="1"
                                   Width="130"
                                   Margin="4"
+                                  HorizontalAlignment="Left"
                                   Style="{StaticResource NeonComboBoxStyle}"
                                   TabIndex="12">
                                 <ComboBox.ItemsSource>
