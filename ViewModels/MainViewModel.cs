@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 using ESCenter.Core;
 using ESCenter.Data;
@@ -14,7 +13,6 @@ using ESCenter.Models;
 using ESCenter.Services;
 using ESCenter.Windows;
 using LiveChartsCore;
-using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
@@ -94,13 +92,6 @@ namespace ESCenter.ViewModels
         public ICommand ShowDashboardCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
         public ICommand NewTicketCommand { get; }
-        // Commands bound from MainWindow input bindings (F-keys)
-        public ICommand OpenDashboardCommand { get; }
-        public ICommand OpenRepairTicketsCommand { get; }
-        public ICommand OpenPartsControlCommand { get; }
-        public ICommand OpenInventoryCommand { get; }
-        public ICommand OpenBoneyardCommand { get; }
-        public ICommand OpenWarrantySystemCommand { get; }
         public ICommand ShowPartsControlCommand { get; }
         public ICommand ShowReportsCommand { get; }
         public ICommand ShowAlBarakaCommand { get; }
@@ -295,12 +286,6 @@ namespace ESCenter.ViewModels
             });
 
             // F-key bindings use these commands (declared separately so XAML can bind by name)
-            OpenDashboardCommand = ShowDashboardCommand;
-            OpenRepairTicketsCommand = ShowRepairTicketsCommand;
-            OpenPartsControlCommand = ShowPartsControlCommand;
-            OpenInventoryCommand = ShowInventoryCommand;
-            OpenBoneyardCommand = ShowBoneyardCommand;
-            OpenWarrantySystemCommand = ShowWarrantySystemCommand;
             AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
             AppEvents.NavigateToTicketsRequested += () => ShowRepairTicketsCommand.Execute(null);
 
@@ -362,16 +347,6 @@ namespace ESCenter.ViewModels
 
         private RepairTicketsViewModel GetOrCreateRepairTicketsViewModel()
             => _repairTicketsViewModel ??= new RepairTicketsViewModel();
-
-        private static string? TryGetParameter(Dictionary<string, string>? parameters, string key)
-        {
-            if (parameters == null)
-            {
-                return null;
-            }
-
-            return parameters.TryGetValue(key, out var value) ? value : null;
-        }
 
         private void Navigate(object viewModel, string successMessage)
         {
