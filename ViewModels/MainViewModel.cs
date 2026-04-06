@@ -102,6 +102,11 @@ namespace ESCenter.ViewModels
         public ICommand ShowWarrantySystemCommand { get; }
         public ICommand ShowUserProfileCommand { get; }
         public ICommand OpenLogFolderCommand { get; }
+        public ICommand NavigateToResultCommand { get; }
+        public ICommand CloseGlobalSearchCommand { get; }
+        public ICommand GlobalSearchMoveDownCommand { get; }
+        public ICommand GlobalSearchMoveUpCommand { get; }
+        public ICommand GlobalSearchAcceptCommand { get; }
 
         private object _currentView;
         public object CurrentView
@@ -215,6 +220,36 @@ namespace ESCenter.ViewModels
         private readonly DispatcherTimer _databaseStatusTimer;
         private RepairTicketsViewModel? _repairTicketsViewModel;
         private UserProfileWindow? _userProfileWindow;
+        private readonly GlobalSearchService _globalSearchService = new();
+
+        private string _globalSearchQuery = string.Empty;
+        public string GlobalSearchQuery
+        {
+            get => _globalSearchQuery;
+            set
+            {
+                if (SetProperty(ref _globalSearchQuery, value))
+                {
+                    RunGlobalSearch();
+                }
+            }
+        }
+
+        private bool _isGlobalSearchOpen;
+        public bool IsGlobalSearchOpen
+        {
+            get => _isGlobalSearchOpen;
+            set => SetProperty(ref _isGlobalSearchOpen, value);
+        }
+
+        private int _globalSearchSelectedIndex = -1;
+        public int GlobalSearchSelectedIndex
+        {
+            get => _globalSearchSelectedIndex;
+            set => SetProperty(ref _globalSearchSelectedIndex, value);
+        }
+
+        public ObservableCollection<GlobalSearchResult> GlobalSearchResults { get; } = new();
 
         public MainViewModel()
         {
@@ -308,6 +343,46 @@ namespace ESCenter.ViewModels
 
             ShowUserProfileCommand = new RelayCommand(_ => ShowUserProfile());
             OpenLogFolderCommand = new RelayCommand(_ => OpenLogFolder());
+            NavigateToResultCommand = new RelayCommand(param =>
+            {
+                if (param is GlobalSearchResult result)
+                {
+                    NavigateToResult(result);
+                }
+            });
+
+            CloseGlobalSearchCommand = new RelayCommand(_ =>
+            {
+                IsGlobalSearchOpen = false;
+                GlobalSearchSelectedIndex = -1;
+            });
+
+            GlobalSearchMoveDownCommand = new RelayCommand(_ =>
+            {
+                if (GlobalSearchResults.Count == 0)
+                {
+                    return;
+                }
+
+                GlobalSearchSelectedIndex = Math.Min(GlobalSearchSelectedIndex + 1, GlobalSearchResults.Count - 1);
+            });
+
+            GlobalSearchMoveUpCommand = new RelayCommand(_ =>
+            {
+                GlobalSearchSelectedIndex = Math.Max(GlobalSearchSelectedIndex - 1, -1);
+            });
+
+            GlobalSearchAcceptCommand = new RelayCommand(_ =>
+            {
+                if (GlobalSearchSelectedIndex >= 0 && GlobalSearchSelectedIndex < GlobalSearchResults.Count)
+                {
+                    NavigateToResult(GlobalSearchResults[GlobalSearchSelectedIndex]);
+                }
+                else if (!string.IsNullOrWhiteSpace(GlobalSearchQuery) && GlobalSearchResults.Count > 0)
+                {
+                    NavigateToResult(GlobalSearchResults[0]);
+                }
+            });
 
             // F-key bindings use these commands (declared separately so XAML can bind by name)
             AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
@@ -403,6 +478,66 @@ namespace ESCenter.ViewModels
         {
             CurrentView = viewModel;
             AppLogger.Success(successMessage);
+        }
+
+        private void RunGlobalSearch()
+        {
+            GlobalSearchResults.Clear();
+            GlobalSearchSelectedIndex = -1;
+
+            if (string.IsNullOrWhiteSpace(GlobalSearchQuery) || GlobalSearchQuery.Trim().Length < 2)
+            {
+                IsGlobalSearchOpen = false;
+                return;
+            }
+
+            try
+            {
+                var results = _globalSearchService.Search(GlobalSearchQuery);
+                foreach (var result in results)
+                {
+                    GlobalSearchResults.Add(result);
+                }
+
+                IsGlobalSearchOpen = GlobalSearchResults.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Global search failed: {ex.Message}");
+                IsGlobalSearchOpen = false;
+            }
+        }
+
+        private void NavigateToResult(GlobalSearchResult result)
+        {
+            GlobalSearchQuery = string.Empty;
+            IsGlobalSearchOpen = false;
+            GlobalSearchSelectedIndex = -1;
+
+            switch (result.NavigationTarget)
+            {
+                case "Tickets":
+                    ActiveSection = NavSection.RepairTickets;
+                    var ticketVm = GetOrCreateRepairTicketsViewModel();
+                    ticketVm.SearchQuery = result.Identifier;
+                    Navigate(ticketVm, $"Found: {result.Identifier}");
+                    break;
+
+                case "Parts":
+                    ActiveSection = NavSection.PartsControl;
+                    Navigate(new PartsControlViewModel(), $"Parts: {result.Name}");
+                    break;
+
+                case "Inventory":
+                    ActiveSection = NavSection.Inventory;
+                    Navigate(new InventoryViewModel(), $"Inventory: {result.Name}");
+                    break;
+
+                case "Boneyard":
+                    ActiveSection = NavSection.Boneyard;
+                    Navigate(new BoneyardViewModel(), $"Boneyard: {result.Name}");
+                    break;
+            }
         }
 
         private void OnStatusRaised(string message, StatusLevel level)
