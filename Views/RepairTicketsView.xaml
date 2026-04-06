@@ -229,6 +229,31 @@
                                FontSize="18"
                                FontWeight="Bold"
                                Foreground="{StaticResource TextPrimaryBrush}" />
+                    <Border Margin="12,0,0,0"
+                            Padding="6,2"
+                            CornerRadius="4"
+                            Background="#2A1800"
+                            BorderBrush="#FF8C42"
+                            BorderThickness="1"
+                            VerticalAlignment="Center">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasUnsavedChanges}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="● Unsaved changes"
+                                   Foreground="#FF8C42"
+                                   FontSize="11"
+                                   FontWeight="SemiBold" />
+                    </Border>
                 </DockPanel>
 
                 <!-- Footer -->
@@ -254,11 +279,24 @@
                     </Button>
 
                     <Button Command="{Binding SaveCommand}"
-                            Style="{StaticResource NeonCyanButtonStyle}"
                             Width="100"
                             Margin="4,0"
                             TabIndex="23"
                             IsDefault="False">
+                        <Button.Style>
+                            <Style TargetType="Button"
+                                   BasedOn="{StaticResource NeonCyanButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasUnsavedChanges}"
+                                                 Value="True">
+                                        <Setter Property="BorderBrush"
+                                                Value="#FF8C42" />
+                                        <Setter Property="BorderThickness"
+                                                Value="1.5" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center">
                             <Image Source="{StaticResource Save}"

@@ -22,6 +22,14 @@ namespace ESCenter.ViewModels
         private readonly TicketsDataService _service;
         private readonly TicketStatusHistoryRepository _statusHistoryRepository = new();
         private string _lastKnownStatus = "Received";
+        private string _formStateSnapshot = string.Empty;
+
+        private bool _hasUnsavedChanges;
+        public bool HasUnsavedChanges
+        {
+            get => _hasUnsavedChanges;
+            private set => SetProperty(ref _hasUnsavedChanges, value);
+        }
 
         // =========================================================
         // LOADING FLAG
@@ -127,6 +135,7 @@ namespace ESCenter.ViewModels
                 if (SetProperty(ref _estimatedCostCurrency, value))
                 {
                     RefreshCostEquivalents();
+                    CheckForUnsavedChanges();
                 }
             }
         }
@@ -140,6 +149,7 @@ namespace ESCenter.ViewModels
                 if (SetProperty(ref _finalCostCurrency, value))
                 {
                     RefreshCostEquivalents();
+                    CheckForUnsavedChanges();
                 }
             }
         }
@@ -182,7 +192,10 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _customerName, value))
+                {
                     RefreshCustomerProfile();
+                    CheckForUnsavedChanges();
+                }
             }
         }
 
@@ -193,45 +206,92 @@ namespace ESCenter.ViewModels
             set
             {
                 if (SetProperty(ref _phoneNumber, value))
+                {
                     RefreshCustomerProfile();
+                    CheckForUnsavedChanges();
+                }
             }
         }
 
         private string _contactMethod = "Call";
-        public string ContactMethod { get => _contactMethod; set => SetProperty(ref _contactMethod, value); }
+        public string ContactMethod
+        {
+            get => _contactMethod;
+            set { if (SetProperty(ref _contactMethod, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _deviceCategory = string.Empty;
-        public string DeviceCategory { get => _deviceCategory; set => SetProperty(ref _deviceCategory, value); }
+        public string DeviceCategory
+        {
+            get => _deviceCategory;
+            set { if (SetProperty(ref _deviceCategory, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _deviceBrand = string.Empty;
-        public string DeviceBrand { get => _deviceBrand; set => SetProperty(ref _deviceBrand, value); }
+        public string DeviceBrand
+        {
+            get => _deviceBrand;
+            set { if (SetProperty(ref _deviceBrand, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _deviceModel = string.Empty;
-        public string DeviceModel { get => _deviceModel; set => SetProperty(ref _deviceModel, value); }
+        public string DeviceModel
+        {
+            get => _deviceModel;
+            set { if (SetProperty(ref _deviceModel, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _serialIMEI = string.Empty;
-        public string SerialIMEI { get => _serialIMEI; set => SetProperty(ref _serialIMEI, value); }
+        public string SerialIMEI
+        {
+            get => _serialIMEI;
+            set { if (SetProperty(ref _serialIMEI, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _damageHistory = string.Empty;
-        public string DamageHistory { get => _damageHistory; set => SetProperty(ref _damageHistory, value); }
+        public string DamageHistory
+        {
+            get => _damageHistory;
+            set { if (SetProperty(ref _damageHistory, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _boardModifications = string.Empty;
-        public string BoardModifications { get => _boardModifications; set => SetProperty(ref _boardModifications, value); }
+        public string BoardModifications
+        {
+            get => _boardModifications;
+            set { if (SetProperty(ref _boardModifications, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _problemDescription = string.Empty;
-        public string ProblemDescription { get => _problemDescription; set => SetProperty(ref _problemDescription, value); }
+        public string ProblemDescription
+        {
+            get => _problemDescription;
+            set { if (SetProperty(ref _problemDescription, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _notes = string.Empty;
-        public string Notes { get => _notes; set => SetProperty(ref _notes, value); }
+        public string Notes
+        {
+            get => _notes;
+            set { if (SetProperty(ref _notes, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _repairStatus = "Received";
-        public string RepairStatus { get => _repairStatus; set => SetProperty(ref _repairStatus, value); }
+        public string RepairStatus
+        {
+            get => _repairStatus;
+            set { if (SetProperty(ref _repairStatus, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _statusChangeNote = string.Empty;
         public string StatusChangeNote { get => _statusChangeNote; set => SetProperty(ref _statusChangeNote, value); }
 
         private string _priorityLevel = "Normal";
-        public string PriorityLevel { get => _priorityLevel; set => SetProperty(ref _priorityLevel, value); }
+        public string PriorityLevel
+        {
+            get => _priorityLevel;
+            set { if (SetProperty(ref _priorityLevel, value)) CheckForUnsavedChanges(); }
+        }
 
         private decimal? _estimatedCost;
         public decimal? EstimatedCost
@@ -242,6 +302,7 @@ namespace ESCenter.ViewModels
                 if (SetProperty(ref _estimatedCost, value))
                 {
                     RefreshCostEquivalents();
+                    CheckForUnsavedChanges();
                 }
             }
         }
@@ -255,21 +316,38 @@ namespace ESCenter.ViewModels
                 if (SetProperty(ref _finalCost, value))
                 {
                     RefreshCostEquivalents();
+                    CheckForUnsavedChanges();
                 }
             }
         }
 
         private DateTime _receiveDate = DateTime.Today;
-        public DateTime ReceiveDate { get => _receiveDate; set => SetProperty(ref _receiveDate, value); }
+        public DateTime ReceiveDate
+        {
+            get => _receiveDate;
+            set { if (SetProperty(ref _receiveDate, value)) CheckForUnsavedChanges(); }
+        }
 
         private TimeSpan _receiveTime = DateTime.Now.TimeOfDay;
-        public TimeSpan ReceiveTime { get => _receiveTime; set => SetProperty(ref _receiveTime, value); }
+        public TimeSpan ReceiveTime
+        {
+            get => _receiveTime;
+            set { if (SetProperty(ref _receiveTime, value)) CheckForUnsavedChanges(); }
+        }
 
         private DateTime? _deliveryDate;
-        public DateTime? DeliveryDate { get => _deliveryDate; set => SetProperty(ref _deliveryDate, value); }
+        public DateTime? DeliveryDate
+        {
+            get => _deliveryDate;
+            set { if (SetProperty(ref _deliveryDate, value)) CheckForUnsavedChanges(); }
+        }
 
         private TimeSpan? _deliveryTime;
-        public TimeSpan? DeliveryTime { get => _deliveryTime; set => SetProperty(ref _deliveryTime, value); }
+        public TimeSpan? DeliveryTime
+        {
+            get => _deliveryTime;
+            set { if (SetProperty(ref _deliveryTime, value)) CheckForUnsavedChanges(); }
+        }
 
         // ── Parts Used ─────────────────────────────────────────────────────
         private string _partsUsed = string.Empty;
@@ -278,8 +356,13 @@ namespace ESCenter.ViewModels
             get => _partsUsed;
             set
             {
-                if (SetProperty(ref _partsUsed, value) && !_suppressPartsSync)
-                    SyncLinesFromJson();
+                if (SetProperty(ref _partsUsed, value))
+                {
+                    if (!_suppressPartsSync)
+                        SyncLinesFromJson();
+
+                    CheckForUnsavedChanges();
+                }
             }
         }
 
@@ -328,19 +411,39 @@ namespace ESCenter.ViewModels
         }
 
         private string _rootCause = string.Empty;
-        public string RootCause { get => _rootCause; set => SetProperty(ref _rootCause, value); }
+        public string RootCause
+        {
+            get => _rootCause;
+            set { if (SetProperty(ref _rootCause, value)) CheckForUnsavedChanges(); }
+        }
 
         private bool _hasWarranty;
-        public bool HasWarranty { get => _hasWarranty; set => SetProperty(ref _hasWarranty, value); }
+        public bool HasWarranty
+        {
+            get => _hasWarranty;
+            set { if (SetProperty(ref _hasWarranty, value)) CheckForUnsavedChanges(); }
+        }
 
         private string _warrantyPeriod = string.Empty;
-        public string WarrantyPeriod { get => _warrantyPeriod; set => SetProperty(ref _warrantyPeriod, value); }
+        public string WarrantyPeriod
+        {
+            get => _warrantyPeriod;
+            set { if (SetProperty(ref _warrantyPeriod, value)) CheckForUnsavedChanges(); }
+        }
 
         private bool _isWarrantyRepair;
-        public bool IsWarrantyRepair { get => _isWarrantyRepair; set => SetProperty(ref _isWarrantyRepair, value); }
+        public bool IsWarrantyRepair
+        {
+            get => _isWarrantyRepair;
+            set { if (SetProperty(ref _isWarrantyRepair, value)) CheckForUnsavedChanges(); }
+        }
 
         private bool _isReadyForPickup;
-        public bool IsReadyForPickup { get => _isReadyForPickup; set => SetProperty(ref _isReadyForPickup, value); }
+        public bool IsReadyForPickup
+        {
+            get => _isReadyForPickup;
+            set { if (SetProperty(ref _isReadyForPickup, value)) CheckForUnsavedChanges(); }
+        }
 
         private DeviceChecklist _deviceChecklist = new DeviceChecklist();
         public DeviceChecklist DeviceChecklist { get => _deviceChecklist; set => SetProperty(ref _deviceChecklist, value); }
@@ -621,6 +724,9 @@ namespace ESCenter.ViewModels
                 EvaluateDuplicateMarkers();
                 RefreshCustomerProfile();
                 _ticketsView.Refresh();
+
+                _formStateSnapshot = CaptureFormSnapshot();
+                HasUnsavedChanges = false;
 
                 AppLogger.Success("Ticket updated successfully!");
                 AppEvents.RequestDashboardRefresh();
@@ -1315,6 +1421,8 @@ namespace ESCenter.ViewModels
 
             RefreshCustomerProfile();
             RefreshCostEquivalents();
+            _formStateSnapshot = string.Empty;
+            HasUnsavedChanges = false;
             FocusCustomerNameRequested?.Invoke();
         }
 
@@ -1376,6 +1484,37 @@ namespace ESCenter.ViewModels
 
             RefreshCustomerProfile();
             RefreshCostEquivalents();
+            _formStateSnapshot = CaptureFormSnapshot();
+            HasUnsavedChanges = false;
+        }
+
+        private string CaptureFormSnapshot()
+        {
+            return string.Join("|",
+                CustomerName, PhoneNumber, ContactMethod,
+                DeviceCategory, DeviceBrand, DeviceModel, SerialIMEI,
+                DamageHistory, BoardModifications, ProblemDescription,
+                Notes, RepairStatus, PriorityLevel,
+                EstimatedCost?.ToString() ?? string.Empty, EstimatedCostCurrency,
+                FinalCost?.ToString() ?? string.Empty, FinalCostCurrency,
+                RootCause, PartsUsed, HasWarranty.ToString(),
+                WarrantyPeriod, IsWarrantyRepair.ToString(),
+                IsReadyForPickup.ToString(),
+                ReceiveDate.ToString("o"), ReceiveTime.ToString(),
+                DeliveryDate?.ToString("o") ?? string.Empty,
+                DeliveryTime?.ToString() ?? string.Empty);
+        }
+
+        private void CheckForUnsavedChanges()
+        {
+            // Only track changes when editing an existing ticket
+            if (SelectedTicket == null || string.IsNullOrEmpty(_formStateSnapshot))
+            {
+                HasUnsavedChanges = false;
+                return;
+            }
+
+            HasUnsavedChanges = CaptureFormSnapshot() != _formStateSnapshot;
         }
 
         private void RefreshCostEquivalents()
