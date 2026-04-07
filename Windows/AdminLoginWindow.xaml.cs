@@ -25,6 +25,13 @@ namespace ESCenter.Windows
 
         private void Window_Closing(object? sender, CancelEventArgs e)
         {
+            // Allow immediate close for modal dialog outcomes (successful login or explicit cancel),
+            // otherwise ShowDialog() can observe a null result and caller may interpret it as failure.
+            if (DialogResult.HasValue)
+            {
+                return;
+            }
+
             if (_animatingClose)
             {
                 return;
