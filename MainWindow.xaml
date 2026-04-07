@@ -715,7 +715,7 @@
                                               VerticalAlignment="Center" 
                                               HorizontalAlignment="Center" 
                                               Width="120" Margin="0,5,-10,0" 
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}">
+                                              Style="{StaticResource GradientCheckBoxStyle}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <Image Source="{StaticResource GalaxyAi3}" Width="18" Height="18" Margin="0,0,6,0"/>
                                             <TextBlock Text="ω11 ∂яινє" Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
@@ -726,7 +726,7 @@
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Bottom"
                                               Margin="0,8,0,0"
-                                              Style="{StaticResource GradientCheckBoxStyle}">
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <Image Source="{StaticResource StatusAI}" Width="18" Height="18" Margin="0,0,6,0"/>
                                             <TextBlock Text="∂єν ∂яινє"
