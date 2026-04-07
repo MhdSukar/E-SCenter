@@ -473,6 +473,8 @@ namespace ESCenter.ViewModels
         public ICommand SuggestionMoveUpCommand   { get; }
         public ICommand CloseSuggestionsCommand   { get; }
         public ICommand AcceptSuggestionCommand   { get; }
+        public ICommand ClearSearchCommand        { get; }
+        public ICommand ResetFiltersCommand       { get; }
 
         // =========================================================
         // CONSTRUCTOR
@@ -510,6 +512,12 @@ namespace ESCenter.ViewModels
             SuggestionMoveUpCommand   = new RelayCommand(_ => MoveSuggestionUp());
             CloseSuggestionsCommand   = new RelayCommand(_ => CloseSuggestions());
             AcceptSuggestionCommand   = new RelayCommand(_ => AcceptSuggestion());
+            ClearSearchCommand        = new RelayCommand(_ => SearchQuery = string.Empty);
+            ResetFiltersCommand       = new RelayCommand(_ =>
+            {
+                SelectedStatusFilter = "All";
+                SelectedPriorityFilter = "All";
+            });
 
             // Sync UsedPartLines → PartsUsed JSON whenever a line's Quantity changes
             UsedPartLines.CollectionChanged += (_, __) => SyncJsonFromLines();
@@ -554,6 +562,8 @@ namespace ESCenter.ViewModels
 
         public void ShowOverdueFromIntegration()
         {
+            SelectedStatusFilter = "All";
+            SelectedPriorityFilter = "All";
             SearchQuery = string.Empty;
             ShowReadyPickupsOnly = false;
             SelectedStatusFilter = "Overdue";
@@ -561,9 +571,10 @@ namespace ESCenter.ViewModels
 
         public void ShowCriticalFromIntegration()
         {
+            SelectedStatusFilter = "All";
+            SelectedPriorityFilter = "All";
             SearchQuery = string.Empty;
             ShowReadyPickupsOnly = false;
-            SelectedStatusFilter = "Open";
             SelectedPriorityFilter = "Critical";
         }
 
