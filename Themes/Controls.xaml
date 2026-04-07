@@ -250,6 +250,10 @@
     <!-- Buttons - Neon / Border variations                                                      -->
     <!-- ========================================================================================= -->
 
+    <!-- ================= GLOBAL GRADIENT BUTTON STYLE ================= -->
+
+
+
     <Style x:Key="NeonBorderButtonStyle" TargetType="Button">
         <Setter Property="Height" Value="26"/>
         <Setter Property="MinWidth" Value="88"/>
@@ -1639,6 +1643,44 @@
         </Setter>
     </Style>
 
+    <Style x:Key="GradientBlueCyan" TargetType="GroupBox">
+        <Setter Property="BorderBrush" Value="{StaticResource BlueCyanGradient}" />
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Margin" Value="6"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10"
+                        Padding="8">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Header (icon-safe, color-safe) -->
+                            <ContentPresenter
+                            ContentSource="Header"
+                            Margin="8,0,0,6"
+                            VerticalAlignment="Center"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
+
+                            <ContentPresenter Grid.Row="1"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <!-- Modern ProgressBar Style -->
     <Style x:Key="ModernProgressBarStyle" TargetType="ProgressBar">
@@ -1772,6 +1814,154 @@
         </Setter>
     </Style>
 
+    <!-- ================= BASE GRADIENT CHECKBOX ================= -->
+    <Style x:Key="GradientCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Grid Width="18" Height="18" Margin="0,0,8,0">
+
+                            <!-- Glow -->
+                            <Border x:Name="Glow"
+                                BorderBrush="{StaticResource Gradient.Primary}"
+                                BorderThickness="2"
+                                CornerRadius="4"
+                                Opacity="0"
+                                Effect="{StaticResource NeonRedGlowEffect}"/>
+
+                            <!-- Box -->
+                            <Border x:Name="Box"
+                                Background="{StaticResource PanelBackgroundBrush}"
+                                BorderBrush="{StaticResource BorderDarkBrush}"
+                                BorderThickness="1.4"
+                                CornerRadius="4"/>
+
+                            <!-- Check mark -->
+                            <Path x:Name="Check"
+                              Data="M2,9 L7,14 L16,3"
+                              Stroke="{StaticResource Gradient.Primary}"
+                              StrokeThickness="2"
+                              StrokeEndLineCap="Round"
+                              StrokeStartLineCap="Round"
+                              Visibility="Collapsed"/>
+                        </Grid>
+
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- Checked -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                        </Trigger>
+
+                        <!-- Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+                        </Trigger>
+
+                        <!-- Focus -->
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+                        </Trigger>
+
+                        <!-- Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Box" Property="Opacity" Value="0.4"/>
+                            <Setter Property="Opacity" Value="0.6"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GradientCheckBoxDangerStyle"
+       TargetType="CheckBox"
+       BasedOn="{StaticResource GradientCheckBoxStyle}">
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Grid Width="18" Height="18" Margin="0,0,8,0">
+
+                            <!-- Glow -->
+                            <Border x:Name="Glow"
+                                BorderBrush="{StaticResource Gradient.Danger}"
+                                BorderThickness="2"
+                                CornerRadius="4"
+                                Opacity="0"
+                                Effect="{StaticResource NeonRedGlowEffect}"/>
+
+                            <!-- Box -->
+                            <Border x:Name="Box"
+                                Background="{StaticResource PanelBackgroundBrush}"
+                                BorderBrush="{StaticResource BorderDarkBrush}"
+                                BorderThickness="1.4"
+                                CornerRadius="4"/>
+
+                            <!-- Check mark -->
+                            <Path x:Name="Check"
+                              Data="M2,9 L7,14 L16,3"
+                              Stroke="{StaticResource Gradient.Danger}"
+                              StrokeThickness="2"
+                              StrokeEndLineCap="Round"
+                              StrokeStartLineCap="Round"
+                              Visibility="Collapsed"/>
+                        </Grid>
+
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- Checked -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Danger}"/>
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                        </Trigger>
+
+                        <!-- Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Danger}"/>
+                        </Trigger>
+
+                        <!-- Focus -->
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Danger}"/>
+                        </Trigger>
+
+                        <!-- Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Box" Property="Opacity" Value="0.4"/>
+                            <Setter Property="Opacity" Value="0.6"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+
+
     <!-- ================= TitleBar Navigation Tabs ================= -->
     <Style x:Key="TitleBarTabButtonStyle" TargetType="RadioButton">
         <Setter Property="Height" Value="26"/>
@@ -1824,6 +2014,82 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- ========================================================================================= -->
+    <!-- Testing                                      -->
+    <!-- ========================================================================================= -->
+
+    <Style x:Key="GradientBorderButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="MinWidth" Value="88"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="1.6"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid SnapsToDevicePixels="True">
+
+                        <!-- 🔥 Glow Layer -->
+                        <Border x:Name="Glow"
+                            IsHitTestVisible="False"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="2"
+                            CornerRadius="7"
+                            Opacity="0"
+                            Effect="{StaticResource NeonCyanGlowEffect}"/>
+
+                        <!-- 🎯 Main Button -->
+                        <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="7"
+                            SnapsToDevicePixels="True">
+
+                            <ContentPresenter x:Name="ContentPresenter"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- ✨ Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🔘 Press -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🚫 Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter TargetName="ContentPresenter"
+                                Property="TextElement.Foreground"
+                                Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
 
 
 </ResourceDictionary>

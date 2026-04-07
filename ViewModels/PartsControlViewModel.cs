@@ -36,6 +36,7 @@ namespace ESCenter.ViewModels
                 FilterAllCommand = new RelayCommand(_ => SetStockFilter(null));
                 FilterLowCommand = new RelayCommand(_ => SetStockFilter("Low"));
                 FilterOutCommand = new RelayCommand(_ => SetStockFilter("Out"));
+                ClearSearchCommand = new RelayCommand(_ => SearchText = string.Empty);
 
                 DatabasePathService.DatabasePathChanged += (_, __) => LoadParts();
                 AppLogger.Success("Parts Control Loaded");
@@ -136,6 +137,7 @@ namespace ESCenter.ViewModels
         public ICommand FilterAllCommand { get; }
         public ICommand FilterLowCommand { get; }
         public ICommand FilterOutCommand { get; }
+        public ICommand ClearSearchCommand { get; }
 
         // -------------------------
         // Status Bar

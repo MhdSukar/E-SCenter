@@ -47,6 +47,7 @@ namespace ESCenter.ViewModels
         public ICommand AddCommand { get; }
         public ICommand EditCommand { get; }
         public ICommand DeleteCommand { get; }
+        public ICommand ClearSearchCommand { get; }
 
         public InventoryViewModel()
         {
@@ -59,6 +60,7 @@ namespace ESCenter.ViewModels
             AddCommand = new RelayCommand(_ => Add());
             EditCommand = new RelayCommand(_ => Edit(), _ => SelectedItem != null);
             DeleteCommand = new RelayCommand(_ => Delete(), _ => SelectedItem != null);
+            ClearSearchCommand = new RelayCommand(_ => SearchText = string.Empty);
 
             Load();
         }

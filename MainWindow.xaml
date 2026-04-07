@@ -157,7 +157,7 @@
                                FontSize="20"
                                FontWeight="SemiBold"
                                VerticalAlignment="Center"
-                               Foreground="{StaticResource NeonBlueBrush}"
+                               Foreground="{StaticResource BlueCyanGradient}"
                                Margin="45,0,0,0"/>
 
                     <!-- ===== Navigation Tabs ===== -->
@@ -174,7 +174,7 @@
                                      IsChecked="{Binding IsDashboardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Dashboard}" Width="25" Height="25" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F1) Dashboard" Margin="0,2,0,0"/>
+                                <TextBlock Text="(F1) Dashboard" Margin="0,2,0,0" Foreground="{StaticResource BlueCyanGradient}"/>
                             </StackPanel>
                         </RadioButton>
 
@@ -184,7 +184,7 @@
                                      IsChecked="{Binding IsRepairTicketsSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Tickets}" Width="25" Height="25" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F2) Tickets" Margin="0,2,0,0"/>
+                                <TextBlock Text="(F2) Tickets" Margin="0,2,0,0" Foreground="{StaticResource BlueCyanGradient}"/>
                             </StackPanel>
                         </RadioButton>
 
@@ -194,7 +194,7 @@
                                      IsChecked="{Binding IsPartsControlSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Parts}" Width="25" Height="25" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F3) Parts" Margin="0,2,0,0"/>
+                                <TextBlock Text="(F3) Parts" Margin="0,2,0,0" Foreground="{StaticResource BlueCyanGradient}" />
                             </StackPanel>
                         </RadioButton>
 
@@ -204,7 +204,7 @@
                                      IsChecked="{Binding IsInventorySelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Inventory}" Width="24" Height="24" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F4) Inventory" Margin="0,2,0,0"/>
+                                <TextBlock Text="(F4) Inventory" Margin="0,2,0,0" Foreground="{StaticResource BlueCyanGradient}"/>
                             </StackPanel>
                         </RadioButton>
 
@@ -214,7 +214,7 @@
                                      IsChecked="{Binding IsBoneyardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Boneyard}" Width="25" Height="25" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F5) Boneyard" Margin="0,2,0,0"/>
+                                <TextBlock Text="(F5) Boneyard" Margin="0,2,0,0" Foreground="{StaticResource BlueCyanGradient}"/>
                             </StackPanel>
                         </RadioButton>
 
@@ -240,7 +240,7 @@
                                 <Image Source="{StaticResource Admin}" Width="16" Height="16" Margin="0,0,4,0"/>
                                 <TextBlock Text="{Binding CurrentUser}"
                                            FontSize="11"
-                                           Foreground="{StaticResource NeonBlueBrush}"
+                                           Foreground="{StaticResource BlueCyanGradient}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                             
@@ -300,7 +300,7 @@
                                            Margin="0,0,6,0"/>
                                     <TextBlock Text="Tickets Act"
                                                 VerticalAlignment="Center"
-                                               Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
+                                               Foreground="{StaticResource BlueCyanGradient}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
@@ -346,7 +346,7 @@
                                                         <TextBlock Text="{Binding Key}"
                                                                    FontSize="9"
                                                                    VerticalAlignment="Center"
-                                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
+                                                                   Foreground="{StaticResource BlueCyanGradient}"/>
                                                     </StackPanel>
                                                 </ToggleButton>
                                             </DataTemplate>
@@ -361,7 +361,7 @@
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource Statistics}" Width="16" Height="17" Margin="0,0,6,0"/>
-                                    <TextBlock Text="Tickets stk" Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
+                                    <TextBlock Text="Tickets stk" Foreground="{StaticResource BlueCyanGradient}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
@@ -518,11 +518,11 @@
                         </GroupBox>
 
                         <!-- ========= Control Group ========= -->
-                        <GroupBox Width="363" Style="{StaticResource DarkCyanGroupBoxStyle}">
+                        <GroupBox Width="363" Style="{StaticResource GradientBlueCyan}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource GalaxyAi3}" Width="18" Height="18" Margin="0,0,6,0"/>
-                                    <TextBlock Text="мн∂ ѕυкαя" Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
+                                    <TextBlock Text="мн∂ ѕυкαя" Foreground="{StaticResource BlueCyanGradient}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
@@ -711,7 +711,11 @@
 
                                     
                                     
-                                    <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="120" Margin="0,5,-10,0" Style="{StaticResource NeonCheckBoxStyle}">
+                                    <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" 
+                                              VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center" 
+                                              Width="120" Margin="0,5,-10,0" 
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <Image Source="{StaticResource GalaxyAi3}" Width="18" Height="18" Margin="0,0,6,0"/>
                                             <TextBlock Text="ω11 ∂яινє" Foreground="{StaticResource NeonDarkCyanDarkBrush}"/>
@@ -722,7 +726,7 @@
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Bottom"
                                               Margin="0,8,0,0"
-                                              Style="{StaticResource NeonCheckBoxStyle}">
+                                              Style="{StaticResource GradientCheckBoxStyle}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <Image Source="{StaticResource StatusAI}" Width="18" Height="18" Margin="0,0,6,0"/>
                                             <TextBlock Text="∂єν ∂яινє"
@@ -739,7 +743,7 @@
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource Admin}" Width="22" Height="22" Margin="0,0,6,0"/>
-                                    <TextBlock Text="Adminstration" Foreground="{StaticResource NeonRedDarkBrush}"/>
+                                    <TextBlock Text="Adminstration" Foreground="{StaticResource Gradient.Danger}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
@@ -894,7 +898,7 @@
                                        Margin="0,0,12,0"/>
 
                             <TextBlock Text="{Binding CurrentUser}" 
-                                       Foreground="{Binding UsernameBrush}" />
+                                       Foreground="{StaticResource BlueCyanGradient}" />
                         </StackPanel>
                     </StatusBarItem>
                 </StatusBar>

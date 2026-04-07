@@ -88,4 +88,59 @@
     <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryText}" />
     <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHover}" />
 
+    <!-- ========================= -->
+    <!-- Gradient Brushes -->
+    <!-- ========================= -->
+    <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
+
+    <LinearGradientBrush x:Key="BlueCyanGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#00E5D4" Offset="0.0"/>
+        <GradientStop Color="#00A8C8" Offset="0.5"/>
+        <GradientStop Color="#2952D9" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="Gradient.Primary" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#19D3C5" Offset="0.0"/>
+        <GradientStop Color="#2F6BFF" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- 🟢 Success -->
+    <LinearGradientBrush x:Key="Gradient.Success" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#00E676" Offset="0.0"/>
+        <GradientStop Color="#00BFA5" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- 🟡 Warning -->
+    <LinearGradientBrush x:Key="Gradient.Warning" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFD54F" Offset="0.0"/>
+        <GradientStop Color="#FF8F00" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- 🔴 Danger -->
+    <LinearGradientBrush x:Key="Gradient.Danger" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF5252" Offset="0.0"/>
+        <GradientStop Color="#D50000" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- 🟣 Accent (cool secondary highlight) -->
+    <LinearGradientBrush x:Key="Gradient.Accent" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#7C4DFF" Offset="0.0"/>
+        <GradientStop Color="#00E5FF" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- ⚫ Subtle Dark Panel -->
+    <LinearGradientBrush x:Key="Gradient.Panel" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#1A1A1A" Offset="0.0"/>
+        <GradientStop Color="#0F0F0F" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- 🌫 Soft Glass Overlay -->
+    <LinearGradientBrush x:Key="Gradient.Glass" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#33FFFFFF" Offset="0.0"/>
+        <GradientStop Color="#11FFFFFF" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- Test Ground -->
+    
+
 </ResourceDictionary>
