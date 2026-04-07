@@ -93,15 +93,10 @@
     <!-- ========================= -->
     <SolidColorBrush x:Key="TransparentBrush" Color="Transparent"/>
 
-    <LinearGradientBrush x:Key="BlueCyanGradient" StartPoint="0,0" EndPoint="1,1">
+    <LinearGradientBrush x:Key="Gradient.Primary" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Color="#00E5D4" Offset="0.0"/>
         <GradientStop Color="#00A8C8" Offset="0.5"/>
         <GradientStop Color="#2952D9" Offset="1.0"/>
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="Gradient.Primary" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#19D3C5" Offset="0.0"/>
-        <GradientStop Color="#2F6BFF" Offset="1.0"/>
     </LinearGradientBrush>
 
     <!-- 🟢 Success -->

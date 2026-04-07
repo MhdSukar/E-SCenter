@@ -183,7 +183,7 @@
                       AutoGenerateColumns="False"
                       SelectedItem="{Binding SelectedPart, Mode=TwoWay}"
                       Style="{StaticResource DarkDataGridStyle}"
-                      RowStyle="{StaticResource CompactDataGridRowStyle}"
+                      RowStyle="{StaticResource TicketRowStyle}"
                       CellStyle="{StaticResource CompactDataGridCellStyle}"
                       ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}">
 
