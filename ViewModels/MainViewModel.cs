@@ -93,6 +93,7 @@ namespace ESCenter.ViewModels
         public ICommand ShowRepairTicketsCommand { get; }
         public ICommand ShowOverdueTicketsCommand { get; }
         public ICommand ShowCriticalTicketsCommand { get; }
+        public ICommand ShowReadyPickupTicketsCommand { get; }
         public ICommand NewTicketCommand { get; }
         public ICommand ShowPartsControlCommand { get; }
         public ICommand ShowReportsCommand { get; }
@@ -295,6 +296,14 @@ namespace ESCenter.ViewModels
                 var vm = GetOrCreateRepairTicketsViewModel();
                 vm.ShowCriticalFromIntegration();
                 Navigate(vm, "Showing critical tickets");
+            });
+
+            ShowReadyPickupTicketsCommand = new RelayCommand(_ =>
+            {
+                ActiveSection = NavSection.RepairTickets;
+                var vm = GetOrCreateRepairTicketsViewModel();
+                vm.ShowReadyPickupsFromIntegration();
+                Navigate(vm, "Showing ready for pickup tickets");
             });
 
             NewTicketCommand = new RelayCommand(_ =>

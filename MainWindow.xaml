@@ -408,7 +408,7 @@
                                            Foreground="{StaticResource TextSecondaryBrush}"/>
 
                                 <TextBlock Grid.Column="4" Grid.Row="0"
-                                           Text="Overdue (>2 days)"
+                                           Text="Ready"
                                            FontSize="8"
                                            FontWeight="SemiBold"
                                            HorizontalAlignment="Center"
@@ -444,12 +444,19 @@
                                            Margin="0,8,0,0"
                                            HorizontalAlignment="Center"/>
 
-                                <TextBlock Text="{Binding Dashboard.OverdueTickets}" Grid.Row="1" Grid.Column="4"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource NeonRedBrush}"
-                                           Margin="0,8,0,0"
-                                           HorizontalAlignment="Center"/>
+                                <Button Grid.Row="1" Grid.Column="4"
+                                        Command="{Binding ShowReadyPickupTicketsCommand}"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Padding="0"
+                                        Margin="0,8,0,0"
+                                        HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Dashboard.ReadyForPickupTickets}"
+                                               FontSize="28"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource NeonCyanBrush}"/>
+                                </Button>
 
                                 <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
                                     <Image Source="{StaticResource CharCritical}" Width="19" Height="19" Margin="0,0,4,0"/>
