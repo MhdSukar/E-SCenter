@@ -70,6 +70,11 @@
                       BlurRadius="18"
                       ShadowDepth="0"
                       Opacity="0.9"/>
+    <DropShadowEffect x:Key="GradientPrimaryGlowEffect"
+                      Color="#00C8C0"
+                      BlurRadius="18"
+                      ShadowDepth="0"
+                      Opacity="0.9"/>
 
     <!-- ========================================================================================= -->
     <!-- Base / Global Styles                                                                    -->
@@ -314,6 +319,79 @@
                                     Property="TextElement.Foreground"
                                     Value="{StaticResource TextDisabledBrush}"/>
                         </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GradientBorderButtonStyle" TargetType="Button">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="MinWidth" Value="88"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="1.6"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid SnapsToDevicePixels="True">
+
+                        <!-- 🔥 Glow Layer -->
+                        <Border x:Name="Glow"
+                            IsHitTestVisible="False"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="2"
+                            CornerRadius="7"
+                            Opacity="0"
+                            Effect="{StaticResource GradientPrimaryGlowEffect}"/>
+
+                        <!-- 🎯 Main Button -->
+                        <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="7"
+                            SnapsToDevicePixels="True">
+
+                            <ContentPresenter x:Name="ContentPresenter"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- ✨ Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🔘 Press -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="Background"
+                                    Value="{StaticResource Gradient.Primary.Subtle}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🚫 Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter TargetName="ContentPresenter"
+                                Property="TextElement.Foreground"
+                                Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -1758,11 +1836,11 @@
                         <Grid Width="18" Height="18" Margin="0,0,8,0">
                             <!-- Glow -->
                             <Border x:Name="Glow"
-                                BorderBrush="{StaticResource NeonRedBrush}"
+                                BorderBrush="{StaticResource NeonCyanBrush}"
                                 BorderThickness="2"
                                 CornerRadius="4"
                                 Opacity="0"
-                                Effect="{StaticResource NeonRedGlowEffect}"/>
+                                Effect="{StaticResource NeonCyanGlowEffect}"/>
 
                             <!-- Box -->
                             <Border x:Name="Box"
@@ -1774,7 +1852,7 @@
                             <!-- Check mark -->
                             <Path x:Name="Check"
                               Data="M2,9 L7,14 L16,3"
-                              Stroke="{StaticResource NeonRedBrush}"
+                              Stroke="{StaticResource NeonCyanBrush}"
                               StrokeThickness="2"
                               StrokeEndLineCap="Round"
                               StrokeStartLineCap="Round"
@@ -1788,25 +1866,46 @@
                         <!-- Checked -->
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource NeonRedBrush}"/>
-                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Box"   Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
+                            <Setter TargetName="Box"   Property="Background"  Value="#142EE6FF"/>
+                            <Setter TargetName="Glow"  Property="Opacity"     Value="0.85"/>
+                            <Setter TargetName="Glow"  Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
+                            <Setter TargetName="Glow"  Property="Effect"      Value="{StaticResource NeonCyanGlowEffect}"/>
                         </Trigger>
 
-                        <!-- Hover -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
-                        </Trigger>
+                        <!-- Hover (unchecked) -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked"   Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Box"  Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
+                            <Setter TargetName="Glow" Property="Opacity"     Value="0.4"/>
+                            <Setter TargetName="Glow" Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
+                            <Setter TargetName="Glow" Property="Effect"      Value="{StaticResource NeonCyanGlowEffect}"/>
+                        </MultiTrigger>
 
-                        <!-- Focus -->
+                        <!-- Hover (checked) — keep checked appearance -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked"   Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Box"  Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
+                            <Setter TargetName="Glow" Property="Opacity"     Value="1.0"/>
+                        </MultiTrigger>
+
+                        <!-- Keyboard focus -->
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
-                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource NeonRedBrush}"/>
+                            <Setter TargetName="Glow" Property="Opacity"     Value="0.9"/>
+                            <Setter TargetName="Box"  Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
+                            <Setter TargetName="Glow" Property="Effect"      Value="{StaticResource NeonCyanGlowEffect}"/>
                         </Trigger>
 
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Box" Property="Opacity" Value="0.4"/>
-                            <Setter Property="Opacity" Value="0.6"/>
+                            <Setter Property="Opacity"                  Value="0.6"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1821,20 +1920,19 @@
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Height" Value="28"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Grid Width="18" Height="18" Margin="0,0,8,0">
 
-                            <!-- Glow -->
+                            <!-- Glow layer -->
                             <Border x:Name="Glow"
                                 BorderBrush="{StaticResource Gradient.Primary}"
                                 BorderThickness="2"
                                 CornerRadius="4"
                                 Opacity="0"
-                                Effect="{StaticResource NeonRedGlowEffect}"/>
+                                Effect="{StaticResource GradientPrimaryGlowEffect}"/>
 
                             <!-- Box -->
                             <Border x:Name="Box"
@@ -1843,14 +1941,20 @@
                                 BorderThickness="1.4"
                                 CornerRadius="4"/>
 
-                            <!-- Check mark -->
+                            <!-- Gradient fill overlay when checked -->
+                            <Border x:Name="Fill"
+                                Background="{StaticResource Gradient.Primary.Subtle}"
+                                CornerRadius="3"
+                                Opacity="0"/>
+
+                            <!-- Check mark — solid mid-gradient color for visibility -->
                             <Path x:Name="Check"
-                              Data="M2,9 L7,14 L16,3"
-                              Stroke="{StaticResource Gradient.Primary}"
-                              StrokeThickness="2"
-                              StrokeEndLineCap="Round"
-                              StrokeStartLineCap="Round"
-                              Visibility="Collapsed"/>
+                                Data="M2,9 L7,14 L16,3"
+                                Stroke="#00D0C8"
+                                StrokeThickness="2.2"
+                                StrokeEndLineCap="Round"
+                                StrokeStartLineCap="Round"
+                                Visibility="Collapsed"/>
                         </Grid>
 
                         <ContentPresenter VerticalAlignment="Center"/>
@@ -1860,26 +1964,41 @@
 
                         <!-- Checked -->
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
-                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
-                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
+                            <Setter TargetName="Check"  Property="Visibility"  Value="Visible"/>
+                            <Setter TargetName="Box"    Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+                            <Setter TargetName="Fill"   Property="Opacity"     Value="1"/>
+                            <Setter TargetName="Glow"   Property="Opacity"     Value="0.85"/>
                         </Trigger>
 
-                        <!-- Hover -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
-                        </Trigger>
+                        <!-- Hover (unchecked) -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked"   Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Box"  Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+                            <Setter TargetName="Glow" Property="Opacity"     Value="0.35"/>
+                        </MultiTrigger>
 
-                        <!-- Focus -->
+                        <!-- Hover (checked) -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked"   Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Glow" Property="Opacity" Value="1.0"/>
+                        </MultiTrigger>
+
+                        <!-- Keyboard focus -->
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="0.9"/>
-                            <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+                            <Setter TargetName="Glow" Property="Opacity"     Value="0.9"/>
+                            <Setter TargetName="Box"  Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
                         </Trigger>
 
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Box" Property="Opacity" Value="0.4"/>
-                            <Setter Property="Opacity" Value="0.6"/>
+                            <Setter Property="Opacity"                  Value="0.6"/>
                         </Trigger>
 
                     </ControlTemplate.Triggers>
@@ -1904,7 +2023,7 @@
                                 BorderThickness="2"
                                 CornerRadius="4"
                                 Opacity="0"
-                                Effect="{StaticResource NeonRedGlowEffect}"/>
+                                Effect="{StaticResource GradientPrimaryGlowEffect}"/>
 
                             <!-- Box -->
                             <Border x:Name="Box"
@@ -1916,7 +2035,7 @@
                             <!-- Check mark -->
                             <Path x:Name="Check"
                               Data="M2,9 L7,14 L16,3"
-                              Stroke="{StaticResource Gradient.Danger}"
+                              Stroke="#FF6060"
                               StrokeThickness="2"
                               StrokeEndLineCap="Round"
                               StrokeStartLineCap="Round"
@@ -2015,78 +2134,6 @@
         </Setter>
     </Style>
 
-    <!-- ========================================================================================= -->
-    <!-- Testing                                      -->
-    <!-- ========================================================================================= -->
-
-    <Style x:Key="GradientBorderButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="26"/>
-        <Setter Property="MinWidth" Value="88"/>
-        <Setter Property="Padding" Value="12,6"/>
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-        <Setter Property="BorderThickness" Value="1.6"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
-        <Setter Property="Cursor" Value="Hand"/>
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid SnapsToDevicePixels="True">
-
-                        <!-- 🔥 Glow Layer -->
-                        <Border x:Name="Glow"
-                            IsHitTestVisible="False"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="2"
-                            CornerRadius="7"
-                            Opacity="0"
-                            Effect="{StaticResource NeonCyanGlowEffect}"/>
-
-                        <!-- 🎯 Main Button -->
-                        <Border x:Name="Bd"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="7"
-                            SnapsToDevicePixels="True">
-
-                            <ContentPresenter x:Name="ContentPresenter"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"
-                                          RecognizesAccessKey="True"/>
-                        </Border>
-                    </Grid>
-
-                    <ControlTemplate.Triggers>
-
-                        <!-- ✨ Hover -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
-                            <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
-                        </Trigger>
-
-                        <!-- 🔘 Press -->
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
-                            <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
-                        </Trigger>
-
-                        <!-- 🚫 Disabled -->
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
-                            <Setter TargetName="ContentPresenter"
-                                Property="TextElement.Foreground"
-                                Value="{StaticResource TextDisabledBrush}"/>
-                        </Trigger>
-
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
 
 
