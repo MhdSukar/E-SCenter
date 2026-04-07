@@ -69,6 +69,7 @@
                                   IsReadOnly="True"
                                   Style="{StaticResource DarkDataGridStyle}"
                                   RowStyle="{StaticResource TicketRowStyle}"
+                                  CellStyle="{StaticResource TicketCellStyle}"
                                   ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
                                   SelectionUnit="FullRow"
                                   CanUserResizeRows="False"

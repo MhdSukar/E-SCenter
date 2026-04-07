@@ -152,7 +152,7 @@
                             <!-- Status filter -->
                             <TextBlock Text="Ticket Status:"
                                        VerticalAlignment="Center"
-                                       Margin="0,0,4,0" Foreground="{StaticResource NeonYellowBrush}"/>
+                                       Margin="0,0,4,0" Foreground="{StaticResource Gradient.Warning}"/>
                             <ComboBox Width="140"
                                       Margin="0,0,10,0"
                                       Style="{StaticResource NeonComboBoxStyle}"
@@ -162,7 +162,7 @@
                             <!-- Priority filter -->
                             <TextBlock Text="Ticket Priority:"
                                        VerticalAlignment="Center"
-                                       Margin="0,0,4,0" Foreground="{StaticResource NeonRedBrush}"/>
+                                       Margin="0,0,4,0" Foreground="{StaticResource Gradient.Danger}"/>
                             <ComboBox Width="140"
                                       Style="{StaticResource NeonComboBoxStyle}"
                                       ItemsSource="{Binding PriorityFilters}"
@@ -192,8 +192,7 @@
                           Style="{StaticResource DarkDataGridStyle}"
                           RowStyle="{StaticResource TicketRowStyle}"
                           CellStyle="{StaticResource TicketCellStyle}"
-                          ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
-                          AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}"
+                          ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}" 
                           SelectionUnit="FullRow">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header=""
@@ -426,7 +425,7 @@
                                    Height="16"
                                    Margin="0,0,6,0" />
                             <TextBlock Text="Ready for Pickup:"
-                                       VerticalAlignment="Center" />
+                                       VerticalAlignment="Center" Foreground="{StaticResource Gradient.Success}" />
                         </StackPanel>
                         <CheckBox IsChecked="{Binding IsReadyForPickup, Mode=TwoWay}"
                                   Grid.Row="0"
