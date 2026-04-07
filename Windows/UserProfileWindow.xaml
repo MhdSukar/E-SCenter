@@ -33,10 +33,10 @@
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock x:Name="UsernameLabel"
                                FontSize="13" FontWeight="SemiBold"
-                               Foreground="{StaticResource NeonBlueBrush}"/>
+                               Foreground="{StaticResource Gradient.Primary}"/>
                     <TextBlock Text="Administrator"
                                FontSize="10"
-                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                               Foreground="{StaticResource Gradient.Danger}"/>
                 </StackPanel>
             </StackPanel>
 
@@ -50,7 +50,8 @@
                     Style="{StaticResource NeonBorderButtonStyle}"
                     Click="BtnSettings_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="⚙" FontSize="14" Margin="0,0,8,0"/>
+                    <Image Source="{StaticResource Settings}"  Width="16" Height="16"
+                           Margin="0,0,8,0"/>
                     <TextBlock Text="Settings"/>
                 </StackPanel>
             </Button>

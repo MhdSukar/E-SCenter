@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
 	  <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>Themes\Philips E-SCenter Icon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\Icons\Philips E-SCenter Icon.ico</ApplicationIcon>
 
 	  <Company>E-SCenter</Company>
 	  <Authors>Mohamad Sukar</Authors>
@@ -56,6 +56,7 @@
     <None Remove="Assets\Icons\Notes.png" />
     <None Remove="Assets\Icons\ongoing.png" />
     <None Remove="Assets\Icons\overdue.png" />
+    <None Remove="Assets\Icons\Philips E-SCenter Logo.png" />
     <None Remove="Assets\Icons\phone.png" />
     <None Remove="Assets\Icons\reports_DB.png" />
     <None Remove="Assets\Icons\Shutdown.png" />
@@ -64,13 +65,15 @@
     <None Remove="Assets\Icons\TBmaximize.png" />
     <None Remove="Assets\Icons\TBminimize.png" />
     <None Remove="Assets\Icons\TBrestore.png" />
+    <None Remove="Assets\Icons\Trox E-SCenter Icon.ico" />
+    <None Remove="Assets\Icons\Trox E-SCenter Logo.png" />
     <None Remove="Themes\Statistics Resurces.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Themes\Philips E-SCenter Icon.ico">
+    <Resource Include="Assets\Icons\Philips E-SCenter Icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -247,6 +250,9 @@
     <Resource Include="Assets\Icons\PartsUsed.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\Philips E-SCenter Logo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\phone.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -317,6 +323,12 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Tickets.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Trox E-SCenter Icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\Trox E-SCenter Logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Unassigned.png">
