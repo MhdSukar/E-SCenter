@@ -46,6 +46,7 @@ namespace ESCenter.ViewModels
         public ICommand AddCommand { get; }
         public ICommand EditCommand { get; }
         public ICommand DeleteCommand { get; }
+        public ICommand ClearSearchCommand { get; }
 
         public BoneyardViewModel()
         {
@@ -55,6 +56,7 @@ namespace ESCenter.ViewModels
             AddCommand = new RelayCommand(_ => AddDevice());
             EditCommand = new RelayCommand(_ => EditDevice(), _ => SelectedDevice != null);
             DeleteCommand = new RelayCommand(_ => DeleteDevice(), _ => SelectedDevice != null);
+            ClearSearchCommand = new RelayCommand(_ => SearchText = string.Empty);
 
             DatabasePathService.DatabasePathChanged += (_, __) => LoadDevices();
             LoadDevices();
