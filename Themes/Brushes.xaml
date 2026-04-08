@@ -122,14 +122,14 @@
     </LinearGradientBrush>
 
     <!-- Danger — bright red to deep red -->
-    <LinearGradientBrush x:Key="Gradient.Danger" StartPoint="0.5,0" EndPoint="0.5,1">
+    <LinearGradientBrush x:Key="Gradient.Danger" StartPoint="0.5,0" EndPoint="0.5,1"> 
         <GradientStop Color="#FF6B6B" Offset="0.0"/>
         <GradientStop Color="#FF5252" Offset="0.5"/>
         <GradientStop Color="#D50000" Offset="1.0"/>
     </LinearGradientBrush>
 
     <!-- Accent — purple to electric cyan -->
-    <LinearGradientBrush x:Key="Gradient.Accent" StartPoint="1,2.5" EndPoint="0,1.5">
+    <LinearGradientBrush x:Key="Gradient.Accent" StartPoint="1,2.5" EndPoint="0,1.0">
         <GradientStop Color="#9C6FFF" Offset="0.0"/>
         <GradientStop Color="#7C4DFF" Offset="0.5"/>
         <GradientStop Color="#00E5FF" Offset="1.0"/>

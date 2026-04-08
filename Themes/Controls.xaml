@@ -3,12 +3,12 @@
                     xmlns:converters="clr-namespace:ESCenter.Converters">
 
     <!-- ========================================================================================= -->
-    <!-- Converters / Helpers                                                                     -->
+    <!-- Converters / Helpers                                                                      -->
     <!-- ========================================================================================= -->
     <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
 
     <!-- ========================================================================================= -->
-    <!-- Effects                                                                                 -->
+    <!-- Effects                                                                                   -->
     <!-- ========================================================================================= -->
     <DropShadowEffect x:Key="NeonRedGlowEffect"
                       Color="#FFFF2E2E"
@@ -77,7 +77,7 @@
                       Opacity="0.9"/>
 
     <!-- ========================================================================================= -->
-    <!-- Base / Global Styles                                                                    -->
+    <!-- Base / Global Styles                                                                      -->
     <!-- ========================================================================================= -->
     <Style TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
@@ -252,12 +252,10 @@
     </Style>
 
     <!-- ========================================================================================= -->
-    <!-- Buttons - Neon / Border variations                                                      -->
+    <!-- Buttons - Neon / Border / Gradient variations                                             -->
     <!-- ========================================================================================= -->
 
     <!-- ================= GLOBAL GRADIENT BUTTON STYLE ================= -->
-
-
 
     <Style x:Key="NeonBorderButtonStyle" TargetType="Button">
         <Setter Property="Height" Value="26"/>
@@ -325,7 +323,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="GradientBlueCyanBorderButtonStyle" TargetType="Button">
+    <Style x:Key="GradientBorderButtonStyleBLueCyan" TargetType="Button">
         <Setter Property="Height" Value="26"/>
         <Setter Property="MinWidth" Value="88"/>
         <Setter Property="Padding" Value="12,6"/>
@@ -334,7 +332,7 @@
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
         <Setter Property="BorderThickness" Value="1.6"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Primary.Horizontal}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
         <Setter Property="Cursor" Value="Hand"/>
 
         <Setter Property="Template">
@@ -390,6 +388,298 @@
                             <Setter TargetName="ContentPresenter"
                                 Property="TextElement.Foreground"
                                 Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GradientBorderButtonStyleGreen" TargetType="Button">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="MinWidth" Value="88"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="1.6"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Success}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid SnapsToDevicePixels="True">
+
+                        <!-- 🔥 Glow Layer -->
+                        <Border x:Name="Glow"
+                        IsHitTestVisible="False"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="2"
+                        CornerRadius="7"
+                        Opacity="0"
+                        Effect="{StaticResource GradientPrimaryGlowEffect}"/>
+
+                        <!-- 🎯 Main Button -->
+                        <Border x:Name="Bd"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="7"
+                        SnapsToDevicePixels="True">
+
+                            <ContentPresenter x:Name="ContentPresenter"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- ✨ Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🔘 Press -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="Background"
+                                Value="{StaticResource Gradient.Primary.Subtle}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🚫 Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter TargetName="ContentPresenter"
+                            Property="TextElement.Foreground"
+                            Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GradientBorderButtonStyleAccent" TargetType="Button">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="MinWidth" Value="88"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="1.6"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Accent}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid SnapsToDevicePixels="True">
+
+                        <!-- 🔥 Glow Layer -->
+                        <Border x:Name="Glow"
+                    IsHitTestVisible="False"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="2"
+                    CornerRadius="7"
+                    Opacity="0"
+                    Effect="{StaticResource GradientPrimaryGlowEffect}"/>
+
+                        <!-- 🎯 Main Button -->
+                        <Border x:Name="Bd"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="7"
+                    SnapsToDevicePixels="True">
+
+                            <ContentPresenter x:Name="ContentPresenter"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- ✨ Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🔘 Press -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="Background"
+                            Value="{StaticResource Gradient.Primary.Subtle}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🚫 Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter TargetName="ContentPresenter"
+                        Property="TextElement.Foreground"
+                        Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GradientBorderButtonStyleRed" TargetType="Button">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="MinWidth" Value="88"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="1.6"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Danger}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid SnapsToDevicePixels="True">
+
+                        <!-- 🔥 Glow Layer -->
+                        <Border x:Name="Glow"
+                IsHitTestVisible="False"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="2"
+                CornerRadius="7"
+                Opacity="0"
+                Effect="{StaticResource GradientPrimaryGlowEffect}"/>
+
+                        <!-- 🎯 Main Button -->
+                        <Border x:Name="Bd"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="7"
+                SnapsToDevicePixels="True">
+
+                            <ContentPresenter x:Name="ContentPresenter"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- ✨ Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🔘 Press -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="Background"
+                        Value="{StaticResource Gradient.Primary.Subtle}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🚫 Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter TargetName="ContentPresenter"
+                    Property="TextElement.Foreground"
+                    Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GradientBorderButtonStyleYellow" TargetType="Button">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="MinWidth" Value="88"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
+        <Setter Property="BorderThickness" Value="1.6"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Warning}"/>
+        <Setter Property="Cursor" Value="Hand"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid SnapsToDevicePixels="True">
+
+                        <!-- 🔥 Glow Layer -->
+                        <Border x:Name="Glow"
+            IsHitTestVisible="False"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="2"
+            CornerRadius="7"
+            Opacity="0"
+            Effect="{StaticResource GradientPrimaryGlowEffect}"/>
+
+                        <!-- 🎯 Main Button -->
+                        <Border x:Name="Bd"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            CornerRadius="7"
+            SnapsToDevicePixels="True">
+
+                            <ContentPresenter x:Name="ContentPresenter"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          RecognizesAccessKey="True"/>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- ✨ Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🔘 Press -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
+                            <Setter TargetName="Bd"   Property="Background"
+                    Value="{StaticResource Gradient.Primary.Subtle}"/>
+                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
+                        </Trigger>
+
+                        <!-- 🚫 Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
+                            <Setter TargetName="ContentPresenter"
+                Property="TextElement.Foreground"
+                Value="{StaticResource TextDisabledBrush}"/>
                         </Trigger>
 
                     </ControlTemplate.Triggers>
@@ -1099,7 +1389,7 @@
     </Style>
 
     <!-- ========================================================================================= -->
-    <!-- Inputs: TextBox / PasswordBox / ComboBox                                               -->
+    <!-- Inputs: TextBox / PasswordBox / ComboBox                                                  -->
     <!-- ========================================================================================= -->
     <Style x:Key="NeonTextBoxStyle" TargetType="TextBox">
         <Setter Property="Height" Value="28"/>
@@ -1317,7 +1607,7 @@
     </Style>
 
     <!-- ========================================================================================= -->
-    <!-- DataGrid / Rows / Cells                                                                  -->
+    <!-- DataGrid / Rows / Cells                                                                   -->
     <!-- ========================================================================================= -->
 
     <Style x:Key="DarkColumnHeaderStyle" TargetType="DataGridColumnHeader">
@@ -1468,7 +1758,6 @@
         </Style.Triggers>
     </Style>
 
-
     <Style x:Key="PriorityCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource CompactDataGridCellStyle}">
         <Style.Triggers>
             <DataTrigger Binding="{Binding DeliveryDate, Converter={StaticResource NullToBooleanConverter}}" Value="False">
@@ -1515,17 +1804,17 @@
     </Style>
 
     <!-- ========================================================================================= -->
-    <!-- Other Controls / GroupBox / ProgressBar / Helpers                                      -->
+    <!-- Other Controls / GroupBox / ProgressBar / Helpers                                         -->
     <!-- ========================================================================================= -->
 
-    <Style x:Key="DarkRedGroupBoxStyle" TargetType="GroupBox">
-        <Setter Property="Foreground" Value="{StaticResource NeonRedDarkBrush}"/>
+    <Style x:Key="DarkYellowGroupBoxStyle" TargetType="GroupBox">
+        <Setter Property="Foreground" Value="{StaticResource NeonYellowBrush}"/>
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Padding" Value="10"/>
         <Setter Property="Margin" Value="6"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{StaticResource NeonRedDarkBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource NeonYellowBrush}"/>
         <Setter Property="Background" Value="{StaticResource DarkCardBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -1598,7 +1887,48 @@
         </Setter>
     </Style>
 
-    <Style x:Key="GradientBlueCyanGroupBox" TargetType="GroupBox">
+    <Style x:Key="DarkPurpleGroupBoxStyle" TargetType="GroupBox">
+        <Setter Property="Foreground" Value="{StaticResource NeonPurpleBrush}"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Margin" Value="6"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource NeonPurpleBrush}"/>
+        <Setter Property="Background" Value="{StaticResource DarkCardBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10"
+                        Padding="8">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- ✅ Header keeps original color + font -->
+                            <ContentPresenter
+                            ContentSource="Header"
+                            Margin="8,0,0,6"
+                            VerticalAlignment="Center"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
+
+                            <ContentPresenter Grid.Row="1"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GradientGroupBoxBlueCyan" TargetType="GroupBox">
         <Setter Property="BorderBrush" Value="{StaticResource Gradient.Primary.Horizontal}" />
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -1636,7 +1966,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="GradientRedGroupBox" TargetType="GroupBox">
+    <Style x:Key="GradientGroupBoxRed" TargetType="GroupBox">
         <Setter Property="BorderBrush" Value="{StaticResource Gradient.Danger}" />
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -1674,7 +2004,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="GradientAccentGroupBox" TargetType="GroupBox">
+    <Style x:Key="GradientGroupBoxAccent" TargetType="GroupBox">
         <Setter Property="BorderBrush" Value="{StaticResource Gradient.Accent}" />
         <Setter Property="FontSize" Value="15"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -1712,6 +2042,43 @@
         </Setter>
     </Style>
 
+    <Style x:Key="GradientGroupBoxYellow" TargetType="GroupBox">
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Warning}" />
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Margin" Value="6"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GroupBox">
+                    <Border Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            CornerRadius="10"
+            Padding="8">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Header (icon-safe, color-safe) -->
+                            <ContentPresenter
+                ContentSource="Header"
+                Margin="8,0,0,6"
+                VerticalAlignment="Center"
+                TextElement.Foreground="{TemplateBinding Foreground}"
+                TextElement.FontSize="{TemplateBinding FontSize}"
+                TextElement.FontWeight="{TemplateBinding FontWeight}"/>
+
+                            <ContentPresenter Grid.Row="1"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- Modern ProgressBar Style -->
     <Style x:Key="ModernProgressBarStyle" TargetType="ProgressBar">
@@ -1762,7 +2129,6 @@
     <Style x:Key="PriorityMinorProgressBar" TargetType="ProgressBar" BasedOn="{StaticResource ModernProgressBarStyle}">
         <Setter Property="Foreground" Value="#B2DFDB"/>
     </Style>
-
 
     <!-- DataGrid centering helpers kept as explicit keys -->
     <Style TargetType="TextBlock" x:Key="DataGridTextBlockCenterStyle">
@@ -2030,7 +2396,6 @@
         </Setter>
     </Style>
 
-
     <!-- ================= TitleBar Navigation Tabs ================= -->
     <Style x:Key="TitleBarTabButtonStyle" TargetType="RadioButton">
         <Setter Property="Height" Value="26"/>
@@ -2083,231 +2448,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
-    <!-- ========================================================================================= -->
-    <!--  Test Zone                                      -->
-    <!-- ========================================================================================= -->
-
-    <Style x:Key="GradientRedBorderButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="26"/>
-        <Setter Property="MinWidth" Value="88"/>
-        <Setter Property="Padding" Value="12,6"/>
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-        <Setter Property="BorderThickness" Value="1.6"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Danger}"/>
-        <Setter Property="Cursor" Value="Hand"/>
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid SnapsToDevicePixels="True">
-
-                        <!-- 🔥 Glow Layer -->
-                        <Border x:Name="Glow"
-                        IsHitTestVisible="False"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="2"
-                        CornerRadius="7"
-                        Opacity="0"
-                        Effect="{StaticResource GradientPrimaryGlowEffect}"/>
-
-                        <!-- 🎯 Main Button -->
-                        <Border x:Name="Bd"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="7"
-                        SnapsToDevicePixels="True">
-
-                            <ContentPresenter x:Name="ContentPresenter"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"
-                                      RecognizesAccessKey="True"/>
-                        </Border>
-                    </Grid>
-
-                    <ControlTemplate.Triggers>
-
-                        <!-- ✨ Hover -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
-                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
-                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
-                        </Trigger>
-
-                        <!-- 🔘 Press -->
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
-                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
-                            <Setter TargetName="Bd"   Property="Background"
-                                Value="{StaticResource Gradient.Primary.Subtle}"/>
-                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
-                        </Trigger>
-
-                        <!-- 🚫 Disabled -->
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
-                            <Setter TargetName="ContentPresenter"
-                            Property="TextElement.Foreground"
-                            Value="{StaticResource TextDisabledBrush}"/>
-                        </Trigger>
-
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="GradientGreenBorderButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="26"/>
-        <Setter Property="MinWidth" Value="88"/>
-        <Setter Property="Padding" Value="12,6"/>
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-        <Setter Property="BorderThickness" Value="1.6"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Success}"/>
-        <Setter Property="Cursor" Value="Hand"/>
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid SnapsToDevicePixels="True">
-
-                        <!-- 🔥 Glow Layer -->
-                        <Border x:Name="Glow"
-                    IsHitTestVisible="False"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="2"
-                    CornerRadius="7"
-                    Opacity="0"
-                    Effect="{StaticResource GradientPrimaryGlowEffect}"/>
-
-                        <!-- 🎯 Main Button -->
-                        <Border x:Name="Bd"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="7"
-                    SnapsToDevicePixels="True">
-
-                            <ContentPresenter x:Name="ContentPresenter"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  RecognizesAccessKey="True"/>
-                        </Border>
-                    </Grid>
-
-                    <ControlTemplate.Triggers>
-
-                        <!-- ✨ Hover -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
-                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
-                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
-                        </Trigger>
-
-                        <!-- 🔘 Press -->
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
-                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
-                            <Setter TargetName="Bd"   Property="Background"
-                            Value="{StaticResource Gradient.Primary.Subtle}"/>
-                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
-                        </Trigger>
-
-                        <!-- 🚫 Disabled -->
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
-                            <Setter TargetName="ContentPresenter"
-                        Property="TextElement.Foreground"
-                        Value="{StaticResource TextDisabledBrush}"/>
-                        </Trigger>
-
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="GradientAccentBorderButtonStyle" TargetType="Button">
-        <Setter Property="Height" Value="26"/>
-        <Setter Property="MinWidth" Value="88"/>
-        <Setter Property="Padding" Value="12,6"/>
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-        <Setter Property="Background" Value="{StaticResource TransparentBrush}"/>
-        <Setter Property="BorderThickness" Value="1.6"/>
-        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Accent}"/>
-        <Setter Property="Cursor" Value="Hand"/>
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid SnapsToDevicePixels="True">
-
-                        <!-- 🔥 Glow Layer -->
-                        <Border x:Name="Glow"
-                IsHitTestVisible="False"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="2"
-                CornerRadius="7"
-                Opacity="0"
-                Effect="{StaticResource GradientPrimaryGlowEffect}"/>
-
-                        <!-- 🎯 Main Button -->
-                        <Border x:Name="Bd"
-                Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                CornerRadius="7"
-                SnapsToDevicePixels="True">
-
-                            <ContentPresenter x:Name="ContentPresenter"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              RecognizesAccessKey="True"/>
-                        </Border>
-                    </Grid>
-
-                    <ControlTemplate.Triggers>
-
-                        <!-- ✨ Hover -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="0.85"/>
-                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
-                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
-                        </Trigger>
-
-                        <!-- 🔘 Press -->
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Glow" Property="Opacity" Value="1"/>
-                            <Setter TargetName="Glow" Property="Effect"  Value="{StaticResource GradientPrimaryGlowEffect}"/>
-                            <Setter TargetName="Bd"   Property="Background"
-                        Value="{StaticResource Gradient.Primary.Subtle}"/>
-                            <Setter TargetName="Bd"   Property="BorderThickness" Value="2"/>
-                        </Trigger>
-
-                        <!-- 🚫 Disabled -->
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Opacity" Value="0.35"/>
-                            <Setter TargetName="ContentPresenter"
-                    Property="TextElement.Foreground"
-                    Value="{StaticResource TextDisabledBrush}"/>
-                        </Trigger>
-
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
 
 
 

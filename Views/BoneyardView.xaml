@@ -69,7 +69,7 @@
                                 Height="28"
                                 Margin="6,0,0,0"
                                 Padding="0"
-                                Style="{StaticResource NeonRedButtonStyle}"
+                                Style="{StaticResource GradientBorderButtonStyleRed}"
                                 Command="{Binding ClearSearchCommand}"
                                 ToolTip="Clear search">
                             <Image Source="{StaticResource Clear}" Width="20" Height="20"/>
@@ -86,7 +86,7 @@
                     <!-- Add -->
                     <Button Width="90"
                             Margin="0,0,8,0"
-                            Style="{StaticResource NeonGreenButtonStyle}"
+                            Style="{StaticResource GradientBorderButtonStyleGreen}"
                             Command="{Binding AddCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource Add}" Width="16" Height="16" Margin="0,0,6,0"/>
@@ -97,7 +97,7 @@
                     <!-- Edit -->
                     <Button Width="90"
                             Margin="0,0,8,0"
-                            Style="{StaticResource NeonCyanButtonStyle}"
+                            Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
                             Command="{Binding EditCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource EditAI}" Width="23" Height="23" Margin="0,0,6,0"/>
@@ -107,7 +107,7 @@
 
                     <!-- Remove -->
                     <Button Width="90"
-                            Style="{StaticResource NeonRedButtonStyle}"
+                            Style="{StaticResource GradientBorderButtonStyleRed}"
                             Command="{Binding DeleteCommand}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource DeleteClose}" Width="16" Height="16" Margin="0,0,6,0"/>

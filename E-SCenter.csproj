@@ -71,9 +71,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\Icons\Philips E-SCenter Icon.ico">
+    <Content Include="Assets\Icons\Philips E-SCenter Icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

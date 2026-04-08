@@ -87,7 +87,7 @@
                                    VerticalAlignment="Center"
                                    FontSize="14"
                                    FontWeight="SemiBold"
-                                   Foreground="{StaticResource NeonBlueBrush}"/>
+                                   Foreground="{StaticResource Gradient.Primary.Horizontal}"/>
                         <TextBlock Text="Repair System"
                                    FontSize="11"
                                    Foreground="{StaticResource TextSecondaryBrush}"
@@ -95,8 +95,8 @@
                     </StackPanel>
 
                     <Button Grid.Column="1"
-                            Width="28"
-                            Height="28"
+                            Width="30"
+                            Height="30"
                             Background="Transparent"
                             BorderBrush="Transparent"
                             Click="BtnExit_Click"
@@ -160,8 +160,8 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Image Grid.Column="0" Width="25" Height="25" Margin="0,0,0,0" Source="{StaticResource Baraka}" />
-                        <TextBlock Grid.Column="1" Text="Al-Baraka" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="›" FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" Margin="6,0,0,0"/>
+                        <TextBlock Grid.Column="1" Text="Al-Baraka" VerticalAlignment="Center" Foreground="{StaticResource Gradient.Warning}"/>
+                        <TextBlock Grid.Column="2" Text="›" FontSize="16" Foreground="{StaticResource Gradient.Warning}" Margin="6,0,0,0"/>
                     </Grid>
                 </Button>
             </StackPanel>
