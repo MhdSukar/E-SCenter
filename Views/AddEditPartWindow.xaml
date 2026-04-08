@@ -97,7 +97,7 @@
 
                     <!-- App Icon -->
                     <Image Grid.Column="0"
-                           Source="Z:\C#\Projects\E-SCenter\E-SCenter\Themes\E-SCenter.png"
+                           Source="/Assets/Icons/Philips E-SCenter Logo.png"
                            Width="18"
                            Height="18"
                            Margin="10,0,6,0"
@@ -239,7 +239,7 @@
 
                         <!-- Cancel -->
                         <Button Width="120"
-                                Style="{StaticResource NeonBorderButtonStyle}"
+                                Style="{StaticResource GradientBorderButtonStyleRed}"
                                 Command="{Binding CancelCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">
@@ -253,7 +253,7 @@
 
                         <!-- Save -->
                         <Button Width="120"
-                                Style="{StaticResource NeonGreenButtonStyle}"
+                                Style="{StaticResource GradientBorderButtonStyleGreen}"
                                 Command="{Binding SaveCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">

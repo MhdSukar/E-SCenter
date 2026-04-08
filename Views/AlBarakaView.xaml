@@ -19,14 +19,14 @@
                     <Image Source="{StaticResource Baraka}" Width="28" Height="28" Margin="0,0,8,0" VerticalAlignment="Center" DockPanel.Dock="Left" />
                     <TextBlock Text="Accounts Records" FontSize="20" FontWeight="Bold" Foreground="{StaticResource NeonOrangeBrush}" DockPanel.Dock="Left" VerticalAlignment="Center" />
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
-                        <Button Command="{Binding OpenExchangeRatesCommand}" Style="{StaticResource GradientRedBorderButtonStyle}" Margin="4,0">
+                        <Button Command="{Binding OpenExchangeRatesCommand}" Style="{StaticResource GradientBorderButtonStyleRed}" Margin="4,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Settings}" Width="19" Height="19" Margin="0,0,6,0" />
                                 <TextBlock Text="Exchange Rate" Width="90"/>
                             </StackPanel>
                         </Button>
 
-                        <Button Command="{Binding RefreshCommand}" Style="{StaticResource NeonOrangeButtonStyle}" MinWidth="10" Width="30" Margin="4,0">
+                        <Button Command="{Binding RefreshCommand}" Style="{StaticResource GradientBorderButtonStyleYellow}" MinWidth="10" Width="30" Margin="4,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Refresh}" Width="23" Height="23" Margin="0,0,0,0" />
                                 
@@ -94,21 +94,21 @@
                 <TextBlock Text="Add / Edit Record" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,12">
-                    <Button Command="{Binding AddNewCommand}" Style="{StaticResource NeonGreenButtonStyle}" Width="80" Margin="4,0">
+                    <Button Command="{Binding AddNewCommand}" Style="{StaticResource GradientBorderButtonStyleGreen}" Width="80" Margin="4,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource Add}" Width="16" Height="16" Margin="0,0,6,0" />
                             <TextBlock Text="New" />
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding SaveCommand}" Style="{StaticResource NeonCyanButtonStyle}" Width="100" Margin="4,0">
+                    <Button Command="{Binding SaveCommand}" Style="{StaticResource GradientBorderButtonStyleBLueCyan}" Width="100" Margin="4,0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource EditAI}" Width="23" Height="23" Margin="0,0,6,0" />
                             <TextBlock Text="Save" Margin="0,2,0,0"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding DeleteCommand}" Style="{StaticResource NeonRedButtonStyle}" Width="80" Margin="4,0" IsEnabled="{Binding SelectedRecord}">
+                    <Button Command="{Binding DeleteCommand}" Style="{StaticResource GradientBorderButtonStyleRed}" Width="80" Margin="4,0" IsEnabled="{Binding SelectedRecord}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource DeleteClose}" Width="16" Height="16" Margin="0,0,6,0" />
                             <TextBlock Text="Delete" />

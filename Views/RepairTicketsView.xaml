@@ -53,7 +53,7 @@
                                 VerticalAlignment="Center">
 
                         <Button Command="{Binding CloseCommand}"
-                                Style="{StaticResource NeonGreenButtonStyle}"
+                                Style="{StaticResource GradientBorderButtonStyleGreen}"
                                 Width="80"
                                 Margin="4,0"
                                 IsEnabled="{Binding SelectedTicket}">
@@ -68,7 +68,7 @@
                         </Button>
 
                         <Button Command="{Binding ReopenCommand}"
-                                Style="{StaticResource NeonOrangeButtonStyle}"
+                                Style="{StaticResource GradientBorderButtonStyleYellow}"
                                 Width="80"
                                 Margin="4,0"
                                 IsEnabled="{Binding SelectedTicket}">
@@ -83,7 +83,7 @@
                         </Button>
 
                         <Button Command="{Binding DeleteCommand}"
-                                Style="{StaticResource NeonRedButtonStyle}"
+                                Style="{StaticResource GradientBorderButtonStyleRed}"
                                 Width="80"
                                 Margin="4,0"
                                 IsEnabled="{Binding SelectedTicket}">
@@ -143,7 +143,7 @@
                                     Height="28"
                                     Margin="0,0,12,0"
                                     Padding="0"
-                                    Style="{StaticResource NeonRedButtonStyle}"
+                                    Style="{StaticResource GradientBorderButtonStyleRed}"
                                     Command="{Binding ClearSearchCommand}"
                                     ToolTip="Clear search">
                                 <Image Source="{StaticResource Clear}" Width="20" Height="20"/>
@@ -172,7 +172,7 @@
                                     Height="28"
                                     Margin="10,0,0,0"
                                     Padding="0"
-                                    Style="{StaticResource NeonRedButtonStyle}"
+                                    Style="{StaticResource GradientBorderButtonStyleRed}"
                                     Command="{Binding ResetFiltersCommand}"
                                     ToolTip="Reset filters">
                                 <Image Source="{StaticResource Clear}" Width="20" Height="20"/>
@@ -288,7 +288,7 @@
                             Margin="0,0,0,12">
 
                     <Button Command="{Binding AddCommand}"
-                            Style="{StaticResource NeonGreenButtonStyle}"
+                            Style="{StaticResource GradientBorderButtonStyleGreen}"
                             Width="80"
                             Margin="4,0"
                             TabIndex="22"
@@ -310,7 +310,7 @@
                             IsDefault="False">
                         <Button.Style>
                             <Style TargetType="Button"
-                                   BasedOn="{StaticResource NeonCyanButtonStyle}">
+                                   BasedOn="{StaticResource GradientBorderButtonStyleBLueCyan}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding HasUnsavedChanges}"
                                                  Value="True">
@@ -333,7 +333,7 @@
                     </Button>
 
                     <Button Command="{Binding ClearCommand}"
-                            Style="{StaticResource NeonOrangeButtonStyle}"
+                            Style="{StaticResource GradientBorderButtonStyleYellow}"
                             Width="80"
                             Margin="4,0"
                             TabIndex="24"
@@ -1290,7 +1290,7 @@
                                   Grid.Row="22"
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
-                                  Style="{StaticResource GradientAccentGroupBox}">
+                                  Style="{StaticResource GradientGroupBoxAccent}">
                             <Grid Margin="8">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -1336,7 +1336,7 @@
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
-                                  Style="{StaticResource GradientRedGroupBox}">
+                                  Style="{StaticResource GradientGroupBoxRed}">
                             <UniformGrid Columns="2"
                                          Margin="8">
 
@@ -1571,7 +1571,7 @@
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
-                                  Style="{StaticResource GradientAccentGroupBox}">
+                                  Style="{StaticResource GradientGroupBoxAccent}">
                             <Grid Margin="8">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -1619,7 +1619,7 @@
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
-                                  Style="{StaticResource GradientBlueCyanGroupBox}">
+                                  Style="{StaticResource GradientGroupBoxYellow}">
                             <UniformGrid Columns="2"
                                          Margin="8">
 
