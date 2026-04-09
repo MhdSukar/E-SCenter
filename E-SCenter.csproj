@@ -29,11 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\EscCommandRequest.cs" />
-    <Compile Remove="Services\DockControlIntegrationServer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="0001-async-data-loading.patch" />
     <None Remove="Assets\Icons\02_recycle.png" />
     <None Remove="Assets\Icons\circled_status_icon_colored.png" />
