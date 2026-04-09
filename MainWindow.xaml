@@ -539,7 +539,7 @@
 
                                 <TextBlock Grid.Column="0" Grid.Row="0"
                                            Text="ѕєαяςн ѕи:"
-                                           Foreground="{StaticResource Gradient.Primary}"/>
+                                           Foreground="{StaticResource Gradient.Accent}"/>
 
                                 <Image Grid.Column="0" Grid.Row="1"
                                        Source="{StaticResource GalaxyAi3}"
