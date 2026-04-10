@@ -615,6 +615,19 @@
         </Setter>
     </Style>
 
+    <Style x:Key="UserProfileActionButtonStyle"
+           TargetType="Button"
+           BasedOn="{StaticResource GradientBorderButtonStyleBLueCyan}">
+        <Setter Property="Height" Value="34"/>
+        <Setter Property="MinWidth" Value="0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="Margin" Value="0,2,0,0"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Gradient.Primary}"/>
+        <Setter Property="Background" Value="{StaticResource Gradient.Primary.Subtle}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+    </Style>
+
     <Style x:Key="GradientBorderButtonStyleYellow" TargetType="Button">
         <Setter Property="Height" Value="26"/>
         <Setter Property="MinWidth" Value="88"/>
