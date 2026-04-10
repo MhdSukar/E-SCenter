@@ -969,9 +969,10 @@ namespace ESCenter.ViewModels
                 }
 
                 var prefs = ESCenter.Services.UserPreferencesService.GetBackupLocation();
-                var backupDir = string.IsNullOrWhiteSpace(prefs)
-                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ESCenter Backups")
+                var backupBaseDir = string.IsNullOrWhiteSpace(prefs)
+                    ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
                     : prefs;
+                var backupDir = Path.Combine(backupBaseDir, "ESCenter Backups");
 
                 if (Directory.Exists(backupDir))
                 {
