@@ -62,12 +62,9 @@ namespace ESCenter.Services
                 }
 
                 var backupLocation = UserPreferencesService.GetBackupLocation();
-                if (string.IsNullOrWhiteSpace(backupLocation))
-                {
-                    backupLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                }
-
-                var backupDirectory = Path.Combine(backupLocation, BackupFolderName);
+                var backupDirectory = string.IsNullOrWhiteSpace(backupLocation)
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), BackupFolderName)
+                    : backupLocation;
                 Directory.CreateDirectory(backupDirectory);
 
                 var sourceName = Path.GetFileNameWithoutExtension(databasePath);
