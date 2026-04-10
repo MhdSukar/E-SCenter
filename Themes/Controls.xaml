@@ -2465,25 +2465,20 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="ItemContainerStyle" Value="{StaticResource SettingsWindowTabItemStyle}"/>
-        <Setter Property="Resources">
-            <Setter.Value>
-                <ResourceDictionary>
-                    <Style TargetType="{x:Type TabPanel}">
-                        <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
-                        <Setter Property="Margin" Value="0,0,0,8"/>
-                    </Style>
+    </Style>
 
-                    <Style TargetType="{x:Type Separator}">
-                        <Setter Property="Margin" Value="0,12,0,12"/>
-                        <Setter Property="Background" Value="{StaticResource DividerBrush}"/>
-                    </Style>
+    <Style x:Key="SettingsWindowTabPanelStyle" TargetType="{x:Type TabPanel}">
+        <Setter Property="Background" Value="{StaticResource DarkBackgroundBrush}"/>
+        <Setter Property="Margin" Value="0,0,0,8"/>
+    </Style>
 
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-                    </Style>
-                </ResourceDictionary>
-            </Setter.Value>
-        </Setter>
+    <Style x:Key="SettingsWindowTabSeparatorStyle" TargetType="{x:Type Separator}">
+        <Setter Property="Margin" Value="0,12,0,12"/>
+        <Setter Property="Background" Value="{StaticResource DividerBrush}"/>
+    </Style>
+
+    <Style x:Key="SettingsWindowTabTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
     </Style>
 
     <Style x:Key="TitleBarTabButtonStyle" TargetType="RadioButton">

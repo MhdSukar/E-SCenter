@@ -38,6 +38,11 @@
             <Border Margin="0,36,0,0" Padding="12" CornerRadius="0,0,10,10" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="1">
                 <Grid>
                     <TabControl Style="{StaticResource SettingsWindowTabControlStyle}">
+                        <TabControl.Resources>
+                            <Style TargetType="{x:Type TabPanel}" BasedOn="{StaticResource SettingsWindowTabPanelStyle}"/>
+                            <Style TargetType="{x:Type Separator}" BasedOn="{StaticResource SettingsWindowTabSeparatorStyle}"/>
+                            <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource SettingsWindowTabTextBlockStyle}"/>
+                        </TabControl.Resources>
                         <TabItem Header="General" Tag="First">
                             <ScrollViewer Background="{StaticResource CardBackgroundBrush}">
                                 <StackPanel Margin="6">
