@@ -711,13 +711,11 @@
                                     </StackPanel>
                                 </Button>
 
-                                <UniformGrid Grid.Row="0"
-                                             Columns="2"
-                                             Rows="3"
-                                             HorizontalAlignment="Center"
-                                             VerticalAlignment="Center">
-                                    <UniformGrid.Style>
-                                        <Style TargetType="UniformGrid">
+                                <StackPanel Grid.Row="0"
+                                            VerticalAlignment="Stretch"
+                                            HorizontalAlignment="Stretch">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
                                             <Setter Property="Visibility" Value="Collapsed"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsAdminAccessGranted}" Value="true">
@@ -725,56 +723,78 @@
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </UniformGrid.Style>
+                                    </StackPanel.Style>
 
-                                    <Button Style="{StaticResource GradientBorderButtonStyleGreen}" Width="145" FontSize="15" Margin="0,5,6,0"
-                                            Command="{Binding InitializeDatabaseCommand}">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource DBCreate}" Width="20" Height="20" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Create DB"/>
-                                        </StackPanel>
-                                    </Button>
+                                    <UniformGrid Columns="2"
+                                                 Rows="2"
+                                                 HorizontalAlignment="Center"
+                                                 VerticalAlignment="Top"
+                                                 Margin="0,4,0,6">
+                                        <Button Content="⚙  Settings"
+                                                Width="138"
+                                                Height="30"
+                                                Margin="3,3,3,3"
+                                                Command="{Binding ShowSettingsCommand}"
+                                                Style="{StaticResource NeonBlueButtonStyle}"
+                                                FontSize="13"/>
+                                        <Button Content="⚡  Backup Now"
+                                                Width="138"
+                                                Height="30"
+                                                Margin="3,3,3,3"
+                                                Command="{Binding BackupNowCommand}"
+                                                Style="{StaticResource NeonGreenButtonStyle}"
+                                                FontSize="13"/>
+                                        <Button Content="📂  Open Logs"
+                                                Width="138"
+                                                Height="30"
+                                                Margin="3,3,3,3"
+                                                Command="{Binding OpenLogFolderCommand}"
+                                                Style="{StaticResource NeonBorderButtonStyle}"
+                                                FontSize="13"/>
+                                        <Button Content="🔄  Refresh All"
+                                                Width="138"
+                                                Height="30"
+                                                Margin="3,3,3,3"
+                                                Command="{Binding RefreshAllCommand}"
+                                                Style="{StaticResource NeonBorderButtonStyle}"
+                                                FontSize="13"/>
+                                    </UniformGrid>
 
-                                    <Button Style="{StaticResource GradientBorderButtonStyleAccent}" Width="145" FontSize="13" Margin="0,5,6,0"
-                                            Command="{Binding ChangeAdminPasswordCommand}">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource Settings}" Width="20" Height="20" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Change Admin"/>
-                                        </StackPanel>
-                                    </Button>
+                                    <Border Height="1"
+                                            Background="#33FF4444"
+                                            Margin="8,2,8,4"/>
 
-                                    <Button Style="{StaticResource GradientBorderButtonStyleBLueCyan}" Width="145" FontSize="15" Margin="0,5,6,0"
-                                            Command="{Binding LoadDatabaseCommand}">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource DBEdit}" Width="20" Height="20" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Connect DB"/>
-                                        </StackPanel>
-                                    </Button>
+                                    <Grid Margin="8,0,8,4">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
 
-                                    <Button Style="{StaticResource GradientBorderButtonStyleRed}" Width="145" FontSize="14" Margin="0,5,6,0"
-                                            Command="{Binding ResetSettingsCommand}">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource ResetSTG}" Width="20" Height="20" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Reset STG"/>
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                            <Ellipse Width="8" Height="8" Fill="{Binding DatabaseConnectionBrush}" Margin="0,0,6,0"/>
+                                            <TextBlock Text="DB:" Foreground="{StaticResource TextSecondaryBrush}" FontSize="10" Margin="0,0,4,0"/>
+                                            <TextBlock Text="{Binding DatabaseConnectionStatusText}" Foreground="{Binding DatabaseConnectionBrush}" FontSize="10" FontWeight="SemiBold"/>
+                                            <TextBlock Text=" · " Foreground="{StaticResource TextSecondaryBrush}" FontSize="10"/>
+                                            <TextBlock Text="{Binding DatabaseFileSizeText}" Foreground="{StaticResource NeonDarkCyanDarkBrush}" FontSize="10"/>
                                         </StackPanel>
-                                    </Button>
 
-                                    <Button Style="{StaticResource GradientBorderButtonStyleRed}" Width="145" FontSize="12" Margin="0,5,6,0"
-                                            Command="{Binding ResetDatabaseCommand}">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource DBReset}" Width="20" Height="20" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Reset DB"/>
+                                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,3,0,0">
+                                            <TextBlock Text="Last backup: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="10"/>
+                                            <TextBlock Text="{Binding LastBackupText}" Foreground="{StaticResource NeonDarkCyanDarkBrush}" FontSize="10" FontWeight="SemiBold"/>
                                         </StackPanel>
-                                    </Button>
 
-                                    <Button Style="{StaticResource GradientBorderButtonStyleRed}" Width="145" FontSize="12" Margin="0,5,6,0"
-                                            Command="{Binding OpenLogFolderCommand}">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource DBReport}" Width="20" Height="20" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Open Logs"/>
-                                        </StackPanel>
-                                    </Button>
-                                </UniformGrid>
+                                        <Button Grid.Row="2"
+                                                Content="🔒  Lock Admin"
+                                                HorizontalAlignment="Left"
+                                                Margin="0,5,0,0"
+                                                Command="{Binding LockAdminCommand}"
+                                                Style="{StaticResource NeonRedButtonStyle}"
+                                                Height="22"
+                                                FontSize="11"
+                                                Padding="8,2"/>
+                                    </Grid>
+                                </StackPanel>
                             </Grid>
                         </GroupBox>
                     </UniformGrid>

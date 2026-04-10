@@ -39,6 +39,15 @@ namespace ESCenter.ViewModels
         private ICommand? _resetDatabaseCommand;
         public ICommand ResetDatabaseCommand => _resetDatabaseCommand ??= new RelayCommand(_ => ResetDatabase());
 
+        private ICommand? _backupNowCommand;
+        public ICommand BackupNowCommand => _backupNowCommand ??= new RelayCommand(_ => BackupNow());
+
+        private ICommand? _refreshAllCommand;
+        public ICommand RefreshAllCommand => _refreshAllCommand ??= new RelayCommand(_ => RefreshAll());
+
+        private ICommand? _lockAdminCommand;
+        public ICommand LockAdminCommand => _lockAdminCommand ??= new RelayCommand(_ => LockAdmin());
+
         private bool _isAdminAccessGranted;
         public bool IsAdminAccessGranted
         {
@@ -186,6 +195,20 @@ namespace ESCenter.ViewModels
         {
             get => _databaseConnectionBrush;
             set => SetProperty(ref _databaseConnectionBrush, value);
+        }
+
+        private string _databaseFileSizeText = string.Empty;
+        public string DatabaseFileSizeText
+        {
+            get => _databaseFileSizeText;
+            set => SetProperty(ref _databaseFileSizeText, value);
+        }
+
+        private string _lastBackupText = "Unknown";
+        public string LastBackupText
+        {
+            get => _lastBackupText;
+            set => SetProperty(ref _lastBackupText, value);
         }
 
         private string _clockText = DateTime.Now.ToString("HH:mm:ss");
@@ -430,8 +453,13 @@ namespace ESCenter.ViewModels
             };
 
             _databaseStatusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
-            _databaseStatusTimer.Tick += async (_, _) => await RefreshDatabaseConnectionStatusAsync();
+            _databaseStatusTimer.Tick += async (_, _) =>
+            {
+                await RefreshDatabaseConnectionStatusAsync();
+                RefreshDatabaseFileSizeAndBackupInfo();
+            };
             _databaseStatusTimer.Start();
+            RefreshDatabaseFileSizeAndBackupInfo();
 
             AppLogger.StatusRaised += OnStatusRaised;
             TicketEvents.TicketsChanged += async (_, _) => await RefreshTicketsChartAsync();
@@ -439,6 +467,7 @@ namespace ESCenter.ViewModels
             {
                 await RefreshTicketsChartAsync();
                 await RefreshDatabaseConnectionStatusAsync();
+                RefreshDatabaseFileSizeAndBackupInfo();
             };
 
             ToggleCurveVisibilityCommand = new RelayCommand(param =>
@@ -899,6 +928,81 @@ namespace ESCenter.ViewModels
             {
                 AppLogger.Error($"Failed to open log folder: {ex.Message}");
             }
+        }
+
+        private void BackupNow()
+        {
+            try
+            {
+                if (System.Windows.Application.Current is App app && app.BackupService != null)
+                {
+                    app.BackupService.TryCreateBackupNow();
+                    LastBackupText = "just now";
+                    AppLogger.Success("Manual backup created.");
+                }
+            }
+            catch (Exception ex) { AppLogger.Error($"Backup failed: {ex.Message}"); }
+        }
+
+        private void RefreshAll()
+        {
+            Dashboard.Refresh();
+            TicketEvents.RaiseTicketsChanged();
+            _ = RefreshTicketsChartAsync();
+            _ = RefreshDatabaseConnectionStatusAsync();
+            RefreshDatabaseFileSizeAndBackupInfo();
+            AppLogger.Success("Refreshed all data.");
+        }
+
+        private void LockAdmin()
+        {
+            IsAdminAccessGranted = false;
+            AppLogger.Success("Admin session locked.");
+        }
+
+        private void RefreshDatabaseFileSizeAndBackupInfo()
+        {
+            try
+            {
+                var dbPath = DatabasePathService.CurrentDatabasePath;
+                if (File.Exists(dbPath))
+                {
+                    var bytes = new FileInfo(dbPath).Length;
+                    DatabaseFileSizeText = bytes >= 1_048_576
+                        ? $"{bytes / 1_048_576.0:F1} MB"
+                        : $"{bytes / 1024.0:F1} KB";
+                }
+                else
+                {
+                    DatabaseFileSizeText = "Not found";
+                }
+
+                var prefs = ESCenter.Services.UserPreferencesService.GetBackupLocation();
+                var backupDir = string.IsNullOrWhiteSpace(prefs)
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ESCenter Backups")
+                    : prefs;
+
+                if (Directory.Exists(backupDir))
+                {
+                    var dbName = Path.GetFileNameWithoutExtension(dbPath);
+                    var ext = Path.GetExtension(dbPath);
+                    if (string.IsNullOrWhiteSpace(ext)) ext = ".bak";
+                    var latest = Directory.GetFiles(backupDir, $"{dbName}_backup_*{ext}")
+                                           .OrderByDescending(File.GetLastWriteTime)
+                                           .FirstOrDefault();
+                    if (latest != null)
+                    {
+                        var ago = DateTime.Now - File.GetLastWriteTime(latest);
+                        LastBackupText = ago.TotalMinutes < 2 ? "just now"
+                                       : ago.TotalHours < 1 ? $"{(int)ago.TotalMinutes}m ago"
+                                       : ago.TotalHours < 24 ? $"{(int)ago.TotalHours}h ago"
+                                                             : $"{(int)ago.TotalDays}d ago";
+                    }
+                    else LastBackupText = "No backups yet";
+                }
+                else LastBackupText = "No backups yet";
+            }
+            catch { DatabaseFileSizeText = "Error"; LastBackupText = "Error"; }
         }
 
         private void ShowWarrantySystem()
