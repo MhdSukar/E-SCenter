@@ -21,24 +21,39 @@ namespace ESCenter.Services
         private static readonly string SettingsPath = Path.Combine(SettingsDirectory, SettingsFileName);
         private static readonly string LegacyDatabaseSettingsPath = Path.Combine(SettingsDirectory, LegacyDatabaseSettingsFileName);
         private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
+        private static UserPreferences? _cachedPreferences;
 
         public static UserPreferences Load()
         {
+            if (_cachedPreferences != null)
+            {
+                return _cachedPreferences;
+            }
+
             try
             {
+                UserPreferences normalized;
+
                 if (!File.Exists(SettingsPath))
                 {
                     var migrated = TryLoadLegacyPreferences();
-                    return Normalize(migrated ?? CreateDefaultPreferences());
+                    normalized = Normalize(migrated ?? CreateDefaultPreferences());
+                }
+                else
+                {
+                    var json = File.ReadAllText(SettingsPath);
+                    var preferences = JsonSerializer.Deserialize<UserPreferences>(json);
+                    normalized = Normalize(preferences);
                 }
 
-                var json = File.ReadAllText(SettingsPath);
-                var preferences = JsonSerializer.Deserialize<UserPreferences>(json);
-                return Normalize(preferences);
+                _cachedPreferences = normalized;
+                return normalized;
             }
             catch
             {
-                return CreateDefaultPreferences();
+                var fallback = CreateDefaultPreferences();
+                _cachedPreferences = fallback;
+                return fallback;
             }
         }
 
@@ -53,6 +68,7 @@ namespace ESCenter.Services
 
             var json = JsonSerializer.Serialize(normalized, JsonOptions);
             File.WriteAllText(SettingsPath, json);
+            _cachedPreferences = normalized;
         }
 
         public static (int PartsThreshold, int InventoryThreshold) GetLowStockThresholds(int defaultValue = 3)
@@ -352,7 +368,7 @@ namespace ESCenter.Services
 
         public static void InvalidateCache()
         {
-            // No-op: preferences are loaded from disk on each call. This method exists for compatibility.
+            _cachedPreferences = null;
         }
         public sealed class UserPreferences
         {
