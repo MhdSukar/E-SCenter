@@ -45,9 +45,6 @@ namespace ESCenter.ViewModels
         private ICommand? _refreshAllCommand;
         public ICommand RefreshAllCommand => _refreshAllCommand ??= new RelayCommand(_ => RefreshAll());
 
-        private ICommand? _lockAdminCommand;
-        public ICommand LockAdminCommand => _lockAdminCommand ??= new RelayCommand(_ => LockAdmin());
-
         private bool _isAdminAccessGranted;
         public bool IsAdminAccessGranted
         {
@@ -934,9 +931,9 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                if (System.Windows.Application.Current is App app && app.BackupService != null)
+                using var backupService = new BackupService();
+                if (backupService.TryCreateBackupNow())
                 {
-                    app.BackupService.TryCreateBackupNow();
                     LastBackupText = "just now";
                     AppLogger.Success("Manual backup created.");
                 }
@@ -952,12 +949,6 @@ namespace ESCenter.ViewModels
             _ = RefreshDatabaseConnectionStatusAsync();
             RefreshDatabaseFileSizeAndBackupInfo();
             AppLogger.Success("Refreshed all data.");
-        }
-
-        private void LockAdmin()
-        {
-            IsAdminAccessGranted = false;
-            AppLogger.Success("Admin session locked.");
         }
 
         private void RefreshDatabaseFileSizeAndBackupInfo()

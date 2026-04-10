@@ -768,7 +768,6 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
                                         <StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -784,15 +783,6 @@
                                             <TextBlock Text="{Binding LastBackupText}" Foreground="{StaticResource NeonDarkCyanDarkBrush}" FontSize="10" FontWeight="SemiBold"/>
                                         </StackPanel>
 
-                                        <Button Grid.Row="2"
-                                                Content="🔒  Lock Admin"
-                                                HorizontalAlignment="Left"
-                                                Margin="0,5,0,0"
-                                                Command="{Binding LockAdminCommand}"
-                                                Style="{StaticResource NeonRedButtonStyle}"
-                                                Height="22"
-                                                FontSize="11"
-                                                Padding="8,2"/>
                                     </Grid>
                                 </StackPanel>
                             </Grid>
