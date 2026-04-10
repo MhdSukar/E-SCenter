@@ -44,34 +44,32 @@
                             <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource SettingsWindowTabTextBlockStyle}"/>
                         </TabControl.Resources>
                         <TabItem Header="General" Tag="First">
-                            <ScrollViewer Background="{StaticResource CardBackgroundBrush}">
-                                <StackPanel Margin="6">
-                                    <CheckBox IsChecked="{Binding LaunchAtWindowsStartup, Mode=TwoWay}" Content="Launch at Windows Startup" Style="{StaticResource GradientCheckBoxStyle}"/>
-                                    <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" Content="Auto-Grant Admin Access on Startup" Style="{StaticResource GradientCheckBoxStyle}"/>
-                                    <Button Content="Reset All Settings to Default" Command="{Binding ResetSettingsCommand}" Style="{StaticResource NeonOrangeButtonStyle}" Margin="0,6,0,0"/>
+                            <StackPanel Margin="6">
+                                <CheckBox IsChecked="{Binding LaunchAtWindowsStartup, Mode=TwoWay}" Content="Launch at Windows Startup" Style="{StaticResource GradientCheckBoxStyle}"/>
+                                <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" Content="Auto-Grant Admin Access on Startup" Style="{StaticResource GradientCheckBoxStyle}"/>
+                                <Button Content="Reset All Settings to Default" Command="{Binding ResetSettingsCommand}" Style="{StaticResource NeonOrangeButtonStyle}" Margin="0,6,0,0"/>
 
-                                    <TextBlock Text="Backup Settings" FontWeight="SemiBold" Margin="0,12,0,6"/>
-                                    <CheckBox IsChecked="{Binding AutoBackupEnabled, Mode=TwoWay}" Content="Enable Automatic Backups" Style="{StaticResource GradientCheckBoxStyle}"/>
+                                <TextBlock Text="Backup Settings" FontWeight="SemiBold" Margin="0,12,0,6"/>
+                                <CheckBox IsChecked="{Binding AutoBackupEnabled, Mode=TwoWay}" Content="Enable Automatic Backups" Style="{StaticResource GradientCheckBoxStyle}"/>
 
-                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                                        <TextBlock Text="Backup Interval (hours):" VerticalAlignment="Center" Width="180"/>
-                                        <TextBox Width="80" Style="{StaticResource NeonTextBoxStyle}" Text="{Binding BackupIntervalHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </StackPanel>
-
-                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                                        <TextBlock Text="Backup Location:" VerticalAlignment="Center" Width="180"/>
-                                        <TextBox Text="{Binding BackupLocation}" IsReadOnly="True" Width="360" Style="{StaticResource NeonTextBoxStyle}"/>
-                                        <Button Content="Browse" Click="BrowseBackupLocation_Click" Style="{StaticResource GradientBorderButtonStyleAccent}" Margin="6,0,0,0"/>
-                                    </StackPanel>
-
-                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                                        <TextBlock Text="Keep Last N Backups (0 = keep all):" VerticalAlignment="Center" Width="180"/>
-                                        <TextBox Width="80" Style="{StaticResource NeonTextBoxStyle}" Text="{Binding BackupRetentionCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </StackPanel>
-
-                                    <Button Content="Back Up Now" Command="{Binding BackupNowCommand}" Style="{StaticResource NeonGreenButtonStyle}" Margin="0,12,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBlock Text="Backup Interval (hours):" VerticalAlignment="Center" Width="180"/>
+                                    <TextBox Width="80" Style="{StaticResource NeonTextBoxStyle}" Text="{Binding BackupIntervalHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
-                            </ScrollViewer>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBlock Text="Backup Location:" VerticalAlignment="Center" Width="180"/>
+                                    <TextBox Text="{Binding BackupLocation}" IsReadOnly="True" Width="360" Style="{StaticResource NeonTextBoxStyle}"/>
+                                    <Button Content="Browse" Click="BrowseBackupLocation_Click" Style="{StaticResource GradientBorderButtonStyleAccent}" Margin="6,0,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBlock Text="Keep Last N Backups (0 = keep all):" VerticalAlignment="Center" Width="180"/>
+                                    <TextBox Width="80" Style="{StaticResource NeonTextBoxStyle}" Text="{Binding BackupRetentionCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+
+                                <Button Content="Back Up Now" Command="{Binding BackupNowCommand}" Style="{StaticResource NeonGreenButtonStyle}" Margin="0,12,0,0"/>
+                            </StackPanel>
                         </TabItem>
 
                         <TabItem Header="Database">

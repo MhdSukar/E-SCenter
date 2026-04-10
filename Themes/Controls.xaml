@@ -2402,8 +2402,9 @@
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderDarkBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="MinWidth" Value="156"/>
         <Setter Property="Padding" Value="14,8"/>
-        <Setter Property="Margin" Value="0,0,6,0"/>
+        <Setter Property="Margin" Value="0"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Template">
