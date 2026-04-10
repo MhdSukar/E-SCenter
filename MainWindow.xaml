@@ -672,7 +672,7 @@
                         </GroupBox>
 
                         <GroupBox Width="363"
-                                  Style="{StaticResource GradientGroupBoxRed}"
+                                  Style="{StaticResource GradientGroupBoxAccent}"
                                   Margin="12,6,11,6">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -735,28 +735,28 @@
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding ShowSettingsCommand}"
-                                                Style="{StaticResource NeonBlueButtonStyle}"
+                                                Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
                                                 FontSize="13"/>
                                         <Button Content="⚡  Backup Now"
                                                 Width="138"
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding BackupNowCommand}"
-                                                Style="{StaticResource NeonGreenButtonStyle}"
+                                                Style="{StaticResource GradientBorderButtonStyleGreen}"
                                                 FontSize="13"/>
                                         <Button Content="📂  Open Logs"
                                                 Width="138"
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding OpenLogFolderCommand}"
-                                                Style="{StaticResource NeonBorderButtonStyle}"
+                                                Style="{StaticResource GradientBorderButtonStyleRed}"
                                                 FontSize="13"/>
                                         <Button Content="🔄  Refresh All"
                                                 Width="138"
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding RefreshAllCommand}"
-                                                Style="{StaticResource NeonBorderButtonStyle}"
+                                                Style="{StaticResource GradientBorderButtonStyleAccent}"
                                                 FontSize="13"/>
                                     </UniformGrid>
 
