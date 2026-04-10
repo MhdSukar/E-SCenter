@@ -52,8 +52,21 @@ namespace ESCenter.Windows
 
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
         {
-            // Settings — to be implemented later
-            AppLogger.Info("Settings coming soon.");
+            try
+            {
+                var window = new SettingsWindow
+                {
+                    Owner = System.Windows.Application.Current.MainWindow,
+                    DataContext = new ESCenter.ViewModels.SettingsViewModel()
+                };
+
+                // Opening settings will deactivate this popup and trigger its close animation
+                window.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to open Settings: {ex.Message}");
+            }
         }
     }
 }

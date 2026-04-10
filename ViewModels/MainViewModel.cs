@@ -46,6 +46,17 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _isAdminAccessGranted, value);
         }
 
+        private void ShowSettings()
+        {
+            var window = new Windows.SettingsWindow
+            {
+                Owner = System.Windows.Application.Current.MainWindow,
+                DataContext = new SettingsViewModel()
+            };
+
+            window.ShowDialog();
+        }
+
         private bool _autoGrantAdminAccess;
         public bool AutoGrantAdminAccess
         {
@@ -102,6 +113,7 @@ namespace ESCenter.ViewModels
         public ICommand ShowBoneyardCommand { get; }
         public ICommand ShowWarrantySystemCommand { get; }
         public ICommand ShowUserProfileCommand { get; }
+        public ICommand ShowSettingsCommand { get; }
         public ICommand OpenLogFolderCommand { get; }
         public ICommand NavigateToResultCommand { get; }
         public ICommand CloseGlobalSearchCommand { get; }
@@ -220,6 +232,11 @@ namespace ESCenter.ViewModels
         private readonly DispatcherTimer _statusResetTimer;
         private readonly DispatcherTimer _databaseStatusTimer;
         private RepairTicketsViewModel? _repairTicketsViewModel;
+        private PartsControlViewModel? _partsControlViewModel;
+        private InventoryViewModel? _inventoryViewModel;
+        private BoneyardViewModel? _boneyardViewModel;
+        private ReportsViewModel? _reportsViewModel;
+        private AlBarakaViewModel? _alBarakaViewModel;
         private UserProfileWindow? _userProfileWindow;
         private readonly GlobalSearchService _globalSearchService = new();
 
@@ -315,32 +332,32 @@ namespace ESCenter.ViewModels
             ShowPartsControlCommand = new RelayCommand(_ =>
             {
                 ActiveSection = NavSection.PartsControl;
-                Navigate(new PartsControlViewModel(), "Parts Control loaded");
+                Navigate(GetOrCreatePartsControlViewModel(), "Parts Control loaded");
             });
 
             ShowReportsCommand = new RelayCommand(_ =>
             {
                 ActiveSection = NavSection.None;
-                Navigate(new ReportsViewModel(), "Reports loaded");
+                Navigate(GetOrCreateReportsViewModel(), "Reports loaded");
             });
 
             ShowAlBarakaCommand = new RelayCommand(_ =>
             {
                 // Open internal Al-Baraka view (replaces external launcher)
                 ActiveSection = NavSection.None;
-                Navigate(new AlBarakaViewModel(), "Al-Baraka loaded");
+                Navigate(GetOrCreateAlBarakaViewModel(), "Al-Baraka loaded");
             });
 
             ShowInventoryCommand = new RelayCommand(_ =>
             {
                 ActiveSection = NavSection.Inventory;
-                Navigate(new InventoryViewModel(), "Inventory loaded");
+                Navigate(GetOrCreateInventoryViewModel(), "Inventory loaded");
             });
 
             ShowBoneyardCommand = new RelayCommand(_ =>
             {
                 ActiveSection = NavSection.Boneyard;
-                Navigate(new BoneyardViewModel(), "Boneyard loaded");
+                Navigate(GetOrCreateBoneyardViewModel(), "Boneyard loaded");
             });
 
             ShowWarrantySystemCommand = new RelayCommand(_ =>
@@ -351,6 +368,7 @@ namespace ESCenter.ViewModels
             });
 
             ShowUserProfileCommand = new RelayCommand(_ => ShowUserProfile());
+            ShowSettingsCommand = new RelayCommand(_ => ShowSettings());
             OpenLogFolderCommand = new RelayCommand(_ => OpenLogFolder());
             NavigateToResultCommand = new RelayCommand(param =>
             {
@@ -456,6 +474,21 @@ namespace ESCenter.ViewModels
         private RepairTicketsViewModel GetOrCreateRepairTicketsViewModel()
             => _repairTicketsViewModel ??= new RepairTicketsViewModel();
 
+        private PartsControlViewModel GetOrCreatePartsControlViewModel()
+            => _partsControlViewModel ??= new PartsControlViewModel();
+
+        private InventoryViewModel GetOrCreateInventoryViewModel()
+            => _inventoryViewModel ??= new InventoryViewModel();
+
+        private BoneyardViewModel GetOrCreateBoneyardViewModel()
+            => _boneyardViewModel ??= new BoneyardViewModel();
+
+        private ReportsViewModel GetOrCreateReportsViewModel()
+            => _reportsViewModel ??= new ReportsViewModel();
+
+        private AlBarakaViewModel GetOrCreateAlBarakaViewModel()
+            => _alBarakaViewModel ??= new AlBarakaViewModel();
+
         private void ShowUserProfile()
         {
             // If already open, close it (toggle behaviour)
@@ -534,17 +567,17 @@ namespace ESCenter.ViewModels
 
                 case "Parts":
                     ActiveSection = NavSection.PartsControl;
-                    Navigate(new PartsControlViewModel(), $"Parts: {result.Name}");
+                    Navigate(GetOrCreatePartsControlViewModel(), $"Parts: {result.Name}");
                     break;
 
                 case "Inventory":
                     ActiveSection = NavSection.Inventory;
-                    Navigate(new InventoryViewModel(), $"Inventory: {result.Name}");
+                    Navigate(GetOrCreateInventoryViewModel(), $"Inventory: {result.Name}");
                     break;
 
                 case "Boneyard":
                     ActiveSection = NavSection.Boneyard;
-                    Navigate(new BoneyardViewModel(), $"Boneyard: {result.Name}");
+                    Navigate(GetOrCreateBoneyardViewModel(), $"Boneyard: {result.Name}");
                     break;
             }
         }

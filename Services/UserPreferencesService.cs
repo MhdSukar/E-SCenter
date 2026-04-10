@@ -214,6 +214,10 @@ namespace ESCenter.Services
             AdminPasswordHash = DefaultAdminPasswordHash,
             AutoGrantAdminAccess = false,
             LaunchAtWindowsStartup = false
+            , AutoBackupEnabled = true
+            , BackupIntervalHours = 6
+            , BackupLocation = string.Empty
+            , BackupRetentionCount = 0
         };
 
         private static UserPreferences Normalize(UserPreferences? preferences)
@@ -243,6 +247,15 @@ namespace ESCenter.Services
             normalized.PreferredDatabasePath ??= string.Empty;
             normalized.LastCustomDatabasePath ??= string.Empty;
             normalized.ExchangeRates ??= new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+
+            // Ensure new backup-related preferences exist
+            // Defaults: automatic backups enabled, 6 hour interval, empty location (Documents), keep all backups
+            // These will be serialized on next Save.
+            // No further normalization needed for bools and ints.
+            normalized.AutoBackupEnabled = normalized.AutoBackupEnabled;
+            normalized.BackupIntervalHours = normalized.BackupIntervalHours <= 0 ? 6 : normalized.BackupIntervalHours;
+            normalized.BackupLocation ??= string.Empty;
+            normalized.BackupRetentionCount = normalized.BackupRetentionCount < 0 ? 0 : normalized.BackupRetentionCount;
 
             // Ensure new preference exists when migrating from older settings
             // Default value is false (do not auto-grant admin access)
@@ -285,6 +298,62 @@ namespace ESCenter.Services
             preferences.LaunchAtWindowsStartup = enabled;
             Save(preferences);
         }
+        public static bool GetAutoBackupEnabled()
+        {
+            var preferences = Load();
+            return preferences.AutoBackupEnabled;
+        }
+
+        public static void SetAutoBackupEnabled(bool enabled)
+        {
+            var preferences = Load();
+            preferences.AutoBackupEnabled = enabled;
+            Save(preferences);
+        }
+
+        public static int GetBackupIntervalHours()
+        {
+            var preferences = Load();
+            return preferences.BackupIntervalHours <= 0 ? 6 : preferences.BackupIntervalHours;
+        }
+
+        public static void SetBackupIntervalHours(int hours)
+        {
+            var preferences = Load();
+            preferences.BackupIntervalHours = Math.Max(1, Math.Min(168, hours));
+            Save(preferences);
+        }
+
+        public static string GetBackupLocation()
+        {
+            var preferences = Load();
+            return preferences.BackupLocation ?? string.Empty;
+        }
+
+        public static void SetBackupLocation(string path)
+        {
+            var preferences = Load();
+            preferences.BackupLocation = path ?? string.Empty;
+            Save(preferences);
+        }
+
+        public static int GetBackupRetentionCount()
+        {
+            var preferences = Load();
+            return preferences.BackupRetentionCount < 0 ? 0 : preferences.BackupRetentionCount;
+        }
+
+        public static void SetBackupRetentionCount(int count)
+        {
+            var preferences = Load();
+            preferences.BackupRetentionCount = Math.Max(0, Math.Min(999, count));
+            Save(preferences);
+        }
+
+        public static void InvalidateCache()
+        {
+            // No-op: preferences are loaded from disk on each call. This method exists for compatibility.
+        }
         public sealed class UserPreferences
         {
             public string PreferredDatabasePath { get; set; } = string.Empty;
@@ -295,6 +364,10 @@ namespace ESCenter.Services
             public string AdminPasswordHash { get; set; } = DefaultAdminPasswordHash;
             public bool AutoGrantAdminAccess { get; set; } = false;
             public bool LaunchAtWindowsStartup { get; set; } = false;
+            public bool AutoBackupEnabled { get; set; } = true;
+            public int BackupIntervalHours { get; set; } = 6;
+            public string BackupLocation { get; set; } = string.Empty;
+            public int BackupRetentionCount { get; set; } = 0;
             public Dictionary<string, decimal> ExchangeRates { get; set; } = new(StringComparer.OrdinalIgnoreCase);
         }
 

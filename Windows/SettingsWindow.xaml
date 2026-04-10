@@ -1,0 +1,131 @@
+<Window x:Class="ESCenter.Windows.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings"
+        Height="520"
+        Width="720"
+        WindowStartupLocation="CenterOwner"
+        Background="Transparent"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="NoResize">
+
+    <Border CornerRadius="12" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="0" SnapsToDevicePixels="True">
+        <Grid>
+            <Border Height="36" Background="{StaticResource DarkCardBrush}" CornerRadius="12,12,0,0" BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" VerticalAlignment="Top">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Settings" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="12,0,0,0"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Style="{StaticResource TitleBarButtonBase}" Click="btnMinimize_Click" x:Name="btnMinimize">
+                            <Image Source="{StaticResource Minimize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
+                        <Button Style="{StaticResource TitleBarButtonBase}" x:Name="btnMaximize" FontSize="17" Click="btnMaximize_Click">
+                            <Image Source="{StaticResource Maximize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
+                        <Button Style="{StaticResource TitleBarCloseButtonStyle}" Click="btnClose_Click">
+                            <Image Source="{StaticResource Close}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Margin="0,36,0,0" Padding="12" CornerRadius="0,0,10,10" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="1">
+                <Grid>
+                    <TabControl Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderDarkBrush}" Foreground="{StaticResource TextPrimaryBrush}">
+                        <TabControl.Resources>
+                            <Style TargetType="TabItem">
+                                <Setter Property="Background" Value="{StaticResource DarkCardBrush}"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource DarkBorderBrush}"/>
+                                <Setter Property="Padding" Value="8,6"/>
+                                <Setter Property="Margin" Value="0,0,6,0"/>
+                            </Style>
+                        </TabControl.Resources>
+                        <TabItem Header="General">
+                            <ScrollViewer Background="{StaticResource CardBackgroundBrush}">
+                                <StackPanel Margin="6">
+                                    <CheckBox IsChecked="{Binding LaunchAtWindowsStartup, Mode=TwoWay}" Content="Launch at Windows Startup" Style="{StaticResource GradientCheckBoxStyle}"/>
+                                    <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" Content="Auto-Grant Admin Access on Startup" Style="{StaticResource GradientCheckBoxStyle}"/>
+                                    <Button Content="Reset All Settings to Default" Command="{Binding ResetSettingsCommand}" Style="{StaticResource NeonOrangeButtonStyle}" Margin="0,6,0,0"/>
+
+                                    <TextBlock Text="Backup Settings" FontWeight="SemiBold" Margin="0,12,0,6"/>
+                                    <CheckBox IsChecked="{Binding AutoBackupEnabled, Mode=TwoWay}" Content="Enable Automatic Backups" Style="{StaticResource GradientCheckBoxStyle}"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="Backup Interval (hours):" VerticalAlignment="Center" Width="180"/>
+                                        <TextBox Width="80" Style="{StaticResource NeonTextBoxStyle}" Text="{Binding BackupIntervalHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="Backup Location:" VerticalAlignment="Center" Width="180"/>
+                                        <TextBox Text="{Binding BackupLocation}" IsReadOnly="True" Width="360" Style="{StaticResource NeonTextBoxStyle}"/>
+                                        <Button Content="Browse" Click="BrowseBackupLocation_Click" Style="{StaticResource GradientBorderButtonStyleAccent}" Margin="6,0,0,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="Keep Last N Backups (0 = keep all):" VerticalAlignment="Center" Width="180"/>
+                                        <TextBox Width="80" Style="{StaticResource NeonTextBoxStyle}" Text="{Binding BackupRetentionCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+
+                                    <Button Content="Back Up Now" Command="{Binding BackupNowCommand}" Style="{StaticResource NeonGreenButtonStyle}" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+
+                        <TabItem Header="Database">
+                            <StackPanel Margin="6">
+                                <TextBlock Text="Current Database Path:" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding CurrentDatabasePath}" TextWrapping="Wrap" Margin="0,4,0,8"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <Button Content="Browse &amp; Load Database" Command="{Binding LoadDatabaseCommand}" Style="{StaticResource GradientBorderButtonStyleBLueCyan}" Width="180"/>
+                                    <Button Content="Initialize / Repair Structure" Command="{Binding InitializeDatabaseCommand}" Style="{StaticResource GradientBorderButtonStyleGreen}" Margin="6,0,0,0" Width="180"/>
+                                    <Button Content="Reset Database (Delete &amp; Recreate)" Command="{Binding ResetDatabaseCommand}" Style="{StaticResource GradientBorderButtonStyleRed}" Margin="6,0,0,0" Width="220"/>
+                                </StackPanel>
+
+                                <Separator Margin="0,10,0,10"/>
+
+                                <Button Content="Check Database Integrity" Command="{Binding CheckDatabaseIntegrityCommand}" Style="{StaticResource GradientBorderButtonStyleAccent}"/>
+                                <TextBlock Text="Last integrity check result:" Margin="0,12,0,0"/>
+                                <TextBlock Text="{Binding IntegrityCheckResult}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </TabItem>
+
+                        <TabItem Header="Security">
+                            <StackPanel Margin="6">
+                                <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" Content="Auto-Grant Admin Access on Startup" Style="{StaticResource GradientCheckBoxStyle}"/>
+                                <Button Content="Change Admin Password" Command="{Binding ChangeAdminPasswordCommand}" Style="{StaticResource GradientBorderButtonStyleAccent}" Margin="0,8,0,0"/>
+                                <Separator Margin="0,10,0,10"/>
+                                <TextBlock Text="Config Transfer" FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <Button Content="Export Settings File" Width="180"
+                                            Command="{Binding ExportSettingsCommand}" 
+                                            Style="{StaticResource GradientBorderButtonStyleAccent}"/>
+                                    <Button Content="Import Settings File" Width="180"
+                                            Command="{Binding ImportSettingsCommand}" Style="{StaticResource GradientBorderButtonStyleAccent}" Margin="6,0,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </TabItem>
+
+                        <TabItem Header="Advanced">
+                            <StackPanel Margin="6">
+                                <Button Content="Open Log Folder" 
+                                        Command="{Binding OpenLogFolderCommand}" 
+                                        Style="{StaticResource GradientBorderButtonStyleAccent}"/>
+                                <TextBlock Text="App Version:" Margin="0,8,0,0"/>
+                                <TextBlock Text="1.7.8"/>
+                                <Separator Margin="0,10,0,10"/>
+                                <TextBlock Text="Named pipe integration server: The app listens for incoming commands over a named pipe. Disable only if you know what you're doing." TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
