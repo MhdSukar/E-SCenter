@@ -11,6 +11,7 @@
     <BitmapImage x:Key="AllList" UriSource="/Assets/Icons/AllList.png"/>
     <BitmapImage x:Key="AodWatch" UriSource="/Assets/Icons/aod_watch.png"/> <!-- Not used -->
     <BitmapImage x:Key="ArmingCountdown" UriSource="/Assets/Icons/arming_countdown.png"/>  <!-- Not used -->
+    <BitmapImage x:Key="BackupNow" UriSource="/Assets/Icons/backup_now.png"/>
     <BitmapImage x:Key="BatteryShield1" UriSource="/Assets/Icons/Battery_android_frame_shield.png"/>
     <BitmapImage x:Key="BatteryShield2" UriSource="/Assets/Icons/battery_android_shield.png"/>
     <BitmapImage x:Key="BoardMod" UriSource="/Assets/Icons/BoardMod.png"/>
@@ -47,6 +48,7 @@
     <BitmapImage x:Key="LowStock" UriSource="/Assets/Icons/LowStock.png"/>
     <BitmapImage x:Key="Model" UriSource="/Assets/Icons/Model.png"/>
     <BitmapImage x:Key="Notes" UriSource="/Assets/Icons/Notes.png"/>
+    <BitmapImage x:Key="OpenLogs" UriSource="/Assets/Icons/open_logs.png"/>
     <BitmapImage x:Key="OutStock" UriSource="/Assets/Icons/OutStock.png"/>
     <BitmapImage x:Key="Parts" UriSource="/Assets/Icons/Parts.png"/>
     <BitmapImage x:Key="PartsUsed" UriSource="/Assets/Icons/PartsUsed.png"/>
@@ -56,6 +58,7 @@
     <BitmapImage x:Key="QR" UriSource="/Assets/Icons/QR.png"/>
     <BitmapImage x:Key="ReadyToPick" UriSource="/Assets/Icons/ReadyToPick.png"/>
     <BitmapImage x:Key="Refresh" UriSource="/Assets/Icons/Refresh.png"/>
+    <BitmapImage x:Key="RefreshAll" UriSource="/Assets/Icons/refresh_all.png"/>
     <BitmapImage x:Key="regular_expression" UriSource="/Assets/Icons/regular_expression.png"/>
     <BitmapImage x:Key="Reopen1" UriSource="/Assets/Icons/ReopenTitle.png"/>
     <BitmapImage x:Key="RepOnWar" UriSource="/Assets/Icons/RepairOnWarranty.png"/>

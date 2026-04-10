@@ -31,6 +31,7 @@
   <ItemGroup>
     <None Remove="0001-async-data-loading.patch" />
     <None Remove="Assets\Icons\02_recycle.png" />
+    <None Remove="Assets\Icons\backup_now.png" />
     <None Remove="Assets\Icons\circled_status_icon_colored.png" />
     <None Remove="Assets\Icons\critical.png" />
     <None Remove="Assets\Icons\DatabaseReports.png" />
@@ -50,9 +51,11 @@
     <None Remove="Assets\Icons\NOT USED [1].png" />
     <None Remove="Assets\Icons\Notes.png" />
     <None Remove="Assets\Icons\ongoing.png" />
+    <None Remove="Assets\Icons\open_logs.png" />
     <None Remove="Assets\Icons\overdue.png" />
     <None Remove="Assets\Icons\Philips E-SCenter Logo.png" />
     <None Remove="Assets\Icons\phone.png" />
+    <None Remove="Assets\Icons\refresh_all.png" />
     <None Remove="Assets\Icons\reports_DB.png" />
     <None Remove="Assets\Icons\Shutdown.png" />
     <None Remove="Assets\Icons\StatusAi.png" />
@@ -233,6 +236,9 @@
     <Resource Include="Assets\Icons\ongoing.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\open_logs.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\OutStock.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -264,6 +270,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Refresh.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\refresh_all.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\regular_expression.png">

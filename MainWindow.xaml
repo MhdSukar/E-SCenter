@@ -20,7 +20,6 @@
         <!-- Severity Icons -->
         <Style x:Key="StatusIconStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,0,6,0"/>
         </Style>
@@ -234,7 +233,7 @@
                                            Margin="0,0,6,0"/>
                                     <TextBlock Text="Tickets Act"
                                                 VerticalAlignment="Center"
-                                               Foreground="{StaticResource Gradient.Primary}"/>
+                                               Foreground="{StaticResource Gradient.Primary.Horizontal}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
@@ -294,8 +293,8 @@
                         <GroupBox Width="363" Style="{StaticResource GradientGroupBoxAccent}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="{StaticResource Statistics}" Width="16" Height="17" Margin="0,0,6,0"/>
-                                    <TextBlock Text="Tickets stk" Foreground="{StaticResource Gradient.Primary}"/>
+                                    <Image Source="{StaticResource Statistics}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Tickets stk" Foreground="{StaticResource Gradient.Accent}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
@@ -455,8 +454,8 @@
                         <GroupBox Width="363" Style="{StaticResource GradientGroupBoxBlueCyan}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="{StaticResource GalaxyAi3}" Width="18" Height="18" Margin="0,0,6,0"/>
-                                    <TextBlock Text="мн∂ ѕυкαя" Foreground="{StaticResource Gradient.Primary}"/>
+                                    <Image Source="{StaticResource GalaxyAi3}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                    <TextBlock Text="мн∂ ѕυкαя" Foreground="{StaticResource Gradient.Primary.Horizontal}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
@@ -672,12 +671,12 @@
                         </GroupBox>
 
                         <GroupBox Width="363"
-                                  Style="{StaticResource GradientGroupBoxRed}"
+                                  Style="{StaticResource GradientGroupBoxAccent}"
                                   Margin="12,6,11,6">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="{StaticResource Admin}" Width="22" Height="22" Margin="0,0,6,0"/>
-                                    <TextBlock Text="Adminstration" Foreground="{StaticResource Gradient.Danger}"/>
+                                    <Image Source="{StaticResource Admin}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                    <TextBlock Text="App Status" Foreground="{StaticResource Gradient.Accent}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
@@ -730,34 +729,55 @@
                                                  HorizontalAlignment="Center"
                                                  VerticalAlignment="Top"
                                                  Margin="0,4,0,6">
-                                        <Button Content="⚙  Settings"
+                                        <Button 
                                                 Width="138"
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding ShowSettingsCommand}"
-                                                Style="{StaticResource NeonBlueButtonStyle}"
-                                                FontSize="13"/>
-                                        <Button Content="⚡  Backup Now"
+                                                Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
+                                                FontSize="13">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Image Source="{StaticResource Settings}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                                <TextBlock Text="Settings"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button
                                                 Width="138"
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding BackupNowCommand}"
-                                                Style="{StaticResource NeonGreenButtonStyle}"
-                                                FontSize="13"/>
-                                        <Button Content="📂  Open Logs"
+                                                Style="{StaticResource GradientBorderButtonStyleGreen}"
+                                                FontSize="13">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Image Source="{StaticResource BackupNow}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                                <TextBlock Text="Backup Now"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button
                                                 Width="138"
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding OpenLogFolderCommand}"
-                                                Style="{StaticResource NeonBorderButtonStyle}"
-                                                FontSize="13"/>
-                                        <Button Content="🔄  Refresh All"
+                                                Style="{StaticResource GradientBorderButtonStyleRed}"
+                                                FontSize="13">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Image Source="{StaticResource OpenLogs}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                                <TextBlock Text="app logger"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button 
                                                 Width="138"
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding RefreshAllCommand}"
-                                                Style="{StaticResource NeonBorderButtonStyle}"
-                                                FontSize="13"/>
+                                                Style="{StaticResource GradientBorderButtonStyleAccent}"
+                                                FontSize="13">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Image Source="{StaticResource RefreshAll}" Width="16" Height="16" Margin="0,0,6,0"/>
+                                                <TextBlock Text="Refresh All"/>
+                                            </StackPanel>
+                                        </Button>
                                     </UniformGrid>
 
                                     <Border Height="1"
@@ -775,12 +795,12 @@
                                             <TextBlock Text="DB:" Foreground="{StaticResource TextSecondaryBrush}" FontSize="10" Margin="0,0,4,0"/>
                                             <TextBlock Text="{Binding DatabaseConnectionStatusText}" Foreground="{Binding DatabaseConnectionBrush}" FontSize="10" FontWeight="SemiBold"/>
                                             <TextBlock Text=" · " Foreground="{StaticResource TextSecondaryBrush}" FontSize="10"/>
-                                            <TextBlock Text="{Binding DatabaseFileSizeText}" Foreground="{StaticResource NeonDarkCyanDarkBrush}" FontSize="10"/>
+                                            <TextBlock Text="{Binding DatabaseFileSizeText}" Foreground="{StaticResource Gradient.Accent}" FontSize="10"/>
                                         </StackPanel>
 
                                         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,3,0,0">
                                             <TextBlock Text="Last backup: " Foreground="{StaticResource TextSecondaryBrush}" FontSize="10"/>
-                                            <TextBlock Text="{Binding LastBackupText}" Foreground="{StaticResource NeonDarkCyanDarkBrush}" FontSize="10" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding LastBackupText}" Foreground="{StaticResource Gradient.Success}" FontSize="10" FontWeight="SemiBold"/>
                                         </StackPanel>
 
                                     </Grid>
