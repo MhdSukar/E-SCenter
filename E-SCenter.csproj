@@ -113,6 +113,9 @@
     <Resource Include="Assets\Icons\arming_countdown.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\backup_now.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\Battery_android_frame_shield.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
