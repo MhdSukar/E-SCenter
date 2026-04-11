@@ -99,58 +99,141 @@
                                 VerticalAlignment="Center"
                                 Margin="6,0,12,0">
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
+                        <!-- Dashboard tab — use this pattern for all 5 tabs -->
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
                                      GroupName="MainTabs"
                                      Command="{Binding ShowDashboardCommand}"
                                      x:Name="BtnDashboard"
-                                     Width="120"
+                                     Width="130"
                                      IsChecked="{Binding IsDashboardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Dashboard}" Width="25" Height="25" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F1) Dashboard" Margin="0,2,0,0" Foreground="{StaticResource Gradient.Primary}"/>
+                                <Image Source="{StaticResource Dashboard}"
+                                       Width="15" Height="15"
+                                       Margin="0,0,6,0"
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="Dashboard"
+                                           VerticalAlignment="Center"/>
+                                <!-- Keyboard hint badge -->
+                                <Border Background="#18FFFFFF"
+                                        CornerRadius="3"
+                                        Padding="3,1"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="F1"
+                                               FontSize="9"
+                                               FontFamily="Consolas"
+                                               Foreground="{StaticResource TextTertiaryBrush}"/>
+                                </Border>
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs" Width="110"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                                     GroupName="MainTabs"
                                      Command="{Binding ShowRepairTicketsCommand}"
+                                     x:Name="BtnRepairTickets"
+                                     Width="147"
                                      IsChecked="{Binding IsRepairTicketsSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Tickets}" Width="25" Height="25" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F2) Tickets" Margin="0,2,0,0" Foreground="{StaticResource Gradient.Primary}"/>
+                                <Image Source="{StaticResource Tickets}"
+                                       Width="15" Height="15"
+                                       Margin="0,0,6,0"
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="Repair Tickets"
+                                           VerticalAlignment="Center"/>
+                                <!-- Keyboard hint badge -->
+                                <Border Background="#18FFFFFF"
+                                        CornerRadius="3"
+                                        Padding="3,1"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="F2"
+                                               FontSize="9"
+                                               FontFamily="Consolas"
+                                               Foreground="{StaticResource TextTertiaryBrush}"/>
+                                </Border>
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs" Width="110"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                                     GroupName="MainTabs"
                                      Command="{Binding ShowPartsControlCommand}"
+                                     x:Name="BtnPartsControl"
+                                     Width="142"
                                      IsChecked="{Binding IsPartsControlSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Parts}" Width="25" Height="25" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F3) Parts" Margin="0,2,0,0" Foreground="{StaticResource Gradient.Primary}" />
+                                <Image Source="{StaticResource Parts}"
+                                       Width="15" Height="15"
+                                       Margin="0,0,6,0"
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="Parts Control"
+                                           VerticalAlignment="Center"/>
+                                <!-- Keyboard hint badge -->
+                                <Border Background="#18FFFFFF"
+                                        CornerRadius="3"
+                                        Padding="3,1"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="F3"
+                                               FontSize="9"
+                                               FontFamily="Consolas"
+                                               Foreground="{StaticResource TextTertiaryBrush}"/>
+                                </Border>
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs" Width="110"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                                     GroupName="MainTabs"
                                      Command="{Binding ShowInventoryCommand}"
+                                     x:Name="BtnInventory"
+                                     Width="123"
                                      IsChecked="{Binding IsInventorySelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Inventory}" Width="24" Height="24" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F4) Inventory" Margin="0,2,0,0" Foreground="{StaticResource Gradient.Primary}"/>
+                                <Image Source="{StaticResource Inventory}"
+                                       Width="15" Height="15"
+                                       Margin="0,0,6,0"
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="Inventory"
+                                           VerticalAlignment="Center"/>
+                                <!-- Keyboard hint badge -->
+                                <Border Background="#18FFFFFF"
+                                        CornerRadius="3"
+                                        Padding="3,1"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="F4"
+                                               FontSize="9"
+                                               FontFamily="Consolas"
+                                               Foreground="{StaticResource TextTertiaryBrush}"/>
+                                </Border>
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
-                                     GroupName="MainTabs" Width="110"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                                     GroupName="MainTabs"
                                      Command="{Binding ShowBoneyardCommand}"
+                                     x:Name="BtnBoneyard"
+                                     Width="125"
                                      IsChecked="{Binding IsBoneyardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource Boneyard}" Width="25" Height="25" Margin="0,0,2,0"/>
-                                <TextBlock Text="(F5) Boneyard" Margin="0,2,0,0" Foreground="{StaticResource Gradient.Primary}"/>
+                                <Image Source="{StaticResource Boneyard}"
+                                       Width="15" Height="15"
+                                       Margin="0,0,6,0"
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="Boneyard"
+                                           VerticalAlignment="Center"/>
+                                <!-- Keyboard hint badge -->
+                                <Border Background="#18FFFFFF"
+                                        CornerRadius="3"
+                                        Padding="3,1"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <TextBlock Text="F5"
+                                               FontSize="9"
+                                               FontFamily="Consolas"
+                                               Foreground="{StaticResource TextTertiaryBrush}"/>
+                                </Border>
                             </StackPanel>
                         </RadioButton>
-
                     </StackPanel>
 
 
@@ -483,7 +566,7 @@
 
                                 <TextBox x:Name="GlobalSearchBox"
                                          Grid.Column="1" Grid.Row="0"
-                                         Height="22"
+                                         Height="23"
                                          VerticalAlignment="Top"
                                          Style="{StaticResource NeonDarkCyanTextBoxStyle}"
                                          Text="{Binding GlobalSearchQuery, UpdateSourceTrigger=PropertyChanged}"
@@ -598,7 +681,7 @@
 
                                 <ComboBox Grid.Column="1" Grid.Row="1"
                                           Padding="8,0,25,0"
-                                          Height="22"
+                                          Height="23"
                                           VerticalAlignment="Center"
                                           Style="{StaticResource NeonDarkCyanComboBoxStyle}"
                                           Margin="0,0,0,0">
@@ -646,6 +729,7 @@
                                             </Border>
                                         </Grid>
                                     </Button>
+
                                 </UniformGrid>
 
                                 <UniformGrid Grid.Column="1" Grid.Row="2" Columns="2" Rows="2"
@@ -687,7 +771,7 @@
                                               Margin="0,8,0,0"
                                               Style="{StaticResource GradientCheckBoxDangerStyle}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource StatusAI}" Width="18" Height="18" Margin="0,0,6,0"/>
+                                            <Image Source="{StaticResource BackupNow}" Width="18" Height="18" Margin="0,0,6,0"/>
                                             <TextBlock Text="∂єν ∂яινє"
                                                        Foreground="{StaticResource Gradient.Primary}"/>
                                         </StackPanel>

@@ -64,9 +64,8 @@
                                VerticalAlignment="Center"/>
 
                         <TextBox Grid.Column="1"
-                                 Padding="6,4"
                                  VerticalAlignment="Center"
-                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 Style="{StaticResource NeonDarkCyanTextBoxStyle}"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Button Grid.Column="2"
@@ -90,7 +89,7 @@
 
                     <ComboBox Width="170"
                               Margin="10,0,0,0"
-                              Style="{StaticResource NeonComboBoxStyle}"
+                              Style="{StaticResource NeonDarkCyanComboBoxStyle}"
                               ItemsSource="{Binding PartTypes}"
                               SelectedItem="{Binding SelectedTypeFilter}"
                               VerticalAlignment="Center"/>

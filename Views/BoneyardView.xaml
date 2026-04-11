@@ -58,9 +58,8 @@
                                VerticalAlignment="Center"/>
 
                         <TextBox Grid.Column="1"
-                                 Padding="6,4"
                                  VerticalAlignment="Center"
-                                 Style="{StaticResource NeonTextBoxStyle}"
+                                 Style="{StaticResource NeonDarkCyanTextBoxStyle}"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Button Grid.Column="2"

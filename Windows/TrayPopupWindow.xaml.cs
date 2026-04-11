@@ -49,6 +49,11 @@ namespace ESCenter.Windows
             FadeAndHide();
         }
 
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Hide();
+        }
+
         private void BtnExit_Click(object sender, RoutedEventArgs e)
         {
             ((App)System.Windows.Application.Current).ExitApp();

@@ -88,7 +88,7 @@
     <!-- DatePicker styles removed to restore default DatePicker behavior -->
 
     <!-- Neon Dark Cyan variants for TextBox and ComboBox (uses NeonDarkCyanDarkBrush glow) -->
-    <Style x:Key="NeonDarkCyanTextBoxStyle" TargetType="TextBox">
+    <Style x:Key="NeonDarkCyanTextBoxStyleOLD" TargetType="TextBox">
         <Setter Property="Height" Value="28"/>
         <Setter Property="Padding" Value="9,4"/>
         <Setter Property="FontSize" Value="11"/>
@@ -136,7 +136,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="NeonDarkCyanComboBoxStyle" TargetType="ComboBox">
+    <Style x:Key="NeonDarkCyanComboBoxStyleOLD" TargetType="ComboBox">
         <Setter Property="Height" Value="28"/>
         <Setter Property="Padding" Value="8,0,25,0"/>
         <Setter Property="FontSize" Value="11"/>
@@ -2724,6 +2724,385 @@
                                 </Setter.Value>
                             </Setter>
                             <Setter TargetName="AvatarCircle" Property="Opacity" Value="0.80"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleBarTabButtonStyle2" TargetType="RadioButton">
+        <Setter Property="Background"        Value="Transparent"/>
+        <Setter Property="BorderThickness"   Value="0"/>
+        <Setter Property="Foreground"        Value="{StaticResource TextSecondaryBrush}"/>
+        <Setter Property="FontSize"          Value="12"/>
+        <Setter Property="FontWeight"        Value="Normal"/>
+        <Setter Property="Height"            Value="36"/>
+        <Setter Property="Padding"           Value="12,0"/>
+        <Setter Property="Cursor"            Value="Hand"/>
+        <Setter Property="FocusVisualStyle"  Value="{x:Null}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <!-- Active indicator line at bottom -->
+                            <RowDefinition Height="2"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Hover / pressed background -->
+                        <Border x:Name="HoverBg"
+                            Grid.Row="0"
+                            Background="Transparent"
+                            Margin="2,4,2,0"
+                            CornerRadius="6"/>
+
+                        <!-- Tab content -->
+                        <ContentPresenter x:Name="Content"
+                                      Grid.Row="0"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Margin="{TemplateBinding Padding}"/>
+
+                        <!-- Active indicator: gradient underline -->
+                        <Border x:Name="ActiveLine"
+                            Grid.Row="1"
+                            CornerRadius="1"
+                            Margin="8,0,8,0"
+                            Opacity="0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#00E5D4" Offset="0.0"/>
+                                    <GradientStop Color="#00A8C8" Offset="0.5"/>
+                                    <GradientStop Color="#2952D9" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HoverBg" Property="Background"
+                                Value="#12237EF2"/>
+                            <Setter Property="Foreground"
+                                Value="{StaticResource TextPrimaryBrush}"/>
+                        </Trigger>
+
+                        <!-- Pressed -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="HoverBg" Property="Background"
+                                Value="#20237EF2"/>
+                        </Trigger>
+
+                        <!-- Checked / active tab -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="ActiveLine"  Property="Opacity"  Value="1"/>
+                            <Setter TargetName="HoverBg"     Property="Background"
+                                Value="#0D00E5D4"/>
+                            <Setter Property="Foreground">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop Color="#00E5D4" Offset="0.0"/>
+                                        <GradientStop Color="#5AA7FF" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Trigger>
+
+                        <!-- Checked + hovered — keep line visible -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked"    Value="True"/>
+                                <Condition Property="IsMouseOver"  Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HoverBg" Property="Background"
+                                Value="#1800E5D4"/>
+                        </MultiTrigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════════════
+     ESC TEXTBOX STYLE
+     Replace NeonDarkCyanTextBoxStyle in Controls.xaml
+     Key stays the same so nothing else needs updating
+     ══════════════════════════════════════════════════════ -->
+    <Style x:Key="NeonDarkCyanTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Height"          Value="30"/>
+        <Setter Property="Padding"         Value="1"/>
+        <Setter Property="FontSize"        Value="11"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background"      Value="#1A1A1A"/>
+        <Setter Property="BorderBrush"     Value="#FF404040"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CaretBrush"      Value="#00E5D4"/>
+        <Setter Property="SelectionBrush"  Value="#40237EF2"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+
+                        <!-- Focus gradient border (underneath, slightly larger) -->
+                        <Border x:Name="FocusBorder"
+                            CornerRadius="7"
+                            Padding="1"
+                            Opacity="0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#00E5D4" Offset="0.0"/>
+                                    <GradientStop Color="#00A8C8" Offset="0.5"/>
+                                    <GradientStop Color="#2952D9" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <!-- Main field surface -->
+                        <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Margin="1">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush"
+                                Value="#FF5A5A5A"/>
+                            <Setter TargetName="Bd" Property="Background"
+                                Value="#1F1F1F"/>
+                        </Trigger>
+
+                        <!-- Focused -->
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusBorder" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="0"/>
+                            <Setter TargetName="Bd" Property="Margin" Value="1"/>
+                            <Setter TargetName="Bd" Property="Background" Value="#222222"/>
+                        </Trigger>
+
+                        <!-- Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                            <Setter Property="Foreground"
+                                Value="{StaticResource TextDisabledBrush}"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <!-- ══════════════════════════════════════════════════════
+     ESC COMBOBOX STYLE
+     Replace NeonDarkCyanComboBoxStyle in Controls.xaml
+     ══════════════════════════════════════════════════════ -->
+    <Style x:Key="NeonDarkCyanComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="Height"          Value="30"/>
+        <Setter Property="Padding"         Value="10,5,32,5"/>
+        <Setter Property="FontSize"        Value="12"/>
+        <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background"      Value="#1A1A1A"/>
+        <Setter Property="BorderBrush"     Value="#FF404040"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="Foreground"
+                        Value="{StaticResource TextPrimaryBrush}"/>
+                    <Setter Property="Background"  Value="Transparent"/>
+                    <Setter Property="Padding"     Value="10,6"/>
+                    <Setter Property="FontSize"    Value="12"/>
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ComboBoxItem">
+                                <Border x:Name="ItemBd"
+                                    Background="{TemplateBinding Background}"
+                                    Padding="{TemplateBinding Padding}"
+                                    CornerRadius="4"
+                                    Margin="4,1">
+                                    <ContentPresenter VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsHighlighted" Value="True">
+                                        <Setter TargetName="ItemBd" Property="Background"
+                                            Value="#18237EF2"/>
+                                        <Setter Property="Foreground"
+                                            Value="#5AA7FF"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="ItemBd" Property="Background"
+                                            Value="#22237EF2"/>
+                                        <Setter Property="Foreground"
+                                            Value="#00E5D4"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+
+                        <!-- Focus gradient border -->
+                        <Border x:Name="FocusBorder"
+                            CornerRadius="7"
+                            Opacity="0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#00E5D4" Offset="0.0"/>
+                                    <GradientStop Color="#00A8C8" Offset="0.5"/>
+                                    <GradientStop Color="#2952D9" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <!-- Main field surface -->
+                        <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Margin="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Selected item text -->
+                                <ContentPresenter x:Name="ContentSite"
+                                              Grid.Column="0"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              IsHitTestVisible="False"/>
+
+                                <!-- Chevron button -->
+                                <ToggleButton x:Name="DropDownToggle"
+                                          Grid.Column="1"
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen,
+                                                      RelativeSource={RelativeSource TemplatedParent},
+                                                      Mode=TwoWay}"
+                                          ClickMode="Press"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          Cursor="Hand">
+                                    <!-- Segoe MDL2 chevron-down -->
+                                    <TextBlock x:Name="ChevronIcon"
+                                           Text="&#xE70D;"
+                                           FontFamily="Segoe MDL2 Assets"
+                                           FontSize="9"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                                </ToggleButton>
+                            </Grid>
+                        </Border>
+
+                        <!-- Dropdown popup -->
+                        <Popup x:Name="PART_Popup"
+                           Placement="Bottom"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           PopupAnimation="Fade"
+                           VerticalOffset="4">
+                            <Border x:Name="DropDownBorder"
+                                Background="#1E1E1E"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="0,4"
+                                MinWidth="{Binding ActualWidth,
+                                           RelativeSource={RelativeSource TemplatedParent}}"
+                                MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border.BorderBrush>
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop Color="#40237EF2" Offset="0.0"/>
+                                        <GradientStop Color="#4000E5D4" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Border.BorderBrush>
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#000000"
+                                                  BlurRadius="20"
+                                                  ShadowDepth="6"
+                                                  Opacity="0.55"/>
+                                </Border.Effect>
+                                <ScrollViewer SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True"
+                                            KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush"
+                                Value="#FF5A5A5A"/>
+                            <Setter TargetName="Bd" Property="Background"
+                                Value="#1F1F1F"/>
+                            <Setter TargetName="ChevronIcon" Property="Foreground"
+                                Value="{StaticResource TextPrimaryBrush}"/>
+                        </Trigger>
+
+                        <!-- Open / focused -->
+                        <Trigger Property="IsDropDownOpen" Value="True">
+                            <Setter TargetName="FocusBorder" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="0"/>
+                            <Setter TargetName="Bd" Property="Margin" Value="1"/>
+                            <Setter TargetName="Bd" Property="Background" Value="#222222"/>
+                            <Setter TargetName="ChevronIcon" Property="Text" Value="&#xE70E;"/>
+                            <Setter TargetName="ChevronIcon" Property="Foreground"
+                                Value="#00E5D4"/>
+                        </Trigger>
+
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="FocusBorder" Property="Opacity" Value="1"/>
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="0"/>
+                            <Setter TargetName="Bd" Property="Margin" Value="1"/>
+                        </Trigger>
+
+                        <!-- Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                            <Setter Property="Foreground"
+                                Value="{StaticResource TextDisabledBrush}"/>
                         </Trigger>
 
                     </ControlTemplate.Triggers>

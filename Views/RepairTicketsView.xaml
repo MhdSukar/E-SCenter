@@ -284,7 +284,7 @@
                                                FontSize="11"/>
                                     <TextBox Text="{Binding StatusChangeNote, UpdateSourceTrigger=PropertyChanged}"
                                              Width="220"
-                                             Style="{StaticResource NeonTextBoxStyle}"/>
+                                             Style="{StaticResource NeonDarkCyanTextBoxStyle}"/>
                                 </StackPanel>
 
                                 <ItemsControl Grid.Row="1" ItemsSource="{Binding StatusHistory}" MaxHeight="160">

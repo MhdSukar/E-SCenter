@@ -1,170 +1,421 @@
 ﻿<Window x:Class="ESCenter.Windows.TrayPopupWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="190" Height="270"
+        Width="210" Height="Auto"
+        SizeToContent="Height"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
         Topmost="True"
-        ShowInTaskbar="False"
-        Opacity="1">
+        ShowInTaskbar="False">
 
     <Window.Resources>
-        <DropShadowEffect x:Key="TrayPopupShadow"
-                          Color="#99000000"
-                          BlurRadius="20"
-                          ShadowDepth="6"
-                          Opacity="0.55"/>
 
-        <Style x:Key="TrayActionButtonStyle" TargetType="Button">
-            <Setter Property="Height" Value="36"/>
-            <Setter Property="Margin" Value="0,6,0,0"/>
-            <Setter Property="Padding" Value="12,0"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-            <Setter Property="Background" Value="{StaticResource DarkCardBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderDarkBrush}"/>
-            <Setter Property="Cursor" Value="Hand"/>
+        <DropShadowEffect x:Key="PopupShadow"
+                          Color="#000000"
+                          BlurRadius="28"
+                          ShadowDepth="8"
+                          Opacity="0.65"/>
+
+        <!-- Nav row button -->
+        <Style x:Key="TrayNavRowStyle" TargetType="Button">
+            <Setter Property="Height"          Value="38"/>
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground"      Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontWeight"      Value="Normal"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Root"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="10">
-                            <ContentPresenter HorizontalAlignment="Stretch"
-                                              VerticalAlignment="Center"/>
-                        </Border>
+                        <Grid>
+
+                            <!-- Left accent stripe — only on hover/press -->
+                            <Border x:Name="Stripe"
+                                    Width="3"
+                                    CornerRadius="0,2,2,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    Opacity="0">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00E5D4" Offset="0"/>
+                                        <GradientStop Color="#2952D9" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+
+                            <!-- Row background -->
+                            <Border x:Name="RowBg"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="6"
+                                    Margin="4,1"/>
+
+                            <!-- Content -->
+                            <ContentPresenter Margin="12,0,10,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Stretch"/>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RowBg"   Property="Background" Value="#15237EF2"/>
+                                <Setter TargetName="Stripe"  Property="Opacity"    Value="1"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="RowBg"  Property="Background" Value="#2000E5D4"/>
+                                <Setter TargetName="Stripe" Property="Opacity"    Value="1"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Exit / shutdown button — danger red tint on hover -->
+        <Style x:Key="TrayExitRowStyle" TargetType="Button"
+               BasedOn="{StaticResource TrayNavRowStyle}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="Stripe"
+                                    Width="3"
+                                    CornerRadius="0,2,2,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    Background="{StaticResource NeonRedBrush}"
+                                    Opacity="0"/>
+                            <Border x:Name="RowBg"
+                                    Background="Transparent"
+                                    CornerRadius="6"
+                                    Margin="4,1"/>
+                            <ContentPresenter Margin="12,0,10,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Stretch"/>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Root" Property="Background" Value="#262A33"/>
-                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource TextLogoBrush}"/>
+                                <Setter TargetName="RowBg"  Property="Background" Value="#18FF3B3B"/>
+                                <Setter TargetName="Stripe" Property="Opacity"    Value="1"/>
+                                <Setter Property="Foreground" Value="{StaticResource NeonRedBrush}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Root" Property="Background" Value="#1B1F26"/>
-                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Root" Property="Opacity" Value="0.4"/>
+                                <Setter TargetName="RowBg" Property="Background" Value="#28FF3B3B"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
 
+    <!-- ═══ Outer shell ══════════════════════════════════════════ -->
     <Border CornerRadius="14"
-            Background="{StaticResource DarkBackgroundBrush}"
-            BorderBrush="{StaticResource NeonBlueBrush}"
-            BorderThickness="1"
-            Padding="12"
-            Effect="{StaticResource TrayPopupShadow}">
+            Background="#161616"
+            Effect="{StaticResource PopupShadow}"
+            Padding="1">
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <!-- Gradient border ring (1px, matches profile button / tab focus) -->
+        <Border.BorderBrush>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#4000E5D4" Offset="0.0"/>
+                <GradientStop Color="#40237EF2" Offset="0.5"/>
+                <GradientStop Color="#402952D9" Offset="1.0"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
+        <Border.BorderThickness>1</Border.BorderThickness>
 
-            <!-- ===== Header with exit button ===== -->
-            <Border Background="{StaticResource DarkCardBrush}"
-                    CornerRadius="10"
-                    BorderBrush="{StaticResource BorderDarkBrush}"
-                    BorderThickness="1"
-                    Padding="10">
-                <Grid>
+        <Border CornerRadius="13"
+                Background="#161616"
+                Padding="0,10,0,8">
+
+            <StackPanel>
+
+                <!-- ═══ Header ════════════════════════════════════ -->
+                <Grid Margin="14,0,14,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel>
-                        <TextBlock Text="E-SCenter"
-                                   VerticalAlignment="Center"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{StaticResource Gradient.Primary.Horizontal}"/>
-                        <TextBlock Text="Repair System"
-                                   FontSize="11"
-                                   Foreground="{StaticResource TextSecondaryBrush}"
-                                   Margin="0,3,0,0"/>
+                    <!-- Brand -->
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock FontSize="15"
+                                   FontWeight="SemiBold">
+                            <TextBlock.Foreground>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#00E5D4" Offset="0.0"/>
+                                    <GradientStop Color="#237EF2" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </TextBlock.Foreground>
+                            E-SCenter
+                        </TextBlock>
+
+                        <!-- DB status line -->
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,3,0,0">
+                            <Ellipse Width="6" Height="6"
+                                     Fill="{Binding DatabaseConnectionBrush}"
+                                     VerticalAlignment="Center"
+                                     Margin="0,0,5,0"/>
+                            <TextBlock Text="{Binding DatabaseConnectionStatusText}"
+                                       FontSize="10"
+                                       Foreground="{Binding DatabaseConnectionBrush}"/>
+                        </StackPanel>
                     </StackPanel>
 
+                    <!-- Close popup button -->
                     <Button Grid.Column="1"
-                            Width="30"
-                            Height="30"
+                            x:Name="BtnClose"
+                            Width="26" Height="26"
                             Background="Transparent"
-                            BorderBrush="Transparent"
-                            Click="BtnExit_Click"
-                            x:Name="BtnExit"
-                            Padding="0"
-                            Margin="6,0,0,0">
-                        <Image Source="{StaticResource PowerOff}"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"/>
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            VerticalAlignment="Top"
+                            Click="BtnClose_Click"
+                            ToolTip="Close">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="CloseBg"
+                                        Background="Transparent"
+                                        CornerRadius="6">
+                                    <TextBlock Text="&#xE711;"
+                                               FontFamily="Segoe MDL2 Assets"
+                                               FontSize="11"
+                                               Foreground="{StaticResource TextTertiaryBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="CloseBg" Property="Background"
+                                                Value="#20FFFFFF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
                     </Button>
                 </Grid>
-            </Border>
 
-            <!-- ===== Compact Buttons ===== -->
-            <StackPanel Grid.Row="1" Margin="0,12,0,0" Orientation="Vertical" VerticalAlignment="Top">
+                <!-- ═══ Divider ═══════════════════════════════════ -->
+                <Border Height="1"
+                        Margin="14,10,14,6"
+                        Opacity="0.15">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                            <GradientStop Color="#00E5D4" Offset="0"/>
+                            <GradientStop Color="#237EF2" Offset="0.5"/>
+                            <GradientStop Color="#2952D9" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
 
-                <Button Style="{StaticResource TrayActionButtonStyle}" Command="{Binding ShowDashboardCommand}" x:Name="BtnDashboard" Click="NavigationButton_Click">
+                <!-- ═══ Navigation rows ═══════════════════════════ -->
+                <Button Style="{StaticResource TrayNavRowStyle}"
+                        Command="{Binding ShowDashboardCommand}"
+                        x:Name="BtnDashboard"
+                        Click="NavigationButton_Click">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35"/>
-                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Width="25" Height="25" Margin="0,0,0,0" Source="{StaticResource Dashboard}" />
-                        <TextBlock Grid.Column="1" Text="Dashboard" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="›" FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" Margin="6,0,0,0"/>
+                        <Image Grid.Column="0" Source="{StaticResource Dashboard}"
+                               Width="16" Height="16" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Dashboard"
+                                   VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{Binding Foreground,
+                                               RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        <TextBlock Grid.Column="2" Text=">"
+                                   FontSize="9" FontFamily="Consolas"
+                                   Foreground="{StaticResource TextTertiaryBrush}"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                 </Button>
 
-                <Button Style="{StaticResource TrayActionButtonStyle}" Command="{Binding ShowRepairTicketsCommand}" x:Name="BtnAddTicket" Click="NavigationButton_Click">
+                <Button Style="{StaticResource TrayNavRowStyle}"
+                        Command="{Binding ShowRepairTicketsCommand}"
+                        x:Name="BtnTickets"
+                        Click="NavigationButton_Click">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35"/>
-                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Width="25" Height="25" Margin="0,0,0,0" Source="{StaticResource Tickets}" />
-                        <TextBlock Grid.Column="1" Text="Tickets" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="›" FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" Margin="6,0,0,0"/>
+                        <Image Grid.Column="0" Source="{StaticResource Tickets}"
+                               Width="16" Height="16" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Tickets"
+                                   VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{Binding Foreground,
+                                               RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        <TextBlock Grid.Column="2" Text=">"
+                                   FontSize="9" FontFamily="Consolas"
+                                   Foreground="{StaticResource TextTertiaryBrush}"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                 </Button>
 
-                <Button Style="{StaticResource TrayActionButtonStyle}" Command="{Binding ShowInventoryCommand}" x:Name="BtnInventory" Click="NavigationButton_Click">
+                <Button Style="{StaticResource TrayNavRowStyle}"
+                        Command="{Binding ShowPartsControlCommand}"
+                        x:Name="BtnParts"
+                        Click="NavigationButton_Click">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35"/>
-                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Width="25" Height="25" Margin="0,0,0,0" Source="{StaticResource Inventory}" />
-                        <TextBlock Grid.Column="1" Text="Inventory" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="›" FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" Margin="6,0,0,0"/>
+                        <Image Grid.Column="0" Source="{StaticResource Parts}"
+                               Width="16" Height="16" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Parts"
+                                   VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{Binding Foreground,
+                                               RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        <TextBlock Grid.Column="2" Text=">"
+                                   FontSize="9" FontFamily="Consolas"
+                                   Foreground="{StaticResource TextTertiaryBrush}"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                 </Button>
 
-                <Button Style="{StaticResource TrayActionButtonStyle}" Command="{Binding ShowAlBarakaCommand}" x:Name="BtnAlBaraka" Click="NavigationButton_Click">
+                <Button Style="{StaticResource TrayNavRowStyle}"
+                        Command="{Binding ShowInventoryCommand}"
+                        x:Name="BtnInventory"
+                        Click="NavigationButton_Click">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35"/>
-                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Width="25" Height="25" Margin="0,0,0,0" Source="{StaticResource Baraka}" />
-                        <TextBlock Grid.Column="1" Text="Al-Baraka" VerticalAlignment="Center" Foreground="{StaticResource Gradient.Warning}"/>
-                        <TextBlock Grid.Column="2" Text="›" FontSize="16" Foreground="{StaticResource Gradient.Warning}" Margin="6,0,0,0"/>
+                        <Image Grid.Column="0" Source="{StaticResource Inventory}"
+                               Width="16" Height="16" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Inventory"
+                                   VerticalAlignment="Center" Margin="8,0,0,0"
+                                   Foreground="{Binding Foreground,
+                                               RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        <TextBlock Grid.Column="2" Text=">"
+                                   FontSize="9" FontFamily="Consolas"
+                                   Foreground="{StaticResource TextTertiaryBrush}"
+                                   VerticalAlignment="Center"/>
                     </Grid>
                 </Button>
+
+                <Button Style="{StaticResource TrayNavRowStyle}"
+                        Command="{Binding ShowAlBarakaCommand}"
+                        x:Name="BtnAlBaraka"
+                        Click="NavigationButton_Click">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.Column="0" Source="{StaticResource Baraka}"
+                               Width="16" Height="16" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Al-Baraka"
+                                   VerticalAlignment="Center" Margin="8,0,0,0">
+                            <TextBlock.Foreground>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#FFD54A" Offset="0"/>
+                                    <GradientStop Color="#FF8F00" Offset="1"/>
+                                </LinearGradientBrush>
+                            </TextBlock.Foreground>
+                        </TextBlock>
+                        <TextBlock Grid.Column="2" Text=">"
+                                   FontSize="9" FontFamily="Consolas"
+                                   Foreground="{StaticResource TextTertiaryBrush}"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+                </Button>
+
+                <!-- ═══ Stats strip ═══════════════════════════════ -->
+                <Border Margin="14,8,14,0"
+                        Background="#0DFFFFFF"
+                        CornerRadius="8"
+                        Padding="10,7">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Open tickets -->
+                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Dashboard.OpenTickets}"
+                                       FontSize="18" FontWeight="Bold"
+                                       HorizontalAlignment="Center" 
+                                       Foreground="{StaticResource Gradient.Accent}">
+                            </TextBlock>
+                            <TextBlock Text="Open"
+                                       FontSize="9"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource TextTertiaryBrush}"/>
+                        </StackPanel>
+
+                        <!-- Vertical divider -->
+                        <Border Grid.Column="1"
+                                Width="1" Background="#20FFFFFF"
+                                VerticalAlignment="Stretch"/>
+
+                        <!-- Ready for pickup tickets -->
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Dashboard.ReadyForPickupTickets}"
+                                       FontSize="18" FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource Gradient.Success}"/>
+                            <TextBlock Text="Ready for Pickup"
+                                       FontSize="9"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource TextTertiaryBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ═══ Second divider ════════════════════════════ -->
+                <Border Height="1"
+                        Margin="14,8,14,2"
+                        Background="#12FFFFFF"/>
+
+                <!-- ═══ Exit row ══════════════════════════════════ -->
+                <Button Style="{StaticResource TrayExitRowStyle}"
+                        x:Name="BtnExit"
+                        Click="BtnExit_Click"
+                        Foreground="{StaticResource TextSecondaryBrush}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="&#xE7E8;"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   FontSize="13"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Foreground="{Binding Foreground,
+                                               RelativeSource={RelativeSource AncestorType=Button}}"/>
+                        <TextBlock Grid.Column="1" Text="Shut down"
+                                   VerticalAlignment="Center" Margin="8,0,0,0"
+                                   FontSize="12"
+                                   Foreground="{Binding Foreground,
+                                               RelativeSource={RelativeSource AncestorType=Button}}"/>
+                    </Grid>
+                </Button>
+
             </StackPanel>
-        </Grid>
+        </Border>
     </Border>
 </Window>
