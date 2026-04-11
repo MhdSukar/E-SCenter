@@ -135,5 +135,46 @@ namespace ESCenter.Windows
                 vm.BackupLocation = dlg.SelectedPath;
             }
         }
+
+        private void PositiveIntegerTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (sender is not System.Windows.Controls.TextBox textBox)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            var proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength)
+                .Insert(textBox.CaretIndex, e.Text);
+            e.Handled = !IsPositiveIntegerText(proposedText);
+        }
+
+        private void PositiveIntegerTextBox_OnPaste(object sender, DataObjectPastingEventArgs e)
+        {
+            if (!e.DataObject.GetDataPresent(typeof(string)))
+            {
+                e.CancelCommand();
+                return;
+            }
+
+            var text = e.DataObject.GetData(typeof(string)) as string;
+            if (sender is not System.Windows.Controls.TextBox textBox || string.IsNullOrWhiteSpace(text))
+            {
+                e.CancelCommand();
+                return;
+            }
+
+            var proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength)
+                .Insert(textBox.CaretIndex, text);
+            if (!IsPositiveIntegerText(proposedText))
+            {
+                e.CancelCommand();
+            }
+        }
+
+        private static bool IsPositiveIntegerText(string text)
+        {
+            return int.TryParse(text, out var value) && value > 0;
+        }
     }
 }

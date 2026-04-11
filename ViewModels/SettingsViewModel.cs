@@ -102,6 +102,34 @@ namespace ESCenter.ViewModels
             }
         }
 
+        private int _partsLowStockThreshold;
+        public int PartsLowStockThreshold
+        {
+            get => _partsLowStockThreshold;
+            set
+            {
+                var clamped = Math.Max(1, value);
+                if (SetProperty(ref _partsLowStockThreshold, clamped))
+                {
+                    UserPreferencesService.SetLowStockThresholds(PartsLowStockThreshold, InventoryLowStockThreshold);
+                }
+            }
+        }
+
+        private int _inventoryLowStockThreshold;
+        public int InventoryLowStockThreshold
+        {
+            get => _inventoryLowStockThreshold;
+            set
+            {
+                var clamped = Math.Max(1, value);
+                if (SetProperty(ref _inventoryLowStockThreshold, clamped))
+                {
+                    UserPreferencesService.SetLowStockThresholds(PartsLowStockThreshold, InventoryLowStockThreshold);
+                }
+            }
+        }
+
         public string CurrentDatabasePath => DatabasePathService.CurrentDatabasePath;
 
         private string _integrityCheckResult = string.Empty;
@@ -132,6 +160,9 @@ namespace ESCenter.ViewModels
             _backupIntervalHours = UserPreferencesService.GetBackupIntervalHours();
             _backupLocation = UserPreferencesService.GetBackupLocation();
             _backupRetentionCount = UserPreferencesService.GetBackupRetentionCount();
+            var lowStockThresholds = UserPreferencesService.GetLowStockThresholds();
+            _partsLowStockThreshold = Math.Max(1, lowStockThresholds.PartsThreshold);
+            _inventoryLowStockThreshold = Math.Max(1, lowStockThresholds.InventoryThreshold);
 
             ResetSettingsCommand = new RelayCommand(_ => ResetSettings());
             LoadDatabaseCommand = new RelayCommand(_ => LoadDatabase());

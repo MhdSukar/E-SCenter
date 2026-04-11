@@ -46,7 +46,26 @@
                         <TabItem Header="General" Tag="First">
                             <StackPanel Margin="6">
                                 <CheckBox IsChecked="{Binding LaunchAtWindowsStartup, Mode=TwoWay}" Content="Launch at Windows Startup" Style="{StaticResource GradientCheckBoxStyle}"/>
-                                
+
+                                <TextBlock Text="Low Stock Alerts" FontWeight="SemiBold" Margin="0,12,0,6"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBlock Text="Parts low stock alert below:" VerticalAlignment="Center" Width="180"/>
+                                    <TextBox Width="80"
+                                             Style="{StaticResource NeonTextBoxStyle}"
+                                             PreviewTextInput="PositiveIntegerTextBox_PreviewTextInput"
+                                             DataObject.Pasting="PositiveIntegerTextBox_OnPaste"
+                                             Text="{Binding PartsLowStockThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBlock Text="Inventory low stock alert below:" VerticalAlignment="Center" Width="180"/>
+                                    <TextBox Width="80"
+                                             Style="{StaticResource NeonTextBoxStyle}"
+                                             PreviewTextInput="PositiveIntegerTextBox_PreviewTextInput"
+                                             DataObject.Pasting="PositiveIntegerTextBox_OnPaste"
+                                             Text="{Binding InventoryLowStockThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
+                                </StackPanel>
+
                                 <TextBlock Text="Backup Settings" FontWeight="SemiBold" Margin="0,12,0,6"/>
                                 <CheckBox IsChecked="{Binding AutoBackupEnabled, Mode=TwoWay}" Content="Enable Automatic Backups" Style="{StaticResource GradientCheckBoxStyle}"/>
 
