@@ -46,34 +46,6 @@ namespace ESCenter.ViewModels
         private double _weeklyCompletionPercent;
         public double WeeklyCompletionPercent { get => _weeklyCompletionPercent; set => SetProperty(ref _weeklyCompletionPercent, value); }
 
-        private int _partsLowStockThreshold = 3;
-        public int PartsLowStockThreshold
-        {
-            get => _partsLowStockThreshold;
-            set
-            {
-                if (SetProperty(ref _partsLowStockThreshold, value))
-                {
-                    PersistLowStockThresholds();
-                    _ = UpdateLowStockCounterAsync();
-                }
-            }
-        }
-
-        private int _inventoryLowStockThreshold = 3;
-        public int InventoryLowStockThreshold
-        {
-            get => _inventoryLowStockThreshold;
-            set
-            {
-                if (SetProperty(ref _inventoryLowStockThreshold, value))
-                {
-                    PersistLowStockThresholds();
-                    _ = UpdateLowStockCounterAsync();
-                }
-            }
-        }
-
         private bool _isLoading;
         public bool IsLoading
         {
@@ -91,10 +63,6 @@ namespace ESCenter.ViewModels
             _service = new TicketsDataService();
             _partsRepository = new PartsRepository();
             _inventoryRepository = new InventoryRepository();
-
-            var thresholds = UserPreferencesService.GetLowStockThresholds();
-            _partsLowStockThreshold = thresholds.PartsThreshold;
-            _inventoryLowStockThreshold = thresholds.InventoryThreshold;
 
             RefreshCommand = new RelayCommand(_ => Refresh());
 
@@ -157,27 +125,16 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private void PersistLowStockThresholds()
-        {
-            try
-            {
-                UserPreferencesService.SetLowStockThresholds(PartsLowStockThreshold, InventoryLowStockThreshold);
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Warning($"Failed to persist low stock thresholds: {ex.Message}");
-            }
-        }
-
         private async Task UpdateLowStockCounterAsync()
         {
             try
             {
+                var thresholds = UserPreferencesService.GetLowStockThresholds();
                 var allParts = await _partsRepository.GetAllAsync();
                 var allInventory = await _inventoryRepository.GetAllAsync();
 
                 var partItems = allParts
-                    .Where(p => p.QuantityOnHand <= PartsLowStockThreshold)
+                    .Where(p => p.QuantityOnHand <= thresholds.PartsThreshold)
                     .Select(p => new LowStockCounterItem
                     {
                         Source = "Parts",
@@ -189,7 +146,7 @@ namespace ESCenter.ViewModels
                     });
 
                 var inventoryItems = allInventory
-                    .Where(i => i.QuantityOnHand <= InventoryLowStockThreshold)
+                    .Where(i => i.QuantityOnHand <= thresholds.InventoryThreshold)
                     .Select(i => new LowStockCounterItem
                     {
                         Source = "Inventory",
