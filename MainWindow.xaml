@@ -845,12 +845,12 @@
 
                     <StatusBarItem HorizontalAlignment="Left">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding StatusIcon}"
-                                       Foreground="{Binding StatusBrush}"
+                            <TextBlock Text="{Binding CurrentStatusLevel, Converter={StaticResource StatusLevelToIconConverter}}"
+                                       Foreground="{Binding CurrentStatusLevel, Converter={StaticResource StatusLevelToBrushConverter}}"
                                        Style="{StaticResource StatusIconStyle}"/>
 
                             <TextBlock Text="{Binding StatusText}"
-                                       Foreground="{Binding StatusBrush}"
+                                       Foreground="{Binding CurrentStatusLevel, Converter={StaticResource StatusLevelToBrushConverter}}"
                                        FontWeight="SemiBold"/>
                         </StackPanel>
                     </StatusBarItem>

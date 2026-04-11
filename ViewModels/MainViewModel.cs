@@ -166,18 +166,11 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _statusText, value);
         }
 
-        private System.Windows.Media.Brush _statusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
-        public System.Windows.Media.Brush StatusBrush
+        private StatusLevel _currentStatusLevel = StatusLevel.Info;
+        public StatusLevel CurrentStatusLevel
         {
-            get => _statusBrush;
-            set => SetProperty(ref _statusBrush, value);
-        }
-
-        private string _statusIcon = "\uE946";
-        public string StatusIcon
-        {
-            get => _statusIcon;
-            set => SetProperty(ref _statusIcon, value);
+            get => _currentStatusLevel;
+            set => SetProperty(ref _currentStatusLevel, value);
         }
 
         private string _databaseConnectionStatusText = "Offline";
@@ -620,26 +613,7 @@ namespace ESCenter.ViewModels
         private void SetStatus(string message, StatusLevel level)
         {
             StatusText = message;
-
-            switch (level)
-            {
-                case StatusLevel.Success:
-                    StatusBrush = System.Windows.Media.Brushes.LimeGreen;
-                    StatusIcon = "\uE73E";
-                    break;
-                case StatusLevel.Warning:
-                    StatusBrush = System.Windows.Media.Brushes.Orange;
-                    StatusIcon = "\uE7BA";
-                    break;
-                case StatusLevel.Error:
-                    StatusBrush = System.Windows.Media.Brushes.IndianRed;
-                    StatusIcon = "\uEA39";
-                    break;
-                default:
-                    StatusBrush = System.Windows.Media.Brushes.DeepSkyBlue;
-                    StatusIcon = "\uE946";
-                    break;
-            }
+            CurrentStatusLevel = level;
         }
 
         private void RequestAdminAccess()

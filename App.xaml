@@ -20,6 +20,8 @@
             <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <conv:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
             <conv:SeriesKeyToIconConverter x:Key="SeriesKeyToIconConverter"/>
+            <conv:StatusLevelToBrushConverter x:Key="StatusLevelToBrushConverter"/>
+            <conv:StatusLevelToIconConverter x:Key="StatusLevelToIconConverter"/>
 
             <!-- ================= MVVM View Mappings ================= -->
             <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
