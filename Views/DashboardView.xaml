@@ -122,14 +122,14 @@
                                 <TextBlock Text="Parts low stock ≤" VerticalAlignment="Center" Margin="0,0,6,0"/>
                                 <TextBox Width="56"
                                          Style="{StaticResource NeonTextBoxStyle}"
-                                         Text="{Binding PartsLowStockThreshold, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding PartsLowStockThreshold, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
                                 <TextBlock Text="Inventory low stock ≤" VerticalAlignment="Center" Margin="0,0,6,0"/>
                                 <TextBox Width="56"
                                          Style="{StaticResource NeonTextBoxStyle}"
-                                         Text="{Binding InventoryLowStockThreshold, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding InventoryLowStockThreshold, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}"/>
                             </StackPanel>
                         </Grid>
 

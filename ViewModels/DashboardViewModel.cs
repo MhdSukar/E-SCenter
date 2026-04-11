@@ -46,8 +46,8 @@ namespace ESCenter.ViewModels
         private double _weeklyCompletionPercent;
         public double WeeklyCompletionPercent { get => _weeklyCompletionPercent; set => SetProperty(ref _weeklyCompletionPercent, value); }
 
-        private string _partsLowStockThreshold = "3";
-        public string PartsLowStockThreshold
+        private int _partsLowStockThreshold = 3;
+        public int PartsLowStockThreshold
         {
             get => _partsLowStockThreshold;
             set
@@ -60,8 +60,8 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private string _inventoryLowStockThreshold = "3";
-        public string InventoryLowStockThreshold
+        private int _inventoryLowStockThreshold = 3;
+        public int InventoryLowStockThreshold
         {
             get => _inventoryLowStockThreshold;
             set
@@ -93,8 +93,8 @@ namespace ESCenter.ViewModels
             _inventoryRepository = new InventoryRepository();
 
             var thresholds = UserPreferencesService.GetLowStockThresholds();
-            _partsLowStockThreshold = thresholds.PartsThreshold.ToString();
-            _inventoryLowStockThreshold = thresholds.InventoryThreshold.ToString();
+            _partsLowStockThreshold = thresholds.PartsThreshold;
+            _inventoryLowStockThreshold = thresholds.InventoryThreshold;
 
             RefreshCommand = new RelayCommand(_ => Refresh());
 
@@ -161,9 +161,7 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                var partsThreshold = ParseThreshold(PartsLowStockThreshold);
-                var inventoryThreshold = ParseThreshold(InventoryLowStockThreshold);
-                UserPreferencesService.SetLowStockThresholds(partsThreshold, inventoryThreshold);
+                UserPreferencesService.SetLowStockThresholds(PartsLowStockThreshold, InventoryLowStockThreshold);
             }
             catch (Exception ex)
             {
@@ -175,14 +173,11 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                var partsThreshold = ParseThreshold(PartsLowStockThreshold);
-                var inventoryThreshold = ParseThreshold(InventoryLowStockThreshold);
-
                 var allParts = await _partsRepository.GetAllAsync();
                 var allInventory = await _inventoryRepository.GetAllAsync();
 
                 var partItems = allParts
-                    .Where(p => p.QuantityOnHand <= partsThreshold)
+                    .Where(p => p.QuantityOnHand <= PartsLowStockThreshold)
                     .Select(p => new LowStockCounterItem
                     {
                         Source = "Parts",
@@ -194,7 +189,7 @@ namespace ESCenter.ViewModels
                     });
 
                 var inventoryItems = allInventory
-                    .Where(i => i.QuantityOnHand <= inventoryThreshold)
+                    .Where(i => i.QuantityOnHand <= InventoryLowStockThreshold)
                     .Select(i => new LowStockCounterItem
                     {
                         Source = "Inventory",
@@ -224,22 +219,5 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private static int ParseThreshold(string input)
-        {
-            if (!int.TryParse(input, out var parsedValue))
-            {
-                return 0;
-            }
-
-            return Math.Max(0, parsedValue);
-        }
-
-        public class LowStockCounterItem
-        {
-            public string Source { get; set; } = string.Empty;
-            public string Sku { get; set; } = string.Empty;
-            public string Name { get; set; } = string.Empty;
-            public int Quantity { get; set; }
-        }
     }
 }
