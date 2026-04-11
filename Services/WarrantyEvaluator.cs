@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using ESCenter.Models;
@@ -49,6 +50,26 @@ namespace ESCenter.Services
 
             expiration = expiration.AddDays(amount);
             return true;
+        }
+
+        public static List<RepairTicket> GetExpiringWarranties(IEnumerable<RepairTicket> tickets, int withinDays)
+        {
+            if (tickets == null || withinDays < 0)
+            {
+                return new List<RepairTicket>();
+            }
+
+            var today = DateTime.Today;
+            var maxDate = today.AddDays(withinDays);
+
+            return tickets
+                .Where(t => t != null
+                            && !t.DeliveryDate.HasValue
+                            && !string.Equals(t.RepairStatus, "Cancelled", StringComparison.OrdinalIgnoreCase)
+                            && TryGetExpiration(t, out var expiration)
+                            && expiration.Date >= today
+                            && expiration.Date <= maxDate)
+                .ToList();
         }
 
         private static DateTime GetWarrantyStart(RepairTicket ticket)

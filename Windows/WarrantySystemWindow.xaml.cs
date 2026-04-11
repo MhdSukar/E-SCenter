@@ -18,16 +18,21 @@ namespace ESCenter.Windows
         private bool _wasMinimized;
 
         public ObservableCollection<WarrantyDeviceRow> WarrantyItems { get; } = new();
+        public ObservableCollection<ExpiringWarrantyRow> ExpiringSoonItems { get; } = new();
 
         public WarrantySystemWindow()
         {
             InitializeComponent();
             SetMaximizeButtonIcon("Maximize");
             DataContext = this;
-            Loaded += (_, __) => WindowFader.SlideIn(this);
+            Loaded += (_, __) =>
+            {
+                WindowFader.SlideIn(this);
+                LoadWarrantyItems();
+                LoadExpiringSoonItems();
+            };
             Closing += Window_Closing;
             StateChanged += Window_StateChanged;
-            LoadWarrantyItems();
         }
 
         private void Window_Closing(object? sender, CancelEventArgs e)
@@ -55,6 +60,7 @@ namespace ESCenter.Windows
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             LoadWarrantyItems();
+            LoadExpiringSoonItems();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -171,6 +177,36 @@ namespace ESCenter.Windows
             var combined = string.Join(" / ", parts);
             return string.IsNullOrWhiteSpace(combined) ? "Unknown Device" : combined;
         }
+
+        private void LoadExpiringSoonItems()
+        {
+            ExpiringSoonItems.Clear();
+
+            var tickets = _ticketsDataService.GetAll();
+            var expiringSoon = WarrantyEvaluator.GetExpiringWarranties(tickets, 30)
+                .OrderBy(t =>
+                {
+                    WarrantyEvaluator.TryGetExpiration(t, out var expiration);
+                    return expiration;
+                })
+                .ToList();
+
+            foreach (var ticket in expiringSoon)
+            {
+                if (!WarrantyEvaluator.TryGetExpiration(ticket, out var expiration))
+                {
+                    continue;
+                }
+
+                var daysRemaining = (expiration.Date - DateTime.Today).Days;
+                ExpiringSoonItems.Add(new ExpiringWarrantyRow
+                {
+                    ClientName = string.IsNullOrWhiteSpace(ticket.CustomerName) ? "-" : ticket.CustomerName,
+                    DeviceName = BuildDeviceName(ticket),
+                    DaysRemainingText = $"{daysRemaining} day(s)"
+                });
+            }
+        }
     }
 
     public class WarrantyDeviceRow
@@ -184,5 +220,12 @@ namespace ESCenter.Windows
         public string WarrantyEndDateText { get; set; } = string.Empty;
         public string RemainingText { get; set; } = string.Empty;
         public string WarrantyState { get; set; } = string.Empty;
+    }
+
+    public class ExpiringWarrantyRow
+    {
+        public string ClientName { get; set; } = string.Empty;
+        public string DeviceName { get; set; } = string.Empty;
+        public string DaysRemainingText { get; set; } = string.Empty;
     }
 }

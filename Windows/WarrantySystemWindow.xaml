@@ -123,11 +123,37 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                    <Expander Header="Expiring Soon (30 days)"
+                              IsExpanded="True"
+                              Margin="0,0,0,10"
+                              Foreground="{StaticResource TextPrimaryBrush}"
+                              Background="{StaticResource DarkCardBrush}">
+                        <Border Style="{StaticResource CardBorderStyle}" Padding="8" Margin="0,6,0,0">
+                            <DataGrid ItemsSource="{Binding ExpiringSoonItems}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      CanUserAddRows="False"
+                                      HeadersVisibility="Column"
+                                      Style="{StaticResource DarkDataGridStyle}"
+                                      RowStyle="{StaticResource CompactDataGridRowStyle}"
+                                      ColumnHeaderStyle="{StaticResource DarkDataGridHeaderStyle}"
+                                      CellStyle="{StaticResource CompactDataGridCellStyle}"
+                                      MaxHeight="150">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="*"/>
+                                    <DataGridTextColumn Header="Device" Binding="{Binding DeviceName}" Width="2*"/>
+                                    <DataGridTextColumn Header="Days Remaining" Binding="{Binding DaysRemainingText}" Width="150"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </Expander>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12">
                         <Image Source="{StaticResource Warranty}" Width="50" Height="50" Margin="0,0,8,0"/>
                         <TextBlock Text="Warranties Database"
                                    Style="{StaticResource CardTitleTextStyle}"
@@ -135,7 +161,7 @@
                                    VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <DataGrid Grid.Row="1"
+                    <DataGrid Grid.Row="2"
                               ItemsSource="{Binding WarrantyItems}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
@@ -204,7 +230,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
                         <Button Content="Refresh"
                                 Width="100"
                                 Margin="0,0,8,0"

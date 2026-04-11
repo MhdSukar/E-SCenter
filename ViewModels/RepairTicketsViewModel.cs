@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -23,6 +24,7 @@ namespace ESCenter.ViewModels
         private readonly TicketStatusHistoryRepository _statusHistoryRepository = new();
         private string _lastKnownStatus = "Received";
         private string _formStateSnapshot = string.Empty;
+        private CancellationTokenSource? _clientHistoryDebounceCts;
 
         private bool _hasUnsavedChanges;
         public bool HasUnsavedChanges
@@ -46,6 +48,9 @@ namespace ESCenter.ViewModels
         // =========================================================
         public ObservableCollection<RepairTicket> Tickets { get; }
         public ObservableCollection<TicketStatusEntry> StatusHistory { get; } = new();
+        public ObservableCollection<RepairTicket> ClientHistory { get; } = new();
+
+        public bool HasClientHistory => ClientHistory.Count > 0;
 
         private readonly ICollectionView _ticketsView;
         public ICollectionView TicketsView => _ticketsView;
@@ -194,6 +199,7 @@ namespace ESCenter.ViewModels
                 if (SetProperty(ref _customerName, value))
                 {
                     RefreshCustomerProfile();
+                    _ = RefreshClientHistoryAsync();
                     CheckForUnsavedChanges();
                 }
             }
@@ -475,6 +481,7 @@ namespace ESCenter.ViewModels
         public ICommand AcceptSuggestionCommand   { get; }
         public ICommand ClearSearchCommand        { get; }
         public ICommand ResetFiltersCommand       { get; }
+        public ICommand SelectClientHistoryTicketCommand { get; }
 
         // =========================================================
         // CONSTRUCTOR
@@ -518,9 +525,15 @@ namespace ESCenter.ViewModels
                 SelectedStatusFilter = "All";
                 SelectedPriorityFilter = "All";
             });
+            SelectClientHistoryTicketCommand = new RelayCommand(param =>
+            {
+                if (param is RepairTicket ticket)
+                    SearchQuery = ticket.TicketId.ToString(CultureInfo.InvariantCulture);
+            });
 
             // Sync UsedPartLines → PartsUsed JSON whenever a line's Quantity changes
             UsedPartLines.CollectionChanged += (_, __) => SyncJsonFromLines();
+            ClientHistory.CollectionChanged += (_, __) => OnPropertyChanged(nameof(HasClientHistory));
 
             ClearForm();
             _ = LoadPartsCatalogAsync();
@@ -1742,6 +1755,46 @@ namespace ESCenter.ViewModels
             CustomerProfileRepeatCount  = CustomerProfileHistory.Count;
             HasCustomerProfileHistory   = CustomerProfileRepeatCount > 0;
             CustomerProfileHeader = BuildCustomerProfileHeader(customerId, normalizedName, normalizedPhone, CustomerProfileRepeatCount);
+        }
+
+        private async Task RefreshClientHistoryAsync()
+        {
+            _clientHistoryDebounceCts?.Cancel();
+            _clientHistoryDebounceCts?.Dispose();
+            _clientHistoryDebounceCts = new CancellationTokenSource();
+            var cancellationToken = _clientHistoryDebounceCts.Token;
+
+            try
+            {
+                await Task.Delay(400, cancellationToken);
+
+                var normalizedName = NormalizeLookup(CustomerName);
+                if (normalizedName.Length < 3)
+                {
+                    if (!cancellationToken.IsCancellationRequested)
+                        System.Windows.Application.Current.Dispatcher.Invoke(ClientHistory.Clear);
+                    return;
+                }
+
+                var history = await _service.GetTicketsByClientAsync(normalizedName, SelectedTicket?.TicketId);
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ClientHistory.Clear();
+                    foreach (var ticket in history)
+                        ClientHistory.Add(ticket);
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                // Expected during debounce.
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to refresh client history: {ex.Message}");
+            }
         }
 
         private static bool IsCustomerMatch(RepairTicket ticket, long? customerId, string name, string phone)
