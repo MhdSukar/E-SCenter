@@ -194,6 +194,13 @@ namespace ESCenter.ViewModels
             set => SetProperty(ref _databaseFileSizeText, value);
         }
 
+        private int _expiringWarrantyCount;
+        public int ExpiringWarrantyCount
+        {
+            get => _expiringWarrantyCount;
+            set => SetProperty(ref _expiringWarrantyCount, value);
+        }
+
         private string _lastBackupText = "Unknown";
         public string LastBackupText
         {
@@ -454,10 +461,15 @@ namespace ESCenter.ViewModels
             RefreshDatabaseFileSizeAndBackupInfo();
 
             AppLogger.StatusRaised += OnStatusRaised;
-            TicketEvents.TicketsChanged += async (_, _) => await RefreshTicketsChartAsync();
+            TicketEvents.TicketsChanged += async (_, _) =>
+            {
+                await RefreshTicketsChartAsync();
+                await RefreshWarrantyAlertCountAsync();
+            };
             DatabasePathService.DatabasePathChanged += async (_, _) =>
             {
                 await RefreshTicketsChartAsync();
+                await RefreshWarrantyAlertCountAsync();
                 await RefreshDatabaseConnectionStatusAsync();
                 RefreshDatabaseFileSizeAndBackupInfo();
             };
@@ -479,6 +491,7 @@ namespace ESCenter.ViewModels
             });
 
             RefreshTicketsChart();
+            RefreshWarrantyAlertCountAsync().FireAndForget(nameof(RefreshWarrantyAlertCountAsync));
             RefreshDatabaseConnectionStatus();
         }
 
@@ -986,6 +999,13 @@ namespace ESCenter.ViewModels
         }
 
         private void RefreshTicketsChart() => RefreshTicketsChartAsync().FireAndForget(nameof(RefreshTicketsChartAsync));
+
+        private async Task RefreshWarrantyAlertCountAsync()
+        {
+            var tickets = await _chartDataService.GetAllAsync();
+            var expiring = WarrantyEvaluator.GetExpiringWarranties(tickets, 30);
+            ExpiringWarrantyCount = expiring.Count;
+        }
 
         private async Task RefreshTicketsChartAsync()
         {
