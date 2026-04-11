@@ -108,32 +108,10 @@
                           Margin="0,0,0,12">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="0" Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
-                                <TextBlock Text="Parts low stock ≤" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBox Width="56"
-                                         Style="{StaticResource NeonTextBoxStyle}"
-                                         Text="{Binding PartsLowStockThreshold, UpdateSourceTrigger=PropertyChanged}"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
-                                <TextBlock Text="Inventory low stock ≤" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBox Width="56"
-                                         Style="{StaticResource NeonTextBoxStyle}"
-                                         Text="{Binding InventoryLowStockThreshold, UpdateSourceTrigger=PropertyChanged}"/>
-                            </StackPanel>
-                        </Grid>
-
-                        <DataGrid Grid.Row="1"
+                        <DataGrid Grid.Row="0"
                                   ItemsSource="{Binding LowStockItems}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"

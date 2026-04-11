@@ -251,6 +251,7 @@ namespace ESCenter.ViewModels
         private readonly DispatcherTimer _clockTimer;
         private readonly DispatcherTimer _statusResetTimer;
         private readonly DispatcherTimer _databaseStatusTimer;
+        private readonly TicketsDataService _chartDataService;
         private RepairTicketsViewModel? _repairTicketsViewModel;
         private PartsControlViewModel? _partsControlViewModel;
         private InventoryViewModel? _inventoryViewModel;
@@ -292,6 +293,7 @@ namespace ESCenter.ViewModels
         public MainViewModel()
         {
             Dashboard = new DashboardViewModel();
+            _chartDataService = new TicketsDataService();
             // Load persisted preference for auto-granting admin access on startup
             _autoGrantAdminAccess = ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess();
             if (_autoGrantAdminAccess)
@@ -945,8 +947,8 @@ namespace ESCenter.ViewModels
         {
             Dashboard.Refresh();
             TicketEvents.RaiseTicketsChanged();
-            _ = RefreshTicketsChartAsync();
-            _ = RefreshDatabaseConnectionStatusAsync();
+            RefreshTicketsChartAsync().FireAndForget(nameof(RefreshTicketsChartAsync));
+            RefreshDatabaseConnectionStatusAsync().FireAndForget(nameof(RefreshDatabaseConnectionStatusAsync));
             RefreshDatabaseFileSizeAndBackupInfo();
             AppLogger.Success("Refreshed all data.");
         }
@@ -1019,12 +1021,11 @@ namespace ESCenter.ViewModels
             }
         }
 
-        private void RefreshTicketsChart() => _ = RefreshTicketsChartAsync();
+        private void RefreshTicketsChart() => RefreshTicketsChartAsync().FireAndForget(nameof(RefreshTicketsChartAsync));
 
         private async Task RefreshTicketsChartAsync()
         {
-            var dataService = new TicketsDataService();
-            var tickets = await dataService.GetAllAsync();
+            var tickets = await _chartDataService.GetAllAsync();
 
             var days = Enumerable.Range(0, 7)
                 .Select(offset => DateTime.Today.AddDays(-6 + offset))
@@ -1095,7 +1096,7 @@ namespace ESCenter.ViewModels
             };
         }
 
-        private void RefreshDatabaseConnectionStatus() => _ = RefreshDatabaseConnectionStatusAsync();
+        private void RefreshDatabaseConnectionStatus() => RefreshDatabaseConnectionStatusAsync().FireAndForget(nameof(RefreshDatabaseConnectionStatusAsync));
 
         private async Task RefreshDatabaseConnectionStatusAsync()
         {
