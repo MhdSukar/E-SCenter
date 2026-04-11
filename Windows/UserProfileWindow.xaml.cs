@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using ESCenter.Core;
+using ESCenter.ViewModels;
 
 namespace ESCenter.Windows
 {
@@ -66,6 +67,26 @@ namespace ESCenter.Windows
             catch (Exception ex)
             {
                 AppLogger.Error($"Failed to open Settings: {ex.Message}");
+            }
+        }
+
+        private void BtnChangePassword_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+            var dialog = new ChangeAdminPasswordWindow
+            {
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+            dialog.ShowDialog();
+        }
+
+        private void BtnRevokeAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+            // Route through MainViewModel to revoke — same as clicking the lock icon
+            if (System.Windows.Application.Current.MainWindow?.DataContext is MainViewModel vm)
+            {
+                vm.IsAdminAccessGranted = false;
             }
         }
     }

@@ -786,7 +786,7 @@
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource Admin}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                    <TextBlock Text="App Status" Foreground="{StaticResource Gradient.Accent}"/>
+                                    <TextBlock Text="αρρ ѕтαтυѕ" Foreground="{StaticResource Gradient.Accent}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
