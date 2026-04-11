@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using ESCenter.Core;
+using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Services;
 using ESCenter.Windows;
@@ -39,6 +40,17 @@ namespace ESCenter
                 $"E-SCenter started — v{System.Reflection.Assembly
                     .GetExecutingAssembly().GetName().Version}");
 
+            AppServices.Build(services =>
+            {
+                services.AddSingleton<TicketsDataService>();
+                services.AddSingleton<PartsRepository>();
+                services.AddSingleton<InventoryRepository>();
+                services.AddSingleton<BoneyardRepository>();
+                services.AddSingleton<GlobalSearchService>();
+                services.AddSingleton<BackupService>();
+                services.AddSingleton<AlBarakaDataService>();
+            });
+
             InitializeDatabase();
             StartBackupService();
             SetupTrayIcon();
@@ -65,7 +77,7 @@ namespace ESCenter
 
         private void StartBackupService()
         {
-            _backupService = new BackupService();
+            _backupService = AppServices.Get<BackupService>();
             _backupService.Start();
         }
 

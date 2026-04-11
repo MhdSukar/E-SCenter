@@ -20,7 +20,7 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                _repo = new PartsRepository();
+                _repo = AppServices.Get<PartsRepository>();
 
                 Parts = new ObservableCollection<PartModel>();
                 PartsView = CollectionViewSource.GetDefaultView(Parts);

@@ -10,7 +10,7 @@ namespace ESCenter.ViewModels
 {
     public class AlBarakaViewModel : ObservableObject
     {
-        private readonly AlBarakaDataService _service = new AlBarakaDataService();
+        private readonly AlBarakaDataService _service = AppServices.Get<AlBarakaDataService>();
 
         public ObservableCollection<AlBarakaRecord> Records { get; } = new();
 

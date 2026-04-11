@@ -14,7 +14,7 @@ namespace ESCenter.ViewModels
 {
     public class BoneyardViewModel : ObservableObject
     {
-        private readonly BoneyardRepository _repo = new();
+        private readonly BoneyardRepository _repo = AppServices.Get<BoneyardRepository>();
         private readonly ICollectionView _devicesView;
 
         public ObservableCollection<BoneyardModel> Devices { get; } = new();

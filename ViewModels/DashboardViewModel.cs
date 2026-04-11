@@ -60,9 +60,9 @@ namespace ESCenter.ViewModels
 
         public DashboardViewModel()
         {
-            _service = new TicketsDataService();
-            _partsRepository = new PartsRepository();
-            _inventoryRepository = new InventoryRepository();
+            _service = AppServices.Get<TicketsDataService>();
+            _partsRepository = AppServices.Get<PartsRepository>();
+            _inventoryRepository = AppServices.Get<InventoryRepository>();
 
             RefreshCommand = new RelayCommand(_ => Refresh());
 

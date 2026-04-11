@@ -252,7 +252,7 @@ namespace ESCenter.ViewModels
         private ReportsViewModel? _reportsViewModel;
         private AlBarakaViewModel? _alBarakaViewModel;
         private UserProfileWindow? _userProfileWindow;
-        private readonly GlobalSearchService _globalSearchService = new();
+        private readonly GlobalSearchService _globalSearchService = AppServices.Get<GlobalSearchService>();
 
         private string _globalSearchQuery = string.Empty;
         public string GlobalSearchQuery
@@ -286,7 +286,7 @@ namespace ESCenter.ViewModels
         public MainViewModel()
         {
             Dashboard = new DashboardViewModel();
-            _chartDataService = new TicketsDataService();
+            _chartDataService = AppServices.Get<TicketsDataService>();
             // Load persisted preference for auto-granting admin access on startup
             _autoGrantAdminAccess = ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess();
             if (_autoGrantAdminAccess)
@@ -897,7 +897,7 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                using var backupService = new BackupService();
+                using var backupService = AppServices.Get<BackupService>();
                 if (backupService.TryCreateBackupNow())
                 {
                     LastBackupText = "just now";

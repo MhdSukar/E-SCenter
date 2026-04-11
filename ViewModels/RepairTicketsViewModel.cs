@@ -481,7 +481,7 @@ namespace ESCenter.ViewModels
         // =========================================================
         public RepairTicketsViewModel()
         {
-            _service = new TicketsDataService();
+            _service = AppServices.Get<TicketsDataService>();
             DatabasePathService.DatabasePathChanged += async (_, __) => await LoadTicketsAsync();
 
             Tickets = new ObservableCollection<RepairTicket>();
@@ -880,8 +880,8 @@ namespace ESCenter.ViewModels
             _catalogItems.Clear();
             try
             {
-                var partsRepo     = new PartsRepository();
-                var inventoryRepo = new InventoryRepository();
+                var partsRepo = AppServices.Get<PartsRepository>();
+                var inventoryRepo = AppServices.Get<InventoryRepository>();
 
                 var parts     = await partsRepo.GetAllAsync();
                 var inventory = await inventoryRepo.GetAllAsync();
@@ -1218,8 +1218,8 @@ namespace ESCenter.ViewModels
 
             try
             {
-                var partsRepo = new PartsRepository();
-                var inventoryRepo = new InventoryRepository();
+                var partsRepo = AppServices.Get<PartsRepository>();
+                var inventoryRepo = AppServices.Get<InventoryRepository>();
 
                 if (delta > 0)
                 {

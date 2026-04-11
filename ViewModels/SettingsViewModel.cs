@@ -69,7 +69,7 @@ namespace ESCenter.ViewModels
                 {
                     UserPreferencesService.SetBackupIntervalHours(clamped);
                     // Update running service interval if needed
-                    var svc = new BackupService();
+                    var svc = AppServices.Get<BackupService>();
                     svc.UpdateInterval(TimeSpan.FromHours(clamped));
                 }
             }
@@ -408,7 +408,7 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                var svc = new BackupService();
+                var svc = AppServices.Get<BackupService>();
                 var ok = svc.TryCreateBackupNow();
                 if (ok)
                 {

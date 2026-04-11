@@ -51,7 +51,7 @@ namespace ESCenter.ViewModels
 
         public InventoryViewModel()
         {
-            _repository = new InventoryRepository();
+            _repository = AppServices.Get<InventoryRepository>();
             DatabasePathService.DatabasePathChanged += (_, __) => Load();
 
             _inventoryView = CollectionViewSource.GetDefaultView(Items);
