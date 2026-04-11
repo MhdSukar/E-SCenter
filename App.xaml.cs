@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using Microsoft.Extensions.DependencyInjection;
 using ESCenter.Core;
 using ESCenter.Data;
 using ESCenter.Models;
