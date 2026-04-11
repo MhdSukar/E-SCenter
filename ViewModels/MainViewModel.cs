@@ -482,16 +482,6 @@ namespace ESCenter.ViewModels
             RefreshDatabaseConnectionStatus();
         }
 
-
-        private void NavigateToRepairTicketsFromDashboard(object? parameter)
-        {
-            ActiveSection = NavSection.RepairTickets;
-            if (ShowRepairTicketsCommand.CanExecute(parameter))
-            {
-                ShowRepairTicketsCommand.Execute(parameter);
-            }
-        }
-
         private RepairTicketsViewModel GetOrCreateRepairTicketsViewModel()
             => _repairTicketsViewModel ??= new RepairTicketsViewModel();
 
