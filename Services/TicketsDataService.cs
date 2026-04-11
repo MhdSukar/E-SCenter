@@ -180,6 +180,48 @@ namespace ESCenter.Services
 
         public Task<Dictionary<string, int>> GetOpenPriorityCountsAsync(IEnumerable<string> priorities)
             => Task.Run(() => GetOpenPriorityCounts(priorities));
+
+        public Task<List<RepairTicket>> GetTicketsByClientAsync(string clientName, int? excludeId = null)
+            => Task.Run(() =>
+            {
+                var normalizedClientName = clientName?.Trim() ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(normalizedClientName))
+                {
+                    return new List<RepairTicket>();
+                }
+
+                var list = new List<RepairTicket>();
+
+                using var conn = new SQLiteConnection(ConnectionString);
+                conn.Open();
+
+                var sql = @"
+                    SELECT TicketId, EscTicketId, CustomerId, CustomerName, PhoneNumber, ContactMethod,
+                           DeviceCategory, DeviceBrand, DeviceModel, SerialIMEI, DamageHistory, BoardModifications,
+                           ProblemDescription, Notes, RepairStatus, PriorityLevel,
+                           EstimatedCost, EstimatedCostCurrency,
+                           FinalCost, FinalCostCurrency,
+                           RootCause, PartsUsed,
+                           HasWarranty, WarrantyPeriod, IsWarrantyRepair, IsReadyForPickup,
+                           ReceiveDate, DeliveryDate, DeviceChecklistJson, AccessoriesJson
+                    FROM TicketsDB
+                    WHERE LOWER(IFNULL(TRIM(CustomerName), '')) LIKE @clientNamePattern
+                      AND (@excludeId IS NULL OR TicketId <> @excludeId)
+                    ORDER BY ReceiveDate DESC
+                    LIMIT 10;";
+
+                using var cmd = new SQLiteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@clientNamePattern", $"%{normalizedClientName.ToLowerInvariant()}%");
+                cmd.Parameters.AddWithValue("@excludeId", (object?)excludeId ?? DBNull.Value);
+
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    list.Add(MapToRepairTicket(reader));
+                }
+
+                return list;
+            });
         // ===================== INSERT =====================
         public int Insert(RepairTicket ticket)
         {

@@ -6,6 +6,7 @@
     <!-- Converters / Helpers                                                                      -->
     <!-- ========================================================================================= -->
     <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+    <converters:StringToInitialConverter x:Key="InitialConverter"/>
 
     <!-- ========================================================================================= -->
     <!-- Effects                                                                                   -->
@@ -2612,6 +2613,124 @@
         </Setter>
     </Style>
 
+    <Style x:Key="UserProfileButtonStyle" TargetType="Button">
+        <Setter Property="Background"   Value="Transparent"/>
+        <Setter Property="BorderBrush"  Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Cursor"       Value="Hand"/>
+        <Setter Property="Padding"      Value="8,4"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+
+                    <!-- Outer pill container -->
+                    <Border x:Name="PillBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="20"
+                        Padding="{TemplateBinding Padding}"
+                        SnapsToDevicePixels="True">
+
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+
+                            <!-- Avatar circle -->
+                            <Border x:Name="AvatarCircle"
+                                    Width="28" Height="28"
+                                    CornerRadius="14"
+                                    Margin="0,0,8,0">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                        <GradientStop Color="#00E5D4" Offset="0.0"/>
+                                        <GradientStop Color="#00A8C8" Offset="0.5"/>
+                                        <GradientStop Color="#2952D9" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <!-- Initials — bind to CurrentUser using converter -->
+                                <TextBlock x:Name="AvatarInitialTb"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding DataContext.CurrentUser, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource InitialConverter}}"/>
+                            </Border>
+
+                            <!-- Username + role -->
+                            <StackPanel VerticalAlignment="Center"
+                                    Margin="0,0,8,0">
+                                <TextBlock x:Name="UsernameTb"
+                                       Text="{Binding DataContext.CurrentUser, RelativeSource={RelativeSource AncestorType=Window}}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center">
+                                    <TextBlock.Foreground>
+                                        <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                            <GradientStop Color="#00E5D4" Offset="0.0"/>
+                                            <GradientStop Color="#237EF2" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+
+                                <TextBlock Text="Administrator"
+                                       FontSize="9"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Margin="0,-1,0,0"/>
+                            </StackPanel>
+
+                            <!-- Chevron -->
+                            <TextBlock x:Name="Chevron"
+                                   Text="&#xE70D;"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   FontSize="8"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center"/>
+
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Triggers -->
+                    <ControlTemplate.Triggers>
+
+                        <!-- Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PillBorder" Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="#237EF2" Opacity="0.10"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="PillBorder" Property="BorderBrush">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="#237EF2" Opacity="0.45"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="Chevron"   Property="Foreground"
+                                Value="{StaticResource NeonCyanBrush}"/>
+                        </Trigger>
+
+                        <!-- Pressed -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="PillBorder" Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="#237EF2" Opacity="0.18"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="PillBorder" Property="BorderBrush">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="#00E5D4" Opacity="0.70"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="AvatarCircle" Property="Opacity" Value="0.80"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 
 </ResourceDictionary>

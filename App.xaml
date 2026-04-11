@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:ESCenter.ViewModels"
              xmlns:views="clr-namespace:ESCenter.Views"
-             xmlns:conv="clr-namespace:ESCenter.Converters">
+             xmlns:conv="clr-namespace:ESCenter.Converters"
+             xmlns:converters="clr-namespace:ESCenter.Converters">
     <!--StartupUri="MainWindow.xaml">-->
 
     <Application.Resources>
@@ -22,6 +23,7 @@
             <conv:SeriesKeyToIconConverter x:Key="SeriesKeyToIconConverter"/>
             <conv:StatusLevelToBrushConverter x:Key="StatusLevelToBrushConverter"/>
             <conv:StatusLevelToIconConverter x:Key="StatusLevelToIconConverter"/>
+            <converters:StringToInitialConverter x:Key="InitialConverter"/>
 
             <!-- ================= MVVM View Mappings ================= -->
             <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
