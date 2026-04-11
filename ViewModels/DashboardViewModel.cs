@@ -73,7 +73,7 @@ namespace ESCenter.ViewModels
         }
 
         // Synchronous wrapper kept for compatibility (fires-and-forgets the async path)
-        public void Refresh() => _ = RefreshAsync();
+        public void Refresh() => RefreshAsync().FireAndForget(nameof(RefreshAsync));
 
         public async Task RefreshAsync()
         {
