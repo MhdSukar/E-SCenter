@@ -27,9 +27,9 @@
             
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                <Button Command="{Binding RefreshCommand}" Style="{StaticResource GradientBorderButtonStyleBLueCyan}" MinWidth="10" Width="30" Margin="20,0">
+                <Button Command="{Binding RefreshCommand}" Style="{StaticResource IconButtonStyle}" MinWidth="10" Width="30" Margin="20,0">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Image Source="{StaticResource Refresh}" Width="23" Height="23"/>
+                        <Image Source="{StaticResource Refresh}" Width="30" Height="30"/>
                     </StackPanel>
                 </Button>
             </StackPanel>

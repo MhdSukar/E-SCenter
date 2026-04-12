@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Inventory Item"
         Width="560"
-        Height="650"
+        Height="700"
         WindowStartupLocation="CenterOwner"
         Background="Transparent"
         WindowStyle="None"
@@ -178,8 +178,8 @@
                                 <RowDefinition Height="36"/>
                                 <RowDefinition Height="36"/>
                                 <RowDefinition Height="36"/>
-                                <RowDefinition Height="36"/>
-                                <RowDefinition Height="72"/>
+                                <RowDefinition Height="65"/>
+                                <RowDefinition Height="85"/>
                                 <RowDefinition Height="90"/>
                                 <RowDefinition Height="36"/>
                             </Grid.RowDefinitions>
@@ -191,7 +191,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <ComboBox Grid.Row="0" Grid.Column="1"
-                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      Style="{StaticResource GradiantComboboxStyle11}"
                                       ItemsSource="{Binding ItemTypes}"
                                       SelectedItem="{Binding Item.ItemType}"/>
 
@@ -203,7 +203,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="0" Grid.Column="3"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Brand}"/>
 
                             <!-- ================= MODEL ================= -->
@@ -213,7 +213,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="1" Grid.Column="1"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Model}"/>
 
                             <!-- ================= VARIANT ================= -->
@@ -224,7 +224,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="1" Grid.Column="3"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Variant}"/>
 
                             <!-- ================= COMPATIBILITY ================= -->
@@ -235,7 +235,7 @@
 
                             <TextBox Grid.Row="2" Grid.Column="1"
                                      Grid.ColumnSpan="3"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Compatibility}"/>
 
                             <!-- ================= SPECS ================= -->
@@ -245,7 +245,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="3" Grid.Column="1"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Specs}"/>
 
                             <!-- ================= SIZE ================= -->
@@ -256,7 +256,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="3" Grid.Column="3"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Size}"/>
 
                             <!-- ================= QUANTITY ================= -->
@@ -266,7 +266,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="4" Grid.Column="1"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.QuantityOnHand}"/>
 
                             <!-- ================= PRICE ================= -->
@@ -277,7 +277,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="4" Grid.Column="3"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Price}"/>
 
                             <!-- ================= CONDITION ================= -->
@@ -287,7 +287,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <ComboBox Grid.Row="5" Grid.Column="1"
-                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      Style="{StaticResource GradiantComboboxStyle11}"
                                       ItemsSource="{Binding Conditions}"
                                       SelectedItem="{Binding Item.Condition}"/>
 
@@ -299,7 +299,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <ComboBox Grid.Row="5" Grid.Column="3"
-                                      Style="{StaticResource NeonComboBoxStyle}"
+                                      Style="{StaticResource GradiantComboboxStyle11}"
                                       ItemsSource="{Binding QualityGrades}"
                                       SelectedItem="{Binding Item.QualityGrade}"/>
 
@@ -310,7 +310,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="6" Grid.Column="1"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Source}"/>
 
                             <!-- ================= LOCATION BOX ================= -->
@@ -321,7 +321,7 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <TextBox Grid.Row="6" Grid.Column="3"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.LocationBox}"/>
 
                             <!-- ================= DESCRIPTION ================= -->
@@ -335,7 +335,7 @@
                                      Height="60"
                                      AcceptsReturn="True"
                                      VerticalScrollBarVisibility="Auto"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Description}"/>
 
                             <!-- ================= NOTES ================= -->
@@ -349,7 +349,7 @@
                                      Height="80"
                                      AcceptsReturn="True"
                                      VerticalScrollBarVisibility="Auto"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Notes}"/>
 
                             <!-- ================= TAGS ================= -->
@@ -360,7 +360,7 @@
 
                             <TextBox Grid.Row="9" Grid.Column="1"
                                      Grid.ColumnSpan="3"
-                                     Style="{StaticResource NeonTextBoxStyle}"
+                                     Style="{StaticResource GradiantTextboxStyle1}"
                                      Text="{Binding Item.Tags}"/>
 
                         </Grid>

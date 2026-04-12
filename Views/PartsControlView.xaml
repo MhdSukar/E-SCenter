@@ -65,7 +65,7 @@
 
                         <TextBox Grid.Column="1"
                                  VerticalAlignment="Center"
-                                 Style="{StaticResource NeonDarkCyanTextBoxStyle}"
+                                 Style="{StaticResource GradiantTextboxStyle1}"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Button Grid.Column="2"
@@ -74,7 +74,7 @@
                                 Height="28"
                                 Margin="6,0,0,0"
                                 Padding="0"
-                                Style="{StaticResource GradientBorderButtonStyleRed}"
+                                Style="{StaticResource IconButtonStyle}"
                                 Command="{Binding ClearSearchCommand}"
                                 ToolTip="Clear search">
                             <Image Source="{StaticResource Clear}" Width="20" Height="20"/>
@@ -89,7 +89,7 @@
 
                     <ComboBox Width="170"
                               Margin="10,0,0,0"
-                              Style="{StaticResource NeonDarkCyanComboBoxStyle}"
+                              Style="{StaticResource GradiantComboboxStyle11}"
                               ItemsSource="{Binding PartTypes}"
                               SelectedItem="{Binding SelectedTypeFilter}"
                               VerticalAlignment="Center"/>
