@@ -419,7 +419,7 @@
 
     <!-- Secondary Function Button -->
     <Style x:Key="GhostButtonStyle" TargetType="Button">
-        <Setter Property="Height"              Value="30"/>
+        <Setter Property="Height"              Value="32"/>
         <Setter Property="MinWidth"            Value="88"/>
         <Setter Property="Padding"             Value="14,0"/>
         <Setter Property="FontSize"            Value="12"/>
@@ -2037,6 +2037,187 @@
         </Setter>
     </Style>
 
+    <Style x:Key="GradientCheckBoxSuccessStyle" TargetType="CheckBox">
+        <Setter Property="FontSize"                 Value="12"/>
+        <Setter Property="Foreground"               Value="{StaticResource TextSecondaryBrush}"/>
+        <Setter Property="Cursor"                   Value="Hand"/>
+        <Setter Property="Height"                   Value="28"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle"         Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                        <Grid Width="18" Height="18" Margin="0,0,9,0">
+
+                            <!-- Red ring -->
+                            <Border x:Name="Ring"
+                        CornerRadius="5"
+                        Opacity="0"
+                        Padding="1"
+                        Background="{StaticResource Gradient.Success}"/>
+
+                            <Border x:Name="Box"
+                        Background="#1A1A1A"
+                        BorderBrush="#FF404040"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Margin="1"/>
+
+                            <!-- Checked fill -->
+                            <Border x:Name="Fill"
+                        CornerRadius="3"
+                        Margin="2"
+                        Background="#18FF3B3B"
+                        Opacity="0"/>
+
+                            <!-- Red check mark -->
+                            <Path x:Name="Check"
+                      Data="M2.5,9 L7,13.5 L15.5,3.5"
+                      Stroke="{StaticResource Gradient.Success}"
+                      StrokeThickness="2"
+                      StrokeEndLineCap="Round"
+                      StrokeStartLineCap="Round"
+                      Visibility="Collapsed"
+                      Margin="1"/>
+                        </Grid>
+
+                        <ContentPresenter VerticalAlignment="Center"/>
+
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked"   Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Box"  Property="BorderBrush" Value="#FF5A5A5A"/>
+                            <Setter TargetName="Ring" Property="Opacity"     Value="0.35"/>
+                            <Setter Property="Foreground"
+                        Value="{StaticResource Gradient.Success}"/>
+                        </MultiTrigger>
+
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="Ring"  Property="Opacity"    Value="1"/>
+                            <Setter TargetName="Fill"  Property="Opacity"    Value="1"/>
+                            <Setter TargetName="Box"   Property="BorderThickness" Value="0"/>
+                            <Setter TargetName="Box"   Property="Margin"    Value="1"/>
+                            <Setter Property="Foreground"
+                        Value="{StaticResource Gradient.Success}"/>
+                        </Trigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked"   Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Ring" Property="Opacity" Value="1"/>
+                        </MultiTrigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GradientCheckBoxWarningStyle" TargetType="CheckBox">
+        <Setter Property="FontSize"                 Value="12"/>
+        <Setter Property="Foreground"               Value="{StaticResource TextSecondaryBrush}"/>
+        <Setter Property="Cursor"                   Value="Hand"/>
+        <Setter Property="Height"                   Value="28"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle"         Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                        <Grid Width="18" Height="18" Margin="0,0,9,0">
+
+                            <!-- Red ring -->
+                            <Border x:Name="Ring"
+                    CornerRadius="5"
+                    Opacity="0"
+                    Padding="1"
+                    Background="{StaticResource Gradient.Warning}"/>
+
+                            <Border x:Name="Box"
+                    Background="#1A1A1A"
+                    BorderBrush="#FF404040"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Margin="1"/>
+
+                            <!-- Checked fill -->
+                            <Border x:Name="Fill"
+                    CornerRadius="3"
+                    Margin="2"
+                    Background="#18FF3B3B"
+                    Opacity="0"/>
+
+                            <!-- Red check mark -->
+                            <Path x:Name="Check"
+                  Data="M2.5,9 L7,13.5 L15.5,3.5"
+                  Stroke="{StaticResource Gradient.Warning}"
+                  StrokeThickness="2"
+                  StrokeEndLineCap="Round"
+                  StrokeStartLineCap="Round"
+                  Visibility="Collapsed"
+                  Margin="1"/>
+                        </Grid>
+
+                        <ContentPresenter VerticalAlignment="Center"/>
+
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked"   Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Box"  Property="BorderBrush" Value="#FF5A5A5A"/>
+                            <Setter TargetName="Ring" Property="Opacity"     Value="0.35"/>
+                            <Setter Property="Foreground"
+                    Value="{StaticResource Gradient.Warning}"/>
+                        </MultiTrigger>
+
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Check" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="Ring"  Property="Opacity"    Value="1"/>
+                            <Setter TargetName="Fill"  Property="Opacity"    Value="1"/>
+                            <Setter TargetName="Box"   Property="BorderThickness" Value="0"/>
+                            <Setter TargetName="Box"   Property="Margin"    Value="1"/>
+                            <Setter Property="Foreground"
+                    Value="{StaticResource Gradient.Warning}"/>
+                        </Trigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked"   Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Ring" Property="Opacity" Value="1"/>
+                        </MultiTrigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- ================= TitleBar Navigation Tabs ================= -->
     <Style x:Key="SettingsWindowTabItemStyle" TargetType="{x:Type TabItem}">
@@ -3351,9 +3532,6 @@
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
-
-    <!-- Neon Red Button (keeps original duplicate-style definitions intact) -->
-    <!-- <Style x:Key="NeonRedButtonStyle" TargetType="Button" BasedOn="{StaticResource NeonBorderButtonStyle}"/> -->
     
 
     <!-- ========================================================================================= -->

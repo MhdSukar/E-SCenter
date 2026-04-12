@@ -215,7 +215,7 @@
                                                x:Name="CustomerNameBox" />
 
                         <GroupBox Header="Recent Client History"
-                                  Grid.Row="21"
+                                  Grid.Row="25"
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   Style="{StaticResource GradientGroupBoxAccent}"
@@ -262,11 +262,11 @@
                             </Expander>
                         </GroupBox>
 
-                        <views:TicketPartsPanel Grid.Row="22"
+                        <views:TicketPartsPanel Grid.Row="21"
                                                 Grid.ColumnSpan="2" />
 
                         <GroupBox Header="Status Timeline"
-                                  Grid.Row="23"
+                                  Grid.Row="22"
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   Style="{StaticResource GradientGroupBoxAccent}">
@@ -311,7 +311,7 @@
 
                         <!-- ================= DEVICE CHECK LIST ================= -->
                         <GroupBox Header="Device Check List"
-                                  Grid.Row="24"
+                                  Grid.Row="23"
                                   Grid.ColumnSpan="2"
                                   Margin="0,12,0,0"
                                   FontWeight="Bold"
@@ -544,6 +544,184 @@
                             </UniformGrid>
                         </GroupBox>
 
+                        
+                        <!-- ================= ACCESSORIES ================= -->
+                        <GroupBox Header="Accessories"
+                                  Grid.Row="24"
+                                  Grid.ColumnSpan="2"
+                                  Margin="0,12,0,0"
+                                  FontWeight="Bold"
+                                  Style="{StaticResource GradientGroupBoxYellow}">
+                            <UniformGrid Columns="2"
+                                         Margin="8">
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Software:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessorySoftware}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="USB Stick:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryUSBStick}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Case:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCase}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Charger:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCharger}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Battery:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryBattery}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Monitor:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMonitor}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Power Cord:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryPowerCord}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Original Package:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryOriginalPackage}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Memory Card:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMemoryCard}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Cables:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCables}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Mouse:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMouse}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Keyboard:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryKeyboard}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <!-- ===== Added Professional Intake Items ===== -->
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="SIM Card:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessorySIMCard}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="SD Adapter:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessorySDAdapter}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Stylus / Pen:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryStylus}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Docking Station:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryDock}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="External Drive:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryExternalDrive}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="0,0,12,6">
+                                    <TextBlock Text="Headphones / Earbuds:"
+                                               VerticalAlignment="Center" />
+                                    <CheckBox IsChecked="{Binding Accessories.AccessoryHeadphones}"
+                                              Style="{StaticResource GradientCheckBoxWarningStyle}"
+                                              Margin="6,0,0,0" />
+                                </StackPanel>
+
+                            </UniformGrid>
+                        </GroupBox>
+
                         <!-- ================= CUSTOMER PROFILE ================= -->
                         <GroupBox Header="{Binding CustomerProfileHeader}"
                                   Grid.Row="26"
@@ -579,194 +757,17 @@
                                           ScrollViewer.VerticalScrollBarVisibility="Auto">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Device Serial"
-                                                            Binding="{Binding SerialIMEI}"
-                                                            Width="107" />
+                                    Binding="{Binding SerialIMEI}"
+                                    Width="107" />
                                         <DataGridTextColumn Header="Problem Description"
-                                                            Binding="{Binding ProblemDescription}"
-                                                            Width="150" />
+                                    Binding="{Binding ProblemDescription}"
+                                    Width="150" />
                                         <DataGridTextColumn Header="Damage History"
-                                                            Binding="{Binding DamageHistory}"
-                                                            Width="150" />
+                                    Binding="{Binding DamageHistory}"
+                                    Width="150" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Grid>
-                        </GroupBox>
-
-                        <!-- ================= ACCESSORIES ================= -->
-                        <GroupBox Header="Accessories"
-                                  Grid.Row="25"
-                                  Grid.ColumnSpan="2"
-                                  Margin="0,12,0,0"
-                                  FontWeight="Bold"
-                                  Style="{StaticResource GradientGroupBoxYellow}">
-                            <UniformGrid Columns="2"
-                                         Margin="8">
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Software:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessorySoftware}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="USB Stick:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryUSBStick}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Case:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCase}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Charger:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCharger}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Battery:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryBattery}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Monitor:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMonitor}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Power Cord:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryPowerCord}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Original Package:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryOriginalPackage}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Memory Card:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMemoryCard}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Cables:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryCables}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Mouse:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryMouse}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Keyboard:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryKeyboard}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <!-- ===== Added Professional Intake Items ===== -->
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="SIM Card:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessorySIMCard}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="SD Adapter:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessorySDAdapter}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Stylus / Pen:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryStylus}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Docking Station:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryDock}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="External Drive:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryExternalDrive}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,12,6">
-                                    <TextBlock Text="Headphones / Earbuds:"
-                                               VerticalAlignment="Center" />
-                                    <CheckBox IsChecked="{Binding Accessories.AccessoryHeadphones}"
-                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
-                                              Margin="6,0,0,0" />
-                                </StackPanel>
-
-                            </UniformGrid>
                         </GroupBox>
 
                     </Grid>

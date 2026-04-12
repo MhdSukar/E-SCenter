@@ -17,9 +17,9 @@
             <DockPanel>
                 <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
                     <Image Source="{StaticResource Baraka}" Width="28" Height="28" Margin="0,0,8,0" VerticalAlignment="Center" DockPanel.Dock="Left" />
-                    <TextBlock Text="Accounts Records" FontSize="20" FontWeight="Bold" Foreground="{StaticResource NeonOrangeBrush}" DockPanel.Dock="Left" VerticalAlignment="Center" />
+                    <TextBlock Text="Accounts Records" FontSize="20" FontWeight="Bold" Foreground="{StaticResource Gradient.Warning}" DockPanel.Dock="Left" VerticalAlignment="Center" />
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
-                        <Button Command="{Binding OpenExchangeRatesCommand}" Style="{StaticResource GradientBorderButtonStyleRed}" Margin="4,0">
+                        <Button Command="{Binding OpenExchangeRatesCommand}" Style="{StaticResource GradientBorderButtonStyleRed}" Margin="10,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Settings}" Width="19" Height="19" Margin="0,0,6,0" />
                                 <TextBlock Text="Exchange Rate" Width="90"/>

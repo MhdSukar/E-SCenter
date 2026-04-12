@@ -21,7 +21,7 @@
             <Image Source="{StaticResource ReadyToPick}" Width="16" Height="16" Margin="0,0,6,0" />
             <TextBlock Text="Ready for Pickup:" VerticalAlignment="Center" Foreground="{StaticResource Gradient.Success}" />
         </StackPanel>
-        <CheckBox IsChecked="{Binding IsReadyForPickup, Mode=TwoWay}" Grid.Row="0" Grid.Column="1" Margin="4" Style="{StaticResource GradientCheckBoxStyle}" TabIndex="21" KeyDown="SaveOrAddOnEnter" />
+        <CheckBox IsChecked="{Binding IsReadyForPickup, Mode=TwoWay}" Grid.Row="0" Grid.Column="1" Margin="4" Style="{StaticResource GradientCheckBoxSuccessStyle}" TabIndex="21" KeyDown="SaveOrAddOnEnter" />
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,6" VerticalAlignment="Center">
             <Image Source="{StaticResource ESCID2}" Width="17" Height="17" Margin="0,0,6,0" />

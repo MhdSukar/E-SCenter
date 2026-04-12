@@ -304,7 +304,7 @@
 
                         <!-- ========= Navigation Group ========= -->
                         <GroupBox Width="375"
-                                  Height="185"
+                                  Height="182"
                                   Padding="1"
                                   Style="{StaticResource GradientGroupBoxBlueCyan}">
 
@@ -374,7 +374,7 @@
                         </GroupBox>
 
                         <!-- ========= Statistics Group ========= -->
-                        <GroupBox Width="363" Height="185" Style="{StaticResource GradientGroupBoxAccent}">
+                        <GroupBox Width="363" Height="182" Style="{StaticResource GradientGroupBoxAccent}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource Statistics}" Width="16" Height="16" Margin="0,0,6,0"/>
@@ -535,7 +535,7 @@
                         </GroupBox>
 
                         <!-- ========= Control Group ========= -->
-                        <GroupBox Width="363" Height="185" Style="{StaticResource GradientGroupBoxBlueCyan}">
+                        <GroupBox Width="363" Height="183" Style="{StaticResource GradientGroupBoxBlueCyan}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource GalaxyAi3}" Width="16" Height="16" Margin="0,0,6,0"/>
@@ -551,6 +551,7 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30"/>
                                     <RowDefinition Height="30"/>
+                                    <RowDefinition Height="3"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
@@ -562,8 +563,8 @@
                                        Source="{StaticResource GalaxyAi3}"
                                        Width="35"
                                        Height="30"
-                                       Margin="0,0,40,0"
-                                       VerticalAlignment="Top"/>
+                                       Margin="0,0,0,0"
+                                       VerticalAlignment="Center"/>
 
                                 <TextBox x:Name="GlobalSearchBox"
                                          Grid.Column="1" Grid.Row="0"
@@ -680,21 +681,19 @@
                                     </Border>
                                 </Popup>
 
-                                <ComboBox Grid.Column="1" Grid.Row="1"
+
+                                <PasswordBox Grid.Column="1" Grid.Row="1"
                                           Padding="8,0,25,0"
                                           Height="23"
                                           VerticalAlignment="Center"
-                                          Style="{StaticResource GradiantComboboxStyle11}"
+                                          Style="{StaticResource DarkPasswordBoxStyle}"
                                           Margin="0,0,0,0">
-                                    <ComboBoxItem Content="All Categories"/>
-                                    <ComboBoxItem Content="Laptops"/>
-                                    <ComboBoxItem Content="Desktops"/>
-                                    <ComboBoxItem Content="Tablets"/>
-                                    <ComboBoxItem Content="Phones"/>
-                                    <ComboBoxItem Content="Accessories"/>
-                                </ComboBox>
+                                </PasswordBox>
 
-                                <UniformGrid Grid.Column="0" Grid.Row="2" Columns="1" Rows="2"
+                                <Border Height="1" Grid.Row="2" Grid.Column="1"
+                                        Background="{StaticResource Gradient.Primary.Horizontal}"/>
+
+                                <UniformGrid Grid.Column="0" Grid.Row="3" Columns="1" Rows="2"
                                              HorizontalAlignment="Center"
                                              VerticalAlignment="Center">
                                     <Button Style="{StaticResource  IconButtonStyle}" MinWidth="1" Width="30" FontSize="14" Margin="0,5,0,3"
@@ -730,10 +729,9 @@
                                             </Border>
                                         </Grid>
                                     </Button>
-
                                 </UniformGrid>
 
-                                <UniformGrid Grid.Column="1" Grid.Row="2" Columns="2" Rows="2"
+                                <UniformGrid Grid.Column="1" Grid.Row="3" Columns="2" Rows="2"
                                              HorizontalAlignment="Center"
                                              VerticalAlignment="Center">
 
@@ -758,21 +756,21 @@
                                     <CheckBox IsChecked="{Binding AutoGrantAdminAccess, Mode=TwoWay}" 
                                               VerticalAlignment="Center" 
                                               HorizontalAlignment="Center" 
-                                              Width="120" Margin="0,5,-10,0" 
+                                              Width="120" Margin="0,0,0,0" 
                                               Style="{StaticResource GradientCheckBoxStyle}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource GalaxyAi3}" Width="18" Height="18" Margin="0,0,6,0"/>
+                                            <Image Source="{StaticResource GalaxyAi3}" Width="18" Height="18" Margin="0,0,5,0"/>
                                             <TextBlock Text="ω11 ∂яινє" Foreground="{StaticResource Gradient.Primary}"/>
                                         </StackPanel>
                                     </CheckBox>
                                     <CheckBox Grid.Row="1"
                                               IsChecked="{Binding LaunchAtWindowsStartup, Mode=TwoWay}"
                                               HorizontalAlignment="Center"
-                                              VerticalAlignment="Bottom"
-                                              Margin="0,8,0,0"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,0,0"
                                               Style="{StaticResource GradientCheckBoxDangerStyle}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Image Source="{StaticResource BackupNow}" Width="18" Height="18" Margin="0,0,6,0"/>
+                                            <Image Source="{StaticResource BackupNow}" Width="18" Height="18" Margin="0,0,5,0"/>
                                             <TextBlock Text="∂єν ∂яινє"
                                                        Foreground="{StaticResource Gradient.Primary}"/>
                                         </StackPanel>
@@ -781,7 +779,7 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Width="363" Height="185"
+                        <GroupBox Width="363" Height="182"
                                   Style="{StaticResource GradientGroupBoxAccent}"
                                   Margin="12,6,11,6">
                             <GroupBox.Header>
@@ -811,7 +809,7 @@
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding ShowSettingsCommand}"
-                                                Style="{StaticResource GradientBorderButtonStyleBLueCyanOLD}"
+                                                Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
                                                 FontSize="13">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Image Source="{StaticResource Settings}" Width="18" Height="18" Margin="0,0,6,0"/>
@@ -840,7 +838,7 @@
                                                 FontSize="13">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Image Source="{StaticResource OpenLogs}" Width="18" Height="18" Margin="0,0,6,0"/>
-                                                <TextBlock Text="app logger"/>
+                                                <TextBlock Text="App Logger"/>
                                             </StackPanel>
                                         </Button>
                                         <Button 

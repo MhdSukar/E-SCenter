@@ -9,10 +9,12 @@
             <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,4">
                     <Image Source="{StaticResource Tickets}" Width="26" Height="26" Margin="0,0,6,0" />
-                    <TextBlock Text="Repair Tickets" FontSize="20" FontWeight="Bold" Foreground="{StaticResource NewPrimaryBlueBrush}" DockPanel.Dock="Left" Margin="0,0,0,0"/>
+                    <TextBlock Text="Repair Tickets" 
+                               FontSize="20" FontWeight="Bold" 
+                               Foreground="{StaticResource Gradient.Primary.Horizontal}" DockPanel.Dock="Left" Margin="0,0,0,0"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0">
                     <Button Command="{Binding CloseCommand}" Style="{StaticResource GradientBorderButtonStyleGreen}" Width="80" Margin="4,0" IsEnabled="{Binding SelectedTicket}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource TickClosed}" Width="16" Height="16" Margin="0,0,6,0" />
@@ -71,16 +73,16 @@
             <DataGrid ItemsSource="{Binding TicketsView}" SelectedItem="{Binding SelectedTicket, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True" AutoGenerateColumns="False" IsReadOnly="True" Style="{StaticResource DarkDataGridStyle}" RowStyle="{StaticResource TicketRowStyle}" CellStyle="{StaticResource TicketCellStyle}" ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}" SelectionUnit="FullRow">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="" Binding="{Binding SymbolDisplay}" Width="34" />
-                    <DataGridTextColumn Header="ESC-ID" Binding="{Binding EscTicketId}" Width="70" />
+                    <DataGridTextColumn Header="ESC-ID" Binding="{Binding EscTicketId}" Width="90" />
                     <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="120" />
                     <DataGridTextColumn Header="Phone" Binding="{Binding PhoneNumber}" Width="100" />
                     <DataGridTextColumn Header="Device" Binding="{Binding DeviceCategory}" Width="80" />
                     <DataGridTextColumn Header="Model" Binding="{Binding DeviceModel}" Width="100" />
                     <DataGridTextColumn Header="Status" Binding="{Binding RepairStatus}" Width="90" />
                     <DataGridTextColumn Header="Priority" Binding="{Binding PriorityLevel}" Width="75" CellStyle="{StaticResource PriorityCellStyle}" />
-                    <DataGridTextColumn Header="Received" Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}" Width="100" />
-                    <DataGridTextColumn Header="Delivery" Binding="{Binding DeliveryDate, StringFormat='yyyy-MM-dd HH:mm'}" Width="100" />
-                    <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="*" />
+                    <DataGridTextColumn Header="Received" Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}" Width="120" />
+                    <DataGridTextColumn Header="Delivery" Binding="{Binding DeliveryDate, StringFormat='yyyy-MM-dd HH:mm'}" Width="120" />
+                    <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="60" />
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>

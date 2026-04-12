@@ -43,7 +43,7 @@
                         <TextBlock Text="Parts Control"
                                FontSize="20"
                                FontWeight="Bold"
-                               Foreground="{StaticResource NewPrimaryBlueBrush}"
+                               Foreground="{StaticResource Gradient.Primary.Horizontal}"
                                Margin="0,0,8,0"/>
 
                 </StackPanel>
