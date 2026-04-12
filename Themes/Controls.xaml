@@ -1153,6 +1153,93 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <Style x:Key="DarkRedPasswordBoxStyle" TargetType="PasswordBox">
+        <Setter Property="Height"           Value="30"/>
+        <Setter Property="Padding"          Value="1"/>
+        <Setter Property="FontSize"         Value="12"/>
+        <Setter Property="Foreground"       Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Background"       Value="#1A1A1A"/>
+        <Setter Property="CaretBrush"       Value="#D50000"/>
+        <Setter Property="SelectionBrush"   Value="#40237EF2"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Grid>
+
+                        <!-- Gradient focus ring -->
+                        <Border x:Name="FocusBorder"
+                        CornerRadius="7"
+                        Opacity="0"
+                        Padding="1">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#FF6B6B" Offset="0.0"/>
+                                    <GradientStop Color="#FF5252" Offset="0.5"/>
+                                    <GradientStop Color="#D50000" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <!-- Field surface -->
+                        <Border x:Name="Bd"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="#FF404040"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Margin="1">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                      Grid.Column="0"
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="Center"/>
+
+                                <!-- Lock icon indicator -->
+                                <TextBlock Grid.Column="1"
+                                   x:Name="LockIcon"
+                                   Text="&#xE72E;"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   FontSize="12"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,10,0"
+                                   Foreground="#FF404040"/>
+                            </Grid>
+                        </Border>
+
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd"       Property="BorderBrush" Value="#FF5A5A5A"/>
+                            <Setter TargetName="Bd"       Property="Background"  Value="#1F1F1F"/>
+                            <Setter TargetName="LockIcon" Property="Foreground"  Value="#FF5A5A5A"/>
+                        </Trigger>
+
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusBorder" Property="Opacity"          Value="1"/>
+                            <Setter TargetName="Bd"          Property="BorderThickness"  Value="0"/>
+                            <Setter TargetName="Bd"          Property="Margin"           Value="1"/>
+                            <Setter TargetName="Bd"          Property="Background"       Value="#222222"/>
+                            <Setter TargetName="LockIcon"    Property="Foreground"       Value="#D50000"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- ========================================================================================= -->
     <!-- DataGrid / Rows / Cells                                                                   -->

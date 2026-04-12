@@ -108,12 +108,12 @@
 
                     <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,6">
                         <TextBlock Text="Password:" Width="80" VerticalAlignment="Center"/>
-                        <PasswordBox Height="25" TabIndex="1" x:Name="PasswordBox" Width="180" Style="{StaticResource DarkPasswordBoxStyle}"/>
+                        <PasswordBox Height="25" TabIndex="1" x:Name="PasswordBox" Width="180" Style="{StaticResource DarkRedPasswordBoxStyle}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center" Margin="0,12,0,0">
-                        <Button TabIndex="2" Content="Login" Width="80" Margin="6,0" Style="{StaticResource GradientBorderButtonStyleGreen}" Click="LoginButton_Click"/>
-                        <Button TabIndex="3" Content="Cancel" Width="80" Margin="6,0" Style="{StaticResource GradientBorderButtonStyleYellow}" Click="CancelButton_Click"/>
+                        <Button TabIndex="2" Content="Login" Width="120" Margin="6,0" Style="{StaticResource PrimaryFilledButtonStyle}" Click="LoginButton_Click"/>
+                        <Button TabIndex="3" Content="Cancel" Width="120" Margin="6,0" Style="{StaticResource GhostButtonStyle}" Click="CancelButton_Click"/>
                     </StackPanel>
 
                     <TextBlock x:Name="ErrorMessageText"

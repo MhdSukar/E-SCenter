@@ -16,7 +16,7 @@
         <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Padding="8" Margin="0,0,10,0">
             <DockPanel>
                 <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
-                    <Image Source="{StaticResource Baraka}" Width="28" Height="28" Margin="0,0,8,0" VerticalAlignment="Center" DockPanel.Dock="Left" />
+                    <Image Source="{StaticResource Baraka}" Width="30" Height="30" Margin="0,0,8,0" VerticalAlignment="Center" DockPanel.Dock="Left" />
                     <TextBlock Text="Accounts Records" FontSize="20" FontWeight="Bold" Foreground="{StaticResource Gradient.Warning}" DockPanel.Dock="Left" VerticalAlignment="Center" />
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
                         <Button Command="{Binding OpenExchangeRatesCommand}" Style="{StaticResource GradientBorderButtonStyleRed}" Margin="10,0">
