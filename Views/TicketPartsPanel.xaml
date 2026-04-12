@@ -49,7 +49,7 @@
             </ItemsControl>
 
             <Grid>
-                <TextBox x:Name="PartsUsedInputBox" Text="{Binding PartsUsedInput, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource NeonDarkCyanTextBoxStyle}" ToolTip="Type to search • ↑↓ navigate • Enter/Tab to add • Esc to close" TabIndex="17">
+                <TextBox x:Name="PartsUsedInputBox" Text="{Binding PartsUsedInput, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource GradiantTextboxStyle1}" ToolTip="Type to search • ↑↓ navigate • Enter/Tab to add • Esc to close" TabIndex="17">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding AddPartFromInputCommand}" />
                         <KeyBinding Key="Tab" Command="{Binding AcceptSuggestionCommand}" />

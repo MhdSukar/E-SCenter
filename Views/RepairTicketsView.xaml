@@ -284,7 +284,7 @@
                                                FontSize="11"/>
                                     <TextBox Text="{Binding StatusChangeNote, UpdateSourceTrigger=PropertyChanged}"
                                              Width="220"
-                                             Style="{StaticResource NeonDarkCyanTextBoxStyle}"/>
+                                             Style="{StaticResource GradiantTextboxStyle1}"/>
                                 </StackPanel>
 
                                 <ItemsControl Grid.Row="1" ItemsSource="{Binding StatusHistory}" MaxHeight="160">
@@ -325,7 +325,7 @@
                                     <TextBlock Text="Powers On:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPowerOn}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -334,7 +334,7 @@
                                     <TextBlock Text="Boots to OS:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBoots}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -343,7 +343,7 @@
                                     <TextBlock Text="Battery Charging:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBatteryCharging}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -352,7 +352,7 @@
                                     <TextBlock Text="Battery Health:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBatteryHealth}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -361,7 +361,7 @@
                                     <TextBlock Text="Overheating:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckOverheating}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -371,7 +371,7 @@
                                     <TextBlock Text="Screen / Display:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckScreen}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -380,7 +380,7 @@
                                     <TextBlock Text="Touch Response:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckTouch}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -389,7 +389,7 @@
                                     <TextBlock Text="Dead Pixels / Lines:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckDeadPixels}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -398,7 +398,7 @@
                                     <TextBlock Text="Buttons:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckButtons}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -408,7 +408,7 @@
                                     <TextBlock Text="Speaker:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckSpeaker}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -417,7 +417,7 @@
                                     <TextBlock Text="Microphone:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckMicrophone}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -426,7 +426,7 @@
                                     <TextBlock Text="Front Camera:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckFrontCamera}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -435,7 +435,7 @@
                                     <TextBlock Text="Rear Camera:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckRearCamera}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -445,7 +445,7 @@
                                     <TextBlock Text="WiFi:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckWiFi}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -454,7 +454,7 @@
                                     <TextBlock Text="Bluetooth:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBluetooth}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -463,7 +463,7 @@
                                     <TextBlock Text="Cellular / Signal:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckCellular}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -472,7 +472,7 @@
                                     <TextBlock Text="USB / Ports:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPorts}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -482,7 +482,7 @@
                                     <TextBlock Text="Face ID / Fingerprint:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckBiometrics}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -491,7 +491,7 @@
                                     <TextBlock Text="Activation / Account Lock:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckActivationLock}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -500,7 +500,7 @@
                                     <TextBlock Text="Storage Detected:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckStorage}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -510,7 +510,7 @@
                                     <TextBlock Text="Frame / Chassis:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckFrame}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -519,7 +519,7 @@
                                     <TextBlock Text="Back Cover:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckCover}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -528,7 +528,7 @@
                                     <TextBlock Text="Liquid Damage Indicators:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckLiquidDamage}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -537,7 +537,7 @@
                                     <TextBlock Text="Signs of Previous Repair:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding DeviceChecklist.DeviceCheckPreviousRepair}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -607,7 +607,7 @@
                                     <TextBlock Text="Software:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessorySoftware}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -616,7 +616,7 @@
                                     <TextBlock Text="USB Stick:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryUSBStick}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -625,7 +625,7 @@
                                     <TextBlock Text="Case:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryCase}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -634,7 +634,7 @@
                                     <TextBlock Text="Charger:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryCharger}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -643,7 +643,7 @@
                                     <TextBlock Text="Battery:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryBattery}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -652,7 +652,7 @@
                                     <TextBlock Text="Monitor:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryMonitor}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -661,7 +661,7 @@
                                     <TextBlock Text="Power Cord:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryPowerCord}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -670,7 +670,7 @@
                                     <TextBlock Text="Original Package:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryOriginalPackage}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -679,7 +679,7 @@
                                     <TextBlock Text="Memory Card:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryMemoryCard}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -688,7 +688,7 @@
                                     <TextBlock Text="Cables:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryCables}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -697,7 +697,7 @@
                                     <TextBlock Text="Mouse:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryMouse}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -706,7 +706,7 @@
                                     <TextBlock Text="Keyboard:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryKeyboard}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -717,7 +717,7 @@
                                     <TextBlock Text="SIM Card:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessorySIMCard}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -726,7 +726,7 @@
                                     <TextBlock Text="SD Adapter:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessorySDAdapter}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -735,7 +735,7 @@
                                     <TextBlock Text="Stylus / Pen:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryStylus}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -744,7 +744,7 @@
                                     <TextBlock Text="Docking Station:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryDock}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -753,7 +753,7 @@
                                     <TextBlock Text="External Drive:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryExternalDrive}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 
@@ -762,7 +762,7 @@
                                     <TextBlock Text="Headphones / Earbuds:"
                                                VerticalAlignment="Center" />
                                     <CheckBox IsChecked="{Binding Accessories.AccessoryHeadphones}"
-                                              Style="{StaticResource NeonCheckBoxStyle}"
+                                              Style="{StaticResource GradientCheckBoxDangerStyle}"
                                               Margin="6,0,0,0" />
                                 </StackPanel>
 

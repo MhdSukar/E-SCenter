@@ -234,11 +234,11 @@
                         <Button Content="Refresh"
                                 Width="100"
                                 Margin="0,0,8,0"
-                                Style="{StaticResource NeonCyanButtonStyle}"
+                                Style="{StaticResource GradientBorderButtonStyleAccent}"
                                 Click="RefreshButton_Click"/>
                         <Button Content="Close"
                                 Width="100"
-                                Style="{StaticResource NeonOrangeButtonStyle}"
+                                Style="{StaticResource GradientBorderButtonStyleYellow}"
                                 Click="CloseButton_Click"/>
                     </StackPanel>
                 </Grid>

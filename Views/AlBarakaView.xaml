@@ -26,7 +26,7 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Command="{Binding RefreshCommand}" Style="{StaticResource GradientBorderButtonStyleYellow}" MinWidth="10" Width="30" Margin="4,0">
+                        <Button Command="{Binding RefreshCommand}" Style="{StaticResource IconButtonStyle}" MinWidth="10" Width="30" Margin="4,0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Refresh}" Width="23" Height="23" Margin="0,0,0,0" />
                                 
@@ -57,7 +57,7 @@
                         <TextBlock Text="To:" VerticalAlignment="Center" Margin="12,0,6,0" />
                         <DatePicker Width="160" SelectedDate="{Binding FilterEnd, Mode=TwoWay, StringFormat=yyyy-MM-dd}"  />
                         <TextBlock Text="Category:" VerticalAlignment="Center" Margin="12,0,6,0" />
-                        <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding FilterCategory}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" Width="160" />
+                        <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding FilterCategory}" Style="{StaticResource GradiantComboboxStyle11}" Width="160" />
                     </StackPanel>
                 </Border>
 
@@ -67,7 +67,6 @@
                           RowStyle="{StaticResource CompactDataGridRowStyle}"
                           CellStyle="{StaticResource CompactDataGridCellStyle}"
                           ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
-                          AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}"
                           RowHeight="25">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat='yyyy-MM-dd'}" Width="90" />
@@ -136,12 +135,15 @@
                         <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding Date, Mode=TwoWay, StringFormat=yyyy-MM-dd}" Margin="0,0,0,10" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Item Name:</TextBlock>
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ItemName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource NeonDarkCyanTextBoxStyle}" Margin="0,0,0,10" />
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ItemName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Style="{StaticResource GradiantTextboxStyle1}" Margin="0,0,0,10" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Price:</TextBlock>
                         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBox Width="140" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource NeonDarkCyanTextBoxStyle}" />
-                            <ComboBox Width="66" Margin="8,0,0,0" ItemsSource="{Binding Currencies}" SelectedItem="{Binding PriceCurrency}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
+                            <TextBox Width="140" Text="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                     Style="{StaticResource GradiantTextboxStyle1}" />
+                            <ComboBox Width="66" Margin="8,0,0,0" ItemsSource="{Binding Currencies}" SelectedItem="{Binding PriceCurrency}" 
+                                      Style="{StaticResource GradiantComboboxStyle11}" />
                             
                         </StackPanel>
                         <TextBlock Grid.Row="3" Grid.Column="0"
@@ -160,10 +162,12 @@
                                    Grid.Row="3" Grid.Column="1"/>
 
                         <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10">Category:</TextBlock>
-                        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" Margin="0,0,0,10" />
+                        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" 
+                                  Style="{StaticResource GradiantComboboxStyle11}" Margin="0,0,0,10" />
 
                         <TextBlock Grid.Row="5" Grid.Column="0" VerticalAlignment="Center">Account:</TextBlock>
-                        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding Accounts}" SelectedItem="{Binding Account}" Style="{StaticResource NeonDarkCyanComboBoxStyle}" />
+                        <ComboBox Grid.Row="5" Grid.Column="1" ItemsSource="{Binding Accounts}" SelectedItem="{Binding Account}" 
+                                  Style="{StaticResource GradiantComboboxStyle11}" />
 
                     </Grid>
                 </ScrollViewer>

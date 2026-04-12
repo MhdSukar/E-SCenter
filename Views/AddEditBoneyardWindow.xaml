@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Add/Edit Device"
         Width="400"
-        Height="450"
+        Height="470"
         WindowStartupLocation="CenterScreen"
         Background="Transparent"
         WindowStyle="None"
@@ -172,38 +172,37 @@
                         <ComboBox ItemsSource="{Binding DeviceTypes}" 
                                   SelectedIndex="{Binding Device.DeviceType}" 
                                   Grid.Row="0" Grid.Column="1" 
-                                  Style="{StaticResource NeonComboBoxStyle}" Margin="0,4"/>
+                                  Style="{StaticResource GradiantComboboxStyle11}" Margin="0,4"/>
 
                         <!-- Brand -->
                         <TextBlock Text="Brand" Grid.Row="1" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.Brand}" Grid.Row="1" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+                        <TextBox Text="{Binding Device.Brand}" Grid.Row="1" Grid.Column="1" Style="{StaticResource GradiantTextboxStyle1}" Margin="0,4"/>
 
                         <!-- Model -->
                         <TextBlock Text="Model" Grid.Row="2" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.Model}" Grid.Row="2" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+                        <TextBox Text="{Binding Device.Model}" Grid.Row="2" Grid.Column="1" Style="{StaticResource GradiantTextboxStyle1}" Margin="0,4"/>
 
                         <!-- Condition -->
                         <TextBlock Text="Condition" Grid.Row="3" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
                         <ComboBox ItemsSource="{Binding ConditionOptions}" 
                                   SelectedItem="{Binding Device.Condition}" 
                                   Grid.Row="3" Grid.Column="1" 
-                                  Style="{StaticResource NeonComboBoxStyle}" Margin="0,4"/>
+                                  Style="{StaticResource GradiantComboboxStyle11}" Margin="0,4"/>
 
                         <!-- Holder ID -->
                         <TextBlock Text="Holder ID" Grid.Row="4" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.HolderID}" Grid.Row="4" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+                        <TextBox Text="{Binding Device.HolderID}" Grid.Row="4" Grid.Column="1" Style="{StaticResource GradiantTextboxStyle1}" Margin="0,4"/>
 
                         <!-- Price -->
                         <TextBlock Text="Price" Grid.Row="5" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.Price}" Grid.Row="5" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
-
+                        <TextBox Text="{Binding Device.Price}" Grid.Row="5" Grid.Column="1" Style="{StaticResource GradiantTextboxStyle1}" Margin="0,4"/>
                         <!-- Notes -->
                         <TextBlock Text="Notes" Grid.Row="6" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.Notes}" Grid.Row="6" Grid.Column="1" AcceptsReturn="True" Height="80" Style="{StaticResource NeonTextBoxStyle}" Margin="0,4"/>
+                        <TextBox Text="{Binding Device.Notes}" Grid.Row="6" Grid.Column="1" AcceptsReturn="True" Height="80" Style="{StaticResource GradiantTextboxStyle1}" Margin="0,4"/>
 
                         <!-- Added At -->
                         <TextBlock Text="Added At" Grid.Row="7" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.AddedAt}" Grid.Row="7" Grid.Column="1" Style="{StaticResource NeonTextBoxStyle}" IsReadOnly="True" Margin="0,4"/>
+                        <TextBox Text="{Binding Device.AddedAt}" Grid.Row="7" Grid.Column="1" Style="{StaticResource GradiantTextboxStyle1}" IsReadOnly="True" Margin="0,4"/>
                     </Grid>
 
                     <!-- ===================== BUTTON BAR ===================== -->
@@ -214,7 +213,7 @@
 
                         <!-- Cancel -->
                         <Button Width="120"
-                                Style="{StaticResource GradientBorderButtonStyleRed}"
+                                Style="{StaticResource GhostButtonStyle}"
                                 Command="{Binding CancelCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">
@@ -225,12 +224,12 @@
 
                         <!-- Save -->
                         <Button Width="120"
-                                Style="{StaticResource GradientBorderButtonStyleGreen}"
+                                Style="{StaticResource PrimaryFilledButtonStyle}"
                                 Command="{Binding SaveCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="5,0,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="{StaticResource Save}" Width="20" Height="20" Margin="0,0,8,0"/>
-                                <TextBlock Text="Save"/>
+                                <TextBlock Text="Save" Foreground="Black"/>
                             </StackPanel>
                         </Button>
 

@@ -100,7 +100,7 @@
                                 Margin="6,0,12,0">
 
                         <!-- Dashboard tab — use this pattern for all 5 tabs -->
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
                                      Command="{Binding ShowDashboardCommand}"
                                      x:Name="BtnDashboard"
@@ -127,7 +127,7 @@
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
                                      Command="{Binding ShowRepairTicketsCommand}"
                                      x:Name="BtnRepairTickets"
@@ -154,7 +154,7 @@
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
                                      Command="{Binding ShowPartsControlCommand}"
                                      x:Name="BtnPartsControl"
@@ -181,7 +181,7 @@
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
                                      Command="{Binding ShowInventoryCommand}"
                                      x:Name="BtnInventory"
@@ -208,7 +208,7 @@
                             </StackPanel>
                         </RadioButton>
 
-                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle2}"
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
                                      GroupName="MainTabs"
                                      Command="{Binding ShowBoneyardCommand}"
                                      x:Name="BtnBoneyard"
@@ -303,9 +303,9 @@
                     <UniformGrid Columns="4" >
 
                         <!-- ========= Navigation Group ========= -->
-                        <GroupBox Width="363"
-                                  
-                                  Padding="0"
+                        <GroupBox Width="375"
+                                  Height="185"
+                                  Padding="1"
                                   Style="{StaticResource GradientGroupBoxBlueCyan}">
 
                             <GroupBox.Header>
@@ -350,17 +350,18 @@
                                                 <ToggleButton Margin="2,0,2,0"
                                                               Padding="2"
                                                               Width="65"
+                                                              Height="25"
                                                               ToolTip="{Binding Key}"
                                                               Style="{StaticResource ChartStatusToggleButtonStyle}"
                                                               IsChecked="{Binding IsVisible, Mode=TwoWay}">
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                         <Image Width="13"
                                                                Height="13"
                                                                Stretch="Uniform"
                                                                Margin="0,0,4,0"
                                                                Source="{Binding Key, Converter={StaticResource SeriesKeyToIconConverter}}"/>
                                                         <TextBlock Text="{Binding Key}"
-                                                                   FontSize="9"
+                                                                   FontSize="8"
                                                                    VerticalAlignment="Center"
                                                                    Foreground="{StaticResource Gradient.Primary}"/>
                                                     </StackPanel>
@@ -373,7 +374,7 @@
                         </GroupBox>
 
                         <!-- ========= Statistics Group ========= -->
-                        <GroupBox Width="363" Style="{StaticResource GradientGroupBoxAccent}">
+                        <GroupBox Width="363" Height="185" Style="{StaticResource GradientGroupBoxAccent}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource Statistics}" Width="16" Height="16" Margin="0,0,6,0"/>
@@ -534,7 +535,7 @@
                         </GroupBox>
 
                         <!-- ========= Control Group ========= -->
-                        <GroupBox Width="363" Style="{StaticResource GradientGroupBoxBlueCyan}">
+                        <GroupBox Width="363" Height="185" Style="{StaticResource GradientGroupBoxBlueCyan}">
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource GalaxyAi3}" Width="16" Height="16" Margin="0,0,6,0"/>
@@ -568,7 +569,7 @@
                                          Grid.Column="1" Grid.Row="0"
                                          Height="23"
                                          VerticalAlignment="Top"
-                                         Style="{StaticResource NeonDarkCyanTextBoxStyle}"
+                                         Style="{StaticResource GradiantTextboxStyle1}"
                                          Text="{Binding GlobalSearchQuery, UpdateSourceTrigger=PropertyChanged}"
                                          ToolTip="Search everywhere (Ctrl+F) — min 2 characters">
                                     <TextBox.InputBindings>
@@ -683,7 +684,7 @@
                                           Padding="8,0,25,0"
                                           Height="23"
                                           VerticalAlignment="Center"
-                                          Style="{StaticResource NeonDarkCyanComboBoxStyle}"
+                                          Style="{StaticResource GradiantComboboxStyle11}"
                                           Margin="0,0,0,0">
                                     <ComboBoxItem Content="All Categories"/>
                                     <ComboBoxItem Content="Laptops"/>
@@ -696,7 +697,7 @@
                                 <UniformGrid Grid.Column="0" Grid.Row="2" Columns="1" Rows="2"
                                              HorizontalAlignment="Center"
                                              VerticalAlignment="Center">
-                                    <Button Style="{StaticResource  GradientBorderButtonStyleGreen}" MinWidth="1" Width="30" FontSize="14" Margin="0,5,0,3"
+                                    <Button Style="{StaticResource  IconButtonStyle}" MinWidth="1" Width="30" FontSize="14" Margin="0,5,0,3"
                                             Command="{Binding ShowWarrantySystemCommand}">
                                         <Grid>
                                             <Image Source="{StaticResource Warranty}" Width="30" Height="20" Margin="-2,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -780,7 +781,7 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Width="363"
+                        <GroupBox Width="363" Height="185"
                                   Style="{StaticResource GradientGroupBoxAccent}"
                                   Margin="12,6,11,6">
                             <GroupBox.Header>
@@ -810,7 +811,7 @@
                                                 Height="30"
                                                 Margin="3,3,3,3"
                                                 Command="{Binding ShowSettingsCommand}"
-                                                Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
+                                                Style="{StaticResource GradientBorderButtonStyleBLueCyanOLD}"
                                                 FontSize="13">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Image Source="{StaticResource Settings}" Width="18" Height="18" Margin="0,0,6,0"/>
@@ -857,7 +858,7 @@
                                     </UniformGrid>
 
                                     <Border Height="1"
-                                            Background="#33FF4444"
+                                            Background="{StaticResource Gradient.Accent}"
                                             Margin="8,2,8,4"/>
 
                                     <Grid Margin="8,0,8,4">

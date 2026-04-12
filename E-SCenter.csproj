@@ -65,6 +65,7 @@
     <None Remove="Assets\Icons\TBrestore.png" />
     <None Remove="Assets\Icons\Trox E-SCenter Icon.ico" />
     <None Remove="Assets\Icons\Trox E-SCenter Logo.png" />
+    <None Remove="Themes\Philips E-SCenter Logo.png" />
     <None Remove="Themes\Statistics Resurces.txt" />
   </ItemGroup>
 
@@ -346,6 +347,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Warranty1.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Themes\Philips E-SCenter Logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

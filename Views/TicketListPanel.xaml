@@ -44,23 +44,24 @@
                         </Border>
 
                         <TextBox Width="240" Margin="0,0,6,0" 
-                                 Style="{StaticResource NeonDarkCyanTextBoxStyle}" 
+                                 Style="{StaticResource GradiantTextboxStyle1}" 
                                  Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Button MinWidth="28" Width="28" Height="28" 
                                 Margin="0,0,12,0" Padding="0" 
-                                Style="{StaticResource GradientBorderButtonStyleRed}" 
+                                Style="{StaticResource IconButtonStyle}" 
                                 Command="{Binding ClearSearchCommand}" ToolTip="Clear search">
                             <Image Source="{StaticResource Clear}" Width="20" Height="20"/>
                         </Button>
 
                         <TextBlock Text="Ticket Status:" VerticalAlignment="Center" Margin="0,0,4,0" Foreground="{StaticResource Gradient.Warning}"/>
-                        <ComboBox Width="140" Margin="0,0,10,0" Style="{StaticResource NeonDarkCyanComboBoxStyle}" ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatusFilter}" />
+                        <ComboBox Width="140" Margin="0,0,10,0" Style="{StaticResource GradiantComboboxStyle11}" ItemsSource="{Binding StatusFilters}" SelectedItem="{Binding SelectedStatusFilter}" />
 
                         <TextBlock Text="Ticket Priority:" VerticalAlignment="Center" Margin="0,0,4,0" Foreground="{StaticResource Gradient.Danger}"/>
-                        <ComboBox Width="140" Style="{StaticResource NeonDarkCyanComboBoxStyle}" ItemsSource="{Binding PriorityFilters}" SelectedItem="{Binding SelectedPriorityFilter}" />
+                        <ComboBox Width="140" Style="{StaticResource GradiantComboboxStyle11}" ItemsSource="{Binding PriorityFilters}" SelectedItem="{Binding SelectedPriorityFilter}" />
 
-                        <Button MinWidth="28" Width="28" Height="28" Margin="10,0,0,0" Padding="0" Style="{StaticResource GradientBorderButtonStyleRed}" Command="{Binding ResetFiltersCommand}" ToolTip="Reset filters">
+                        <Button MinWidth="28" Width="28" Height="28" Margin="10,0,0,0" Padding="0" 
+                                Style="{StaticResource IconButtonStyle}" Command="{Binding ResetFiltersCommand}" ToolTip="Reset filters">
                             <Image Source="{StaticResource Clear}" Width="20" Height="20"/>
                         </Button>
                     </StackPanel>
