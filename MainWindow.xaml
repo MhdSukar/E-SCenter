@@ -308,229 +308,477 @@
                                   Padding="1"
                                   Style="{StaticResource GradientGroupBoxBlueCyan}">
 
+                            <!-- ─── Header: Icon · Title · LIVE badge ─── -->
                             <GroupBox.Header>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="{StaticResource Charts}"
-                                           Width="16"
-                                           Height="16"
-                                           Margin="0,0,6,0"/>
-                                    <TextBlock Text="Tickets Act"
-                                                VerticalAlignment="Center"
-                                               Foreground="{StaticResource Gradient.Primary.Horizontal}"/>
-                                </StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Image Source="{StaticResource Charts}"
+                                               Width="15" Height="15" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Tickets Act"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{StaticResource Gradient.Primary.Horizontal}"/>
+                                    </StackPanel>
+
+                                    <!-- ✦ LIVE pulse badge -->
+                                    <Border Grid.Column="2"
+                                            Background="#1A00E5D4"
+                                            BorderBrush="#4400C8C0"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="5,1"
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Ellipse Width="5" Height="5"
+                                                     Fill="{StaticResource NeonCyanBrush}"
+                                                     Margin="0,0,4,0"
+                                                     VerticalAlignment="Center">
+                                                <Ellipse.Effect>
+                                                    <DropShadowEffect Color="#FF3BE7FF"
+                                              BlurRadius="6"
+                                              ShadowDepth="0"
+                                              Opacity="0.95"/>
+                                                </Ellipse.Effect>
+                                            </Ellipse>
+                                            <TextBlock Text="LIVE"
+                                                       FontSize="7"
+                                                       FontWeight="Bold"
+                                                       FontFamily="Consolas"
+                                                       Foreground="{StaticResource NeonCyanBrush}"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
                             </GroupBox.Header>
 
+                            <!-- ─── Content ─── -->
                             <Grid Height="137" Margin="0,-8,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Grid Grid.Row="0" Margin="0,0,0,6">
-                                    <lvc:CartesianChart Margin="0"
+                                <!-- Chart with a subtle glass backing -->
+                                <Border Grid.Row="0"
+                                        Background="#08FFFFFF"
+                                        CornerRadius="6"
+                                        Margin="0,2,0,4"
+                                        ClipToBounds="True">
+                                    <!-- Subtle top-edge gradient accent -->
+                                    <Border.BorderBrush>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="#2200E5D4" Offset="0"/>
+                                            <GradientStop Color="#1100A8C8" Offset="0.5"/>
+                                            <GradientStop Color="#222952D9" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.BorderBrush>
+                                    <Border.BorderThickness>0,1,0,0</Border.BorderThickness>
+
+                                    <lvc:CartesianChart Margin="2,0,2,0"
                                                         Series="{Binding TicketsSeries}"
                                                         XAxes="{Binding TicketsXAxis}"
                                                         YAxes="{Binding TicketsYAxis}"
                                                         TooltipTextPaint="{Binding TicketsTooltipTextPaint}"
                                                         TooltipBackgroundPaint="{Binding TicketsTooltipBackgroundPaint}"
                                                         LegendPosition="Hidden"/>
-                                </Grid>
+                                </Border>
 
-                                <ScrollViewer Grid.Row="1"
-                                              HorizontalScrollBarVisibility="Auto"
-                                              VerticalScrollBarVisibility="Disabled">
-                                    <ItemsControl ItemsSource="{Binding TicketStatusCurves}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <ToggleButton Margin="2,0,2,0"
-                                                              Padding="2"
-                                                              Width="65"
-                                                              Height="25"
-                                                              ToolTip="{Binding Key}"
-                                                              Style="{StaticResource ChartStatusToggleButtonStyle}"
-                                                              IsChecked="{Binding IsVisible, Mode=TwoWay}">
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                        <Image Width="13"
-                                                               Height="13"
-                                                               Stretch="Uniform"
-                                                               Margin="0,0,4,0"
-                                                               Source="{Binding Key, Converter={StaticResource SeriesKeyToIconConverter}}"/>
-                                                        <TextBlock Text="{Binding Key}"
-                                                                   FontSize="8"
-                                                                   VerticalAlignment="Center"
-                                                                   Foreground="{StaticResource Gradient.Primary}"/>
-                                                    </StackPanel>
-                                                </ToggleButton>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
+                                <!-- Toggle buttons row — wrapped in a pill-shaped container -->
+                                <Border Grid.Row="1"
+                                        Background="#0C2952D9"
+                                        BorderBrush="#1800E5D4"
+                                        BorderThickness="1"
+                                        CornerRadius="5"
+                                        Padding="2,2"
+                                        Margin="0,0,0,2">
+                                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                                        <ItemsControl ItemsSource="{Binding TicketStatusCurves}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ToggleButton Margin="2,0"
+                                                                  Padding="2"
+                                                                  Width="65"
+                                                                  Height="22"
+                                                                  ToolTip="{Binding Key}"
+                                                                  Style="{StaticResource ChartStatusToggleButtonStyle}"
+                                                                  IsChecked="{Binding IsVisible, Mode=TwoWay}">
+                                                        <StackPanel Orientation="Horizontal"
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center">
+                                                            <Image Width="12" Height="12"
+                                                                   Stretch="Uniform"
+                                                                   Margin="0,0,4,0"
+                                                                   Source="{Binding Key, Converter={StaticResource SeriesKeyToIconConverter}}"/>
+                                                            <TextBlock Text="{Binding Key}"
+                                                                       FontSize="8"
+                                                                       VerticalAlignment="Center"
+                                                                       Foreground="{StaticResource Gradient.Primary}"/>
+                                                        </StackPanel>
+                                                    </ToggleButton>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Border>
                             </Grid>
                         </GroupBox>
 
                         <!-- ========= Statistics Group ========= -->
-                        <GroupBox Width="363" Height="182" Style="{StaticResource GradientGroupBoxAccent}">
+                        <GroupBox Width="363"
+                                  Height="182"
+                                  Style="{StaticResource GradientGroupBoxAccent}">
+
+                            <!-- ─── Header ─── -->
                             <GroupBox.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="{StaticResource Statistics}" Width="16" Height="16" Margin="0,0,6,0"/>
-                                    <TextBlock Text="Tickets stk" Foreground="{StaticResource Gradient.Accent}"/>
+                                    <Image Source="{StaticResource Statistics}"
+                                           Width="15" Height="15" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Tickets stk"
+                                               Foreground="{StaticResource Gradient.Accent}"/>
                                 </StackPanel>
                             </GroupBox.Header>
 
-                            <Grid>
+                            <!-- ─── Content ─── -->
+                            <Grid Margin="0,-4,0,0">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="30"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <!-- stat cards -->
+                                    <RowDefinition Height="1"/>
+                                    <!-- gradient divider -->
+                                    <RowDefinition Height="38"/>
+                                    <!-- alert pills -->
                                 </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="0" Grid.Row="0"
-                                           Text="Total"
-                                           FontSize="8"
-                                           FontWeight="SemiBold"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                                <!-- ── Row 0 : Five stat mini-cards ── -->
+                                <UniformGrid Grid.Row="0"
+                                             Columns="5"
+                                             Rows="1"
+                                             Margin="0,4,0,5">
 
-                                <TextBlock Grid.Column="1" Grid.Row="0"
-                                           Text="Open"
-                                           FontSize="8"
-                                           FontWeight="SemiBold"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <!-- ① Total (Neon Purple) -->
+                                    <Border Margin="2,0"
+                                            Background="#0DFFFFFF"
+                                            BorderThickness="0,0,0,2"
+                                            Padding="4,5,4,4">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#FFB200FF" Opacity="0.55"/>
+                                        </Border.BorderBrush>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="TOTAL"
+                                                       FontSize="7"
+                                                       FontWeight="Bold"
+                                                       FontFamily="Consolas"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource TextTertiaryBrush}"
+                                                       Margin="0,0,0,3"/>
+                                            <TextBlock Text="{Binding Dashboard.TotalTickets}"
+                                                       FontSize="26"
+                                                       FontWeight="Bold"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource NeonPurpleBrush}">
+                                                <TextBlock.Effect>
+                                                    <DropShadowEffect Color="#FFB200FF"
+                                              BlurRadius="10"
+                                              ShadowDepth="0"
+                                              Opacity="0.75"/>
+                                                </TextBlock.Effect>
+                                            </TextBlock>
+                                            <Border Height="2" CornerRadius="1" Margin="6,3,6,0" Opacity="0.5">
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="#FFB200FF"/>
+                                                </Border.Background>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
 
-                                <TextBlock Grid.Column="2" Grid.Row="0"
-                                           Text="Close"
-                                           FontSize="8"
-                                           FontWeight="SemiBold"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <!-- ② Open (Neon Green) -->
+                                    <Border Margin="2,0"
+                                            Background="#0DFFFFFF"
+                                            BorderThickness="0,0,0,2"
+                                            Padding="4,5,4,4">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#FF2EFF2E" Opacity="0.55"/>
+                                        </Border.BorderBrush>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="OPEN"
+                                                       FontSize="7"
+                                                       FontWeight="Bold"
+                                                       FontFamily="Consolas"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource TextTertiaryBrush}"
+                                                       Margin="0,0,0,3"/>
+                                            <TextBlock Text="{Binding Dashboard.OpenTickets}"
+                                                       FontSize="26"
+                                                       FontWeight="Bold"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource NeonGreenBrush}">
+                                                <TextBlock.Effect>
+                                                    <DropShadowEffect Color="#FF2EFF2E"
+                                                                      BlurRadius="10"
+                                                                      ShadowDepth="0"
+                                                                      Opacity="0.75"/>
+                                                </TextBlock.Effect>
+                                            </TextBlock>
+                                            <Border Height="2" CornerRadius="1" Margin="6,3,6,0" Opacity="0.5"
+                                                    Background="{StaticResource NeonGreenBrush}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                                <TextBlock Grid.Column="3" Grid.Row="0"
-                                           Text="Critical"
-                                           FontSize="8"
-                                           FontWeight="SemiBold"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <!-- ③ Closed (Neon Blue) -->
+                                    <Border Margin="2,0"
+                                            Background="#0DFFFFFF"
+                                            BorderThickness="0,0,0,2"
+                                            Padding="4,5,4,4">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#FF0066FF" Opacity="0.55"/>
+                                        </Border.BorderBrush>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="CLOSED"
+                                                       FontSize="7"
+                                                       FontWeight="Bold"
+                                                       FontFamily="Consolas"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource TextTertiaryBrush}"
+                                                       Margin="0,0,0,3"/>
+                                            <TextBlock Text="{Binding Dashboard.ClosedTickets}"
+                                                       FontSize="26"
+                                                       FontWeight="Bold"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource NeonBlueBrush}">
+                                                <TextBlock.Effect>
+                                                    <DropShadowEffect Color="#FF0066FF"
+                                              BlurRadius="10"
+                                              ShadowDepth="0"
+                                              Opacity="0.75"/>
+                                                </TextBlock.Effect>
+                                            </TextBlock>
+                                            <Border Height="2" CornerRadius="1" Margin="6,3,6,0" Opacity="0.5"
+                                                    Background="{StaticResource NeonBlueBrush}"/>
+                                        </StackPanel>
+                                    </Border>
 
-                                <TextBlock Grid.Column="4" Grid.Row="0"
-                                           Text="Ready To Pcik"
-                                           FontSize="8"
-                                           FontWeight="SemiBold"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <!-- ④ Critical (Neon Orange) -->
+                                    <Border Margin="2,0"
+                                            Background="#0DFFFFFF"
+                                            BorderThickness="0,0,0,2"
+                                            Padding="4,5,4,4">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#FFFFAA00" Opacity="0.55"/>
+                                        </Border.BorderBrush>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="CRITICAL"
+                                                       FontSize="7"
+                                                       FontWeight="Bold"
+                                                       FontFamily="Consolas"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource TextTertiaryBrush}"
+                                                       Margin="0,0,0,3"/>
+                                            <TextBlock Text="{Binding Dashboard.CriticalOpenTickets}"
+                                                       FontSize="26"
+                                                       FontWeight="Bold"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource NeonOrangeBrush}">
+                                                <TextBlock.Effect>
+                                                    <DropShadowEffect Color="#FFFFAA00"
+                                                                      BlurRadius="10"
+                                                                      ShadowDepth="0"
+                                                                      Opacity="0.75"/>
+                                                </TextBlock.Effect>
+                                            </TextBlock>
+                                            <Border Height="2" CornerRadius="1" Margin="6,3,6,0" Opacity="0.5"
+                                                    Background="{StaticResource NeonOrangeBrush}"/>
+                                        </StackPanel>
+                                    </Border>
 
+                                    <!-- ⑤ Ready to Pick (Neon Cyan — clickable) -->
+                                    <Border Margin="2,0"
+                                            Background="#0DFFFFFF"
+                                            BorderThickness="0,0,0,2"
+                                            Padding="4,5,4,4">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#FF3BE7FF" Opacity="0.55"/>
+                                        </Border.BorderBrush>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="READY"
+                                                       FontSize="7"
+                                                       FontWeight="Bold"
+                                                       FontFamily="Consolas"
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="{StaticResource TextTertiaryBrush}"
+                                                       Margin="0,0,0,3"/>
+                                            <!-- Clickable number -->
+                                            <Button Command="{Binding ShowReadyPickupTicketsCommand}"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand"
+                                                    Padding="0"
+                                                    HorizontalAlignment="Center"
+                                                    FocusVisualStyle="{x:Null}">
+                                                <TextBlock Text="{Binding Dashboard.ReadyForPickupTickets}"
+                                                           FontSize="26"
+                                                           FontWeight="Bold"
+                                                           Foreground="{StaticResource NeonCyanBrush}">
+                                                    <TextBlock.Effect>
+                                                        <DropShadowEffect Color="#FF3BE7FF"
+                                                                          BlurRadius="10"
+                                                                          ShadowDepth="0"
+                                                                          Opacity="0.75"/>
+                                                    </TextBlock.Effect>
+                                                </TextBlock>
+                                            </Button>
+                                            <Border Height="2" CornerRadius="1" Margin="6,3,6,0" Opacity="0.5"
+                                                    Background="{StaticResource NeonCyanBrush}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </UniformGrid>
 
-                                <TextBlock Text="{Binding Dashboard.TotalTickets}" Grid.Row="1" Grid.Column="0"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource NeonPurpleBrush}"
-                                           Margin="0,8,0,0"
-                                           HorizontalAlignment="Center"/>
+                                <!-- ── Row 1 : Gradient divider ── -->
+                                <Border Grid.Row="1"
+                                        Margin="6,0,6,0"
+                                        Opacity="0.45">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="#009C6FFF" Offset="0"/>
+                                            <GradientStop Color="#CC7C4DFF"  Offset="0.35"/>
+                                            <GradientStop Color="#CC00E5FF"  Offset="0.65"/>
+                                            <GradientStop Color="#0000E5FF"  Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
 
-                                <TextBlock Text="{Binding Dashboard.OpenTickets}" Grid.Row="1" Grid.Column="1"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource NeonGreenBrush}"
-                                           Margin="0,8,0,0"
-                                           HorizontalAlignment="Center"/>
+                                <!-- ── Row 2 : Alert pills ── -->
+                                <Grid Grid.Row="2" Margin="2,5,2,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="{Binding Dashboard.ClosedTickets}" Grid.Row="1" Grid.Column="2"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource NeonBlueBrush}"
-                                           Margin="0,8,0,0"
-                                           HorizontalAlignment="Center"/>
+                                    <!-- ⚠ Overdue pill -->
+                                    <Border Grid.Column="1"
+                                            Background="#14FF3B3B"
+                                            BorderThickness="1"
+                                            CornerRadius="7"
+                                            Padding="7,0"
+                                            Margin="0,0,4,0">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#FFFF3B3B" Opacity="0.28"/>
+                                        </Border.BorderBrush>
+                                        <Grid VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="{Binding Dashboard.CriticalOpenTickets}" Grid.Row="1" Grid.Column="3"
-                                           FontSize="28"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource NeonOrangeBrush}"
-                                           Margin="0,8,0,0"
-                                           HorizontalAlignment="Center"/>
+                                            <!-- Alert icon -->
+                                            <Image Grid.Column="0"
+                                                   Source="{StaticResource CharCritical}"
+                                                   Width="14" Height="14"
+                                                   Margin="0,0,5,0"
+                                                   VerticalAlignment="Center"/>
 
-                                <Button Grid.Row="1" Grid.Column="4"
-                                        Command="{Binding ShowReadyPickupTicketsCommand}"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Cursor="Hand"
-                                        Padding="0"
-                                        Margin="0,8,0,0"
-                                        HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding Dashboard.ReadyForPickupTickets}"
-                                               FontSize="28"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource NeonCyanBrush}"/>
-                                </Button>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="Overdue"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{StaticResource NeonRedBrush}"/>
 
-                                <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
-                                    <Image Source="{StaticResource CharCritical}" Width="19" Height="19" Margin="0,0,4,0"/>
-                                    <TextBlock Grid.Column="0" Grid.Row="2"
-                                               Text="Alerts:"
-                                               Foreground="{StaticResource NeonRedDarkBrush}"
-                                               FontSize="14"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"/>
+                                            <!-- Clickable count -->
+                                            <Button Grid.Column="2"
+                                                    Command="{Binding ShowOverdueTicketsCommand}"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand"
+                                                    Padding="0"
+                                                    FocusVisualStyle="{x:Null}">
+                                                <TextBlock Text="{Binding Dashboard.OverdueTickets}"
+                                                           FontSize="17"
+                                                           FontWeight="Bold"
+                                                           Foreground="{StaticResource NeonRedBrush}">
+                                                    <TextBlock.Effect>
+                                                        <DropShadowEffect Color="#FFFF3B3B"
+                                                  BlurRadius="8"
+                                                  ShadowDepth="0"
+                                                  Opacity="0.85"/>
+                                                    </TextBlock.Effect>
+                                                </TextBlock>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
 
-                                </StackPanel>
-                                
-                                <TextBlock Grid.Column="1" Grid.Row="2"
-                                           Text="Critical:"
-                                           Foreground="{StaticResource NeonOrangeBrush}"
-                                           FontSize="14"
-                                           Margin="0,19,0,0"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                                <Button Grid.Column="2" Grid.Row="2"
-                                        Command="{Binding ShowCriticalTicketsCommand}"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Cursor="Hand"
-                                        Padding="0"
-                                        Margin="0,18,0,0"
-                                        HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding Dashboard.CriticalOpenTickets}"
-                                               FontSize="19"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource NeonOrangeBrush}"/>
-                                </Button>
+                                    <!-- ● Critical pill -->
+                                    <Border Grid.Column="0"
+                                            Background="#14FFAA00"
+                                            BorderThickness="1"
+                                            CornerRadius="7"
+                                            Padding="7,0"
+                                            Margin="4,0,0,0">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="#FFFFAA00" Opacity="0.28"/>
+                                        </Border.BorderBrush>
+                                        <Grid VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="3" Grid.Row="2"
-                                           Text="Overdue:"
-                                           Foreground="{StaticResource NeonRedDarkBrush}"
-                                           FontSize="14"
-                                           Margin="0,19,0,0"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                                <Button Grid.Column="4" Grid.Row="2"
-                                        Command="{Binding ShowOverdueTicketsCommand}"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Cursor="Hand"
-                                        Padding="0"
-                                        Margin="0,18,0,0"
-                                        HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding Dashboard.OverdueTickets}"
-                                               FontSize="19"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource NeonRedBrush}"/>
-                                </Button>
+                                            <!-- Glowing dot -->
+                                            <Ellipse Grid.Column="0"
+                                                     Width="7" Height="7"
+                                                     Fill="{StaticResource NeonOrangeBrush}"
+                                                     Margin="0,0,6,0"
+                                                     VerticalAlignment="Center">
+                                                <Ellipse.Effect>
+                                                    <DropShadowEffect Color="#FFFFAA00"
+                                              BlurRadius="6"
+                                              ShadowDepth="0"
+                                              Opacity="0.95"/>
+                                                </Ellipse.Effect>
+                                            </Ellipse>
+
+                                            <TextBlock Grid.Column="1"
+                                                       Text="Critical"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{StaticResource NeonOrangeBrush}"/>
+
+                                            <!-- Clickable count -->
+                                            <Button Grid.Column="2"
+                                                    Command="{Binding ShowCriticalTicketsCommand}"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand"
+                                                    Padding="0"
+                                                    FocusVisualStyle="{x:Null}">
+                                                <TextBlock Text="{Binding Dashboard.CriticalOpenTickets}"
+                                                           FontSize="17"
+                                                           FontWeight="Bold"
+                                                           Foreground="{StaticResource NeonOrangeBrush}">
+                                                    <TextBlock.Effect>
+                                                        <DropShadowEffect Color="#FFFFAA00"
+                                                  BlurRadius="8"
+                                                  ShadowDepth="0"
+                                                  Opacity="0.85"/>
+                                                    </TextBlock.Effect>
+                                                </TextBlock>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
                             </Grid>
                         </GroupBox>
 
