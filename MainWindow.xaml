@@ -408,7 +408,7 @@
                                                                   Width="55"
                                                                   Height="22"
                                                                   ToolTip="{Binding Key}"
-                                                                  Style="{StaticResource ChartStatusToggleButtonStyleTEST}"
+                                                                  Style="{StaticResource ChartStatusToggleButtonStyle}"
                                                                   IsChecked="{Binding IsVisible, Mode=TwoWay}">
                                                         <StackPanel Orientation="Horizontal"
                                                                     HorizontalAlignment="Center"

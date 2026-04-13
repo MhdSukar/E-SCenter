@@ -141,9 +141,9 @@ namespace ESCenter.ViewModels
                         Sku = p.SKU ?? string.Empty,
                         Name = string.IsNullOrWhiteSpace(p.PartCode)
                             ? string.IsNullOrWhiteSpace(p.SKU) ? "Unnamed Part" : p.SKU
-                            : p.PartCode,
+                            : p.SKU,
                         Quantity = p.QuantityOnHand
-                    });
+                    }); //some  shit and need a rework to make SKU appear properly
 
                 var inventoryItems = allInventory
                     .Where(i => i.QuantityOnHand <= thresholds.InventoryThreshold)

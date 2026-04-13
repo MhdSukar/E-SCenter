@@ -9,77 +9,6 @@
         <vm:PartsControlViewModel/>
     </UserControl.DataContext>
 
-    <UserControl.Resources>
-
-        <!-- ── SKU monospace chip ── -->
-        <Style x:Key="SkuChipBorder" TargetType="Border">
-            <Setter Property="Background"      Value="#1A237EF2"/>
-            <Setter Property="BorderBrush"     Value="#30237EF2"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius"    Value="4"/>
-            <Setter Property="Padding"         Value="8,2"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment"   Value="Center"/>
-        </Style>
-        <Style x:Key="SkuChipText" TargetType="TextBlock">
-            <Setter Property="Foreground"  Value="#5AA7FF"/>
-            <Setter Property="FontSize"    Value="11"/>
-            <Setter Property="FontWeight"  Value="SemiBold"/>
-            <Setter Property="FontFamily"  Value="Consolas"/>
-        </Style>
-
-        <!-- ── Part Code secondary chip ── -->
-        <Style x:Key="PartCodeChipBorder" TargetType="Border">
-            <Setter Property="Background"      Value="#14FFFFFF"/>
-            <Setter Property="BorderBrush"     Value="#20FFFFFF"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius"    Value="4"/>
-            <Setter Property="Padding"         Value="8,2"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment"   Value="Center"/>
-        </Style>
-        <Style x:Key="PartCodeChipText" TargetType="TextBlock">
-            <Setter Property="Foreground"  Value="{StaticResource TextSecondaryBrush}"/>
-            <Setter Property="FontSize"    Value="11"/>
-            <Setter Property="FontFamily"  Value="Consolas"/>
-        </Style>
-
-        <!-- ── Type chip (matches inventory) ── -->
-        <Style x:Key="TypeChipBorder" TargetType="Border">
-            <Setter Property="Background"      Value="#1A00E5D4"/>
-            <Setter Property="BorderBrush"     Value="#2500E5D4"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius"    Value="4"/>
-            <Setter Property="Padding"         Value="8,2"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment"   Value="Center"/>
-        </Style>
-        <Style x:Key="TypeChipText" TargetType="TextBlock">
-            <Setter Property="Foreground"  Value="#00E5D4"/>
-            <Setter Property="FontSize"    Value="11"/>
-            <Setter Property="FontWeight"  Value="SemiBold"/>
-        </Style>
-
-        <!-- ── Location monospace capsule ── -->
-        <Style x:Key="LocationCapsule" TargetType="Border">
-            <Setter Property="Background"      Value="#14FFFFFF"/>
-            <Setter Property="CornerRadius"    Value="4"/>
-            <Setter Property="Padding"         Value="6,2"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment"   Value="Center"/>
-        </Style>
-
-        <!-- ── Stock filter quick-button base ── -->
-        <Style x:Key="StockFilterButtonBase" TargetType="Button">
-            <Setter Property="Height"          Value="28"/>
-            <Setter Property="Padding"         Value="10,0"/>
-            <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-        </Style>
-
-    </UserControl.Resources>
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -156,7 +85,7 @@
                         <Border CornerRadius="7"
                                 BorderBrush="{StaticResource BorderDarkBrush}"
                                 BorderThickness="1"
-                                Background="{StaticResource AppBackgroundBrush}"
+                                Background="{StaticResource CardBackgroundBrush}"
                                 Width="230"
                                 Height="32"
                                 Margin="0,0,10,0">
