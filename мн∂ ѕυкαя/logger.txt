@@ -1,4 +1,0 @@
-﻿AppLogger.Error("Connection lost");
-AppLogger.Warning("Low inventory");
-AppLogger.Success("Saved successfully");
-AppLogger.Info("System ready");
