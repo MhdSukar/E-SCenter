@@ -128,13 +128,13 @@
                         <TextBlock Text="From:" VerticalAlignment="Center"
                                    Margin="0,0,6,0" FontSize="12"
                                    Foreground="{StaticResource TextSecondaryBrush}"/>
-                        <DatePicker Width="145" Height="28"
+                        <DatePicker Width="145" Height="28" 
                                     SelectedDate="{Binding FilterStart, Mode=TwoWay, StringFormat=YYYY-MM-DD}"/>
 
                         <TextBlock Text="To:" VerticalAlignment="Center"
                                    Margin="12,0,6,0" FontSize="12"
                                    Foreground="{StaticResource TextSecondaryBrush}"/>
-                        <DatePicker Width="145" Height="28"
+                        <DatePicker Width="145" Height="28" 
                                     SelectedDate="{Binding FilterEnd, Mode=TwoWay, StringFormat=yyyy-MM-dd}"/>
 
                         <TextBlock Text="Category:" VerticalAlignment="Center"

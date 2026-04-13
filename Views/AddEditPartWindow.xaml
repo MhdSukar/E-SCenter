@@ -239,7 +239,7 @@
 
                         <!-- Cancel -->
                         <Button Width="120"
-                                Style="{StaticResource GradientBorderButtonStyleRed}"
+                                Style="{StaticResource GhostButtonStyle}"
                                 Command="{Binding CancelCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                             <StackPanel Orientation="Horizontal">
@@ -253,9 +253,9 @@
 
                         <!-- Save -->
                         <Button Width="120"
-                                Style="{StaticResource GradientBorderButtonStyleGreen}"
+                                Style="{StaticResource PrimaryFilledButtonStyle}"
                                 Command="{Binding SaveCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+                                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="5,0,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="{StaticResource Save}" Width="20" Height="20"
                                        Margin="0,0,8,0"/>
