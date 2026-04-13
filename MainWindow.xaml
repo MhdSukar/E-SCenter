@@ -108,7 +108,7 @@
                                      IsChecked="{Binding IsDashboardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Dashboard}"
-                                       Width="15" Height="15"
+                                       Width="25" Height="25"
                                        Margin="0,0,6,0"
                                        VerticalAlignment="Center"/>
                                 <TextBlock Text="Dashboard"
@@ -135,7 +135,7 @@
                                      IsChecked="{Binding IsRepairTicketsSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Tickets}"
-                                       Width="15" Height="15"
+                                       Width="25" Height="25"
                                        Margin="0,0,6,0"
                                        VerticalAlignment="Center"/>
                                 <TextBlock Text="Repair Tickets"
@@ -162,7 +162,7 @@
                                      IsChecked="{Binding IsPartsControlSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Parts}"
-                                       Width="15" Height="15"
+                                       Width="25" Height="25"
                                        Margin="0,0,6,0"
                                        VerticalAlignment="Center"/>
                                 <TextBlock Text="Parts Control"
@@ -189,7 +189,7 @@
                                      IsChecked="{Binding IsInventorySelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Inventory}"
-                                       Width="15" Height="15"
+                                       Width="25" Height="25"
                                        Margin="0,0,6,0"
                                        VerticalAlignment="Center"/>
                                 <TextBlock Text="Inventory"
@@ -216,7 +216,7 @@
                                      IsChecked="{Binding IsBoneyardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Boneyard}"
-                                       Width="15" Height="15"
+                                       Width="25" Height="25"
                                        Margin="0,0,6,0"
                                        VerticalAlignment="Center"/>
                                 <TextBlock Text="Boneyard"
@@ -358,35 +358,32 @@
                             </GroupBox.Header>
 
                             <!-- ─── Content ─── -->
-                            <Grid Height="137" Margin="0,-8,0,0">
+                            <Grid Grid.Row="0" Margin="0,0,0,6">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <!-- Chart with a subtle glass backing -->
-                                <Border Grid.Row="0"
-                                        Background="#08FFFFFF"
-                                        CornerRadius="6"
-                                        Margin="0,2,0,4"
-                                        ClipToBounds="True">
-                                    <!-- Subtle top-edge gradient accent -->
-                                    <Border.BorderBrush>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                            <GradientStop Color="#2200E5D4" Offset="0"/>
-                                            <GradientStop Color="#1100A8C8" Offset="0.5"/>
-                                            <GradientStop Color="#222952D9" Offset="1"/>
+                                <Border CornerRadius="8" Margin="1">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#0A237EF2" Offset="0"/>
+                                            <GradientStop Color="#0600E5D4" Offset="1"/>
                                         </LinearGradientBrush>
-                                    </Border.BorderBrush>
-                                    <Border.BorderThickness>0,1,0,0</Border.BorderThickness>
-
-                                    <lvc:CartesianChart Margin="2,0,2,0"
+                                    </Border.Background>
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#00E5D4" BlurRadius="14" ShadowDepth="0" Opacity="0.10"/>
+                                    </Border.Effect>
+                                    
+                                    <lvc:CartesianChart Margin="2"
                                                         Series="{Binding TicketsSeries}"
                                                         XAxes="{Binding TicketsXAxis}"
                                                         YAxes="{Binding TicketsYAxis}"
                                                         TooltipTextPaint="{Binding TicketsTooltipTextPaint}"
                                                         TooltipBackgroundPaint="{Binding TicketsTooltipBackgroundPaint}"
-                                                        LegendPosition="Hidden"/>
+                                                        LegendPosition="Hidden"
+                                                        AnimationsSpeed="00:00:00.7"/>
                                 </Border>
 
                                 <!-- Toggle buttons row — wrapped in a pill-shaped container -->
@@ -395,7 +392,7 @@
                                         BorderBrush="#1800E5D4"
                                         BorderThickness="1"
                                         CornerRadius="5"
-                                        Padding="2,2"
+                                        Padding="35,2"
                                         Margin="0,0,0,2">
                                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                                         <ItemsControl ItemsSource="{Binding TicketStatusCurves}">
@@ -408,10 +405,10 @@
                                                 <DataTemplate>
                                                     <ToggleButton Margin="2,0"
                                                                   Padding="2"
-                                                                  Width="65"
+                                                                  Width="55"
                                                                   Height="22"
                                                                   ToolTip="{Binding Key}"
-                                                                  Style="{StaticResource ChartStatusToggleButtonStyle}"
+                                                                  Style="{StaticResource ChartStatusToggleButtonStyleTEST}"
                                                                   IsChecked="{Binding IsVisible, Mode=TwoWay}">
                                                         <StackPanel Orientation="Horizontal"
                                                                     HorizontalAlignment="Center"
@@ -684,7 +681,7 @@
                                             <!-- Alert icon -->
                                             <Image Grid.Column="0"
                                                    Source="{StaticResource CharCritical}"
-                                                   Width="14" Height="14"
+                                                   Width="25" Height="25"
                                                    Margin="0,0,5,0"
                                                    VerticalAlignment="Center"/>
 
@@ -736,18 +733,11 @@
                                             </Grid.ColumnDefinitions>
 
                                             <!-- Glowing dot -->
-                                            <Ellipse Grid.Column="0"
-                                                     Width="7" Height="7"
-                                                     Fill="{StaticResource NeonOrangeBrush}"
-                                                     Margin="0,0,6,0"
-                                                     VerticalAlignment="Center">
-                                                <Ellipse.Effect>
-                                                    <DropShadowEffect Color="#FFFFAA00"
-                                              BlurRadius="6"
-                                              ShadowDepth="0"
-                                              Opacity="0.95"/>
-                                                </Ellipse.Effect>
-                                            </Ellipse>
+                                            <Image Grid.Column="0"
+                                                   Source="{StaticResource CharMajor}"
+                                                   Width="25" Height="25"
+                                                   Margin="0,0,5,0"
+                                                   VerticalAlignment="Center"/>
 
                                             <TextBlock Grid.Column="1"
                                                        Text="Critical"

@@ -3626,6 +3626,124 @@
     <!-- ========================================================================================= -->
 
 
+    <!-- Chart Button — redesigned: glowing underline + active dot -->
+    <Style x:Key="ChartStatusToggleButtonStyleTEST" TargetType="ToggleButton">
+        <Setter Property="Background"          Value="Transparent"/>
+        <Setter Property="BorderThickness"     Value="0"/>
+        <Setter Property="Foreground"          Value="{StaticResource TextSecondaryBrush}"/>
+        <Setter Property="FontSize"            Value="11"/>
+        <Setter Property="FontWeight"          Value="Normal"/>
+        <Setter Property="Padding"             Value="10,0"/>
+        <Setter Property="Cursor"              Value="Hand"/>
+        <Setter Property="FocusVisualStyle"    Value="{x:Null}"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <!-- 2 px glowing underline row -->
+                            <RowDefinition Height="2"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Hover / pressed tint -->
+                        <Border x:Name="HoverBg"
+                            Grid.Row="0"
+                            Background="Transparent"
+                            Margin="1,2,1,0"
+                            CornerRadius="5"/>
+
+                        <!-- Button label + icon -->
+                        <ContentPresenter Grid.Row="0"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Margin="{TemplateBinding Padding}"/>
+
+                        <!-- Active indicator dot (top-center) -->
+                        <Ellipse x:Name="ActiveDot"
+                             Grid.Row="0"
+                             Width="4" Height="4"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             Margin="0,3,0,0"
+                             Opacity="0">
+                            <Ellipse.Fill>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#00E5D4" Offset="0"/>
+                                    <GradientStop Color="#5AA7FF" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Ellipse.Fill>
+                            <Ellipse.Effect>
+                                <DropShadowEffect Color="#00E5D4" BlurRadius="6"
+                                              ShadowDepth="0" Opacity="0.9"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+
+                        <!-- 2 px glowing gradient underline -->
+                        <Border x:Name="ActiveLine"
+                            Grid.Row="1"
+                            CornerRadius="1"
+                            Margin="5,0,5,0"
+                            Opacity="0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#00E5D4" Offset="0.0"/>
+                                    <GradientStop Color="#00B8D9" Offset="0.5"/>
+                                    <GradientStop Color="#2952D9" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="#00E5D4" BlurRadius="8"
+                                              ShadowDepth="0" Opacity="0.85"/>
+                            </Border.Effect>
+                        </Border>
+
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+
+                        <!-- Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HoverBg" Property="Background" Value="#12237EF2"/>
+                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                        </Trigger>
+
+                        <!-- Pressed -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="HoverBg" Property="Background" Value="#22237EF2"/>
+                        </Trigger>
+
+                        <!-- Active (checked) -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="ActiveLine" Property="Opacity"    Value="1"/>
+                            <Setter TargetName="ActiveDot"  Property="Opacity"    Value="1"/>
+                            <Setter TargetName="HoverBg"    Property="Background" Value="#0D00E5D4"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Foreground">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <GradientStop Color="#00E5D4" Offset="0"/>
+                                        <GradientStop Color="#5AA7FF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+
+                        <!-- Checked + hovered — keep line bright -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked"   Value="True"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HoverBg" Property="Background" Value="#1800E5D4"/>
+                        </MultiTrigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 
 
