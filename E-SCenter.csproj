@@ -17,6 +17,11 @@
 	  <Copyright>© 2026 Mohamad Sukar</Copyright>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Prefer32Bit>false</Prefer32Bit>
+	</PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Assets\Icons\New\**" />
     <Compile Remove="ESCenter\**" />
