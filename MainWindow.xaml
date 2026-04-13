@@ -104,7 +104,7 @@
                                      GroupName="MainTabs"
                                      Command="{Binding ShowDashboardCommand}"
                                      x:Name="BtnDashboard"
-                                     Width="130"
+                                     Width="140"
                                      IsChecked="{Binding IsDashboardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Dashboard}"
@@ -131,7 +131,7 @@
                                      GroupName="MainTabs"
                                      Command="{Binding ShowRepairTicketsCommand}"
                                      x:Name="BtnRepairTickets"
-                                     Width="147"
+                                     Width="157"
                                      IsChecked="{Binding IsRepairTicketsSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Tickets}"
@@ -158,7 +158,7 @@
                                      GroupName="MainTabs"
                                      Command="{Binding ShowPartsControlCommand}"
                                      x:Name="BtnPartsControl"
-                                     Width="142"
+                                     Width="155"
                                      IsChecked="{Binding IsPartsControlSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Parts}"
@@ -185,7 +185,7 @@
                                      GroupName="MainTabs"
                                      Command="{Binding ShowInventoryCommand}"
                                      x:Name="BtnInventory"
-                                     Width="123"
+                                     Width="134"
                                      IsChecked="{Binding IsInventorySelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Inventory}"
@@ -212,7 +212,7 @@
                                      GroupName="MainTabs"
                                      Command="{Binding ShowBoneyardCommand}"
                                      x:Name="BtnBoneyard"
-                                     Width="125"
+                                     Width="135"
                                      IsChecked="{Binding IsBoneyardSelected, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <Image Source="{StaticResource Boneyard}"
@@ -303,7 +303,7 @@
                     <UniformGrid Columns="4" >
 
                         <!-- ========= Navigation Group ========= -->
-                        <GroupBox Width="375"
+                        <GroupBox Width="363"
                                   Height="182"
                                   Padding="1"
                                   Style="{StaticResource GradientGroupBoxBlueCyan}">
@@ -320,7 +320,7 @@
                                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                         <Image Source="{StaticResource Charts}"
                                                Width="15" Height="15" Margin="0,0,6,0"/>
-                                        <TextBlock Text="Tickets Act"
+                                        <TextBlock Text="тιςкєтѕ αςт"
                                                    VerticalAlignment="Center"
                                                    Foreground="{StaticResource Gradient.Primary.Horizontal}"/>
                                     </StackPanel>
@@ -392,7 +392,7 @@
                                         BorderBrush="#1800E5D4"
                                         BorderThickness="1"
                                         CornerRadius="5"
-                                        Padding="35,2"
+                                        Padding="32,2"
                                         Margin="0,0,0,2">
                                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                                         <ItemsControl ItemsSource="{Binding TicketStatusCurves}">
@@ -441,7 +441,7 @@
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="{StaticResource Statistics}"
                                            Width="15" Height="15" Margin="0,0,6,0"/>
-                                    <TextBlock Text="Tickets stk"
+                                    <TextBlock Text="тιςкєтѕ ѕтк"
                                                Foreground="{StaticResource Gradient.Accent}"/>
                                 </StackPanel>
                             </GroupBox.Header>
@@ -658,11 +658,12 @@
                                 <Grid Grid.Row="2" Margin="2,5,2,2">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="5"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
                                     <!-- ⚠ Overdue pill -->
-                                    <Border Grid.Column="1"
+                                    <Border Grid.Column="2"
                                             Background="#14FF3B3B"
                                             BorderThickness="1"
                                             CornerRadius="7"

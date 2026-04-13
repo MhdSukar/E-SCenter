@@ -234,14 +234,16 @@
                                           ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
                                           AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}">
                                     <DataGrid.Columns>
-                                        <DataGridTemplateColumn Header="Ticket ID" Width="95">
+                                        <DataGridTemplateColumn Header="Ticket ID" Width="85">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Button Command="{Binding DataContext.SelectClientHistoryTicketCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                             CommandParameter="{Binding}"
                                                             Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
                                                             Padding="8,2"
-                                                            MinWidth="74"
+                                                            MinWidth="65"
+                                                            MinHeight="20"
+                                                            Height="20"
                                                             HorizontalAlignment="Left">
                                                         <TextBlock Text="{Binding TicketId}" />
                                                     </Button>
@@ -253,10 +255,10 @@
                                                             Width="110" />
                                         <DataGridTextColumn Header="Device"
                                                             Binding="{Binding DeviceModel}"
-                                                            Width="*" />
+                                                            Width="95" />
                                         <DataGridTextColumn Header="Status"
                                                             Binding="{Binding RepairStatus}"
-                                                            Width="140" />
+                                                            Width="130" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </Expander>
