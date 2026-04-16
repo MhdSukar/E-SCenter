@@ -238,9 +238,17 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <!-- Priority badge -->
-                    <DataGridTextColumn Header="Priority" Binding="{Binding PriorityLevel}"
-                                        Width="75" CellStyle="{StaticResource PriorityCellStyle}"/>
+                    <!-- Priority pill -->
+                    <DataGridTemplateColumn Header="Priority" Width="85" SortMemberPath="PriorityLevel">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource PriorityPillBorderStyle}">
+                                    <TextBlock Text="{Binding PriorityLevel}"
+                                               Style="{StaticResource PriorityPillTextStyle}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
                     <DataGridTextColumn Header="Received"
                                         Binding="{Binding ReceiveDate, StringFormat='yyyy-MM-dd HH:mm'}" Width="120"/>

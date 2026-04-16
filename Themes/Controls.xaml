@@ -1520,6 +1520,54 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="PriorityPillBorderStyle" TargetType="Border">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="8,2"/>
+        <Setter Property="Background" Value="#FF1591BB"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding PriorityLevel}" Value="Minor">
+                <Setter Property="Background" Value="#B2DFDB"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding PriorityLevel}" Value="Normal">
+                <Setter Property="Background" Value="#FF1591BB"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding PriorityLevel}" Value="Major">
+                <Setter Property="Background" Value="#FFD2B114"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding PriorityLevel}" Value="Critical">
+                <Setter Property="Background" Value="#FFCE1A1A"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding DeliveryDate, Converter={StaticResource NullToBooleanConverter}}" Value="False">
+                <Setter Property="Background" Value="#1B5E20"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="PriorityPillTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding PriorityLevel}" Value="Minor">
+                <Setter Property="Foreground" Value="Black"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding PriorityLevel}" Value="Normal">
+                <Setter Property="Foreground" Value="Black"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding PriorityLevel}" Value="Major">
+                <Setter Property="Foreground" Value="Black"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding PriorityLevel}" Value="Critical">
+                <Setter Property="Foreground" Value="White"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding DeliveryDate, Converter={StaticResource NullToBooleanConverter}}" Value="False">
+                <Setter Property="Foreground" Value="#E8F5E9"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- ========================================================================================= -->
     <!-- Other Controls / GroupBox / ProgressBar / Helpers                                         -->
     <!-- ========================================================================================= -->

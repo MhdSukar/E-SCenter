@@ -902,7 +902,7 @@ namespace ESCenter.ViewModels
         // =========================================================
         // PARTS — catalog loading
         // =========================================================
-        private void LoadPartsCatalog() => _ = LoadPartsCatalogAsync();
+        /*private void LoadPartsCatalog() => _ = LoadPartsCatalogAsync();*/
 
         private async Task RefreshCatalogAndSuggestionsAsync()
         {
