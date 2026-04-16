@@ -51,8 +51,12 @@ namespace ESCenter.ViewModels
 
         public InventoryViewModel()
         {
-            _repository = AppServices.Get<InventoryRepository>();
-            DatabasePathService.DatabasePathChanged += (_, __) => Load();
+            var isDesignMode = DesignTimeHelper.IsInDesignMode;
+            _repository = AppServices.IsInitialized ? AppServices.Get<InventoryRepository>() : new InventoryRepository();
+            if (!isDesignMode)
+            {
+                DatabasePathService.DatabasePathChanged += (_, __) => Load();
+            }
 
             _inventoryView = CollectionViewSource.GetDefaultView(Items);
             _inventoryView.Filter = FilterInventory;
@@ -62,17 +66,33 @@ namespace ESCenter.ViewModels
             DeleteCommand = new RelayCommand(_ => Delete(), _ => SelectedItem != null);
             ClearSearchCommand = new RelayCommand(_ => SearchText = string.Empty);
 
-            Load();
+            if (isDesignMode)
+            {
+                Items.Add(new InventoryItemModel { ItemType = "Display", Brand = "Samsung", Model = "S21", QuantityOnHand = 5, Price = 38, Condition = "New", Description = "OLED Screen" });
+                Items.Add(new InventoryItemModel { ItemType = "Battery", Brand = "Apple", Model = "iPhone 12", QuantityOnHand = 2, Price = 24, Condition = "Refurb", Description = "Li-Ion Pack" });
+                _inventoryView.Refresh();
+            }
+            else
+            {
+                Load();
+            }
         }
 
         private void Load()
         {
-            Items.Clear();
-            foreach (var item in _repository.GetAll())
+            try
             {
-                Items.Add(item);
+                Items.Clear();
+                foreach (var item in _repository.GetAll())
+                {
+                    Items.Add(item);
+                }
+                _inventoryView.Refresh();
             }
-            _inventoryView.Refresh();
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to load inventory: {ex.Message}");
+            }
         }
 
         private bool FilterInventory(object obj)

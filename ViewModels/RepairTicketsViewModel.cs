@@ -488,11 +488,18 @@ namespace ESCenter.ViewModels
         // =========================================================
         public RepairTicketsViewModel()
         {
-            _service = AppServices.Get<TicketsDataService>();
-            DatabasePathService.DatabasePathChanged += async (_, __) => await LoadTicketsAsync();
+            var isDesignMode = DesignTimeHelper.IsInDesignMode;
+            _service = AppServices.IsInitialized ? AppServices.Get<TicketsDataService>() : new TicketsDataService();
+            if (!isDesignMode)
+            {
+                DatabasePathService.DatabasePathChanged += async (_, __) => await LoadTicketsAsync();
+            }
 
             Tickets = new ObservableCollection<RepairTicket>();
-            _ = LoadTicketsAsync();
+            if (!isDesignMode)
+            {
+                _ = LoadTicketsAsync();
+            }
 
             _ticketsView = CollectionViewSource.GetDefaultView(Tickets);
             _ticketsView.Filter = TicketFilter;
@@ -535,8 +542,29 @@ namespace ESCenter.ViewModels
             UsedPartLines.CollectionChanged += (_, __) => SyncJsonFromLines();
             ClientHistory.CollectionChanged += (_, __) => OnPropertyChanged(nameof(HasClientHistory));
 
+            if (isDesignMode)
+            {
+                Tickets.Add(new RepairTicket
+                {
+                    TicketId = 1,
+                    EscTicketId = "ESC-3001",
+                    CustomerName = "Design Preview",
+                    PhoneNumber = "09XXXXXXXX",
+                    DeviceBrand = "Samsung",
+                    DeviceModel = "S23 Ultra",
+                    RepairStatus = "Under Repair",
+                    PriorityLevel = "Major",
+                    ReceiveDate = DateTime.Now.AddDays(-1),
+                    IsReadyForPickup = false
+                });
+                SelectedTicket = Tickets[0];
+            }
+
             ClearForm();
-            _ = LoadPartsCatalogAsync();
+            if (!isDesignMode)
+            {
+                _ = LoadPartsCatalogAsync();
+            }
 
             SelectedPartsUsed.CollectionChanged += (_, __) => { /* kept for compat, no-op */ };
         }

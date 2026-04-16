@@ -20,14 +20,12 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                _repo = AppServices.Get<PartsRepository>();
+                var isDesignMode = DesignTimeHelper.IsInDesignMode;
+                _repo = AppServices.IsInitialized ? AppServices.Get<PartsRepository>() : new PartsRepository();
 
                 Parts = new ObservableCollection<PartModel>();
                 PartsView = CollectionViewSource.GetDefaultView(Parts);
                 PartsView.Filter = FilterParts;
-
-                LoadParts();
-                BuildPartTypes();
 
                 AddPartCommand = new RelayCommand(_ => AddPart());
                 EditPartCommand = new RelayCommand(_ => EditPart(), _ => SelectedPart != null);
@@ -38,6 +36,17 @@ namespace ESCenter.ViewModels
                 FilterOutCommand = new RelayCommand(_ => SetStockFilter("Out"));
                 ClearSearchCommand = new RelayCommand(_ => SearchText = string.Empty);
 
+                if (isDesignMode)
+                {
+                    Parts.Add(new PartModel { PartId = 1, SKU = "IC-PWR-01", PartCode = "PMIC-IC", PartType = "IC", QuantityOnHand = 4, Price = 12.5, Category = "Power" });
+                    Parts.Add(new PartModel { PartId = 2, SKU = "DSP-GLX-22", PartCode = "LCD-S22", PartType = "Display", QuantityOnHand = 1, Price = 85, Category = "Screen" });
+                    BuildPartTypes();
+                    PartsView.Refresh();
+                    return;
+                }
+
+                LoadParts();
+                BuildPartTypes();
                 DatabasePathService.DatabasePathChanged += (_, __) => LoadParts();
                 AppLogger.Success("Parts Control Loaded");
             }

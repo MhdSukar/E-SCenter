@@ -60,15 +60,34 @@ namespace ESCenter.ViewModels
 
         public DashboardViewModel()
         {
-            _service = AppServices.Get<TicketsDataService>();
-            _partsRepository = AppServices.Get<PartsRepository>();
-            _inventoryRepository = AppServices.Get<InventoryRepository>();
+            var isDesignMode = DesignTimeHelper.IsInDesignMode;
+            _service = AppServices.IsInitialized ? AppServices.Get<TicketsDataService>() : new TicketsDataService();
+            _partsRepository = AppServices.IsInitialized ? AppServices.Get<PartsRepository>() : new PartsRepository();
+            _inventoryRepository = AppServices.IsInitialized ? AppServices.Get<InventoryRepository>() : new InventoryRepository();
 
             RefreshCommand = new RelayCommand(_ => Refresh());
 
+            if (isDesignMode)
+            {
+                TotalTickets = 124;
+                OpenTickets = 38;
+                ClosedTickets = 86;
+                ReadyForPickupTickets = 11;
+                CriticalOpenTickets = 4;
+                OverdueTickets = 6;
+                WeeklyTotalTickets = 19;
+                WeeklyFinishedTickets = 14;
+                WeeklyIncome = 780m;
+                WeeklyCompletionPercent = 73.68;
+                RecentTickets.Add(new RepairTicket { EscTicketId = "ESC-2401", CustomerName = "John Carter", DeviceModel = "Galaxy S22", PriorityLevel = "Major" });
+                RecentTickets.Add(new RepairTicket { EscTicketId = "ESC-2402", CustomerName = "Mia Khan", DeviceModel = "iPhone 13", PriorityLevel = "Critical" });
+                LowStockItems.Add(new LowStockCounterItem { Source = "Parts", Name = "Charging IC", Quantity = 2, Sku = "IC-CHG-08" });
+                LowStockItems.Add(new LowStockCounterItem { Source = "Inventory", Name = "USB-C Cable", Quantity = 3, Sku = string.Empty });
+                return;
+            }
+
             TicketEvents.TicketsChanged += (_, _) => Refresh();
             DatabasePathService.DatabasePathChanged += (_, _) => Refresh();
-
             Refresh();
         }
 

@@ -14,7 +14,7 @@ namespace ESCenter.ViewModels
 {
     public class BoneyardViewModel : ObservableObject
     {
-        private readonly BoneyardRepository _repo = AppServices.Get<BoneyardRepository>();
+        private readonly BoneyardRepository _repo;
         private readonly ICollectionView _devicesView;
 
         public ObservableCollection<BoneyardModel> Devices { get; } = new();
@@ -50,6 +50,8 @@ namespace ESCenter.ViewModels
 
         public BoneyardViewModel()
         {
+            var isDesignMode = DesignTimeHelper.IsInDesignMode;
+            _repo = AppServices.IsInitialized ? AppServices.Get<BoneyardRepository>() : new BoneyardRepository();
             _devicesView = CollectionViewSource.GetDefaultView(Devices);
             _devicesView.Filter = FilterDevices;
 
@@ -57,6 +59,13 @@ namespace ESCenter.ViewModels
             EditCommand = new RelayCommand(_ => EditDevice(), _ => SelectedDevice != null);
             DeleteCommand = new RelayCommand(_ => DeleteDevice(), _ => SelectedDevice != null);
             ClearSearchCommand = new RelayCommand(_ => SearchText = string.Empty);
+
+            if (isDesignMode)
+            {
+                Devices.Add(new BoneyardModel { DeviceId = 1, DeviceType = 0, Brand = "Samsung", Model = "A50", Condition = "Damaged Board", HolderID = "BY-001", AddedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm") });
+                Devices.Add(new BoneyardModel { DeviceId = 2, DeviceType = 1, Brand = "Apple", Model = "iPhone X", Condition = "Broken Display", HolderID = "BY-002", AddedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm") });
+                return;
+            }
 
             DatabasePathService.DatabasePathChanged += (_, __) => LoadDevices();
             LoadDevices();
@@ -83,10 +92,17 @@ namespace ESCenter.ViewModels
 
         private void LoadDevices()
         {
-            Devices.Clear();
-            foreach (var d in _repo.GetAll())
+            try
             {
-                Devices.Add(d);
+                Devices.Clear();
+                foreach (var d in _repo.GetAll())
+                {
+                    Devices.Add(d);
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to load boneyard devices: {ex.Message}");
             }
         }
 

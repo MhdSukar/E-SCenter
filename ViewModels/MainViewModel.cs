@@ -259,7 +259,7 @@ namespace ESCenter.ViewModels
         private ReportsViewModel? _reportsViewModel;
         private AlBarakaViewModel? _alBarakaViewModel;
         private UserProfileWindow? _userProfileWindow;
-        private readonly GlobalSearchService _globalSearchService = AppServices.Get<GlobalSearchService>();
+        private readonly GlobalSearchService _globalSearchService;
 
         private string _globalSearchQuery = string.Empty;
         public string GlobalSearchQuery
@@ -292,8 +292,14 @@ namespace ESCenter.ViewModels
 
         public MainViewModel()
         {
+            var isDesignMode = DesignTimeHelper.IsInDesignMode;
             Dashboard = new DashboardViewModel();
-            _chartDataService = AppServices.Get<TicketsDataService>();
+            _chartDataService = AppServices.IsInitialized
+                ? AppServices.Get<TicketsDataService>()
+                : new TicketsDataService();
+            _globalSearchService = AppServices.IsInitialized
+                ? AppServices.Get<GlobalSearchService>()
+                : new GlobalSearchService();
             // Load persisted preference for auto-granting admin access on startup
             _autoGrantAdminAccess = ESCenter.Services.UserPreferencesService.GetAutoGrantAdminAccess();
             if (_autoGrantAdminAccess)
@@ -302,8 +308,8 @@ namespace ESCenter.ViewModels
             }
 
             _launchAtWindowsStartup = UserPreferencesService.GetLaunchAtWindowsStartup();
-            var startupApplyResult = WindowsStartupService.SetLaunchAtStartup(_launchAtWindowsStartup);
-            if (!startupApplyResult)
+            var startupApplyResult = isDesignMode || WindowsStartupService.SetLaunchAtStartup(_launchAtWindowsStartup);
+            if (!startupApplyResult && !isDesignMode)
             {
                 _launchAtWindowsStartup = WindowsStartupService.IsLaunchAtStartupEnabled();
                 UserPreferencesService.SetLaunchAtWindowsStartup(_launchAtWindowsStartup);
@@ -434,15 +440,21 @@ namespace ESCenter.ViewModels
             });
 
             // F-key bindings use these commands (declared separately so XAML can bind by name)
-            AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
-            AppEvents.NavigateToTicketsRequested += () => ShowRepairTicketsCommand.Execute(null);
+            if (!isDesignMode)
+            {
+                AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
+                AppEvents.NavigateToTicketsRequested += () => ShowRepairTicketsCommand.Execute(null);
+            }
 
             CurrentView = Dashboard;
             SetStatus("System Ready", StatusLevel.Info);
 
             _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _clockTimer.Tick += (_, _) => ClockText = DateTime.Now.ToString("HH:mm:ss");
-            _clockTimer.Start();
+            if (!isDesignMode)
+            {
+                _clockTimer.Start();
+            }
 
             _statusResetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
             _statusResetTimer.Tick += (_, _) =>
@@ -457,22 +469,28 @@ namespace ESCenter.ViewModels
                 await RefreshDatabaseConnectionStatusAsync();
                 RefreshDatabaseFileSizeAndBackupInfo();
             };
-            _databaseStatusTimer.Start();
-            RefreshDatabaseFileSizeAndBackupInfo();
-
-            AppLogger.StatusRaised += OnStatusRaised;
-            TicketEvents.TicketsChanged += async (_, _) =>
+            if (!isDesignMode)
             {
-                await RefreshTicketsChartAsync();
-                await RefreshWarrantyAlertCountAsync();
-            };
-            DatabasePathService.DatabasePathChanged += async (_, _) =>
-            {
-                await RefreshTicketsChartAsync();
-                await RefreshWarrantyAlertCountAsync();
-                await RefreshDatabaseConnectionStatusAsync();
+                _databaseStatusTimer.Start();
                 RefreshDatabaseFileSizeAndBackupInfo();
-            };
+            }
+
+            if (!isDesignMode)
+            {
+                AppLogger.StatusRaised += OnStatusRaised;
+                TicketEvents.TicketsChanged += async (_, _) =>
+                {
+                    await RefreshTicketsChartAsync();
+                    await RefreshWarrantyAlertCountAsync();
+                };
+                DatabasePathService.DatabasePathChanged += async (_, _) =>
+                {
+                    await RefreshTicketsChartAsync();
+                    await RefreshWarrantyAlertCountAsync();
+                    await RefreshDatabaseConnectionStatusAsync();
+                    RefreshDatabaseFileSizeAndBackupInfo();
+                };
+            }
 
             ToggleCurveVisibilityCommand = new RelayCommand(param =>
             {
@@ -490,9 +508,12 @@ namespace ESCenter.ViewModels
                 }
             });
 
-            RefreshTicketsChart();
-            RefreshWarrantyAlertCountAsync().FireAndForget(nameof(RefreshWarrantyAlertCountAsync));
-            RefreshDatabaseConnectionStatus();
+            if (!isDesignMode)
+            {
+                RefreshTicketsChart();
+                RefreshWarrantyAlertCountAsync().FireAndForget(nameof(RefreshWarrantyAlertCountAsync));
+                RefreshDatabaseConnectionStatus();
+            }
         }
 
         private RepairTicketsViewModel GetOrCreateRepairTicketsViewModel()

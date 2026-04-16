@@ -7,6 +7,8 @@ namespace ESCenter.Core
     {
         private static IServiceProvider? _provider;
 
+        internal static bool IsInitialized => _provider != null;
+
         internal static IServiceProvider Provider =>
             _provider ?? throw new InvalidOperationException("AppServices not initialized.");
 
