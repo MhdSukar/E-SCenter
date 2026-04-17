@@ -21,8 +21,8 @@ namespace ESCenter.Windows
         private string _searchText = string.Empty;
 
         public ObservableCollection<WarrantyDeviceRow> WarrantyItems { get; } = new();
-        public ObservableCollection<ExpiringWarrantyRow> ExpiringSoonItems { get; } = new();
-        public int ExpiringWarrantyCount => ExpiringSoonItems.Count;
+        public ObservableCollection<ActiveWarrantyRow> ActiveWarrantyItems { get; } = new();
+        public int ActiveWarrantyCount => ActiveWarrantyItems.Count;
         public string SearchText
         {
             get => _searchText;
@@ -158,7 +158,7 @@ namespace ESCenter.Windows
         private void RefreshWarrantyData()
         {
             LoadWarrantyItems();
-            LoadExpiringSoonItems();
+            LoadActiveWarrantyItems();
             CollectionViewSource.GetDefaultView(WarrantyItems)?.Refresh();
         }
 
@@ -233,12 +233,12 @@ namespace ESCenter.Windows
             !string.IsNullOrWhiteSpace(value)
             && value.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
 
-        private void LoadExpiringSoonItems()
+        private void LoadActiveWarrantyItems()
         {
-            ExpiringSoonItems.Clear();
+            ActiveWarrantyItems.Clear();
 
-            var tickets = _ticketsDataService.GetAll();
-            var expiringSoon = WarrantyEvaluator.GetExpiringWarranties(tickets, ExpiringSoonThresholdDays)
+            var tickets = _ticketsDataService.GetAll()
+                .Where(t => t != null && t.HasWarranty)
                 .OrderBy(t =>
                 {
                     WarrantyEvaluator.TryGetExpiration(t, out var expiration);
@@ -246,7 +246,7 @@ namespace ESCenter.Windows
                 })
                 .ToList();
 
-            foreach (var ticket in expiringSoon)
+            foreach (var ticket in tickets)
             {
                 if (!WarrantyEvaluator.TryGetExpiration(ticket, out var expiration))
                 {
@@ -254,7 +254,12 @@ namespace ESCenter.Windows
                 }
 
                 var daysRemaining = (expiration.Date - DateTime.Today).Days;
-                ExpiringSoonItems.Add(new ExpiringWarrantyRow
+                if (daysRemaining < 0)
+                {
+                    continue;
+                }
+
+                ActiveWarrantyItems.Add(new ActiveWarrantyRow
                 {
                     ClientName = string.IsNullOrWhiteSpace(ticket.CustomerName) ? "-" : ticket.CustomerName,
                     DeviceName = BuildDeviceName(ticket),
@@ -263,7 +268,7 @@ namespace ESCenter.Windows
                 });
             }
 
-            OnPropertyChanged(nameof(ExpiringWarrantyCount));
+            OnPropertyChanged(nameof(ActiveWarrantyCount));
         }
 
         private void OnPropertyChanged(string propertyName) =>
@@ -283,7 +288,7 @@ namespace ESCenter.Windows
         public string WarrantyState { get; set; } = string.Empty;
     }
 
-    public class ExpiringWarrantyRow
+    public class ActiveWarrantyRow
     {
         public string ClientName { get; set; } = string.Empty;
         public string DeviceName { get; set; } = string.Empty;

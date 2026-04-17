@@ -31,6 +31,8 @@ namespace ESCenter.ViewModels
         }
 
         private string _searchText;
+        public string DevicesCountDisplay =>
+                        $"Showing {_devicesView.Cast<object>().Count()} of {Devices.Count} devices";
         public string SearchText
         {
             get => _searchText;
