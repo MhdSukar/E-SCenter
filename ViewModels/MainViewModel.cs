@@ -931,7 +931,7 @@ namespace ESCenter.ViewModels
         {
             try
             {
-                using var backupService = AppServices.Get<BackupService>();
+                var backupService = AppServices.Get<BackupService>();
                 if (backupService.TryCreateBackupNow())
                 {
                     LastBackupText = "just now";

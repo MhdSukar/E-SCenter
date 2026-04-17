@@ -133,7 +133,7 @@
                     <!-- status / action bar -->
                 </Grid.RowDefinitions>
 
-                <!-- ── Row 0: Expiring Soon alert panel ── -->
+                <!-- ── Row 0: Active Warranties panel ── -->
                 <Border Grid.Row="0"
                         Margin="12,12,12,0"
                         CornerRadius="10"
@@ -141,13 +141,13 @@
                         ClipToBounds="True">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                            <GradientStop Color="#50FBBF24" Offset="0"/>
-                            <GradientStop Color="#20FBBF24" Offset="1"/>
+                            <GradientStop Color="#5022C55E" Offset="0"/>
+                            <GradientStop Color="#2022C55E" Offset="1"/>
                         </LinearGradientBrush>
                     </Border.BorderBrush>
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                            <GradientStop Color="#0CFBBF24" Offset="0"/>
+                            <GradientStop Color="#0C22C55E" Offset="0"/>
                             <GradientStop Color="#00000000" Offset="0.6"/>
                         </LinearGradientBrush>
                     </Border.Background>
@@ -156,32 +156,32 @@
                         <Expander.Header>
                             <StackPanel Orientation="Horizontal" Margin="4,0">
                                 <!-- Warning dot -->
-                                <Ellipse Width="8" Height="8" Fill="#FBBF24"
+                                <Ellipse Width="8" Height="8" Fill="#22C55E"
                                          VerticalAlignment="Center" Margin="0,0,8,0">
                                     <Ellipse.Effect>
-                                        <DropShadowEffect Color="#FBBF24" BlurRadius="6"
+                                        <DropShadowEffect Color="#22C55E" BlurRadius="6"
                                                           ShadowDepth="0" Opacity="0.9"/>
                                     </Ellipse.Effect>
                                 </Ellipse>
-                                <TextBlock Text="Expiring Soon"
+                                <TextBlock Text="Active Warranties"
                                            FontSize="12" FontWeight="SemiBold"
-                                           Foreground="#FBBF24" VerticalAlignment="Center"/>
-                                <TextBlock Text=" — next 30 days"
+                                           Foreground="#22C55E" VerticalAlignment="Center"/>
+                                <TextBlock Text=" — still valid"
                                            FontSize="11"
                                            Foreground="{StaticResource TextSecondaryBrush}"
                                            VerticalAlignment="Center" Margin="4,0,0,0"/>
                                 <!-- Count badge -->
-                                <Border Background="#1AFBBF24" BorderBrush="#30FBBF24"
+                                <Border Background="#1A22C55E" BorderBrush="#3022C55E"
                                         BorderThickness="1" CornerRadius="8"
                                         Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding ExpiringWarrantyCount}"
+                                    <TextBlock Text="{Binding ActiveWarrantyCount}"
                                                FontSize="10" FontWeight="SemiBold"
-                                               Foreground="#FBBF24"/>
+                                               Foreground="#22C55E"/>
                                 </Border>
                             </StackPanel>
                         </Expander.Header>
 
-                        <DataGrid ItemsSource="{Binding ExpiringSoonItems}"
+                        <DataGrid ItemsSource="{Binding ActiveWarrantyItems}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   CanUserAddRows="False"
@@ -204,10 +204,10 @@
                                                     CornerRadius="10" Padding="10,3">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
-                                                        <Setter Property="Background" Value="#1AFBBF24"/>
+                                                        <Setter Property="Background" Value="#1A22C55E"/>
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsUrgent}" Value="True">
-                                                                <Setter Property="Background" Value="#2AEF4444"/>
+                                                                <Setter Property="Background" Value="#1AFBBF24"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
@@ -217,10 +217,10 @@
                                                            HorizontalAlignment="Center">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
-                                                            <Setter Property="Foreground" Value="#FBBF24"/>
+                                                            <Setter Property="Foreground" Value="#22C55E"/>
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsUrgent}" Value="True">
-                                                                    <Setter Property="Foreground" Value="#EF4444"/>
+                                                                    <Setter Property="Foreground" Value="#FBBF24"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
