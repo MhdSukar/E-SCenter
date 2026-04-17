@@ -1006,6 +1006,7 @@ namespace ESCenter.ViewModels
                 };
 
                 window.ShowDialog();
+                RefreshWarrantyAlertCountAsync().FireAndForget(nameof(RefreshWarrantyAlertCountAsync));
                 AppLogger.Success("Warranty system opened.");
             }
             catch (Exception ex)

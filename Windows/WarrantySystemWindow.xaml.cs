@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Data;
 using System.Windows.Media;
 using ESCenter.Core;
 using ESCenter.Models;
@@ -11,25 +12,44 @@ using ESCenter.Services;
 
 namespace ESCenter.Windows
 {
-    public partial class WarrantySystemWindow : Window
+    public partial class WarrantySystemWindow : Window, INotifyPropertyChanged
     {
+        private const int ExpiringSoonThresholdDays = 30;
         private readonly TicketsDataService _ticketsDataService = new();
         private bool _animatingClose;
         private bool _wasMinimized;
+        private string _searchText = string.Empty;
 
         public ObservableCollection<WarrantyDeviceRow> WarrantyItems { get; } = new();
         public ObservableCollection<ExpiringWarrantyRow> ExpiringSoonItems { get; } = new();
+        public int ExpiringWarrantyCount => ExpiringSoonItems.Count;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (_searchText == value)
+                {
+                    return;
+                }
+
+                _searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+                CollectionViewSource.GetDefaultView(WarrantyItems)?.Refresh();
+            }
+        }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public WarrantySystemWindow()
         {
             InitializeComponent();
             SetMaximizeButtonIcon("Maximize");
             DataContext = this;
+            CollectionViewSource.GetDefaultView(WarrantyItems).Filter = MatchesSearch;
             Loaded += (_, __) =>
             {
                 WindowFader.SlideIn(this);
-                LoadWarrantyItems();
-                LoadExpiringSoonItems();
+                RefreshWarrantyData();
             };
             Closing += Window_Closing;
             StateChanged += Window_StateChanged;
@@ -59,8 +79,7 @@ namespace ESCenter.Windows
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            LoadWarrantyItems();
-            LoadExpiringSoonItems();
+            RefreshWarrantyData();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -136,6 +155,13 @@ namespace ESCenter.Windows
             }
         }
 
+        private void RefreshWarrantyData()
+        {
+            LoadWarrantyItems();
+            LoadExpiringSoonItems();
+            CollectionViewSource.GetDefaultView(WarrantyItems)?.Refresh();
+        }
+
         private void LoadWarrantyItems()
         {
             WarrantyItems.Clear();
@@ -153,6 +179,11 @@ namespace ESCenter.Windows
                 }
 
                 var daysLeft = (expiresAt.Date - DateTime.Today).Days;
+                var warrantyState = daysLeft < 0
+                    ? "Expired"
+                    : daysLeft <= ExpiringSoonThresholdDays
+                        ? "Expiring Soon"
+                        : "Active";
 
                 WarrantyItems.Add(new WarrantyDeviceRow
                 {
@@ -164,7 +195,7 @@ namespace ESCenter.Windows
                     WarrantyStartDateText = (ticket.DeliveryDate?.Date ?? ticket.ReceiveDate.Date).ToString("yyyy-MM-dd"),
                     WarrantyEndDateText = expiresAt.ToString("yyyy-MM-dd"),
                     RemainingText = daysLeft >= 0 ? $"{daysLeft} day(s)" : $"Expired {-daysLeft} day(s) ago",
-                    WarrantyState = daysLeft >= 0 ? "Active" : "Expired"
+                    WarrantyState = warrantyState
                 });
             }
         }
@@ -178,12 +209,36 @@ namespace ESCenter.Windows
             return string.IsNullOrWhiteSpace(combined) ? "Unknown Device" : combined;
         }
 
+        private bool MatchesSearch(object candidate)
+        {
+            if (candidate is not WarrantyDeviceRow row)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                return true;
+            }
+
+            var search = SearchText.Trim();
+            return Contains(row.TicketCode, search)
+                || Contains(row.CustomerName, search)
+                || Contains(row.DeviceName, search)
+                || Contains(row.SerialNumber, search)
+                || Contains(row.WarrantyState, search);
+        }
+
+        private static bool Contains(string value, string search) =>
+            !string.IsNullOrWhiteSpace(value)
+            && value.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
+
         private void LoadExpiringSoonItems()
         {
             ExpiringSoonItems.Clear();
 
             var tickets = _ticketsDataService.GetAll();
-            var expiringSoon = WarrantyEvaluator.GetExpiringWarranties(tickets, 30)
+            var expiringSoon = WarrantyEvaluator.GetExpiringWarranties(tickets, ExpiringSoonThresholdDays)
                 .OrderBy(t =>
                 {
                     WarrantyEvaluator.TryGetExpiration(t, out var expiration);
@@ -203,10 +258,16 @@ namespace ESCenter.Windows
                 {
                     ClientName = string.IsNullOrWhiteSpace(ticket.CustomerName) ? "-" : ticket.CustomerName,
                     DeviceName = BuildDeviceName(ticket),
-                    DaysRemainingText = $"{daysRemaining} day(s)"
+                    DaysRemainingText = $"{daysRemaining} day(s)",
+                    IsUrgent = daysRemaining <= 7
                 });
             }
+
+            OnPropertyChanged(nameof(ExpiringWarrantyCount));
         }
+
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     public class WarrantyDeviceRow
@@ -227,5 +288,6 @@ namespace ESCenter.Windows
         public string ClientName { get; set; } = string.Empty;
         public string DeviceName { get; set; } = string.Empty;
         public string DaysRemainingText { get; set; } = string.Empty;
+        public bool IsUrgent { get; set; }
     }
 }

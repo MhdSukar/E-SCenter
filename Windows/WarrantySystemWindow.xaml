@@ -181,7 +181,7 @@
                             </StackPanel>
                         </Expander.Header>
 
-                        <DataGrid ItemsSource="{Binding ExpiringeSoonItems}"
+                        <DataGrid ItemsSource="{Binding ExpiringSoonItems}"
                                   AutoGenerateColumns="False"
                                   IsReadOnly="True"
                                   CanUserAddRows="False"
