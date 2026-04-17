@@ -235,7 +235,8 @@
                       Style="{StaticResource DarkDataGridStyle}"
                       RowStyle="{StaticResource TicketRowStyle}"
                       CellStyle="{StaticResource CompactDataGridCellStyle}"
-                      ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}">
+                      ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
+                      IsReadOnly="True">
 
                 <DataGrid.Columns>
 

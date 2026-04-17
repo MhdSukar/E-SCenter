@@ -41,7 +41,8 @@
         </Grid.RowDefinitions>
 
         <!-- ═══ Header ═════════════════════════════════════════════ -->
-        <DockPanel Grid.Row="0" Margin="0,0,0,14">
+        <DockPanel Grid.Row="0" Margin="0,0,0,14" Width="290"
+                   HorizontalAlignment="Left">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Image Source="{StaticResource Dashboard}"
                        Width="30" Height="30" Margin="0,0,8,0"/>

@@ -240,7 +240,8 @@
                       Style="{StaticResource DarkDataGridStyle}"
                       RowStyle="{StaticResource CompactDataGridRowStyle}"
                       CellStyle="{StaticResource CompactDataGridCellStyle}"
-                      ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}">
+                      ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
+                      IsReadOnly="True">
 
                 <DataGrid.Columns>
 
