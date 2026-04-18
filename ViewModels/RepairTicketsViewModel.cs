@@ -566,15 +566,7 @@ namespace ESCenter.ViewModels
                 _ = LoadPartsCatalogAsync();
             }
 
-            SelectedPartsUsed.CollectionChanged += (_, __) => { /* kept for compat, no-op */ };
         }
-
-        // =========================================================
-        // COMPAT: keep SelectedPartsUsed as a forwarding alias
-        //         so any code not yet migrated doesn't crash
-        // =========================================================
-        private readonly ObservableCollection<string> _selectedPartsUsed = new();
-        public ObservableCollection<string> SelectedPartsUsed => _selectedPartsUsed;
 
         // =========================================================
         // PUBLIC INTEGRATION HELPERS
