@@ -176,7 +176,7 @@
                     </DataGridTemplateColumn>
 
                     <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="120"/>
-                    <DataGridTextColumn Header="Phone" Binding="{Binding PhoneNumber}" Width="100"/>
+                    <DataGridTextColumn Header="Phone" Binding="{Binding PhoneNumber}" Width="115"/>
                     <DataGridTextColumn Header="Device" Binding="{Binding DeviceCategory}" Width="80"/>
                     <DataGridTextColumn Header="Model" Binding="{Binding DeviceModel}" Width="100"/>
 
@@ -239,7 +239,7 @@
                     </DataGridTemplateColumn>
 
                     <!-- Priority pill -->
-                    <DataGridTemplateColumn Header="Priority" Width="85" SortMemberPath="PriorityLevel">
+                    <DataGridTemplateColumn Header="Priority" Width="80" SortMemberPath="PriorityLevel">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Style="{StaticResource PriorityPillBorderStyle}">
