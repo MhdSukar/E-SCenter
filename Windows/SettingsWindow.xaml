@@ -85,6 +85,15 @@
                                     <TextBox Width="80" Style="{StaticResource GradiantTextboxStyle1}" Text="{Binding BackupRetentionCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
 
+                                <TextBlock Text="Pickup Notification" FontWeight="SemiBold" Margin="0,12,0,6"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBlock Text="Message Language:" VerticalAlignment="Center" Width="180"/>
+                                    <ComboBox Width="180"
+                                              Style="{StaticResource GradiantComboboxStyle11}"
+                                              ItemsSource="{Binding PickupMessageLanguages}"
+                                              SelectedItem="{Binding PickupMessageLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+
                                 <Button Content="Back Up Now" Command="{Binding BackupNowCommand}" Style="{StaticResource GradientBorderButtonStyleGreen}" Margin="0,12,0,0"/>
                             </StackPanel>
                         </TabItem>

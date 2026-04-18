@@ -229,6 +229,7 @@ namespace ESCenter.Services
             , BackupIntervalHours = 6
             , BackupLocation = string.Empty
             , BackupRetentionCount = 0
+            , PickupMessageLanguage = "English"
         };
 
         private static UserPreferences Normalize(UserPreferences? preferences)
@@ -267,6 +268,7 @@ namespace ESCenter.Services
             normalized.BackupIntervalHours = normalized.BackupIntervalHours <= 0 ? 6 : normalized.BackupIntervalHours;
             normalized.BackupLocation ??= string.Empty;
             normalized.BackupRetentionCount = normalized.BackupRetentionCount < 0 ? 0 : normalized.BackupRetentionCount;
+            normalized.PickupMessageLanguage = NormalizePickupMessageLanguage(normalized.PickupMessageLanguage);
 
             // Ensure new preference exists when migrating from older settings
             // Default value is false (do not auto-grant admin access)
@@ -280,6 +282,26 @@ namespace ESCenter.Services
         {
             var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(value));
             return Convert.ToHexString(bytes);
+        }
+
+        public static string GetPickupMessageLanguage()
+        {
+            var preferences = Load();
+            return NormalizePickupMessageLanguage(preferences.PickupMessageLanguage);
+        }
+
+        public static void SetPickupMessageLanguage(string language)
+        {
+            var preferences = Load();
+            preferences.PickupMessageLanguage = NormalizePickupMessageLanguage(language);
+            Save(preferences);
+        }
+
+        private static string NormalizePickupMessageLanguage(string? language)
+        {
+            return string.Equals(language?.Trim(), "Arabic", StringComparison.OrdinalIgnoreCase)
+                ? "Arabic"
+                : "English";
         }
 
         public static bool GetAutoGrantAdminAccess()
@@ -379,6 +401,7 @@ namespace ESCenter.Services
             public int BackupIntervalHours { get; set; } = 6;
             public string BackupLocation { get; set; } = string.Empty;
             public int BackupRetentionCount { get; set; } = 0;
+            public string PickupMessageLanguage { get; set; } = "English";
             public Dictionary<string, decimal> ExchangeRates { get; set; } = new(StringComparer.OrdinalIgnoreCase);
         }
 

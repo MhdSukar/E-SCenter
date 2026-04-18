@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
@@ -223,7 +224,14 @@ namespace ESCenter.ViewModels
         public string ContactMethod
         {
             get => _contactMethod;
-            set { if (SetProperty(ref _contactMethod, value)) CheckForUnsavedChanges(); }
+            set
+            {
+                if (SetProperty(ref _contactMethod, value))
+                {
+                    CheckForUnsavedChanges();
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         private string _deviceCategory = string.Empty;
@@ -448,7 +456,14 @@ namespace ESCenter.ViewModels
         public bool IsReadyForPickup
         {
             get => _isReadyForPickup;
-            set { if (SetProperty(ref _isReadyForPickup, value)) CheckForUnsavedChanges(); }
+            set
+            {
+                if (SetProperty(ref _isReadyForPickup, value))
+                {
+                    CheckForUnsavedChanges();
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         private DeviceChecklist _deviceChecklist = new DeviceChecklist();
@@ -468,6 +483,7 @@ namespace ESCenter.ViewModels
         public ICommand ClearCommand           { get; }
         public ICommand CloseCommand           { get; }
         public ICommand ReopenCommand          { get; }
+        public ICommand CopyPickupMessageCommand { get; }
 
         // Parts commands
         public ICommand AddPartCommand            { get; }
@@ -511,6 +527,7 @@ namespace ESCenter.ViewModels
             ClearCommand  = new RelayCommand(_ => ClearForm());
             CloseCommand  = new RelayCommand(_ => CloseTicket(),  _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
+            CopyPickupMessageCommand = new RelayCommand(_ => CopyPickupMessage(), _ => CanCopyPickupMessage());
 
             // Parts commands
             AddPartCommand = new RelayCommand(param =>
@@ -820,6 +837,89 @@ namespace ESCenter.ViewModels
         // =========================================================
         private bool CanCloseTicket()  => SelectedTicket != null && !SelectedTicket.DeliveryDate.HasValue;
         private bool CanReopenTicket() => SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue;
+        private bool CanCopyPickupMessage() => SelectedTicket != null && IsReadyForPickup;
+
+        private void CopyPickupMessage()
+        {
+            if (!CanCopyPickupMessage())
+            {
+                return;
+            }
+
+            var isArabic = string.Equals(UserPreferencesService.GetPickupMessageLanguage(), "Arabic", StringComparison.OrdinalIgnoreCase);
+            var message = BuildPickupMessage(isArabic);
+            var isWhatsApp = string.Equals(ContactMethod?.Trim(), "WhatsApp", StringComparison.OrdinalIgnoreCase);
+
+            if (isWhatsApp && TryOpenWhatsAppMessage(PhoneNumber, message))
+            {
+                AppLogger.Success("WhatsApp message opened successfully!");
+                return;
+            }
+
+            System.Windows.Clipboard.SetText(message);
+            AppLogger.Success("Message copied to clipboard!");
+        }
+
+        private string BuildPickupMessage(bool isArabic)
+        {
+            var customerName = string.IsNullOrWhiteSpace(CustomerName) ? (isArabic ? "العميل" : "Customer") : CustomerName.Trim();
+            var deviceBrand = string.IsNullOrWhiteSpace(DeviceBrand) ? (isArabic ? "الجهاز" : "Device") : DeviceBrand.Trim();
+            var deviceModel = string.IsNullOrWhiteSpace(DeviceModel) ? string.Empty : $" {DeviceModel.Trim()}";
+            var escTicketId = string.IsNullOrWhiteSpace(EscTicketId) ? "N/A" : EscTicketId.Trim();
+            var finalCostValue = FinalCost?.ToString("0.##", CultureInfo.CurrentCulture) ?? "0";
+            var finalCostCurrency = string.IsNullOrWhiteSpace(FinalCostCurrency) ? "S.P" : FinalCostCurrency.Trim();
+
+            if (isArabic)
+            {
+                return
+$@"عزيزي/عزيزتي {customerName}،
+
+جهازك {deviceBrand}{deviceModel} (رقم التذكرة: {escTicketId}) جاهز للاستلام.
+
+التكلفة النهائية: {finalCostValue} {finalCostCurrency}
+
+يرجى زيارتنا في أقرب وقت ممكن.
+شكرًا لاختيارك E-SCenter! 🔧";
+            }
+
+            return
+$@"Dear {customerName},
+
+Your {deviceBrand}{deviceModel} (Ticket: {escTicketId}) is ready for pickup.
+
+Final Cost: {finalCostValue} {finalCostCurrency}
+
+Please visit us at your earliest convenience.
+Thank you for choosing E-SCenter! 🔧";
+        }
+
+        private bool TryOpenWhatsAppMessage(string? rawPhoneNumber, string message)
+        {
+            var digitsOnly = new string((rawPhoneNumber ?? string.Empty).Where(char.IsDigit).ToArray());
+            if (string.IsNullOrWhiteSpace(digitsOnly))
+            {
+                AppLogger.Warning("WhatsApp contact requires a valid phone number. Message copied to clipboard instead.");
+                return false;
+            }
+
+            var encodedMessage = Uri.EscapeDataString(message);
+            var url = $"https://wa.me/{digitsOnly}?text={encodedMessage}";
+
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warning($"Failed to open WhatsApp URL: {ex.Message}. Message copied to clipboard instead.");
+                return false;
+            }
+        }
 
         private void CloseTicket()
         {

@@ -102,6 +102,25 @@ namespace ESCenter.ViewModels
             }
         }
 
+        private string _pickupMessageLanguage = "English";
+        public string PickupMessageLanguage
+        {
+            get => _pickupMessageLanguage;
+            set
+            {
+                var normalized = string.Equals(value?.Trim(), "Arabic", StringComparison.OrdinalIgnoreCase)
+                    ? "Arabic"
+                    : "English";
+
+                if (SetProperty(ref _pickupMessageLanguage, normalized))
+                {
+                    UserPreferencesService.SetPickupMessageLanguage(normalized);
+                }
+            }
+        }
+
+        public string[] PickupMessageLanguages { get; } = { "English", "Arabic" };
+
         private int _partsLowStockThreshold;
         public int PartsLowStockThreshold
         {
@@ -160,6 +179,7 @@ namespace ESCenter.ViewModels
             _backupIntervalHours = UserPreferencesService.GetBackupIntervalHours();
             _backupLocation = UserPreferencesService.GetBackupLocation();
             _backupRetentionCount = UserPreferencesService.GetBackupRetentionCount();
+            _pickupMessageLanguage = UserPreferencesService.GetPickupMessageLanguage();
             var lowStockThresholds = UserPreferencesService.GetLowStockThresholds();
             _partsLowStockThreshold = Math.Max(1, lowStockThresholds.PartsThreshold);
             _inventoryLowStockThreshold = Math.Max(1, lowStockThresholds.InventoryThreshold);
@@ -198,6 +218,7 @@ namespace ESCenter.ViewModels
                 LaunchAtWindowsStartup = false;
                 AutoGrantAdminAccess = false;
                 BackupLocation = string.Empty;
+                PickupMessageLanguage = "English";
 
                 MessageBox.Show("All app settings were reset to default.\nAdmin credentials are now default: Admin / Admin.", "Reset Completed", MessageBoxButton.OK, MessageBoxImage.Information);
                 AppLogger.Success("All app settings were reset to default.");
@@ -394,6 +415,7 @@ namespace ESCenter.ViewModels
                 BackupIntervalHours = UserPreferencesService.GetBackupIntervalHours();
                 BackupLocation = UserPreferencesService.GetBackupLocation();
                 BackupRetentionCount = UserPreferencesService.GetBackupRetentionCount();
+                PickupMessageLanguage = UserPreferencesService.GetPickupMessageLanguage();
 
                 MessageBox.Show("Settings imported successfully.", "Import Settings", MessageBoxButton.OK, MessageBoxImage.Information);
             }
