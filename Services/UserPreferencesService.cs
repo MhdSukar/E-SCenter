@@ -91,12 +91,7 @@ namespace ESCenter.Services
         {
             var defaults = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase)
             {
-                ["USD"] = 13000m,
-                ["EUR"] = 14000m,
-                ["RON"] = 2900m,
-                ["GBP"] = 16500m,
-                ["CHF"] = 14500m,
-                ["CAD"] = 9600m
+                ["USD"] = 13000m
             };
 
             var preferences = Load();
@@ -122,7 +117,7 @@ namespace ESCenter.Services
                 ? new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase)
                 : new Dictionary<string, decimal>(
                     rates
-                        .Where(kvp => !string.IsNullOrWhiteSpace(kvp.Key))
+                        .Where(kvp => string.Equals(kvp.Key?.Trim(), "USD", StringComparison.OrdinalIgnoreCase))
                         .ToDictionary(
                             kvp => kvp.Key.Trim().ToUpperInvariant(),
                             kvp => kvp.Value),

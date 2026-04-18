@@ -51,12 +51,6 @@ namespace ESCenter.Windows
             var rates = UserPreferencesService.GetExchangeRates();
 
             UsdRateBox.Text = GetRateText(rates, "USD");
-            EurRateBox.Text = GetRateText(rates, "EUR");
-            RonRateBox.Text = GetRateText(rates, "RON");
-            GbpRateBox.Text = GetRateText(rates, "GBP");
-            ChfRateBox.Text = GetRateText(rates, "CHF");
-            CadRateBox.Text = GetRateText(rates, "CAD");
-            TryRateBox.Text = GetRateText(rates, "TRY");
         }
 
         private static string GetRateText(Dictionary<string, decimal> rates, string code)
@@ -72,12 +66,6 @@ namespace ESCenter.Windows
             {
                 var rates = UserPreferencesService.GetExchangeRates();
                 rates["USD"] = ParseRate(UsdRateBox.Text, "USD");
-                rates["EUR"] = ParseRate(EurRateBox.Text, "EUR");
-                rates["RON"] = ParseRate(RonRateBox.Text, "RON");
-                rates["GBP"] = ParseRate(GbpRateBox.Text, "GBP");
-                rates["CHF"] = ParseRate(ChfRateBox.Text, "CHF");
-                rates["CAD"] = ParseRate(CadRateBox.Text, "CAD");
-                rates["TRY"] = ParseRate(TryRateBox.Text, "TRY");
 
                 UserPreferencesService.SetExchangeRates(rates);
                 AppLogger.Success("Exchange rates saved.");

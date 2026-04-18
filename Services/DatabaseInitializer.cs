@@ -101,9 +101,9 @@ namespace ESCenter.Services
                 ["RepairStatus"] = "TEXT NOT NULL DEFAULT 'Received'",
                 ["PriorityLevel"] = "TEXT NOT NULL DEFAULT 'Normal'",
                 ["EstimatedCost"] = "REAL",
-                ["EstimatedCostCurrency"] = "TEXT DEFAULT 'EUR'",
+                ["EstimatedCostCurrency"] = "TEXT DEFAULT 'S.P'",
                 ["FinalCost"] = "REAL",
-                ["FinalCostCurrency"] = "TEXT DEFAULT 'EUR'",
+                ["FinalCostCurrency"] = "TEXT DEFAULT 'S.P'",
                 ["HasWarranty"] = "INTEGER DEFAULT 0",
                 ["WarrantyPeriod"] = "TEXT",
                 ["IsWarrantyRepair"] = "INTEGER DEFAULT 0",
@@ -132,6 +132,7 @@ namespace ESCenter.Services
                 ["PartType"] = "TEXT NOT NULL",
                 ["QuantityOnHand"] = "INTEGER DEFAULT 0",
                 ["Price"] = "REAL DEFAULT 0",
+                ["PriceCurrency"] = "TEXT DEFAULT 'S.P'",
                 ["QualityGrade"] = "INTEGER DEFAULT 3",
                 ["LocationShelf"] = "TEXT",
                 ["LocationBin"] = "TEXT",
@@ -180,6 +181,7 @@ namespace ESCenter.Services
                 ["Size"] = "TEXT",
                 ["QuantityOnHand"] = "INTEGER DEFAULT 0",
                 ["Price"] = "REAL DEFAULT 0",
+                ["PriceCurrency"] = "TEXT DEFAULT 'S.P'",
                 ["Condition"] = "TEXT",
                 ["QualityGrade"] = "INTEGER DEFAULT 3",
                 ["Source"] = "TEXT",
@@ -206,6 +208,7 @@ namespace ESCenter.Services
                 ["HolderID"] = "TEXT",
                 ["Notes"] = "TEXT",
                 ["Price"] = "REAL DEFAULT 0",
+                ["PriceCurrency"] = "TEXT DEFAULT 'S.P'",
                 ["AddedAt"] = "TEXT"
             };
 

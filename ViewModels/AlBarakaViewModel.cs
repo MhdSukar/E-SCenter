@@ -169,7 +169,7 @@ namespace ESCenter.ViewModels
                 Date = SelectedRecord.Date;
                 ItemName = SelectedRecord.ItemName;
                 Price = SelectedRecord.Price;
-                PriceCurrency = SelectedRecord.PriceCurrency;
+                PriceCurrency = NormalizeCurrency(SelectedRecord.PriceCurrency);
                 Category = SelectedRecord.Category;
                 Account = SelectedRecord.Account;
             }
@@ -224,7 +224,7 @@ namespace ESCenter.ViewModels
                         Date = Date,
                         ItemName = ItemName,
                         Price = Price,
-                        PriceCurrency = PriceCurrency,
+                        PriceCurrency = NormalizeCurrency(PriceCurrency),
                         Category = Category,
                         Account = Account?.Trim() ?? string.Empty
                     };
@@ -239,7 +239,7 @@ namespace ESCenter.ViewModels
                     SelectedRecord.Date = Date;
                     SelectedRecord.ItemName = ItemName;
                     SelectedRecord.Price = Price;
-                    SelectedRecord.PriceCurrency = PriceCurrency;
+                    SelectedRecord.PriceCurrency = NormalizeCurrency(PriceCurrency);
                     SelectedRecord.Category = Category;
                     SelectedRecord.Account = Account?.Trim() ?? string.Empty;
 
@@ -299,6 +299,7 @@ namespace ESCenter.ViewModels
                 var list = filtered.ToList();
                 foreach (var r in list)
                 {
+                    r.PriceCurrency = NormalizeCurrency(r.PriceCurrency);
                     Records.Add(r);
                 }
 
@@ -347,6 +348,9 @@ namespace ESCenter.ViewModels
             var spEquivalent = amount.Value * rate;
             return $"≈ {spEquivalent:N0} S.P";
         }
+
+        private static string NormalizeCurrency(string currency)
+            => string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
 
         private void OpenExchangeRates()
         {

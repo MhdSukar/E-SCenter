@@ -68,8 +68,8 @@ namespace ESCenter.ViewModels
 
             if (isDesignMode)
             {
-                Items.Add(new InventoryItemModel { ItemType = "Display", Brand = "Samsung", Model = "S21", QuantityOnHand = 5, Price = 38, Condition = "New", Description = "OLED Screen" });
-                Items.Add(new InventoryItemModel { ItemType = "Battery", Brand = "Apple", Model = "iPhone 12", QuantityOnHand = 2, Price = 24, Condition = "Refurb", Description = "Li-Ion Pack" });
+                Items.Add(new InventoryItemModel { ItemType = "Display", Brand = "Samsung", Model = "S21", QuantityOnHand = 5, Price = 38, PriceCurrency = "USD", Condition = "New", Description = "OLED Screen" });
+                Items.Add(new InventoryItemModel { ItemType = "Battery", Brand = "Apple", Model = "iPhone 12", QuantityOnHand = 2, Price = 24, PriceCurrency = "USD", Condition = "Refurb", Description = "Li-Ion Pack" });
                 _inventoryView.Refresh();
             }
             else
@@ -173,6 +173,7 @@ namespace ESCenter.ViewModels
                 Size = src.Size,
                 QuantityOnHand = src.QuantityOnHand,
                 Price = src.Price,
+                PriceCurrency = src.PriceCurrency,
                 Condition = src.Condition,
                 QualityGrade = src.QualityGrade,
                 Source = src.Source,

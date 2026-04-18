@@ -74,6 +74,13 @@ namespace ESCenter.Models
             set => SetProperty(ref _price, value);
         }
 
+        private string _priceCurrency = "S.P";
+        public string PriceCurrency
+        {
+            get => _priceCurrency;
+            set => SetProperty(ref _priceCurrency, value);
+        }
+
         private string _condition;
         public string Condition
         {

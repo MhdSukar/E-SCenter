@@ -338,10 +338,10 @@ namespace ESCenter.Services
                 PriorityLevel = reader["PriorityLevel"]?.ToString(),
 
                 EstimatedCost = reader["EstimatedCost"] != DBNull.Value ? Convert.ToDecimal(reader["EstimatedCost"]) : (decimal?)null,
-                EstimatedCostCurrency = reader["EstimatedCostCurrency"]?.ToString() ?? "S.P",
+                EstimatedCostCurrency = NormalizeCurrency(reader["EstimatedCostCurrency"]?.ToString()),
 
                 FinalCost = reader["FinalCost"] != DBNull.Value ? Convert.ToDecimal(reader["FinalCost"]) : (decimal?)null,
-                FinalCostCurrency = reader["FinalCostCurrency"]?.ToString() ?? "S.P",
+                FinalCostCurrency = NormalizeCurrency(reader["FinalCostCurrency"]?.ToString()),
 
                 RootCause = reader["RootCause"]?.ToString(),
                 PartsUsed = reader["PartsUsed"]?.ToString(),
@@ -384,10 +384,10 @@ namespace ESCenter.Services
             cmd.Parameters.AddWithValue("@priority", ticket.PriorityLevel ?? "Normal");
 
             cmd.Parameters.AddWithValue("@est", ticket.EstimatedCost ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@estCur", ticket.EstimatedCostCurrency ?? "S.P");
+            cmd.Parameters.AddWithValue("@estCur", NormalizeCurrency(ticket.EstimatedCostCurrency));
 
             cmd.Parameters.AddWithValue("@final", ticket.FinalCost ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@finalCur", ticket.FinalCostCurrency ?? "S.P");
+            cmd.Parameters.AddWithValue("@finalCur", NormalizeCurrency(ticket.FinalCostCurrency));
 
             cmd.Parameters.AddWithValue("@rootCause", ticket.RootCause ?? string.Empty);
             cmd.Parameters.AddWithValue("@parts", ticket.PartsUsed ?? string.Empty);
@@ -441,6 +441,9 @@ namespace ESCenter.Services
 
             return $"ESC-{nextNumber:D6}";
         }
+
+        private static string NormalizeCurrency(string currency)
+            => string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
 
 
         public string GetNextEscTicketId() => GenerateEscTicketId();

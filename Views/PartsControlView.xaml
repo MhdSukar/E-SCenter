@@ -384,13 +384,19 @@
                     <DataGridTemplateColumn Header="Price" Width="90" SortMemberPath="Price">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Price, StringFormat={}${0:F2}}"
-                                           Foreground="{StaticResource Gradient.Primary}"
+                                <TextBlock Foreground="{StaticResource Gradient.Primary}"
                                            FontWeight="SemiBold"
                                            FontSize="12"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Right"
-                                           Margin="0,0,6,0"/>
+                                           Margin="0,0,6,0">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0:F2} {1}">
+                                            <Binding Path="Price"/>
+                                            <Binding Path="PriceCurrency"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

@@ -21,6 +21,11 @@ namespace ESCenter.ViewModels
             "Phone", "Tablet", "Laptop", "Other"
         };
 
+        public ObservableCollection<string> Currencies { get; } = new()
+        {
+            "S.P", "USD"
+        };
+
         public bool IsEditMode { get; }
 
         public ICommand SaveCommand { get; }
@@ -36,8 +41,11 @@ namespace ESCenter.ViewModels
             Device = device ?? new BoneyardModel
             {
                 DeviceType = -1,
+                PriceCurrency = "S.P",
                 AddedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm")
             };
+
+            Device.PriceCurrency = NormalizeCurrency(Device.PriceCurrency);
 
             if (Device.DeviceType < 0)
             {
@@ -78,5 +86,8 @@ namespace ESCenter.ViewModels
                 }
             }
         }
+
+        private static string NormalizeCurrency(string currency)
+            => string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
     }
 }
