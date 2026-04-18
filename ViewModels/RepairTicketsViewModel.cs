@@ -211,7 +211,8 @@ namespace ESCenter.ViewModels
             get => _phoneNumber;
             set
             {
-                if (SetProperty(ref _phoneNumber, value))
+                var normalizedValue = NormalizeSyrianPhoneNumber(value);
+                if (SetProperty(ref _phoneNumber, normalizedValue))
                 {
                     RefreshCustomerProfile();
                     CheckForUnsavedChanges();
@@ -448,7 +449,14 @@ namespace ESCenter.ViewModels
         public bool IsReadyForPickup
         {
             get => _isReadyForPickup;
-            set { if (SetProperty(ref _isReadyForPickup, value)) CheckForUnsavedChanges(); }
+            set
+            {
+                if (SetProperty(ref _isReadyForPickup, value))
+                {
+                    CheckForUnsavedChanges();
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         private DeviceChecklist _deviceChecklist = new DeviceChecklist();
@@ -468,6 +476,7 @@ namespace ESCenter.ViewModels
         public ICommand ClearCommand           { get; }
         public ICommand CloseCommand           { get; }
         public ICommand ReopenCommand          { get; }
+        public ICommand CopyPickupMessageCommand { get; }
 
         // Parts commands
         public ICommand AddPartCommand            { get; }
@@ -511,6 +520,7 @@ namespace ESCenter.ViewModels
             ClearCommand  = new RelayCommand(_ => ClearForm());
             CloseCommand  = new RelayCommand(_ => CloseTicket(),  _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
+            CopyPickupMessageCommand = new RelayCommand(_ => CopyPickupMessage(), _ => CanCopyPickupMessage());
 
             // Parts commands
             AddPartCommand = new RelayCommand(param =>
@@ -820,7 +830,35 @@ namespace ESCenter.ViewModels
         // =========================================================
         private bool CanCloseTicket()  => SelectedTicket != null && !SelectedTicket.DeliveryDate.HasValue;
         private bool CanReopenTicket() => SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue;
+        private bool CanCopyPickupMessage() => SelectedTicket != null && IsReadyForPickup;
 
+        private void CopyPickupMessage()
+        {
+            if (!CanCopyPickupMessage())
+            {
+                return;
+            }
+
+            var customerName = string.IsNullOrWhiteSpace(CustomerName) ? "Customer" : CustomerName.Trim();
+            var deviceBrand = string.IsNullOrWhiteSpace(DeviceBrand) ? "Device" : DeviceBrand.Trim();
+            var deviceModel = string.IsNullOrWhiteSpace(DeviceModel) ? string.Empty : $" {DeviceModel.Trim()}";
+            var escTicketId = string.IsNullOrWhiteSpace(EscTicketId) ? "N/A" : EscTicketId.Trim();
+            var finalCostValue = FinalCost?.ToString("0.##", CultureInfo.CurrentCulture) ?? "0";
+            var finalCostCurrency = string.IsNullOrWhiteSpace(FinalCostCurrency) ? "S.P" : FinalCostCurrency.Trim();
+
+            var message =
+                        $@"Dear {customerName},
+
+                        Your {deviceBrand}{deviceModel} (Ticket: {escTicketId}) is ready for pickup.
+
+                        Final Cost: {finalCostValue} {finalCostCurrency}
+
+                        Please visit us at your earliest convenience.
+                        Thank you for choosing E-SCenter! 🔧";
+
+            System.Windows.Clipboard.SetText(message);
+            AppLogger.Success("Message copied to clipboard!");
+        }
         private void CloseTicket()
         {
             if (!CanCloseTicket()) return;
@@ -1830,6 +1868,31 @@ namespace ESCenter.ViewModels
 
         private static string NormalizeLookup(string value) =>
             string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
+
+        private static string NormalizeSyrianPhoneNumber(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            var trimmed = value.Trim();
+            var digits = new string(trimmed.Where(char.IsDigit).ToArray());
+            if (digits.Length == 0)
+                return trimmed;
+
+            if (digits.StartsWith("009639", StringComparison.Ordinal) && digits.Length == 14)
+                return $"+{digits[2..]}";
+
+            if (digits.StartsWith("9639", StringComparison.Ordinal) && digits.Length == 12)
+                return $"+{digits}";
+
+            if (digits.StartsWith("09", StringComparison.Ordinal) && digits.Length == 10)
+                return $"+963{digits[1..]}";
+
+            if (digits.StartsWith("9", StringComparison.Ordinal) && digits.Length == 9)
+                return $"+963{digits}";
+
+            return trimmed;
+        }
 
         private static string BuildCustomerProfileHeader(long? customerId, string name, string phone, int count)
         {
