@@ -189,24 +189,5 @@ namespace ESCenter.ViewModels
         // =====================
         // Search / Filter
         // =====================
-        private void ApplySearchFilter()
-        {
-            Devices.Clear();
-            var allDevices = _repo.GetAll();
-
-            var filtered = string.IsNullOrWhiteSpace(_searchText)
-                ? allDevices
-                : allDevices.Where(d =>
-                    (d.DeviceTypeText?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (d.Brand?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (d.Model?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (d.Condition?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (d.HolderID?.Contains(_searchText, StringComparison.OrdinalIgnoreCase) ?? false));
-
-            foreach (var d in filtered)
-            {
-                Devices.Add(d);
-            }
-        }
     }
 }
