@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
@@ -211,8 +212,7 @@ namespace ESCenter.ViewModels
             get => _phoneNumber;
             set
             {
-                var normalizedValue = NormalizeSyrianPhoneNumber(value);
-                if (SetProperty(ref _phoneNumber, normalizedValue))
+                if (SetProperty(ref _phoneNumber, value))
                 {
                     RefreshCustomerProfile();
                     CheckForUnsavedChanges();
@@ -224,7 +224,14 @@ namespace ESCenter.ViewModels
         public string ContactMethod
         {
             get => _contactMethod;
-            set { if (SetProperty(ref _contactMethod, value)) CheckForUnsavedChanges(); }
+            set
+            {
+                if (SetProperty(ref _contactMethod, value))
+                {
+                    CheckForUnsavedChanges();
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         private string _deviceCategory = string.Empty;
@@ -839,26 +846,81 @@ namespace ESCenter.ViewModels
                 return;
             }
 
-            var customerName = string.IsNullOrWhiteSpace(CustomerName) ? "Customer" : CustomerName.Trim();
-            var deviceBrand = string.IsNullOrWhiteSpace(DeviceBrand) ? "Device" : DeviceBrand.Trim();
+            var isArabic = string.Equals(UserPreferencesService.GetPickupMessageLanguage(), "Arabic", StringComparison.OrdinalIgnoreCase);
+            var message = BuildPickupMessage(isArabic);
+            var isWhatsApp = string.Equals(ContactMethod?.Trim(), "WhatsApp", StringComparison.OrdinalIgnoreCase);
+
+            if (isWhatsApp && TryOpenWhatsAppMessage(PhoneNumber, message))
+            {
+                AppLogger.Success("WhatsApp message opened successfully!");
+                return;
+            }
+
+            System.Windows.Clipboard.SetText(message);
+            AppLogger.Success("Message copied to clipboard!");
+        }
+
+        private string BuildPickupMessage(bool isArabic)
+        {
+            var customerName = string.IsNullOrWhiteSpace(CustomerName) ? (isArabic ? "العميل" : "Customer") : CustomerName.Trim();
+            var deviceBrand = string.IsNullOrWhiteSpace(DeviceBrand) ? (isArabic ? "الجهاز" : "Device") : DeviceBrand.Trim();
             var deviceModel = string.IsNullOrWhiteSpace(DeviceModel) ? string.Empty : $" {DeviceModel.Trim()}";
             var escTicketId = string.IsNullOrWhiteSpace(EscTicketId) ? "N/A" : EscTicketId.Trim();
             var finalCostValue = FinalCost?.ToString("0.##", CultureInfo.CurrentCulture) ?? "0";
             var finalCostCurrency = string.IsNullOrWhiteSpace(FinalCostCurrency) ? "S.P" : FinalCostCurrency.Trim();
 
-            var message =
-                        $@"Dear {customerName},
+            if (isArabic)
+            {
+                return
+                        $@"السيد/السيدة {customerName}،
 
-                        Your {deviceBrand}{deviceModel} (Ticket: {escTicketId}) is ready for pickup.
+                        جهازك {deviceBrand}{deviceModel} (رقم التذكرة: {escTicketId}) جاهز للاستلام.
 
-                        Final Cost: {finalCostValue} {finalCostCurrency}
+                        التكلفة النهائية: {finalCostValue} {finalCostCurrency}
 
-                        Please visit us at your earliest convenience.
-                        Thank you for choosing E-SCenter! 🔧";
+                        يرجى زيارتنا في أقرب وقت ممكن.
+                      شكرًا لاختيارك مركز الخدمات الألكترونية";
+            }
 
-            System.Windows.Clipboard.SetText(message);
-            AppLogger.Success("Message copied to clipboard!");
+            return
+                    $@"Dear {customerName},
+
+                    Your {deviceBrand}{deviceModel} (Ticket: {escTicketId}) is ready for pickup.
+
+                    Final Cost: {finalCostValue} {finalCostCurrency}
+
+                    Please visit us at your earliest convenience.
+                    Thank you for choosing E-SCenter";
         }
+
+        private bool TryOpenWhatsAppMessage(string? rawPhoneNumber, string message)
+        {
+            var digitsOnly = new string((rawPhoneNumber ?? string.Empty).Where(char.IsDigit).ToArray());
+            if (string.IsNullOrWhiteSpace(digitsOnly))
+            {
+                AppLogger.Warning("WhatsApp contact requires a valid phone number. Message copied to clipboard instead.");
+                return false;
+            }
+
+            var encodedMessage = Uri.EscapeDataString(message);
+            var url = $"https://wa.me/{digitsOnly}?text={encodedMessage}";
+
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Warning($"Failed to open WhatsApp URL: {ex.Message}. Message copied to clipboard instead.");
+                return false;
+            }
+        }
+
         private void CloseTicket()
         {
             if (!CanCloseTicket()) return;
@@ -1868,31 +1930,6 @@ namespace ESCenter.ViewModels
 
         private static string NormalizeLookup(string value) =>
             string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
-
-        private static string NormalizeSyrianPhoneNumber(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return string.Empty;
-
-            var trimmed = value.Trim();
-            var digits = new string(trimmed.Where(char.IsDigit).ToArray());
-            if (digits.Length == 0)
-                return trimmed;
-
-            if (digits.StartsWith("009639", StringComparison.Ordinal) && digits.Length == 14)
-                return $"+{digits[2..]}";
-
-            if (digits.StartsWith("9639", StringComparison.Ordinal) && digits.Length == 12)
-                return $"+{digits}";
-
-            if (digits.StartsWith("09", StringComparison.Ordinal) && digits.Length == 10)
-                return $"+963{digits[1..]}";
-
-            if (digits.StartsWith("9", StringComparison.Ordinal) && digits.Length == 9)
-                return $"+963{digits}";
-
-            return trimmed;
-        }
 
         private static string BuildCustomerProfileHeader(long? customerId, string name, string phone, int count)
         {

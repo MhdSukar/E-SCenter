@@ -295,7 +295,6 @@
                     <sys:String>In Repair</sys:String>
                     <sys:String>Testing</sys:String>
                     <sys:String>Waiting For Client Approval</sys:String>
-                    <sys:String>Ready for Pickup</sys:String>
                     <sys:String>Completed</sys:String>
                     <sys:String>Cancelled</sys:String>
                 </x:Array>
