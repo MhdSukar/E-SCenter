@@ -22,6 +22,7 @@ namespace ESCenter.ViewModels
         };
 
         public ObservableCollection<int> QualityGrades { get; } = new() { 1, 2, 3, 4, 5 };
+        public ObservableCollection<string> Currencies { get; } = new() { "S.P", "USD" };
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
@@ -32,6 +33,7 @@ namespace ESCenter.ViewModels
             {
                 QuantityOnHand = 1,
                 Price = 0,
+                PriceCurrency = "S.P",
                 QualityGrade = 3,
                 Condition = "New"
             };
@@ -55,6 +57,7 @@ namespace ESCenter.ViewModels
                 Size = existing.Size,
                 QuantityOnHand = existing.QuantityOnHand,
                 Price = existing.Price,
+                PriceCurrency = NormalizeCurrency(existing.PriceCurrency),
                 Condition = existing.Condition,
                 QualityGrade = existing.QualityGrade,
                 Source = existing.Source,
@@ -76,5 +79,8 @@ namespace ESCenter.ViewModels
                 win.Close();
             }
         }
+
+        private static string NormalizeCurrency(string currency)
+            => string.Equals(currency, "USD", System.StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
     }
 }

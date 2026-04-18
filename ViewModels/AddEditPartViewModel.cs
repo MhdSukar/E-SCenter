@@ -38,6 +38,7 @@ namespace ESCenter.ViewModels
 
         public ObservableCollection<string> Unit1Options { get; } = new();
         public ObservableCollection<string> Unit2Options { get; } = new();
+        public ObservableCollection<string> Currencies { get; } = new() { "S.P", "USD" };
 
         private string _selectedQuality;
         public string SelectedQuality
@@ -64,6 +65,7 @@ namespace ESCenter.ViewModels
         {
             IsEditMode = isEdit;
             Part = part ?? new PartModel();
+            Part.PriceCurrency = NormalizeCurrency(Part.PriceCurrency);
 
             SelectedQuality = Part.QualityDisplay;
 
@@ -170,5 +172,8 @@ namespace ESCenter.ViewModels
                 }
             }
         }
+
+        private static string NormalizeCurrency(string currency)
+            => string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
     }
 }

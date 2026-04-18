@@ -195,7 +195,14 @@
 
                         <!-- Price -->
                         <TextBlock Text="Price" Grid.Row="5" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Device.Price}" Grid.Row="5" Grid.Column="1" Style="{StaticResource GradiantTextboxStyle1}" Margin="0,4"/>
+                        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="0,4">
+                            <TextBox Width="120" Text="{Binding Device.Price}" Style="{StaticResource GradiantTextboxStyle1}"/>
+                            <ComboBox Width="70"
+                                      Margin="6,0,0,0"
+                                      ItemsSource="{Binding Currencies}"
+                                      SelectedItem="{Binding Device.PriceCurrency}"
+                                      Style="{StaticResource GradiantComboboxStyle11}"/>
+                        </StackPanel>
                         <!-- Notes -->
                         <TextBlock Text="Notes" Grid.Row="6" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
                         <TextBox Text="{Binding Device.Notes}" Grid.Row="6" Grid.Column="1" AcceptsReturn="True" Height="80" Style="{StaticResource GradiantTextboxStyle1}" Margin="0,4"/>

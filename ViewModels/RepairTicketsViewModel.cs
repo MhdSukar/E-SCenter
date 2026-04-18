@@ -129,7 +129,7 @@ namespace ESCenter.ViewModels
         // CURRENCY
         // =========================================================
         public ObservableCollection<string> Currencies { get; } =
-            new ObservableCollection<string> { "S.P", "USD", "EUR", "RON", "GBP", "CHF", "CAD", "TRY" };
+            new ObservableCollection<string> { "S.P", "USD" };
 
         private string _estimatedCostCurrency = "S.P";
         public string EstimatedCostCurrency
@@ -1502,8 +1502,8 @@ namespace ESCenter.ViewModels
             PriorityLevel      = ticket.PriorityLevel ?? "Normal";
             EstimatedCost         = ticket.EstimatedCost;
             FinalCost             = ticket.FinalCost;
-            EstimatedCostCurrency = ticket.EstimatedCostCurrency ?? "S.P";
-            FinalCostCurrency     = ticket.FinalCostCurrency     ?? "S.P";
+            EstimatedCostCurrency = NormalizeCurrency(ticket.EstimatedCostCurrency);
+            FinalCostCurrency     = NormalizeCurrency(ticket.FinalCostCurrency);
             RootCause        = ticket.RootCause     ?? string.Empty;
             HasWarranty      = ticket.HasWarranty;
             WarrantyPeriod   = ticket.WarrantyPeriod ?? string.Empty;
@@ -1598,6 +1598,9 @@ namespace ESCenter.ViewModels
             var spEquivalent = amount.Value * rate;
             return $"≈ {spEquivalent:N0} S.P";
         }
+
+        private static string NormalizeCurrency(string currency)
+            => string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
 
         private async Task LoadStatusHistoryAsync(int ticketId)
         {

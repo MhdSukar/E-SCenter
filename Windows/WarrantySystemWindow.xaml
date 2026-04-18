@@ -193,8 +193,20 @@
                                   ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
                                   CellStyle="{StaticResource CompactDataGridCellStyle}">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="*"/>
-                                <DataGridTextColumn Header="Device" Binding="{Binding DeviceName}" Width="2*"/>
+                                <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="200"/>
+                                <DataGridTextColumn Header="Device" Binding="{Binding DeviceName}" Width="600"/>
+                                <DataGridTemplateColumn Header="Serial / IMEI" Width="150" SortMemberPath="SerialNumber">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#14FFFFFF" CornerRadius="4" Padding="6,2"
+                    HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding SerialNumber}"
+                           FontFamily="Consolas" FontSize="11"
+                           Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
 
                                 <!-- Days Remaining — colour-coded -->
                                 <DataGridTemplateColumn Header="Days Remaining" Width="150" SortMemberPath="DaysRemainingText">
@@ -393,7 +405,7 @@
                             </DataGridTemplateColumn>
 
                             <!-- Warranty period -->
-                            <DataGridTemplateColumn Header="Warranty" Width="110" SortMemberPath="WarrantyPeriod">
+                            <DataGridTemplateColumn Header="Warranty" Width="100" SortMemberPath="WarrantyPeriod">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border Background="#1A5AA7FF" BorderBrush="#205AA7FF"

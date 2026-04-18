@@ -276,9 +276,16 @@
                                        HorizontalAlignment="Center"
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
-                            <TextBox Grid.Row="4" Grid.Column="3"
-                                     Style="{StaticResource GradiantTextboxStyle1}"
-                                     Text="{Binding Item.Price}"/>
+                            <StackPanel Grid.Row="4" Grid.Column="3" Orientation="Horizontal">
+                                <TextBox Width="90"
+                                         Style="{StaticResource GradiantTextboxStyle1}"
+                                         Text="{Binding Item.Price}"/>
+                                <ComboBox Width="54"
+                                          Margin="6,0,0,0"
+                                          Style="{StaticResource GradiantComboboxStyle11}"
+                                          ItemsSource="{Binding Currencies}"
+                                          SelectedItem="{Binding Item.PriceCurrency}"/>
+                            </StackPanel>
 
                             <!-- ================= CONDITION ================= -->
                             <TextBlock Grid.Row="5" Grid.Column="0"
