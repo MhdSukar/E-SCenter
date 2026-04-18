@@ -448,7 +448,14 @@ namespace ESCenter.ViewModels
         public bool IsReadyForPickup
         {
             get => _isReadyForPickup;
-            set { if (SetProperty(ref _isReadyForPickup, value)) CheckForUnsavedChanges(); }
+            set
+            {
+                if (SetProperty(ref _isReadyForPickup, value))
+                {
+                    CheckForUnsavedChanges();
+                    CommandManager.InvalidateRequerySuggested();
+                }
+            }
         }
 
         private DeviceChecklist _deviceChecklist = new DeviceChecklist();
@@ -468,6 +475,7 @@ namespace ESCenter.ViewModels
         public ICommand ClearCommand           { get; }
         public ICommand CloseCommand           { get; }
         public ICommand ReopenCommand          { get; }
+        public ICommand CopyPickupMessageCommand { get; }
 
         // Parts commands
         public ICommand AddPartCommand            { get; }
@@ -511,6 +519,7 @@ namespace ESCenter.ViewModels
             ClearCommand  = new RelayCommand(_ => ClearForm());
             CloseCommand  = new RelayCommand(_ => CloseTicket(),  _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
+            CopyPickupMessageCommand = new RelayCommand(_ => CopyPickupMessage(), _ => CanCopyPickupMessage());
 
             // Parts commands
             AddPartCommand = new RelayCommand(param =>
@@ -820,6 +829,35 @@ namespace ESCenter.ViewModels
         // =========================================================
         private bool CanCloseTicket()  => SelectedTicket != null && !SelectedTicket.DeliveryDate.HasValue;
         private bool CanReopenTicket() => SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue;
+        private bool CanCopyPickupMessage() => SelectedTicket != null && IsReadyForPickup;
+
+        private void CopyPickupMessage()
+        {
+            if (!CanCopyPickupMessage())
+            {
+                return;
+            }
+
+            var customerName = string.IsNullOrWhiteSpace(CustomerName) ? "Customer" : CustomerName.Trim();
+            var deviceBrand = string.IsNullOrWhiteSpace(DeviceBrand) ? "Device" : DeviceBrand.Trim();
+            var deviceModel = string.IsNullOrWhiteSpace(DeviceModel) ? string.Empty : $" {DeviceModel.Trim()}";
+            var escTicketId = string.IsNullOrWhiteSpace(EscTicketId) ? "N/A" : EscTicketId.Trim();
+            var finalCostValue = FinalCost?.ToString("0.##", CultureInfo.CurrentCulture) ?? "0";
+            var finalCostCurrency = string.IsNullOrWhiteSpace(FinalCostCurrency) ? "S.P" : FinalCostCurrency.Trim();
+
+            var message =
+$@"Dear {customerName},
+
+Your {deviceBrand}{deviceModel} (Ticket: {escTicketId}) is ready for pickup.
+
+Final Cost: {finalCostValue} {finalCostCurrency}
+
+Please visit us at your earliest convenience.
+Thank you for choosing E-SCenter! 🔧";
+
+            System.Windows.Clipboard.SetText(message);
+            AppLogger.Success("Message copied to clipboard!");
+        }
 
         private void CloseTicket()
         {
