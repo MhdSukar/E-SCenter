@@ -188,7 +188,14 @@
 
                         <!-- Price -->
                         <TextBlock Text="Price" Grid.Row="3" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <TextBox Text="{Binding Part.Price}" Grid.Row="3" Grid.Column="1" Style="{StaticResource GradiantTextboxStyle1}" Margin="0,4"/>
+                        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,4">
+                            <TextBox Width="100" Text="{Binding Part.Price}" Style="{StaticResource GradiantTextboxStyle1}"/>
+                            <ComboBox Width="70"
+                                      Margin="6,0,0,0"
+                                      ItemsSource="{Binding Currencies}"
+                                      SelectedItem="{Binding Part.PriceCurrency}"
+                                      Style="{StaticResource GradiantComboboxStyle11}"/>
+                        </StackPanel>
 
                         <!-- Quality -->
                         <TextBlock Text="Quality" Grid.Row="4" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>

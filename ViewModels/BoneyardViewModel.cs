@@ -148,6 +148,7 @@ namespace ESCenter.ViewModels
                 HolderID = SelectedDevice.HolderID,
                 Notes = SelectedDevice.Notes,
                 Price = SelectedDevice.Price,
+                PriceCurrency = SelectedDevice.PriceCurrency,
                 AddedAt = SelectedDevice.AddedAt
             };
 
@@ -164,6 +165,7 @@ namespace ESCenter.ViewModels
                 SelectedDevice.HolderID = clone.HolderID;
                 SelectedDevice.Notes = clone.Notes;
                 SelectedDevice.Price = clone.Price;
+                SelectedDevice.PriceCurrency = clone.PriceCurrency;
                 SelectedDevice.AddedAt = clone.AddedAt;
 
                 _repo.Update(SelectedDevice);

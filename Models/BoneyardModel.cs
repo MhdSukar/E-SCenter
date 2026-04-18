@@ -15,6 +15,7 @@
         public string HolderID { get; set; }
         public string Notes { get; set; }
         public double Price { get; set; }
+        public string PriceCurrency { get; set; } = "S.P";
         public string AddedAt { get; set; }
 
         public string DeviceTypeText =>

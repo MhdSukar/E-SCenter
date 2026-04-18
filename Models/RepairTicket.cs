@@ -36,10 +36,10 @@ namespace ESCenter.Models
 
         // ================= COST =================
         public decimal? EstimatedCost { get; set; }
-        public string EstimatedCostCurrency { get; set; } = "EUR";
+        public string EstimatedCostCurrency { get; set; } = "S.P";
 
         public decimal? FinalCost { get; set; }
-        public string FinalCostCurrency { get; set; } = "EUR";
+        public string FinalCostCurrency { get; set; } = "S.P";
 
         // ================= WARRANTY =================
         public bool HasWarranty { get; set; }

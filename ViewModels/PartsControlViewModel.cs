@@ -38,8 +38,8 @@ namespace ESCenter.ViewModels
 
                 if (isDesignMode)
                 {
-                    Parts.Add(new PartModel { PartId = 1, SKU = "IC-PWR-01", PartCode = "PMIC-IC", PartType = "IC", QuantityOnHand = 4, Price = 12.5, Category = "Power" });
-                    Parts.Add(new PartModel { PartId = 2, SKU = "DSP-GLX-22", PartCode = "LCD-S22", PartType = "Display", QuantityOnHand = 1, Price = 85, Category = "Screen" });
+                    Parts.Add(new PartModel { PartId = 1, SKU = "IC-PWR-01", PartCode = "PMIC-IC", PartType = "IC", QuantityOnHand = 4, Price = 12.5, PriceCurrency = "USD", Category = "Power" });
+                    Parts.Add(new PartModel { PartId = 2, SKU = "DSP-GLX-22", PartCode = "LCD-S22", PartType = "Display", QuantityOnHand = 1, Price = 85, PriceCurrency = "USD", Category = "Screen" });
                     BuildPartTypes();
                     PartsView.Refresh();
                     return;
@@ -215,6 +215,7 @@ namespace ESCenter.ViewModels
                 {
                     case nameof(PartModel.QuantityOnHand):
                     case nameof(PartModel.Price):
+                    case nameof(PartModel.PriceCurrency):
                     case nameof(PartModel.LocationShelf):
                     case nameof(PartModel.LocationBin):
                     case nameof(PartModel.QualityGrade):
@@ -470,6 +471,8 @@ namespace ESCenter.ViewModels
                     PartCode = p.PartCode,
                     PartType = p.PartType,
                     QuantityOnHand = p.QuantityOnHand,
+                    Price = p.Price,
+                    PriceCurrency = p.PriceCurrency,
                     QualityGrade = p.QualityGrade,
                     LocationShelf = p.LocationShelf,
                     LocationBin = p.LocationBin,
@@ -496,6 +499,8 @@ namespace ESCenter.ViewModels
                 dst.PartCode = src.PartCode;
                 dst.PartType = src.PartType;
                 dst.QuantityOnHand = src.QuantityOnHand;
+                dst.Price = src.Price;
+                dst.PriceCurrency = src.PriceCurrency;
                 dst.QualityGrade = src.QualityGrade;
                 dst.LocationShelf = src.LocationShelf;
                 dst.LocationBin = src.LocationBin;
