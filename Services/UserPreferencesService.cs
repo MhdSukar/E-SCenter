@@ -230,6 +230,7 @@ namespace ESCenter.Services
             , BackupLocation = string.Empty
             , BackupRetentionCount = 0
             , PickupMessageLanguage = "English"
+            , DashboardFinalCostCurrency = "S.P"
         };
 
         private static UserPreferences Normalize(UserPreferences? preferences)
@@ -269,6 +270,7 @@ namespace ESCenter.Services
             normalized.BackupLocation ??= string.Empty;
             normalized.BackupRetentionCount = normalized.BackupRetentionCount < 0 ? 0 : normalized.BackupRetentionCount;
             normalized.PickupMessageLanguage = NormalizePickupMessageLanguage(normalized.PickupMessageLanguage);
+            normalized.DashboardFinalCostCurrency = NormalizeDashboardFinalCostCurrency(normalized.DashboardFinalCostCurrency);
 
             // Ensure new preference exists when migrating from older settings
             // Default value is false (do not auto-grant admin access)
@@ -297,11 +299,31 @@ namespace ESCenter.Services
             Save(preferences);
         }
 
+        public static string GetDashboardFinalCostCurrency()
+        {
+            var preferences = Load();
+            return NormalizeDashboardFinalCostCurrency(preferences.DashboardFinalCostCurrency);
+        }
+
+        public static void SetDashboardFinalCostCurrency(string currency)
+        {
+            var preferences = Load();
+            preferences.DashboardFinalCostCurrency = NormalizeDashboardFinalCostCurrency(currency);
+            Save(preferences);
+        }
+
         private static string NormalizePickupMessageLanguage(string? language)
         {
             return string.Equals(language?.Trim(), "Arabic", StringComparison.OrdinalIgnoreCase)
                 ? "Arabic"
                 : "English";
+        }
+
+        private static string NormalizeDashboardFinalCostCurrency(string? currency)
+        {
+            return string.Equals(currency?.Trim(), "USD", StringComparison.OrdinalIgnoreCase)
+                ? "USD"
+                : "S.P";
         }
 
         public static bool GetAutoGrantAdminAccess()
@@ -402,6 +424,7 @@ namespace ESCenter.Services
             public string BackupLocation { get; set; } = string.Empty;
             public int BackupRetentionCount { get; set; } = 0;
             public string PickupMessageLanguage { get; set; } = "English";
+            public string DashboardFinalCostCurrency { get; set; } = "S.P";
             public Dictionary<string, decimal> ExchangeRates { get; set; } = new(StringComparer.OrdinalIgnoreCase);
         }
 

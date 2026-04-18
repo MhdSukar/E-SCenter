@@ -107,6 +107,7 @@ namespace ESCenter.ViewModels
         }
 
         public ICommand ShowDashboardCommand { get; }
+        public ICommand OpenDashboardTicketCommand { get; }
         public ICommand ShowRepairTicketsCommand { get; }
         public ICommand ShowOverdueTicketsCommand { get; }
         public ICommand ShowCriticalTicketsCommand { get; }
@@ -321,10 +322,20 @@ namespace ESCenter.ViewModels
                 Navigate(Dashboard, "Dashboard loaded");
             });
 
+            OpenDashboardTicketCommand = new RelayCommand(param =>
+            {
+                if (param is RepairTicket ticket)
+                {
+                    OpenDashboardTicket(ticket);
+                }
+            });
+
             ShowRepairTicketsCommand = new RelayCommand(_ =>
             {
                 ActiveSection = NavSection.RepairTickets;
-                Navigate(GetOrCreateRepairTicketsViewModel(), "Tickets loaded");
+                var vm = GetOrCreateRepairTicketsViewModel();
+                vm.ClearFocusedTicketFromIntegration();
+                Navigate(vm, "Tickets loaded");
             });
 
             ShowOverdueTicketsCommand = new RelayCommand(_ =>
@@ -444,6 +455,7 @@ namespace ESCenter.ViewModels
             {
                 AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
                 AppEvents.NavigateToTicketsRequested += () => ShowRepairTicketsCommand.Execute(null);
+                Dashboard.TicketSelected += OpenDashboardTicket;
             }
 
             CurrentView = Dashboard;
@@ -565,6 +577,19 @@ namespace ESCenter.ViewModels
         {
             CurrentView = viewModel;
             AppLogger.Success(successMessage);
+        }
+
+        private void OpenDashboardTicket(RepairTicket ticket)
+        {
+            if (ticket == null)
+            {
+                return;
+            }
+
+            ActiveSection = NavSection.RepairTickets;
+            var vm = GetOrCreateRepairTicketsViewModel();
+            vm.FocusTicketFromIntegration(ticket.TicketId);
+            Navigate(vm, $"Opened ticket: {ticket.EscTicketId}");
         }
 
         private void RunGlobalSearch()

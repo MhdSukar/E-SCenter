@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -57,6 +58,8 @@ namespace ESCenter.ViewModels
         public ObservableCollection<LowStockCounterItem> LowStockItems { get; } = new();
 
         public ICommand RefreshCommand { get; }
+        public ICommand OpenTicketCommand { get; }
+        public Action<RepairTicket>? TicketSelected;
 
         public DashboardViewModel()
         {
@@ -66,6 +69,13 @@ namespace ESCenter.ViewModels
             _inventoryRepository = AppServices.IsInitialized ? AppServices.Get<InventoryRepository>() : new InventoryRepository();
 
             RefreshCommand = new RelayCommand(_ => Refresh());
+            OpenTicketCommand = new RelayCommand(param =>
+            {
+                if (param is RepairTicket ticket)
+                {
+                    TicketSelected?.Invoke(ticket);
+                }
+            });
 
             if (isDesignMode)
             {
@@ -125,8 +135,10 @@ namespace ESCenter.ViewModels
                 RecentTickets.Clear();
                 foreach (var ticket in recentTicketsTask.Result)
                 {
+                    ticket.FinalCostCurrency = NormalizeCurrency(ticket.FinalCostCurrency);
                     RecentTickets.Add(ticket);
                 }
+                ApplyDashboardCostDisplayPreference();
                 WeeklyCompletionPercent = WeeklyTotalTickets == 0
                     ? 0
                     : (double)WeeklyFinishedTickets / WeeklyTotalTickets * 100.0;
@@ -143,6 +155,53 @@ namespace ESCenter.ViewModels
                 IsLoading = false;
             }
         }
+
+        private void ApplyDashboardCostDisplayPreference()
+        {
+            var preferredCurrency = UserPreferencesService.GetDashboardFinalCostCurrency();
+            var rates = UserPreferencesService.GetExchangeRates();
+            rates.TryGetValue("USD", out var usdRate);
+            if (usdRate <= 0)
+            {
+                usdRate = 1m;
+            }
+
+            foreach (var ticket in RecentTickets)
+            {
+                ticket.DashboardCostDisplay = FormatDashboardCost(ticket.FinalCost, ticket.FinalCostCurrency, preferredCurrency, usdRate);
+            }
+        }
+
+        private static string FormatDashboardCost(decimal? amount, string sourceCurrency, string targetCurrency, decimal usdRate)
+        {
+            if (!amount.HasValue)
+            {
+                return "-";
+            }
+
+            var normalizedSource = NormalizeCurrency(sourceCurrency);
+            var normalizedTarget = NormalizeCurrency(targetCurrency);
+
+            if (normalizedSource == normalizedTarget)
+            {
+                return $"{amount.Value:N0} {normalizedTarget}";
+            }
+
+            if (normalizedSource == "USD" && normalizedTarget == "S.P")
+            {
+                return $"{Math.Round(amount.Value * usdRate, 0):N0} S.P";
+            }
+
+            if (normalizedSource == "S.P" && normalizedTarget == "USD")
+            {
+                return $"{(amount.Value / usdRate).ToString("N2", CultureInfo.CurrentCulture)} USD";
+            }
+
+            return $"{amount.Value:N0} {normalizedSource}";
+        }
+
+        private static string NormalizeCurrency(string? currency)
+            => string.Equals(currency?.Trim(), "USD", StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
 
         private async Task UpdateLowStockCounterAsync()
         {
