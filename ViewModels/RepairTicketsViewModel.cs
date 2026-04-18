@@ -26,6 +26,7 @@ namespace ESCenter.ViewModels
         private string _lastKnownStatus = "Received";
         private string _formStateSnapshot = string.Empty;
         private CancellationTokenSource? _clientHistoryDebounceCts;
+        private int? _focusedTicketId;
 
         private bool _hasUnsavedChanges;
         public bool HasUnsavedChanges
@@ -546,8 +547,11 @@ namespace ESCenter.ViewModels
             ClearSearchCommand        = new RelayCommand(_ => SearchQuery = string.Empty);
             ResetFiltersCommand       = new RelayCommand(_ =>
             {
+                _focusedTicketId = null;
                 SelectedStatusFilter = "All";
                 SelectedPriorityFilter = "All";
+                ShowReadyPickupsOnly = false;
+                SearchQuery = string.Empty;
             });
             SelectClientHistoryTicketCommand = new RelayCommand(param =>
             {
@@ -590,6 +594,7 @@ namespace ESCenter.ViewModels
         // =========================================================
         public void PrepareNewTicketFromIntegration()
         {
+            _focusedTicketId = null;
             ShowReadyPickupsOnly = false;
             SearchQuery = string.Empty;
             SelectedStatusFilter = "Open";
@@ -598,6 +603,7 @@ namespace ESCenter.ViewModels
 
         public void SearchDeviceFromIntegration(string searchQuery)
         {
+            _focusedTicketId = null;
             ShowReadyPickupsOnly = false;
             SelectedStatusFilter = "All";
             SearchQuery = searchQuery?.Trim() ?? string.Empty;
@@ -605,6 +611,7 @@ namespace ESCenter.ViewModels
 
         public void ShowReadyPickupsFromIntegration()
         {
+            _focusedTicketId = null;
             SearchQuery = string.Empty;
             SelectedStatusFilter = "All";
             ShowReadyPickupsOnly = true;
@@ -612,6 +619,7 @@ namespace ESCenter.ViewModels
 
         public void ShowOverdueFromIntegration()
         {
+            _focusedTicketId = null;
             SelectedStatusFilter = "All";
             SelectedPriorityFilter = "All";
             SearchQuery = string.Empty;
@@ -621,6 +629,7 @@ namespace ESCenter.ViewModels
 
         public void ShowCriticalFromIntegration()
         {
+            _focusedTicketId = null;
             SelectedStatusFilter = "All";
             SelectedPriorityFilter = "All";
             SearchQuery = string.Empty;
@@ -629,6 +638,28 @@ namespace ESCenter.ViewModels
         }
 
         public ObservableCollection<RepairTicket> CustomerProfileHistory { get; } = new();
+
+        public void FocusTicketFromIntegration(int ticketId)
+        {
+            _focusedTicketId = ticketId;
+            SelectedStatusFilter = "All";
+            SelectedPriorityFilter = "All";
+            ShowReadyPickupsOnly = false;
+            SearchQuery = string.Empty;
+            _ticketsView.Refresh();
+
+            var ticket = Tickets.FirstOrDefault(t => t.TicketId == ticketId);
+            if (ticket != null)
+            {
+                SelectedTicket = ticket;
+            }
+        }
+
+        public void ClearFocusedTicketFromIntegration()
+        {
+            _focusedTicketId = null;
+            _ticketsView.Refresh();
+        }
 
         private string _customerProfileHeader = "Customer Profile";
         public string CustomerProfileHeader
@@ -663,8 +694,19 @@ namespace ESCenter.ViewModels
                 Tickets.Clear();
                 foreach (var t in tickets)
                     Tickets.Add(t);
+                if (_focusedTicketId.HasValue)
+                {
+                    var focused = Tickets.FirstOrDefault(t => t.TicketId == _focusedTicketId.Value);
+                    if (focused != null)
+                    {
+                        SelectedTicket = focused;
+                    }
+                }
                 EvaluateDuplicateMarkers();
-                ClearForm();
+                if (!_focusedTicketId.HasValue)
+                {
+                    ClearForm();
+                }
                 RefreshCustomerProfile();
                 _ticketsView.Refresh();
             }
@@ -684,6 +726,7 @@ namespace ESCenter.ViewModels
         private bool TicketFilter(object obj)
         {
             if (obj is not RepairTicket t) return false;
+            if (_focusedTicketId.HasValue && t.TicketId != _focusedTicketId.Value) return false;
 
             if (SelectedStatusFilter == "Open"   && t.DeliveryDate.HasValue)    return false;
             if (SelectedStatusFilter == "Closed" && !t.DeliveryDate.HasValue)   return false;
@@ -770,6 +813,7 @@ namespace ESCenter.ViewModels
             {
                 if (!ValidateForm()) return;
                 ApplyNaDefaults();
+                if (!ApplyReadyForPickupDecision()) return;
 
                 ApplyFormToTicket(SelectedTicket);
                 _service.Update(SelectedTicket);
@@ -837,7 +881,7 @@ namespace ESCenter.ViewModels
         // =========================================================
         private bool CanCloseTicket()  => SelectedTicket != null && !SelectedTicket.DeliveryDate.HasValue;
         private bool CanReopenTicket() => SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue;
-        private bool CanCopyPickupMessage() => SelectedTicket != null && IsReadyForPickup;
+        private bool CanCopyPickupMessage() => SelectedTicket != null;
 
         private void CopyPickupMessage()
         {
@@ -847,7 +891,7 @@ namespace ESCenter.ViewModels
             }
 
             var isArabic = string.Equals(UserPreferencesService.GetPickupMessageLanguage(), "Arabic", StringComparison.OrdinalIgnoreCase);
-            var message = BuildPickupMessage(isArabic);
+            var message = BuildStatusMessage(isArabic, RepairStatus);
             var isWhatsApp = string.Equals(ContactMethod?.Trim(), "WhatsApp", StringComparison.OrdinalIgnoreCase);
 
             if (isWhatsApp && TryOpenWhatsAppMessage(PhoneNumber, message))
@@ -860,7 +904,46 @@ namespace ESCenter.ViewModels
             AppLogger.Success("Message copied to clipboard!");
         }
 
-        private string BuildPickupMessage(bool isArabic)
+        private bool ApplyReadyForPickupDecision()
+        {
+            if (!IsReadyForPickup)
+            {
+                return true;
+            }
+
+            if (string.Equals(RepairStatus, "Completed", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(RepairStatus, "Cancelled", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            var choice = System.Windows.MessageBox.Show(
+                "This ticket is marked as Ready for Pickup.\nChoose Yes to mark Completed, No to mark Cancelled, or Cancel to stop saving.",
+                "Ready for Pickup Decision",
+                MessageBoxButton.YesNoCancel,
+                MessageBoxImage.Question);
+
+            if (choice == MessageBoxResult.Cancel)
+            {
+                return false;
+            }
+
+            if (choice == MessageBoxResult.Yes)
+            {
+                RepairStatus = "Completed";
+            }
+            else
+            {
+                RepairStatus = "Cancelled";
+                IsReadyForPickup = false;
+            }
+
+            DeliveryDate = DateTime.Today;
+            DeliveryTime = DateTime.Now.TimeOfDay;
+            return true;
+        }
+
+        private string BuildStatusMessage(bool isArabic, string status)
         {
             var customerName = string.IsNullOrWhiteSpace(CustomerName) ? (isArabic ? "العميل" : "Customer") : CustomerName.Trim();
             var deviceBrand = string.IsNullOrWhiteSpace(DeviceBrand) ? (isArabic ? "الجهاز" : "Device") : DeviceBrand.Trim();
@@ -868,29 +951,72 @@ namespace ESCenter.ViewModels
             var escTicketId = string.IsNullOrWhiteSpace(EscTicketId) ? "N/A" : EscTicketId.Trim();
             var finalCostValue = FinalCost?.ToString("0.##", CultureInfo.CurrentCulture) ?? "0";
             var finalCostCurrency = string.IsNullOrWhiteSpace(FinalCostCurrency) ? "S.P" : FinalCostCurrency.Trim();
+            var normalizedStatus = status?.Trim() ?? "Received";
 
             if (isArabic)
             {
-                return
-                        $@"السيد/السيدة {customerName}،
+                return normalizedStatus switch
+                {
+                    "Received" => $@"السيد/السيدة {customerName}،
 
-                        جهازك {deviceBrand}{deviceModel} (رقم التذكرة: {escTicketId}) جاهز للاستلام.
-
-                        التكلفة النهائية: {finalCostValue} {finalCostCurrency}
-
-                        يرجى زيارتنا في أقرب وقت ممكن.
-                      شكرًا لاختيارك مركز الخدمات الألكترونية";
+تم استلام جهازك {deviceBrand}{deviceModel} بنجاح.
+رقم التذكرة: {escTicketId}
+سنبدأ الفحص قريباً.
+شكراً لاختيارك مركز الخدمات الإلكترونية.",
+                    "Diagnosing" => $@"تم بدء تشخيص جهازك {deviceBrand}{deviceModel}.
+سنوافيك بأي تحديث قريباً.",
+                    "Waiting for Parts" => $@"جهازك {deviceBrand}{deviceModel} بانتظار توفر القطع اللازمة للإصلاح.
+سنقوم بإبلاغك فور توفرها.",
+                    "In Repair" => $@"جهازك {deviceBrand}{deviceModel} قيد الإصلاح حالياً.
+سنرسل لك تحديثاً عند انتقاله للمرحلة التالية.",
+                    "Testing" => $@"تم الانتهاء من الإصلاح الأساسي لجهازك {deviceBrand}{deviceModel}.
+الجهاز الآن في مرحلة الاختبار لضمان الجودة.",
+                    "Waiting For Client Approval" => $@"جهازك {deviceBrand}{deviceModel} بانتظار موافقتك على متابعة الإصلاح.
+يرجى التواصل معنا في أقرب وقت.",
+                    "Ready for Pickup" => $@"جهازك {deviceBrand}{deviceModel} جاهز للاستلام.
+التكلفة النهائية: {finalCostValue} {finalCostCurrency}
+يرجى زيارتنا في أقرب وقت ممكن.
+شكراً لاختيارك مركز الخدمات الإلكترونية.",
+                    "Completed" => $@"تم إكمال إصلاح جهازك {deviceBrand}{deviceModel} بنجاح.
+رقم التذكرة: {escTicketId}
+التكلفة النهائية: {finalCostValue} {finalCostCurrency}
+شكراً لاختيارك مركز الخدمات الإلكترونية.",
+                    "Cancelled" => $@"تم إلغاء طلب إصلاح جهازك {deviceBrand}{deviceModel}.
+إذا رغبت بإعادة فتح الطلب يرجى التواصل معنا.",
+                    _ => $@"تحديث حالة جهازك {deviceBrand}{deviceModel}: {normalizedStatus}."
+                };
             }
 
-            return
-                    $@"Dear {customerName},
+            return normalizedStatus switch
+            {
+                "Received" => $@"Dear {customerName},
 
-                    Your {deviceBrand}{deviceModel} (Ticket: {escTicketId}) is ready for pickup.
-
-                    Final Cost: {finalCostValue} {finalCostCurrency}
-
-                    Please visit us at your earliest convenience.
-                    Thank you for choosing E-SCenter";
+Your {deviceBrand}{deviceModel} has been received successfully.
+Ticket ESC ID: {escTicketId}
+We will begin diagnosis shortly.
+Thank you for choosing E-SCenter.",
+                "Diagnosing" => $@"Your {deviceBrand}{deviceModel} is currently under diagnosis.
+We will keep you updated soon.",
+                "Waiting for Parts" => $@"Your {deviceBrand}{deviceModel} is waiting for required parts.
+We will notify you once parts are available.",
+                "In Repair" => $@"Your {deviceBrand}{deviceModel} is currently in repair.
+We will send you the next update when the status changes.",
+                "Testing" => $@"Repair work for your {deviceBrand}{deviceModel} is done.
+Your device is now in quality testing.",
+                "Waiting For Client Approval" => $@"Your {deviceBrand}{deviceModel} is waiting for your approval to proceed.
+Please contact us at your earliest convenience.",
+                "Ready for Pickup" => $@"Your {deviceBrand}{deviceModel} is ready for pickup.
+Final Cost: {finalCostValue} {finalCostCurrency}
+Please visit us at your earliest convenience.
+Thank you for choosing E-SCenter.",
+                "Completed" => $@"Your {deviceBrand}{deviceModel} repair has been completed successfully.
+Ticket ESC ID: {escTicketId}
+Final Cost: {finalCostValue} {finalCostCurrency}
+Thank you for choosing E-SCenter.",
+                "Cancelled" => $@"Your {deviceBrand}{deviceModel} repair request has been cancelled.
+If you would like to reopen the request, please contact us.",
+                _ => $@"Status update for your {deviceBrand}{deviceModel}: {normalizedStatus}."
+            };
         }
 
         private bool TryOpenWhatsAppMessage(string? rawPhoneNumber, string message)

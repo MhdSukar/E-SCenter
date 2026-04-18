@@ -103,6 +103,11 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Style="{StaticResource TicketCardStyle}">
+                                    <Border.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick"
+                                                      Command="{Binding DataContext.OpenTicketCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                      CommandParameter="{Binding}"/>
+                                    </Border.InputBindings>
                                     <!-- Hover state via EventTrigger not needed — 
                                          wire NavigateToTicket via MouseLeftButtonUp
                                          in code-behind if desired -->
@@ -186,7 +191,7 @@
                                                        FontSize="10"
                                                        Foreground="{StaticResource TextTertiaryBrush}"
                                                        HorizontalAlignment="Right"/>
-                                            <TextBlock Text="{Binding FinalCostDisplay}"
+                                            <TextBlock Text="{Binding DashboardCostDisplay}"
                                                        FontSize="11"
                                                        FontWeight="SemiBold"
                                                        Foreground="#00E5D4"

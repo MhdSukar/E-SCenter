@@ -94,6 +94,14 @@
                                               SelectedItem="{Binding PickupMessageLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
 
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBlock Text="Dashboard Final Cost Currency:" VerticalAlignment="Center" Width="180"/>
+                                    <ComboBox Width="180"
+                                              Style="{StaticResource GradiantComboboxStyle11}"
+                                              ItemsSource="{Binding DashboardCostCurrencies}"
+                                              SelectedItem="{Binding DashboardFinalCostCurrency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+
                                 <Button Content="Back Up Now" Command="{Binding BackupNowCommand}" Style="{StaticResource GradientBorderButtonStyleGreen}" Margin="0,12,0,0"/>
                             </StackPanel>
                         </TabItem>
