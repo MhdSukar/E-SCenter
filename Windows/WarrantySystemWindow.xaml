@@ -193,6 +193,20 @@
                                   ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
                                   CellStyle="{StaticResource CompactDataGridCellStyle}">
                             <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="ESC-ID" Width="120" SortMemberPath="EscId">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#1A237EF2" BorderBrush="#30237EF2"
+                                                    BorderThickness="1" CornerRadius="4"
+                                                    Padding="7,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding EscId}"
+                                                           Foreground="#5AA7FF"
+                                                           FontFamily="Consolas"
+                                                           FontSize="11" FontWeight="SemiBold"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="200"/>
                                 <DataGridTextColumn Header="Device" Binding="{Binding DeviceName}" Width="600"/>
                                 <DataGridTemplateColumn Header="Serial / IMEI" Width="150" SortMemberPath="SerialNumber">
@@ -364,8 +378,8 @@
 
                         <DataGrid.Columns>
 
-                            <!-- Ticket Code — monospace chip -->
-                            <DataGridTemplateColumn Header="Ticket" Width="125" SortMemberPath="TicketCode">
+                            <!-- ESC-ID — monospace chip -->
+                            <DataGridTemplateColumn Header="ESC-ID" Width="125" SortMemberPath="TicketCode">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border Background="#1A237EF2" BorderBrush="#30237EF2"

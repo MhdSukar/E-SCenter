@@ -261,8 +261,10 @@ namespace ESCenter.Windows
 
                 ActiveWarrantyItems.Add(new ActiveWarrantyRow
                 {
+                    EscId = ticket.EscTicketId ?? $"ESC-{ticket.TicketId:D6}",
                     ClientName = string.IsNullOrWhiteSpace(ticket.CustomerName) ? "-" : ticket.CustomerName,
                     DeviceName = BuildDeviceName(ticket),
+                    SerialNumber = string.IsNullOrWhiteSpace(ticket.SerialIMEI) ? "-" : ticket.SerialIMEI,
                     DaysRemainingText = $"{daysRemaining} day(s)",
                     IsUrgent = daysRemaining <= 7
                 });
@@ -290,8 +292,10 @@ namespace ESCenter.Windows
 
     public class ActiveWarrantyRow
     {
+        public string EscId { get; set; } = string.Empty;
         public string ClientName { get; set; } = string.Empty;
         public string DeviceName { get; set; } = string.Empty;
+        public string SerialNumber { get; set; } = string.Empty;
         public string DaysRemainingText { get; set; } = string.Empty;
         public bool IsUrgent { get; set; }
     }
