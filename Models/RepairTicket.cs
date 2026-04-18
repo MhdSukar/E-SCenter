@@ -80,12 +80,15 @@ namespace ESCenter.Models
             {
                 if (FinalCost.HasValue)
                 {
-                    return $"{FinalCost.Value:F0} {FinalCostCurrency ?? "USD"}";
+                    return $"{FinalCost.Value:F0} {FinalCostCurrency ?? "S.P"}";
                 }
 
                 return "-";
             }
         }
+
+        [JsonIgnore]
+        public string DashboardCostDisplay { get; set; } = "-";
 
         [JsonIgnore]
         public bool IsRepeatedCustomer { get; set; }

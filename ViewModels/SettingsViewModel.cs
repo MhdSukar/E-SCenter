@@ -121,6 +121,25 @@ namespace ESCenter.ViewModels
 
         public string[] PickupMessageLanguages { get; } = { "English", "Arabic" };
 
+        private string _dashboardFinalCostCurrency = "S.P";
+        public string DashboardFinalCostCurrency
+        {
+            get => _dashboardFinalCostCurrency;
+            set
+            {
+                var normalized = string.Equals(value?.Trim(), "USD", StringComparison.OrdinalIgnoreCase)
+                    ? "USD"
+                    : "S.P";
+
+                if (SetProperty(ref _dashboardFinalCostCurrency, normalized))
+                {
+                    UserPreferencesService.SetDashboardFinalCostCurrency(normalized);
+                }
+            }
+        }
+
+        public string[] DashboardCostCurrencies { get; } = { "S.P", "USD" };
+
         private int _partsLowStockThreshold;
         public int PartsLowStockThreshold
         {
@@ -180,6 +199,7 @@ namespace ESCenter.ViewModels
             _backupLocation = UserPreferencesService.GetBackupLocation();
             _backupRetentionCount = UserPreferencesService.GetBackupRetentionCount();
             _pickupMessageLanguage = UserPreferencesService.GetPickupMessageLanguage();
+            _dashboardFinalCostCurrency = UserPreferencesService.GetDashboardFinalCostCurrency();
             var lowStockThresholds = UserPreferencesService.GetLowStockThresholds();
             _partsLowStockThreshold = Math.Max(1, lowStockThresholds.PartsThreshold);
             _inventoryLowStockThreshold = Math.Max(1, lowStockThresholds.InventoryThreshold);
@@ -219,6 +239,7 @@ namespace ESCenter.ViewModels
                 AutoGrantAdminAccess = false;
                 BackupLocation = string.Empty;
                 PickupMessageLanguage = "English";
+                DashboardFinalCostCurrency = "S.P";
 
                 MessageBox.Show("All app settings were reset to default.\nAdmin credentials are now default: Admin / Admin.", "Reset Completed", MessageBoxButton.OK, MessageBoxImage.Information);
                 AppLogger.Success("All app settings were reset to default.");

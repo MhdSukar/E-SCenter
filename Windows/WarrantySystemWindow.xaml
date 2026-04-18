@@ -208,7 +208,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="200"/>
-                                <DataGridTextColumn Header="Device" Binding="{Binding DeviceName}" Width="600"/>
+                                <DataGridTextColumn Header="Device" Binding="{Binding DeviceName}" Width="550"/>
                                 <DataGridTemplateColumn Header="Serial / IMEI" Width="150" SortMemberPath="SerialNumber">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
