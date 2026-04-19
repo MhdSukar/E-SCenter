@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using ESCenter.Core;
 
 namespace ESCenter.Services
 {
@@ -27,7 +28,7 @@ namespace ESCenter.Services
                     return;
                 }
 
-                await using var stream = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write, FileShare.None);
+                await using var stream = new FileStream(dialog.FileName, FileMode.Create, FileAccess.Write);
                 await using var writer = new StreamWriter(stream, new UTF8Encoding(true));
 
                 await writer.WriteLineAsync(string.Join(",", headers.Select(Escape)));
