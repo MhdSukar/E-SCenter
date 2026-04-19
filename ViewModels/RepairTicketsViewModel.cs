@@ -906,7 +906,7 @@ namespace ESCenter.ViewModels
 
             var t = SelectedTicket;
             var receipt = $"┌─────────────────────────────┐\n│  E-SCenter Repair Receipt   │\n├─────────────────────────────┤\n│ ESC-ID : {t.EscTicketId,-17}│\n│ Date   : {t.ReceiveDate:yyyy-MM-dd}         │\n│ Client : {t.CustomerName,-17}│\n│ Phone  : {t.PhoneNumber,-17}│\n│ Device : {($"{t.DeviceBrand} {t.DeviceModel}".Trim()),-17}│\n│ Serial : {t.SerialIMEI,-17}│\n│ Problem: {t.ProblemDescription,-17}│\n│ Status : {t.RepairStatus,-17}│\n│ Est.   : {(t.EstimatedCost?.ToString("N0") ?? "0")} {t.EstimatedCostCurrency}         │\n└─────────────────────────────┘";
-            Clipboard.SetText(receipt);
+            System.Windows.Clipboard.SetText(receipt);
             AppLogger.Success("Receipt copied to clipboard.");
         }
 
