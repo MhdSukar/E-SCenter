@@ -1083,16 +1083,16 @@ namespace ESCenter.ViewModels
             }
 
             EnsureStatusToggle("ongoing", "#FFFFFF");
-            EnsureStatusToggle("Finished", "#5AA7FF");
+            EnsureStatusToggle("closed", "#5AA7FF");
             EnsureStatusToggle("Major", "#FFD54A");
             EnsureStatusToggle("Critical", "#FF8C42");
             EnsureStatusToggle("Overdue", "#FF5A5A");
-            OrderStatusToggles("ongoing", "Finished", "Major", "Critical", "Overdue");
+            OrderStatusToggles("ongoing", "closed", "Major", "Critical", "Overdue");
 
             TicketsSeries = new ISeries[]
             {
                 BuildSeries("ongoing", openCounts, SKColor.Parse("#FFFFFF")),
-                BuildSeries("Finished", finishedCounts, SKColor.Parse("#5AA7FF")),
+                BuildSeries("closed", finishedCounts, SKColor.Parse("#5AA7FF")),
                 BuildSeries("Major", majorCounts, SKColor.Parse("#FFD54A")),
                 BuildSeries("Critical", criticalCounts, SKColor.Parse("#FF8C42")),
                 BuildSeries("Overdue", overdueCounts, SKColor.Parse("#FF5A5A"))

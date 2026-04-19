@@ -16,7 +16,7 @@ namespace ESCenter.Converters
             var iconResourceKey = key switch
             {
                 "ongoing" => "CharOngoing",
-                "Finished" => "CharFinished",
+                "closed" => "CharFinished",
                 "Major" => "CharMajor",
                 "Critical" => "CharCritical",
                 "Overdue" => "CharOverdue",
