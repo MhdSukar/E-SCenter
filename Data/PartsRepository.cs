@@ -88,6 +88,72 @@ namespace ESCenter.Data
         public Task DecrementQuantityBySkuAsync(string sku, int amount)
             => Task.Run(() => DecrementQuantityBySku(sku, amount));
 
+        
+        public bool ExistsByName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(@"
+                SELECT COUNT(1)
+                FROM Parts
+                WHERE LOWER(IFNULL(TRIM(PartCode), '')) = LOWER(@name)
+                   OR LOWER(IFNULL(TRIM(Description), '')) = LOWER(@name);", conn);
+            cmd.Parameters.AddWithValue("@name", name.Trim());
+
+            var result = cmd.ExecuteScalar();
+            return result != null && result != DBNull.Value && Convert.ToInt32(result) > 0;
+        }
+
+
+        public void DecrementQuantityByName(string name, int amount)
+        {
+            if (string.IsNullOrWhiteSpace(name) || amount <= 0)
+            {
+                return;
+            }
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(@"
+                UPDATE Parts
+                SET QuantityOnHand = CASE
+                    WHEN QuantityOnHand - @amount < 0 THEN 0
+                    ELSE QuantityOnHand - @amount
+                END
+                WHERE LOWER(IFNULL(TRIM(PartCode), '')) = LOWER(@name)
+                   OR LOWER(IFNULL(TRIM(Description), '')) = LOWER(@name);", conn);
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@name", name.Trim());
+            cmd.ExecuteNonQuery();
+        }
+
+        public void RestoreQuantityByName(string name, int amount)
+        {
+            if (string.IsNullOrWhiteSpace(name) || amount <= 0)
+            {
+                return;
+            }
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(@"
+                UPDATE Parts
+                SET QuantityOnHand = QuantityOnHand + @amount
+                WHERE LOWER(IFNULL(TRIM(PartCode), '')) = LOWER(@name)
+                   OR LOWER(IFNULL(TRIM(Description), '')) = LOWER(@name);", conn);
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@name", name.Trim());
+            cmd.ExecuteNonQuery();
+        }
+
         // -------------------------
         // INSERT
         // -------------------------

@@ -19,7 +19,7 @@ using SkiaSharp;
 
 namespace ESCenter.ViewModels
 {
-    public class MainViewModel : ObservableObject
+    public class MainViewModel : ObservableObject, IDisposable
     {
         private ICommand? _requestAdminAccessCommand;
         public ICommand RequestAdminAccessCommand => _requestAdminAccessCommand ??= new RelayCommand(_ => RequestAdminAccess());
@@ -252,6 +252,11 @@ namespace ESCenter.ViewModels
         private readonly DispatcherTimer _clockTimer;
         private readonly DispatcherTimer _statusResetTimer;
         private readonly DispatcherTimer _databaseStatusTimer;
+        private readonly DispatcherTimer _autoRefreshTimer;
+        private Action? _dashboardRefreshRequestedHandler;
+        private Action? _navigateToTicketsRequestedHandler;
+        private EventHandler? _ticketsChangedHandler;
+        private EventHandler? _databasePathChangedHandler;
         private readonly TicketsDataService _chartDataService;
         private RepairTicketsViewModel? _repairTicketsViewModel;
         private PartsControlViewModel? _partsControlViewModel;
@@ -453,8 +458,10 @@ namespace ESCenter.ViewModels
             // F-key bindings use these commands (declared separately so XAML can bind by name)
             if (!isDesignMode)
             {
-                AppEvents.DashboardRefreshRequested += () => Dashboard.Refresh();
-                AppEvents.NavigateToTicketsRequested += () => ShowRepairTicketsCommand.Execute(null);
+                _dashboardRefreshRequestedHandler = () => Dashboard.Refresh();
+                _navigateToTicketsRequestedHandler = () => ShowRepairTicketsCommand.Execute(null);
+                AppEvents.DashboardRefreshRequested += _dashboardRefreshRequestedHandler;
+                AppEvents.NavigateToTicketsRequested += _navigateToTicketsRequestedHandler;
                 Dashboard.TicketSelected += OpenDashboardTicket;
             }
 
@@ -487,21 +494,30 @@ namespace ESCenter.ViewModels
                 RefreshDatabaseFileSizeAndBackupInfo();
             }
 
+            _autoRefreshTimer = new DispatcherTimer();
+            _autoRefreshTimer.Tick += (_, _) =>
+            {
+                Dashboard.Refresh();
+                RefreshTicketsChartAsync().FireAndForget(nameof(RefreshTicketsChartAsync));
+            };
+
             if (!isDesignMode)
             {
                 AppLogger.StatusRaised += OnStatusRaised;
-                TicketEvents.TicketsChanged += async (_, _) =>
+                _ticketsChangedHandler = async (_, _) =>
                 {
                     await RefreshTicketsChartAsync();
                     await RefreshWarrantyAlertCountAsync();
                 };
-                DatabasePathService.DatabasePathChanged += async (_, _) =>
+                _databasePathChangedHandler = async (_, _) =>
                 {
                     await RefreshTicketsChartAsync();
                     await RefreshWarrantyAlertCountAsync();
                     await RefreshDatabaseConnectionStatusAsync();
                     RefreshDatabaseFileSizeAndBackupInfo();
                 };
+                TicketEvents.TicketsChanged += _ticketsChangedHandler;
+                DatabasePathService.DatabasePathChanged += _databasePathChangedHandler;
             }
 
             ToggleCurveVisibilityCommand = new RelayCommand(param =>
@@ -525,6 +541,7 @@ namespace ESCenter.ViewModels
                 RefreshTicketsChart();
                 RefreshWarrantyAlertCountAsync().FireAndForget(nameof(RefreshWarrantyAlertCountAsync));
                 RefreshDatabaseConnectionStatus();
+                ApplyAutoRefreshInterval(UserPreferencesService.GetAutoRefreshIntervalSeconds());
             }
         }
 
@@ -1234,6 +1251,65 @@ namespace ESCenter.ViewModels
 
             OnPropertyChanged(nameof(TicketsSeries));
         }
+
+
+        public void ApplyAutoRefreshInterval(int seconds)
+        {
+            var normalized = Math.Max(0, seconds);
+            UserPreferencesService.SetAutoRefreshIntervalSeconds(normalized);
+
+            if (normalized == 0)
+            {
+                _autoRefreshTimer.Stop();
+                return;
+            }
+
+            _autoRefreshTimer.Interval = TimeSpan.FromSeconds(normalized);
+            _autoRefreshTimer.Stop();
+            _autoRefreshTimer.Start();
+        }
+
+        public void Dispose()
+        {
+            _clockTimer.Stop();
+            _statusResetTimer.Stop();
+            _databaseStatusTimer.Stop();
+            _autoRefreshTimer.Stop();
+
+            AppLogger.StatusRaised -= OnStatusRaised;
+
+            if (_ticketsChangedHandler != null)
+            {
+                TicketEvents.TicketsChanged -= _ticketsChangedHandler;
+                _ticketsChangedHandler = null;
+            }
+
+            if (_databasePathChangedHandler != null)
+            {
+                DatabasePathService.DatabasePathChanged -= _databasePathChangedHandler;
+                _databasePathChangedHandler = null;
+            }
+
+            if (_dashboardRefreshRequestedHandler != null)
+            {
+                AppEvents.DashboardRefreshRequested -= _dashboardRefreshRequestedHandler;
+                _dashboardRefreshRequestedHandler = null;
+            }
+
+            if (_navigateToTicketsRequestedHandler != null)
+            {
+                AppEvents.NavigateToTicketsRequested -= _navigateToTicketsRequestedHandler;
+                _navigateToTicketsRequestedHandler = null;
+            }
+
+            Dashboard.TicketSelected -= OpenDashboardTicket;
+            (Dashboard as IDisposable)?.Dispose();
+            (_repairTicketsViewModel as IDisposable)?.Dispose();
+            (_partsControlViewModel as IDisposable)?.Dispose();
+            (_inventoryViewModel as IDisposable)?.Dispose();
+            (_boneyardViewModel as IDisposable)?.Dispose();
+        }
+
         public enum NavSection
         {
             None,

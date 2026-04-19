@@ -75,7 +75,9 @@ namespace ESCenter.Services
                 ["UpdatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP"
             };
 
-            return EnsureTable(conn, tableName, expectedColumns);
+            var report = EnsureTable(conn, tableName, expectedColumns);
+            MigratePartsUnitColumns(conn);
+            return report;
         }
 
         private string EnsureTicketsTable(SQLiteConnection conn)
@@ -118,7 +120,9 @@ namespace ESCenter.Services
                 ["UpdatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP"
             };
 
-            return EnsureTable(conn, tableName, expectedColumns);
+            var report = EnsureTable(conn, tableName, expectedColumns);
+            MigratePartsUnitColumns(conn);
+            return report;
         }
 
         private string EnsurePartsTable(SQLiteConnection conn)
@@ -138,14 +142,16 @@ namespace ESCenter.Services
                 ["LocationBin"] = "TEXT",
                 ["UnitValue1"] = "REAL DEFAULT 0",
                 ["UnitCode1"] = "TEXT",
-                ["UnitValue2"] = "TEXT",
-                ["UnitCode2"] = "REAL DEFAULT 0",
+                ["UnitValue2"] = "REAL DEFAULT 0",
+                ["UnitCode2"] = "TEXT",
                 ["ChipPartNumber"] = "TEXT",
                 ["Category"] = "TEXT",
                 ["Description"] = "TEXT"
             };
 
-            return EnsureTable(conn, tableName, expectedColumns);
+            var report = EnsureTable(conn, tableName, expectedColumns);
+            MigratePartsUnitColumns(conn);
+            return report;
         }
 
         private string EnsureTicketStatusHistoryTable(SQLiteConnection conn)
@@ -260,6 +266,99 @@ namespace ESCenter.Services
             }
 
             return columns;
+        }
+
+
+        private void MigratePartsUnitColumns(SQLiteConnection conn)
+        {
+            try
+            {
+                var typeMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                using (var pragma = new SQLiteCommand("PRAGMA table_info(Parts);", conn))
+                using (var reader = pragma.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var name = reader["name"]?.ToString() ?? string.Empty;
+                        var type = reader["type"]?.ToString() ?? string.Empty;
+                        if (!string.IsNullOrWhiteSpace(name))
+                        {
+                            typeMap[name] = type.Trim().ToUpperInvariant();
+                        }
+                    }
+                }
+
+                var unitValue2Wrong = typeMap.TryGetValue("UnitValue2", out var unitValue2Type)
+                    && unitValue2Type.Contains("TEXT", StringComparison.OrdinalIgnoreCase);
+                var unitCode2Wrong = typeMap.TryGetValue("UnitCode2", out var unitCode2Type)
+                    && unitCode2Type.Contains("REAL", StringComparison.OrdinalIgnoreCase);
+
+                if (!unitValue2Wrong && !unitCode2Wrong)
+                {
+                    return;
+                }
+
+                using var tx = conn.BeginTransaction();
+
+                using (var renameCmd = new SQLiteCommand("ALTER TABLE Parts RENAME TO Parts_old;", conn, tx))
+                {
+                    renameCmd.ExecuteNonQuery();
+                }
+
+                var expectedColumns = new Dictionary<string, string>
+                {
+                    ["PartId"] = "INTEGER PRIMARY KEY AUTOINCREMENT",
+                    ["SKU"] = "TEXT",
+                    ["PartCode"] = "TEXT",
+                    ["PartType"] = "TEXT NOT NULL",
+                    ["QuantityOnHand"] = "INTEGER DEFAULT 0",
+                    ["Price"] = "REAL DEFAULT 0",
+                    ["PriceCurrency"] = "TEXT DEFAULT 'S.P'",
+                    ["QualityGrade"] = "INTEGER DEFAULT 3",
+                    ["LocationShelf"] = "TEXT",
+                    ["LocationBin"] = "TEXT",
+                    ["UnitValue1"] = "REAL DEFAULT 0",
+                    ["UnitCode1"] = "TEXT",
+                    ["UnitValue2"] = "REAL DEFAULT 0",
+                    ["UnitCode2"] = "TEXT",
+                    ["ChipPartNumber"] = "TEXT",
+                    ["Category"] = "TEXT",
+                    ["Description"] = "TEXT"
+                };
+
+                var defs = string.Join(", ", expectedColumns.Select(c => $"{c.Key} {c.Value}"));
+                using (var createCmd = new SQLiteCommand($"CREATE TABLE Parts ({defs});", conn, tx))
+                {
+                    createCmd.ExecuteNonQuery();
+                }
+
+                const string copySql = @"
+                    INSERT INTO Parts (PartId, SKU, PartCode, PartType, QuantityOnHand, Price, PriceCurrency, QualityGrade, LocationShelf, LocationBin, UnitValue1, UnitCode1, UnitValue2, UnitCode2, ChipPartNumber, Category, Description)
+                    SELECT PartId, SKU, PartCode, PartType, QuantityOnHand, Price, PriceCurrency, QualityGrade, LocationShelf, LocationBin, UnitValue1, UnitCode1,
+                           CASE
+                               WHEN UnitValue2 IS NULL OR TRIM(CAST(UnitValue2 AS TEXT)) = '' THEN 0
+                               ELSE CAST(UnitValue2 AS REAL)
+                           END AS UnitValue2,
+                           CAST(UnitCode2 AS TEXT) AS UnitCode2,
+                           ChipPartNumber, Category, Description
+                    FROM Parts_old;";
+
+                using (var copyCmd = new SQLiteCommand(copySql, conn, tx))
+                {
+                    copyCmd.ExecuteNonQuery();
+                }
+
+                using (var dropCmd = new SQLiteCommand("DROP TABLE Parts_old;", conn, tx))
+                {
+                    dropCmd.ExecuteNonQuery();
+                }
+
+                tx.Commit();
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to migrate Parts unit columns: {ex.Message}");
+            }
         }
 
         private void CreateTable(SQLiteConnection conn, string tableName, Dictionary<string, string> columns)

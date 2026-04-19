@@ -12,10 +12,11 @@ using ESCenter.Views;
 
 namespace ESCenter.ViewModels
 {
-    public class BoneyardViewModel : ObservableObject
+    public class BoneyardViewModel : ObservableObject, IDisposable
     {
         private readonly BoneyardRepository _repo;
         private readonly ICollectionView _devicesView;
+        private EventHandler? _databasePathChangedHandler;
 
         public ObservableCollection<BoneyardModel> Devices { get; } = new();
 
@@ -69,7 +70,8 @@ namespace ESCenter.ViewModels
                 return;
             }
 
-            DatabasePathService.DatabasePathChanged += (_, __) => LoadDevices();
+            _databasePathChangedHandler = (_, __) => LoadDevices();
+            DatabasePathService.DatabasePathChanged += _databasePathChangedHandler;
             LoadDevices();
         }
 
@@ -191,5 +193,14 @@ namespace ESCenter.ViewModels
         // =====================
         // Search / Filter
         // =====================
+
+        public void Dispose()
+        {
+            if (_databasePathChangedHandler != null)
+            {
+                DatabasePathService.DatabasePathChanged -= _databasePathChangedHandler;
+                _databasePathChangedHandler = null;
+            }
+        }
     }
 }

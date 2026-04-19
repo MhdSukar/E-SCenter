@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.IO.Pipes;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +20,7 @@ namespace ESCenter
         private NotifyIcon? _trayIcon;
         private TrayPopupWindow? _trayPopup;
         private BackupService? _backupService;
+        private CancellationTokenSource? _pipeServerCts;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -26,11 +29,13 @@ namespace ESCenter
             const string appName = "ESCenterUniqueAppName";
             var createdNew = false;
 
+            StartActivationPipeServer();
+
             _mutex = new Mutex(true, appName, out createdNew);
 
             if (!createdNew)
             {
-                BringExistingInstanceToFront();
+                TryActivateExistingInstance();
                 Shutdown();
                 return;
             }
@@ -82,17 +87,48 @@ namespace ESCenter
             _backupService.Start();
         }
 
-        private void BringExistingInstanceToFront()
+        private void StartActivationPipeServer()
         {
-            foreach (Window window in Current.Windows)
+            _pipeServerCts = new CancellationTokenSource();
+            var token = _pipeServerCts.Token;
+
+            Task.Run(async () =>
             {
-                if (window is MainWindow main)
+                while (!token.IsCancellationRequested)
                 {
-                    main.WindowState = WindowState.Normal;
-                    main.Show();
-                    main.Activate();
-                    break;
+                    try
+                    {
+                        using var server = new NamedPipeServerStream("ESCenterActivatePipe", PipeDirection.In, 1, PipeTransmissionMode.Message, PipeOptions.Asynchronous);
+                        await server.WaitForConnectionAsync(token);
+                        using var reader = new StreamReader(server);
+                        var message = await reader.ReadLineAsync();
+                        if (string.Equals(message?.Trim(), "ACTIVATE", StringComparison.OrdinalIgnoreCase))
+                        {
+                            await Current.Dispatcher.InvokeAsync(ShowMainWindow);
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                    catch
+                    {
+                    }
                 }
+            }, token);
+        }
+
+        private void TryActivateExistingInstance()
+        {
+            try
+            {
+                using var client = new NamedPipeClientStream(".", "ESCenterActivatePipe", PipeDirection.Out);
+                client.Connect(500);
+                using var writer = new StreamWriter(client) { AutoFlush = true };
+                writer.WriteLine("ACTIVATE");
+            }
+            catch
+            {
             }
         }
 
@@ -123,6 +159,8 @@ namespace ESCenter
             }
 
             _backupService?.Dispose();
+            _pipeServerCts?.Cancel();
+            _pipeServerCts?.Dispose();
 
             Shutdown();
         }
@@ -198,6 +236,8 @@ namespace ESCenter
             }
 
             _backupService?.Dispose();
+            _pipeServerCts?.Cancel();
+            _pipeServerCts?.Dispose();
 
             if (_mutex != null)
             {

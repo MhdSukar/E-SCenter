@@ -144,6 +144,7 @@ namespace ESCenter.ViewModels
         public ICommand DeleteCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand OpenExchangeRatesCommand { get; }
+        public ICommand ExportAlBarakaCsvCommand { get; }
 
         public AlBarakaViewModel()
         {
@@ -152,6 +153,7 @@ namespace ESCenter.ViewModels
             DeleteCommand = new RelayCommand(_ => Delete(), _ => SelectedRecord != null);
             RefreshCommand = new RelayCommand(_ => Refresh());
             OpenExchangeRatesCommand = new RelayCommand(_ => OpenExchangeRates());
+            ExportAlBarakaCsvCommand = new RelayCommand(_ => ExportAlBarakaCsv().FireAndForget(nameof(ExportAlBarakaCsv)));
 
             // default filters: beginning and end of current month
             var today = DateTime.Today;
@@ -160,6 +162,17 @@ namespace ESCenter.ViewModels
             Date = today;
 
             Refresh();
+        }
+
+        private async System.Threading.Tasks.Task ExportAlBarakaCsv()
+        {
+            await CsvExportService.ExportAsync(Records.Cast<object>(),
+                new[] { "Date", "ItemName", "Price", "Currency", "Category", "Account" },
+                row =>
+                {
+                    var r = (AlBarakaRecord)row;
+                    return new[] { r.Date.ToString("yyyy-MM-dd"), r.ItemName ?? string.Empty, r.Price?.ToString("0.##") ?? string.Empty, r.PriceCurrency ?? "S.P", r.Category ?? string.Empty, r.Account ?? string.Empty };
+                }, "albaraka-export.csv");
         }
 
         private void UpdateFormFromSelection()

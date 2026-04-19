@@ -19,7 +19,7 @@ using ESCenter.Services;
 
 namespace ESCenter.ViewModels
 {
-    public class RepairTicketsViewModel : ObservableObject
+    public class RepairTicketsViewModel : ObservableObject, IDisposable
     {
         private readonly TicketsDataService _service;
         private readonly TicketStatusHistoryRepository _statusHistoryRepository = new();
@@ -27,6 +27,7 @@ namespace ESCenter.ViewModels
         private string _formStateSnapshot = string.Empty;
         private CancellationTokenSource? _clientHistoryDebounceCts;
         private int? _focusedTicketId;
+        private EventHandler? _databasePathChangedHandler;
 
         private bool _hasUnsavedChanges;
         public bool HasUnsavedChanges
@@ -485,6 +486,8 @@ namespace ESCenter.ViewModels
         public ICommand CloseCommand           { get; }
         public ICommand ReopenCommand          { get; }
         public ICommand CopyPickupMessageCommand { get; }
+        public ICommand CopyReceiptCommand { get; }
+        public ICommand ExportTicketsCsvCommand { get; }
 
         // Parts commands
         public ICommand AddPartCommand            { get; }
@@ -509,7 +512,8 @@ namespace ESCenter.ViewModels
             _service = AppServices.IsInitialized ? AppServices.Get<TicketsDataService>() : new TicketsDataService();
             if (!isDesignMode)
             {
-                DatabasePathService.DatabasePathChanged += async (_, __) => await LoadTicketsAsync();
+                _databasePathChangedHandler = async (_, __) => await LoadTicketsAsync();
+                DatabasePathService.DatabasePathChanged += _databasePathChangedHandler;
             }
 
             Tickets = new ObservableCollection<RepairTicket>();
@@ -529,6 +533,8 @@ namespace ESCenter.ViewModels
             CloseCommand  = new RelayCommand(_ => CloseTicket(),  _ => CanCloseTicket());
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
             CopyPickupMessageCommand = new RelayCommand(_ => CopyPickupMessage(), _ => CanCopyPickupMessage());
+            CopyReceiptCommand = new RelayCommand(_ => CopyReceipt(), _ => SelectedTicket != null);
+            ExportTicketsCsvCommand = new RelayCommand(_ => ExportTicketsCsv().FireAndForget(nameof(ExportTicketsCsv)));
 
             // Parts commands
             AddPartCommand = new RelayCommand(param =>
@@ -882,6 +888,27 @@ namespace ESCenter.ViewModels
         private bool CanCloseTicket()  => SelectedTicket != null && !SelectedTicket.DeliveryDate.HasValue;
         private bool CanReopenTicket() => SelectedTicket != null && SelectedTicket.DeliveryDate.HasValue;
         private bool CanCopyPickupMessage() => SelectedTicket != null;
+
+        private async Task ExportTicketsCsv()
+        {
+            await CsvExportService.ExportAsync(Tickets.Cast<object>(),
+                new[] { "ESC-ID", "Customer", "Phone", "Device", "Model", "Status", "Priority", "Received", "Delivery", "FinalCost" },
+                row =>
+                {
+                    var t = (RepairTicket)row;
+                    return new[] { t.EscTicketId ?? string.Empty, t.CustomerName ?? string.Empty, t.PhoneNumber ?? string.Empty, t.DeviceCategory ?? string.Empty, t.DeviceModel ?? string.Empty, t.RepairStatus ?? string.Empty, t.PriorityLevel ?? string.Empty, t.ReceiveDate.ToString("yyyy-MM-dd"), t.DeliveryDate?.ToString("yyyy-MM-dd") ?? string.Empty, t.FinalCost?.ToString("0.##") ?? string.Empty };
+                }, "tickets-export.csv");
+        }
+
+        private void CopyReceipt()
+        {
+            if (SelectedTicket == null) return;
+
+            var t = SelectedTicket;
+            var receipt = $"┌─────────────────────────────┐\n│  E-SCenter Repair Receipt   │\n├─────────────────────────────┤\n│ ESC-ID : {t.EscTicketId,-17}│\n│ Date   : {t.ReceiveDate:yyyy-MM-dd}         │\n│ Client : {t.CustomerName,-17}│\n│ Phone  : {t.PhoneNumber,-17}│\n│ Device : {($"{t.DeviceBrand} {t.DeviceModel}".Trim()),-17}│\n│ Serial : {t.SerialIMEI,-17}│\n│ Problem: {t.ProblemDescription,-17}│\n│ Status : {t.RepairStatus,-17}│\n│ Est.   : {(t.EstimatedCost?.ToString("N0") ?? "0")} {t.EstimatedCostCurrency}         │\n└─────────────────────────────┘";
+            Clipboard.SetText(receipt);
+            AppLogger.Success("Receipt copied to clipboard.");
+        }
 
         private void CopyPickupMessage()
         {
@@ -1479,23 +1506,48 @@ If you would like to reopen the request, please contact us.",
             {
                 var partsRepo = AppServices.Get<PartsRepository>();
                 var inventoryRepo = AppServices.Get<InventoryRepository>();
+                var normalizedSku = sku?.Trim() ?? string.Empty;
+                var normalizedName = name.Trim();
+
+                var updateParts = !string.IsNullOrWhiteSpace(normalizedSku)
+                    || partsRepo.ExistsByName(normalizedName);
 
                 if (delta > 0)
                 {
-                    if (!string.IsNullOrWhiteSpace(sku))
-                        partsRepo.RestoreQuantityBySku(sku, delta);
+                    if (updateParts)
+                    {
+                        if (string.IsNullOrWhiteSpace(normalizedSku))
+                        {
+                            partsRepo.RestoreQuantityByName(normalizedName, delta);
+                        }
+                        else
+                        {
+                            partsRepo.RestoreQuantityBySku(normalizedSku, delta);
+                        }
+                    }
                     else
-                        partsRepo.RestoreQuantityBySku(name, delta);
-                    inventoryRepo.RestoreQuantityByName(name, delta);
+                    {
+                        inventoryRepo.RestoreQuantityByName(normalizedName, delta);
+                    }
                 }
                 else
                 {
                     var qty = -delta;
-                    if (!string.IsNullOrWhiteSpace(sku))
-                        partsRepo.DecrementQuantityBySku(sku, qty);
+                    if (updateParts)
+                    {
+                        if (string.IsNullOrWhiteSpace(normalizedSku))
+                        {
+                            partsRepo.DecrementQuantityByName(normalizedName, qty);
+                        }
+                        else
+                        {
+                            partsRepo.DecrementQuantityBySku(normalizedSku, qty);
+                        }
+                    }
                     else
-                        partsRepo.DecrementQuantityBySku(name, qty);
-                    inventoryRepo.DecrementQuantityByName(name, qty);
+                    {
+                        inventoryRepo.DecrementQuantityByName(normalizedName, qty);
+                    }
                 }
             }
             catch (Exception ex)
@@ -2113,6 +2165,19 @@ If you would like to reopen the request, please contact us.",
         // =========================================================
         // COLLECTION HELPERS
         // =========================================================
+        public void Dispose()
+        {
+            if (_databasePathChangedHandler != null)
+            {
+                DatabasePathService.DatabasePathChanged -= _databasePathChangedHandler;
+                _databasePathChangedHandler = null;
+            }
+
+            _clientHistoryDebounceCts?.Cancel();
+            _clientHistoryDebounceCts?.Dispose();
+            _clientHistoryDebounceCts = null;
+        }
+
         private void RefreshTicketInCollection(RepairTicket ticket)
         {
             var index = Tickets.IndexOf(ticket);

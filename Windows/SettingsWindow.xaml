@@ -102,6 +102,15 @@
                                               SelectedItem="{Binding DashboardFinalCostCurrency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
 
+                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                    <TextBlock Text="Auto-refresh interval (seconds, 0 = off)" VerticalAlignment="Center" Width="250"/>
+                                    <TextBox Width="80"
+                                             Style="{StaticResource GradiantTextboxStyle1}"
+                                             PreviewTextInput="PositiveIntegerTextBox_PreviewTextInput"
+                                             DataObject.Pasting="PositiveIntegerTextBox_OnPaste"
+                                             Text="{Binding AutoRefreshIntervalSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+
                                 <Button Content="Back Up Now" Command="{Binding BackupNowCommand}" Style="{StaticResource GradientBorderButtonStyleGreen}" Margin="0,12,0,0"/>
                             </StackPanel>
                         </TabItem>

@@ -12,9 +12,10 @@ using ESCenter.Services;
 
 namespace ESCenter.ViewModels
 {
-    public class PartsControlViewModel : ObservableObject
+    public class PartsControlViewModel : ObservableObject, IDisposable
     {
         private readonly PartsRepository _repo;
+        private EventHandler? _databasePathChangedHandler;
 
         public PartsControlViewModel()
         {
@@ -35,6 +36,8 @@ namespace ESCenter.ViewModels
                 FilterLowCommand = new RelayCommand(_ => SetStockFilter("Low"));
                 FilterOutCommand = new RelayCommand(_ => SetStockFilter("Out"));
                 ClearSearchCommand = new RelayCommand(_ => SearchText = string.Empty);
+                ExportPartsCsvCommand = new RelayCommand(_ => ExportPartsCsv().FireAndForget(nameof(ExportPartsCsv)));
+                ExportReorderListCommand = new RelayCommand(_ => ExportReorderList().FireAndForget(nameof(ExportReorderList)));
 
                 if (isDesignMode)
                 {
@@ -47,7 +50,8 @@ namespace ESCenter.ViewModels
 
                 LoadParts();
                 BuildPartTypes();
-                DatabasePathService.DatabasePathChanged += (_, __) => LoadParts();
+                _databasePathChangedHandler = (_, __) => LoadParts();
+                DatabasePathService.DatabasePathChanged += _databasePathChangedHandler;
                 AppLogger.Success("Parts Control Loaded");
             }
             catch (Exception ex)
@@ -147,6 +151,8 @@ namespace ESCenter.ViewModels
         public ICommand FilterLowCommand { get; }
         public ICommand FilterOutCommand { get; }
         public ICommand ClearSearchCommand { get; }
+        public ICommand ExportPartsCsvCommand { get; }
+        public ICommand ExportReorderListCommand { get; }
 
         // -------------------------
         // Status Bar
@@ -196,7 +202,6 @@ namespace ESCenter.ViewModels
             {
                 part.PropertyChanged -= Part_PropertyChanged; // Unsubscribe first to avoid duplicates
                 part.PropertyChanged += Part_PropertyChanged;
-                AppLogger.Info($"Auto-save hooked for part ID: {part.PartId}");
             }
             catch (Exception ex)
             {
@@ -229,9 +234,7 @@ namespace ESCenter.ViewModels
                     case nameof(PartModel.Category):
                     case nameof(PartModel.Description):
                     case nameof(PartModel.ChipPartNumber):
-                        AppLogger.Info($"Auto-saving part {part.PartId}, property changed: {e.PropertyName}");
                         _repo.Update(part);
-                        AppLogger.Success($"Part {part.PartId} auto-saved successfully");
                         break;
                 }
             }
@@ -520,5 +523,43 @@ namespace ESCenter.ViewModels
                 throw;
             }
         }
+
+        private async System.Threading.Tasks.Task ExportPartsCsv()
+        {
+            await CsvExportService.ExportAsync(Parts.Cast<object>(), new[] { "SKU", "PartCode", "Type", "Qty", "Price", "Currency", "Quality", "Shelf", "Bin", "Description" },
+                row =>
+                {
+                    var p = (PartModel)row;
+                    return new[] { p.SKU ?? string.Empty, p.PartCode ?? string.Empty, p.PartType ?? string.Empty, p.QuantityOnHand.ToString(), p.Price.ToString("0.##"), p.PriceCurrency ?? "S.P", p.QualityGrade.ToString(), p.LocationShelf ?? string.Empty, p.LocationBin ?? string.Empty, p.Description ?? string.Empty };
+                }, "parts-export.csv");
+        }
+
+        private async System.Threading.Tasks.Task ExportReorderList()
+        {
+            var inventoryRepo = AppServices.Get<InventoryRepository>();
+            var inventory = await inventoryRepo.GetAllAsync();
+            var rows = Parts.Where(x => x.QuantityOnHand == 0).Select(x => new[] { "Parts", x.SKU ?? x.PartCode ?? string.Empty, x.PartType ?? string.Empty, x.QuantityOnHand.ToString(), $"{x.LocationShelf}/{x.LocationBin}" })
+                .Concat(inventory.Where(i => i.QuantityOnHand == 0).Select(i => new[] { "Inventory", i.ItemType ?? i.Model ?? string.Empty, i.ItemType ?? string.Empty, i.QuantityOnHand.ToString(), i.LocationBox ?? string.Empty }))
+                .ToList();
+
+            await CsvExportService.ExportAsync(rows.Cast<object>(), new[] { "Source", "SKU/Name", "Type", "CurrentQty", "Shelf/Box" },
+                row => (string[])row, "reorder-list.csv");
+            AppLogger.Success("Reorder list exported.");
+        }
+
+        public void Dispose()
+        {
+            if (_databasePathChangedHandler != null)
+            {
+                DatabasePathService.DatabasePathChanged -= _databasePathChangedHandler;
+                _databasePathChangedHandler = null;
+            }
+
+            foreach (var part in Parts)
+            {
+                part.PropertyChanged -= Part_PropertyChanged;
+            }
+        }
+
     }
 }

@@ -231,6 +231,7 @@ namespace ESCenter.Services
             , BackupRetentionCount = 0
             , PickupMessageLanguage = "English"
             , DashboardFinalCostCurrency = "S.P"
+            , AutoRefreshIntervalSeconds = 60
         };
 
         private static UserPreferences Normalize(UserPreferences? preferences)
@@ -271,6 +272,7 @@ namespace ESCenter.Services
             normalized.BackupRetentionCount = normalized.BackupRetentionCount < 0 ? 0 : normalized.BackupRetentionCount;
             normalized.PickupMessageLanguage = NormalizePickupMessageLanguage(normalized.PickupMessageLanguage);
             normalized.DashboardFinalCostCurrency = NormalizeDashboardFinalCostCurrency(normalized.DashboardFinalCostCurrency);
+            normalized.AutoRefreshIntervalSeconds = normalized.AutoRefreshIntervalSeconds < 0 ? 60 : normalized.AutoRefreshIntervalSeconds;
 
             // Ensure new preference exists when migrating from older settings
             // Default value is false (do not auto-grant admin access)
@@ -405,6 +407,21 @@ namespace ESCenter.Services
             Save(preferences);
         }
 
+
+
+        public static int GetAutoRefreshIntervalSeconds()
+        {
+            var preferences = Load();
+            return preferences.AutoRefreshIntervalSeconds < 0 ? 60 : preferences.AutoRefreshIntervalSeconds;
+        }
+
+        public static void SetAutoRefreshIntervalSeconds(int seconds)
+        {
+            var preferences = Load();
+            preferences.AutoRefreshIntervalSeconds = Math.Max(0, seconds);
+            Save(preferences);
+        }
+
         public static void InvalidateCache()
         {
             _cachedPreferences = null;
@@ -426,6 +443,7 @@ namespace ESCenter.Services
             public string PickupMessageLanguage { get; set; } = "English";
             public string DashboardFinalCostCurrency { get; set; } = "S.P";
             public Dictionary<string, decimal> ExchangeRates { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+            public int AutoRefreshIntervalSeconds { get; set; } = 60;
         }
 
         private sealed class LegacyDatabaseSettings

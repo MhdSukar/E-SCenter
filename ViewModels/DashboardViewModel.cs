@@ -11,11 +11,13 @@ using ESCenter.Services;
 
 namespace ESCenter.ViewModels
 {
-    public class DashboardViewModel : ObservableObject
+    public class DashboardViewModel : ObservableObject, IDisposable
     {
         private readonly TicketsDataService _service;
         private readonly PartsRepository _partsRepository;
         private readonly InventoryRepository _inventoryRepository;
+        private EventHandler? _ticketsChangedHandler;
+        private EventHandler? _databasePathChangedHandler;
 
         private int _totalTickets;
         public int TotalTickets { get => _totalTickets; set => SetProperty(ref _totalTickets, value); }
@@ -41,8 +43,11 @@ namespace ESCenter.ViewModels
         private int _weeklyFinishedTickets;
         public int WeeklyFinishedTickets { get => _weeklyFinishedTickets; set => SetProperty(ref _weeklyFinishedTickets, value); }
 
-        private decimal? _weeklyIncome;
-        public decimal? WeeklyIncome { get => _weeklyIncome; set => SetProperty(ref _weeklyIncome, value); }
+        private decimal _weeklyIncomeSP;
+        public decimal WeeklyIncomeSP { get => _weeklyIncomeSP; set => SetProperty(ref _weeklyIncomeSP, value); }
+
+        private decimal _weeklyIncomeUSD;
+        public decimal WeeklyIncomeUSD { get => _weeklyIncomeUSD; set => SetProperty(ref _weeklyIncomeUSD, value); }
 
         private double _weeklyCompletionPercent;
         public double WeeklyCompletionPercent { get => _weeklyCompletionPercent; set => SetProperty(ref _weeklyCompletionPercent, value); }
@@ -59,6 +64,7 @@ namespace ESCenter.ViewModels
 
         public ICommand RefreshCommand { get; }
         public ICommand OpenTicketCommand { get; }
+        public ICommand ExportReorderListCommand { get; }
         public Action<RepairTicket>? TicketSelected;
 
         public DashboardViewModel()
@@ -76,6 +82,7 @@ namespace ESCenter.ViewModels
                     TicketSelected?.Invoke(ticket);
                 }
             });
+            ExportReorderListCommand = new RelayCommand(_ => ExportReorderList().FireAndForget(nameof(ExportReorderList)));
 
             if (isDesignMode)
             {
@@ -87,7 +94,8 @@ namespace ESCenter.ViewModels
                 OverdueTickets = 6;
                 WeeklyTotalTickets = 19;
                 WeeklyFinishedTickets = 14;
-                WeeklyIncome = 780m;
+                WeeklyIncomeSP = 780m;
+                WeeklyIncomeUSD = 0m;
                 WeeklyCompletionPercent = 73.68;
                 RecentTickets.Add(new RepairTicket { EscTicketId = "ESC-2401", CustomerName = "John Carter", DeviceModel = "Galaxy S22", PriorityLevel = "Major" });
                 RecentTickets.Add(new RepairTicket { EscTicketId = "ESC-2402", CustomerName = "Mia Khan", DeviceModel = "iPhone 13", PriorityLevel = "Critical" });
@@ -96,8 +104,10 @@ namespace ESCenter.ViewModels
                 return;
             }
 
-            TicketEvents.TicketsChanged += (_, _) => Refresh();
-            DatabasePathService.DatabasePathChanged += (_, _) => Refresh();
+            _ticketsChangedHandler = (_, _) => Refresh();
+            _databasePathChangedHandler = (_, _) => Refresh();
+            TicketEvents.TicketsChanged += _ticketsChangedHandler;
+            DatabasePathService.DatabasePathChanged += _databasePathChangedHandler;
             Refresh();
         }
 
@@ -130,7 +140,8 @@ namespace ESCenter.ViewModels
                 OverdueTickets = summary.OverdueTickets;
                 WeeklyTotalTickets = summary.WeeklyTotalTickets;
                 WeeklyFinishedTickets = summary.WeeklyFinishedTickets;
-                WeeklyIncome = summary.WeeklyIncome;
+                WeeklyIncomeSP = summary.WeeklyIncomeSP;
+                WeeklyIncomeUSD = summary.WeeklyIncomeUSD;
 
                 RecentTickets.Clear();
                 foreach (var ticket in recentTicketsTask.Result)
@@ -153,6 +164,28 @@ namespace ESCenter.ViewModels
             finally
             {
                 IsLoading = false;
+            }
+        }
+
+
+
+        private async Task ExportReorderList()
+        {
+            try
+            {
+                var allParts = await _partsRepository.GetAllAsync();
+                var allInventory = await _inventoryRepository.GetAllAsync();
+                var rows = allParts.Where(x => x.QuantityOnHand == 0).Select(x => new[] { "Parts", x.SKU ?? x.PartCode ?? string.Empty, x.PartType ?? string.Empty, x.QuantityOnHand.ToString(), $"{x.LocationShelf}/{x.LocationBin}" })
+                    .Concat(allInventory.Where(i => i.QuantityOnHand == 0).Select(i => new[] { "Inventory", i.ItemType ?? i.Model ?? string.Empty, i.ItemType ?? string.Empty, i.QuantityOnHand.ToString(), i.LocationBox ?? string.Empty }))
+                    .ToList();
+
+                await CsvExportService.ExportAsync(rows.Cast<object>(), new[] { "Source", "SKU/Name", "Type", "CurrentQty", "Shelf/Box" },
+                    row => (string[])row, "reorder-list.csv");
+                AppLogger.Success("Reorder list exported.");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to export reorder list: {ex.Message}");
             }
         }
 
@@ -254,5 +287,20 @@ namespace ESCenter.ViewModels
             }
         }
 
+
+        public void Dispose()
+        {
+            if (_ticketsChangedHandler != null)
+            {
+                TicketEvents.TicketsChanged -= _ticketsChangedHandler;
+                _ticketsChangedHandler = null;
+            }
+
+            if (_databasePathChangedHandler != null)
+            {
+                DatabasePathService.DatabasePathChanged -= _databasePathChangedHandler;
+                _databasePathChangedHandler = null;
+            }
+        }
     }
 }

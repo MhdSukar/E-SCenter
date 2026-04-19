@@ -86,7 +86,7 @@ namespace ESCenter.Services
                 if (retention > 0)
                 {
                     var files = Directory.GetFiles(backupDirectory, $"{sourceName}_backup_*{sourceExtension}");
-                    var ordered = files.Select(f => new FileInfo(f)).OrderByDescending(fi => fi.CreationTime).ToList();
+                    var ordered = files.Select(f => new FileInfo(f)).OrderByDescending(fi => fi.LastWriteTime).ToList();
                     for (int i = retention; i < ordered.Count; i++)
                     {
                         try

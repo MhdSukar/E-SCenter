@@ -140,6 +140,26 @@ namespace ESCenter.ViewModels
 
         public string[] DashboardCostCurrencies { get; } = { "S.P", "USD" };
 
+
+
+        private int _autoRefreshIntervalSeconds;
+        public int AutoRefreshIntervalSeconds
+        {
+            get => _autoRefreshIntervalSeconds;
+            set
+            {
+                var normalized = Math.Max(0, value);
+                if (SetProperty(ref _autoRefreshIntervalSeconds, normalized))
+                {
+                    UserPreferencesService.SetAutoRefreshIntervalSeconds(normalized);
+                    if (System.Windows.Application.Current.MainWindow?.DataContext is MainViewModel mainViewModel)
+                    {
+                        mainViewModel.ApplyAutoRefreshInterval(normalized);
+                    }
+                }
+            }
+        }
+
         private int _partsLowStockThreshold;
         public int PartsLowStockThreshold
         {
@@ -200,6 +220,7 @@ namespace ESCenter.ViewModels
             _backupRetentionCount = UserPreferencesService.GetBackupRetentionCount();
             _pickupMessageLanguage = UserPreferencesService.GetPickupMessageLanguage();
             _dashboardFinalCostCurrency = UserPreferencesService.GetDashboardFinalCostCurrency();
+            _autoRefreshIntervalSeconds = UserPreferencesService.GetAutoRefreshIntervalSeconds();
             var lowStockThresholds = UserPreferencesService.GetLowStockThresholds();
             _partsLowStockThreshold = Math.Max(1, lowStockThresholds.PartsThreshold);
             _inventoryLowStockThreshold = Math.Max(1, lowStockThresholds.InventoryThreshold);
@@ -437,6 +458,7 @@ namespace ESCenter.ViewModels
                 BackupLocation = UserPreferencesService.GetBackupLocation();
                 BackupRetentionCount = UserPreferencesService.GetBackupRetentionCount();
                 PickupMessageLanguage = UserPreferencesService.GetPickupMessageLanguage();
+                AutoRefreshIntervalSeconds = UserPreferencesService.GetAutoRefreshIntervalSeconds();
 
                 MessageBox.Show("Settings imported successfully.", "Import Settings", MessageBoxButton.OK, MessageBoxImage.Information);
             }

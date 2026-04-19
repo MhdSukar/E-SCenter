@@ -64,7 +64,8 @@ namespace ESCenter.Services
                     SUM(CASE WHEN DeliveryDate IS NULL AND ReceiveDate < @overdueCutoff THEN 1 ELSE 0 END) AS OverdueTickets,
                     SUM(CASE WHEN ReceiveDate >= @weekStart AND ReceiveDate < @weekEnd THEN 1 ELSE 0 END) AS WeeklyTotalTickets,
                     SUM(CASE WHEN DeliveryDate IS NOT NULL AND DeliveryDate >= @weekStart AND DeliveryDate < @weekEnd THEN 1 ELSE 0 END) AS WeeklyFinishedTickets,
-                    SUM(CASE WHEN DeliveryDate IS NOT NULL AND DeliveryDate >= @weekStart AND DeliveryDate < @weekEnd THEN IFNULL(FinalCost, 0) ELSE 0 END) AS WeeklyIncome
+                    SUM(CASE WHEN DeliveryDate IS NOT NULL AND DeliveryDate >= @weekStart AND DeliveryDate < @weekEnd THEN IFNULL(FinalCost, 0) ELSE 0 END) AS WeeklyIncomeSP,
+                    SUM(CASE WHEN DeliveryDate IS NOT NULL AND DeliveryDate >= @weekStart AND DeliveryDate < @weekEnd AND UPPER(IFNULL(FinalCostCurrency,'S.P')) = 'USD' THEN IFNULL(FinalCost, 0) ELSE 0 END) AS WeeklyIncomeUSD
                 FROM TicketsDB;";
 
             using var cmd = new SQLiteCommand(sql, conn);
@@ -88,7 +89,8 @@ namespace ESCenter.Services
                 OverdueTickets = reader["OverdueTickets"] != DBNull.Value ? Convert.ToInt32(reader["OverdueTickets"]) : 0,
                 WeeklyTotalTickets = reader["WeeklyTotalTickets"] != DBNull.Value ? Convert.ToInt32(reader["WeeklyTotalTickets"]) : 0,
                 WeeklyFinishedTickets = reader["WeeklyFinishedTickets"] != DBNull.Value ? Convert.ToInt32(reader["WeeklyFinishedTickets"]) : 0,
-                WeeklyIncome = reader["WeeklyIncome"] != DBNull.Value ? Convert.ToDecimal(reader["WeeklyIncome"]) : 0m
+                WeeklyIncomeSP = reader["WeeklyIncomeSP"] != DBNull.Value ? Convert.ToDecimal(reader["WeeklyIncomeSP"]) : 0m,
+                WeeklyIncomeUSD = reader["WeeklyIncomeUSD"] != DBNull.Value ? Convert.ToDecimal(reader["WeeklyIncomeUSD"]) : 0m
             };
         }
 
@@ -459,7 +461,8 @@ namespace ESCenter.Services
             public int OverdueTickets { get; set; }
             public int WeeklyTotalTickets { get; set; }
             public int WeeklyFinishedTickets { get; set; }
-            public decimal WeeklyIncome { get; set; }
+            public decimal WeeklyIncomeSP { get; set; }
+            public decimal WeeklyIncomeUSD { get; set; }
         }
     }
 }
