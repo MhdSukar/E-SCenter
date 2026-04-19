@@ -10,5 +10,5 @@ public class UppercaseConverter : IValueConverter
         return value?.ToString().ToUpper();
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => System.Windows.Data.Binding.DoNothing;
 }

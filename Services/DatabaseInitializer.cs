@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using ESCenter.Core;
 
 namespace ESCenter.Services
 {
