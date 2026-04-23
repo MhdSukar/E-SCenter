@@ -1,11 +1,8 @@
-﻿using System.Windows;
+using System.Windows;
 using ESCenter.ViewModels;
 
 namespace ESCenter.Views
 {
-    /// <summary>
-    /// Interaction logic for CustomersView.xaml
-    /// </summary>
     public partial class RepairTicketsView : System.Windows.Controls.UserControl
     {
         private RepairTicketsViewModel? _subscribedViewModel;
@@ -33,8 +30,8 @@ namespace ESCenter.Views
 
         private void FocusCustomerName()
         {
-            CustomerNameBox.FocusCustomerNameInput();
+            TabCustomer.IsSelected = true;
+            CustomerPanelRef.FocusCustomerNameInput();
         }
-
     }
 }
