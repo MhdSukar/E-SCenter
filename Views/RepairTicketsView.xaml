@@ -98,13 +98,14 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="TabControl">
                         <DockPanel>
-                            <TabPanel x:Name="HeaderPanel"
-                                      DockPanel.Dock="Top"
-                                      Background="#0A000000"
-                                      BorderBrush="{StaticResource BorderDarkBrush}"
-                                      BorderThickness="0,0,0,1"
-                                      IsItemsHost="True"
-                                      KeyboardNavigation.TabIndex="1"/>
+                            <Border DockPanel.Dock="Top"
+                                    Background="#0A000000"
+                                    BorderBrush="{StaticResource BorderDarkBrush}"
+                                    BorderThickness="0,0,0,1">
+                                <TabPanel x:Name="HeaderPanel"
+                                          IsItemsHost="True"
+                                          KeyboardNavigation.TabIndex="1"/>
+                            </Border>
                             <ScrollViewer VerticalScrollBarVisibility="Auto"
                                           HorizontalScrollBarVisibility="Disabled"
                                           Padding="0,8,0,0"
