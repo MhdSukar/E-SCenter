@@ -38,6 +38,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Grid.ColumnSpan="2" Style="{StaticResource SectionLine}">
@@ -51,40 +52,50 @@
         <TextBlock Grid.Row="0" Grid.Column="0" Text="👤 CUSTOMER" Style="{StaticResource SectionHeader}"
                    Foreground="#5AA7FF" Margin="0,14,0,6"/>
 
-        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal"
+                    Margin="0,0,0,8" VerticalAlignment="Center">
+            <Image Source="{StaticResource ESCID2}" Width="13" Height="13" Margin="0,0,5,0"/>
+            <TextBlock Text="ESC Code:" Style="{StaticResource FieldLabel}" Margin="0"/>
+        </StackPanel>
+        <TextBox Grid.Row="1" Grid.Column="1"
+                 Text="{Binding EscTicketId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Margin="4,0,0,8" Style="{StaticResource GradiantTextboxStyle1}"
+                 ToolTip="Format: ESC-000001" Focusable="False" IsTabStop="False"/>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
             <Image Source="{StaticResource IDTitle}" Width="13" Height="13" Margin="0,0,5,0"/>
             <TextBlock Text="Customer ID:" Style="{StaticResource FieldLabel}" Margin="0"/>
         </StackPanel>
-        <TextBox Grid.Row="1" Grid.Column="1"
+        <TextBox Grid.Row="2" Grid.Column="1"
                  Text="{Binding CustomerIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Margin="4,0,0,8" Style="{StaticResource GradiantTextboxStyle1}"
                  TabIndex="1" KeyDown="SingleLineTextBox_KeyDown"/>
 
-        <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
+        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
             <Image Source="{StaticResource AddressBook}" Width="13" Height="13" Margin="0,0,5,0"/>
             <TextBlock Text="Customer Name:" Style="{StaticResource FieldLabel}" Margin="0"/>
             <TextBlock Text=" *" Foreground="#FF5A5A" FontWeight="Bold" VerticalAlignment="Center" FontSize="13"/>
         </StackPanel>
-        <TextBox x:Name="CustomerNameBox" Grid.Row="2" Grid.Column="1"
+        <TextBox x:Name="CustomerNameBox" Grid.Row="3" Grid.Column="1"
                  Text="{Binding CustomerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Margin="4,0,0,8" Style="{StaticResource GradiantTextboxStyle1}"
                  TabIndex="2" KeyDown="SingleLineTextBox_KeyDown"/>
 
-        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
+        <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
             <Image Source="{StaticResource PhoneNumber}" Width="13" Height="13" Margin="0,0,5,0"/>
             <TextBlock Text="Phone Number:" Style="{StaticResource FieldLabel}" Margin="0"/>
             <TextBlock Text=" *" Foreground="#FF5A5A" FontWeight="Bold" VerticalAlignment="Center" FontSize="13"/>
         </StackPanel>
-        <TextBox Grid.Row="3" Grid.Column="1"
+        <TextBox Grid.Row="4" Grid.Column="1"
                  Text="{Binding PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Margin="4,0,0,8" Style="{StaticResource GradiantTextboxStyle1}"
                  TabIndex="3" KeyDown="SingleLineTextBox_KeyDown"/>
 
-        <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
+        <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
             <Image Source="{StaticResource ContactAI}" Width="13" Height="13" Margin="0,0,5,0"/>
             <TextBlock Text="Contact Method:" Style="{StaticResource FieldLabel}" Margin="0"/>
         </StackPanel>
-        <ComboBox Grid.Row="4" Grid.Column="1"
+        <ComboBox Grid.Row="5" Grid.Column="1"
                   SelectedItem="{Binding ContactMethod, Mode=TwoWay}"
                   Margin="4,0,0,8" Style="{StaticResource GradiantComboboxStyle11}" TabIndex="4">
             <ComboBox.ItemsSource>

@@ -106,7 +106,7 @@
                                           IsItemsHost="True"
                                           KeyboardNavigation.TabIndex="1"/>
                             </Border>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden"
                                           HorizontalScrollBarVisibility="Disabled"
                                           Padding="0,8,0,0"
                                           Focusable="False">
@@ -137,110 +137,107 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <DockPanel Grid.Row="0"
-                           Margin="0,0,0,12">
-                    <TextBlock Text="Ticket Details"
-                               FontSize="18"
-                               FontWeight="Bold"
-                               Foreground="{StaticResource TextPrimaryBrush}" />
-                    <Border Margin="12,0,0,0"
-                            Padding="6,2"
-                            CornerRadius="4"
-                            Background="#2A1800"
-                            BorderBrush="#FF8C42"
-                            BorderThickness="1"
-                            VerticalAlignment="Center">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Visibility"
-                                        Value="Collapsed" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HasUnsavedChanges}"
-                                                 Value="True">
-                                        <Setter Property="Visibility"
-                                                Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <TextBlock Text="● Unsaved changes"
-                                   Foreground="#FF8C42"
-                                   FontSize="11"
-                                   FontWeight="SemiBold" />
-                    </Border>
+                <DockPanel Grid.Row="0" Margin="0,0,0,12">
+                    <Grid DockPanel.Dock="Left" Margin="0,0,12,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Margin="0,0,10,0" CornerRadius="2">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#00E5D4" Offset="0"/>
+                                    <GradientStop Color="#237EF2" Offset="0.5"/>
+                                    <GradientStop Color="#2952D9" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <TextBlock Grid.Column="1"
+                                   Text="Ticket Details"
+                                   FontSize="17"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"
+                                   Foreground="{StaticResource Gradient.Primary.Horizontal}" />
+
+                        <Border Grid.Column="2"
+                                Margin="12,0,0,0"
+                                Padding="6,2"
+                                CornerRadius="4"
+                                Background="#2A1800"
+                                BorderBrush="#FF8C42"
+                                BorderThickness="1"
+                                VerticalAlignment="Center">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasUnsavedChanges}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="● Unsaved changes"
+                                       Foreground="#FF8C42"
+                                       FontSize="11"
+                                       FontWeight="SemiBold" />
+                        </Border>
+                    </Grid>
+
+                    <StackPanel DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <Button Command="{Binding AddCommand}"
+                                Style="{StaticResource GradientBorderButtonStyleGreen}"
+                                Width="34"
+                                Height="30"
+                                Margin="4,0"
+                                TabIndex="22"
+                                IsDefault="False"
+                                ToolTip="Add">
+                            <Image Source="{StaticResource Add}" Width="16" Height="16" />
+                        </Button>
+
+                        <Button Command="{Binding SaveCommand}"
+                                Width="34"
+                                Height="30"
+                                Margin="4,0"
+                                TabIndex="23"
+                                IsDefault="False"
+                                ToolTip="Save">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource GradientBorderButtonStyleBLueCyan}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasUnsavedChanges}" Value="True">
+                                            <Setter Property="BorderBrush" Value="#FF8C42" />
+                                            <Setter Property="BorderThickness" Value="1.5" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Image Source="{StaticResource Save}" Width="18" Height="18" />
+                        </Button>
+
+                        <Button Command="{Binding ClearCommand}"
+                                Style="{StaticResource GradientBorderButtonStyleYellow}"
+                                Width="34"
+                                Height="30"
+                                Margin="4,0"
+                                TabIndex="24"
+                                IsDefault="False"
+                                ToolTip="Clear">
+                            <Image Source="{StaticResource Clear}" Width="16" Height="16" />
+                        </Button>
+                    </StackPanel>
                 </DockPanel>
 
-                <StackPanel Grid.Row="1"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            Margin="0,0,0,12">
-                    <Button Command="{Binding AddCommand}"
-                            Style="{StaticResource GradientBorderButtonStyleGreen}"
-                            Width="80"
-                            Margin="4,0"
-                            TabIndex="22"
-                            IsDefault="False">
-                        <StackPanel Orientation="Horizontal"
-                                    VerticalAlignment="Center">
-                            <Image Source="{StaticResource Add}"
-                                   Width="16"
-                                   Height="16"
-                                   Margin="0,0,6,0" />
-                            <TextBlock Text="Add" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button Command="{Binding SaveCommand}"
-                            Width="100"
-                            Margin="4,0"
-                            TabIndex="23"
-                            IsDefault="False">
-                        <Button.Style>
-                            <Style TargetType="Button"
-                                   BasedOn="{StaticResource GradientBorderButtonStyleBLueCyan}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HasUnsavedChanges}"
-                                                 Value="True">
-                                        <Setter Property="BorderBrush"
-                                                Value="#FF8C42" />
-                                        <Setter Property="BorderThickness"
-                                                Value="1.5" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <StackPanel Orientation="Horizontal"
-                                    VerticalAlignment="Center">
-                            <Image Source="{StaticResource Save}"
-                                   Width="23"
-                                   Height="23"
-                                   Margin="0,0,6,0" />
-                            <TextBlock Text="Save" Margin="0,2,0,0" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button Command="{Binding ClearCommand}"
-                            Style="{StaticResource GradientBorderButtonStyleYellow}"
-                            Width="80"
-                            Margin="4,0"
-                            TabIndex="24"
-                            IsDefault="False">
-                        <StackPanel Orientation="Horizontal"
-                                    VerticalAlignment="Center">
-                            <Image Source="{StaticResource Clear}"
-                                   Width="16"
-                                   Height="16"
-                                   Margin="0,0,6,0" />
-                            <TextBlock Text="Clear" />
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
@@ -269,7 +266,7 @@
                                              Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                 </StackPanel>
                             </TabItem.Header>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                                 <StackPanel>
                                     <Grid Margin="0,4,0,0">
                                         <Grid.ColumnDefinitions>
@@ -376,7 +373,7 @@
                                              Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                 </StackPanel>
                             </TabItem.Header>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                                 <StackPanel>
                                     <views:TicketCustomerPanel x:Name="CustomerPanelRef"/>
 
@@ -457,7 +454,7 @@
                                                       ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
                                                       AlternatingRowBackground="{StaticResource DataGridRowAltBackgroundBrush}"
                                                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                                      ScrollViewer.VerticalScrollBarVisibility="Hidden">
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn Header="Device Serial"
                                                         Binding="{Binding SerialIMEI}"
@@ -486,7 +483,7 @@
                                              Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                 </StackPanel>
                             </TabItem.Header>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                                 <views:TicketDevicePanel/>
                             </ScrollViewer>
                         </TabItem>
@@ -501,7 +498,7 @@
                                              Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                 </StackPanel>
                             </TabItem.Header>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                                 <StackPanel>
                                     <views:TicketRepairPanel/>
                                     <Border Height="1" Background="{StaticResource BorderDarkBrush}" Margin="0,8"/>
@@ -521,7 +518,7 @@
                                              Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                 </StackPanel>
                             </TabItem.Header>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                                 <StackPanel>
                                     <GroupBox Header="Device Check List"
                                               Margin="0,12,0,0"
@@ -595,7 +592,7 @@
                                              Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                 </StackPanel>
                             </TabItem.Header>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
                                 <views:TicketDeviceNotesPanel/>
                             </ScrollViewer>
                         </TabItem>
