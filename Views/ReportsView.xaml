@@ -1,12 +1,219 @@
-﻿<UserControl x:Class="ESCenter.Views.ReportsView"
+<UserControl x:Class="ESCenter.Views.ReportsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ESCenter.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="http://schemas.livecharts.com/2.0/wpf"
+             xmlns:vm="clr-namespace:ESCenter.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="1200">
+
+    <UserControl.Resources>
+        <Style x:Key="CustomDatePanelStyle" TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedPeriod}" Value="{x:Static vm:ReportPeriod.Custom}">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}"
+                Margin="12,12,12,8"
+                Padding="10,8">
+            <DockPanel LastChildFill="False">
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
+                    <Image Source="{StaticResource DBReport}" Width="18" Height="18" Margin="0,0,6,0"/>
+                    <TextBlock Text="Reports"
+                               FontSize="17"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource Gradient.Primary.Horizontal}"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                    <ComboBox Width="150"
+                              ItemsSource="{Binding PeriodOptions}"
+                              SelectedItem="{Binding SelectedPeriodOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Background="#151515"
+                              BorderBrush="{StaticResource BorderDarkBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="8,0,0,0" Style="{StaticResource CustomDatePanelStyle}">
+                        <DatePicker SelectedDate="{Binding PeriodStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="130"/>
+                        <TextBlock Text="→" Margin="6,0" VerticalAlignment="Center" Foreground="{StaticResource TextTertiaryBrush}"/>
+                        <DatePicker SelectedDate="{Binding PeriodEnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="130"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8" Fill="{StaticResource NeonCyanBrush}" Margin="0,0,10,0"
+                             Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Ellipse.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         From="0" To="1" Duration="0:0:0.8"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Ellipse.Triggers>
+                    </Ellipse>
+
+                    <Button Command="{Binding RefreshCommand}"
+                            Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
+                            Margin="0,0,8,0"
+                            Padding="12,6"
+                            Content="Refresh"/>
+
+                    <Button Command="{Binding ExportReportCsvCommand}"
+                            Style="{StaticResource GradientBorderButtonStyleAccent}"
+                            Padding="12,6"
+                            Content="Export CSV"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <UniformGrid Grid.Row="1" Columns="4" Margin="12,0,12,8">
+            <Border Background="#161616" CornerRadius="10" BorderThickness="1" Padding="14,12" Margin="0,0,8,0">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#00E5D4" Offset="0"/>
+                        <GradientStop Color="#237EF2" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <StackPanel>
+                    <TextBlock Text="TOTAL TICKETS" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}"/>
+                    <TextBlock Text="{Binding TotalTicketsInPeriod}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource NeonCyanBrush}">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="#00E5D4" BlurRadius="14" ShadowDepth="0" Opacity="0.85"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#161616" CornerRadius="10" BorderThickness="1" Padding="14,12" Margin="0,0,8,0">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#22C55E" Offset="0"/>
+                        <GradientStop Color="#3BFF8A" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <StackPanel>
+                    <TextBlock Text="COMPLETED" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}"/>
+                    <TextBlock Text="{Binding ClosedTicketsInPeriod}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource NeonGreenBrush}">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="#2EFF2E" BlurRadius="14" ShadowDepth="0" Opacity="0.85"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#161616" CornerRadius="10" BorderThickness="1" Padding="14,12" Margin="0,0,8,0">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#B200FF" Offset="0"/>
+                        <GradientStop Color="#7D3CFF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <StackPanel>
+                    <TextBlock Text="COMPLETION RATE" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}"/>
+                    <TextBlock Text="{Binding CompletionRate, StringFormat={}{0:F1}%}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource NeonPurpleBrush}">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="#B200FF" BlurRadius="14" ShadowDepth="0" Opacity="0.85"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#161616" CornerRadius="10" BorderThickness="1" Padding="14,12">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FFAA00" Offset="0"/>
+                        <GradientStop Color="#FF6B00" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+                <StackPanel>
+                    <TextBlock Text="REVENUE (S.P)" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}"/>
+                    <TextBlock Text="{Binding TotalRevenueSP, StringFormat={}{0:N0}}" FontSize="28" FontWeight="Bold" Foreground="{StaticResource NeonOrangeBrush}">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="#FFAA00" BlurRadius="14" ShadowDepth="0" Opacity="0.85"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Grid.Column="0" Style="{StaticResource GradientGroupBoxBlueCyan}" Margin="12,0,6,12">
+                <GroupBox.Header>
+                    <TextBlock Text="Revenue by Day" Foreground="{StaticResource Gradient.Primary.Horizontal}" FontWeight="SemiBold"/>
+                </GroupBox.Header>
+                <Border Margin="8" Background="#0A1020" CornerRadius="8" BorderBrush="#2200E5D4" BorderThickness="1">
+                    <lvc:CartesianChart Margin="8"
+                                        Series="{Binding RevenueChartSeries}"
+                                        XAxes="{Binding RevenueChartXAxes}"
+                                        LegendPosition="Hidden"
+                                        AnimationsSpeed="0:0:0.5"/>
+                </Border>
+            </GroupBox>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <GroupBox Grid.Row="0" Style="{StaticResource GradientGroupBoxBlueCyan}" Margin="6,0,12,8">
+                    <GroupBox.Header>
+                        <TextBlock Text="Repair Status Breakdown" Foreground="{StaticResource Gradient.Primary.Horizontal}" FontWeight="SemiBold"/>
+                    </GroupBox.Header>
+                    <lvc:PieChart Height="180"
+                                  Margin="8"
+                                  Series="{Binding StatusChartSeries}"
+                                  LegendPosition="Bottom"
+                                  AnimationsSpeed="0:0:0.5"/>
+                </GroupBox>
+
+                <GroupBox Grid.Row="1" Style="{StaticResource GradientGroupBoxBlueCyan}" Margin="6,0,12,12">
+                    <GroupBox.Header>
+                        <TextBlock Text="Top Device Categories" Foreground="{StaticResource Gradient.Primary.Horizontal}" FontWeight="SemiBold"/>
+                    </GroupBox.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="8">
+                        <ItemsControl ItemsSource="{Binding TopRepairs}" MaxHeight="200">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Category}" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        <ProgressBar Grid.Column="1" Height="8" Margin="8,0" Style="{StaticResource ModernProgressBarStyle}" Value="{Binding Percentage}" Maximum="100" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Count}" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </GroupBox>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>
