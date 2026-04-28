@@ -22,6 +22,7 @@ namespace ESCenter.ViewModels
     public class RepairTicketsViewModel : ObservableObject, IDisposable
     {
         private readonly TicketsDataService _service;
+        private readonly CustomerRepository _customerRepo;
         private readonly TicketStatusHistoryRepository _statusHistoryRepository = new();
         private string _lastKnownStatus = "Received";
         private string _formStateSnapshot = string.Empty;
@@ -52,6 +53,14 @@ namespace ESCenter.ViewModels
         public ObservableCollection<RepairTicket> Tickets { get; }
         public ObservableCollection<TicketStatusEntry> StatusHistory { get; } = new();
         public ObservableCollection<RepairTicket> ClientHistory { get; } = new();
+        public ObservableCollection<CustomerModel> CustomerSuggestions { get; } = new();
+
+        private bool _isCustomerSuggestionOpen;
+        public bool IsCustomerSuggestionOpen
+        {
+            get => _isCustomerSuggestionOpen;
+            set => SetProperty(ref _isCustomerSuggestionOpen, value);
+        }
 
         public bool HasClientHistory => ClientHistory.Count > 0;
 
@@ -203,6 +212,7 @@ namespace ESCenter.ViewModels
                 {
                     RefreshCustomerProfile();
                     _ = RefreshClientHistoryAsync();
+                    _ = RefreshCustomerSuggestionsAsync();
                     CheckForUnsavedChanges();
                 }
             }
@@ -502,6 +512,7 @@ namespace ESCenter.ViewModels
         public ICommand ClearSearchCommand        { get; }
         public ICommand ResetFiltersCommand       { get; }
         public ICommand SelectClientHistoryTicketCommand { get; }
+        public ICommand SelectCustomerSuggestionCommand { get; }
 
         // =========================================================
         // CONSTRUCTOR
@@ -510,6 +521,7 @@ namespace ESCenter.ViewModels
         {
             var isDesignMode = DesignTimeHelper.IsInDesignMode;
             _service = AppServices.IsInitialized ? AppServices.Get<TicketsDataService>() : new TicketsDataService();
+            _customerRepo = AppServices.Get<CustomerRepository>();
             if (!isDesignMode)
             {
                 _databasePathChangedHandler = async (_, __) => await LoadTicketsAsync();
@@ -563,6 +575,19 @@ namespace ESCenter.ViewModels
             {
                 if (param is RepairTicket ticket)
                     SearchQuery = ticket.TicketId.ToString(CultureInfo.InvariantCulture);
+            });
+            SelectCustomerSuggestionCommand = new RelayCommand(param =>
+            {
+                if (param is not CustomerModel customer)
+                {
+                    return;
+                }
+
+                CustomerName = customer.FullName;
+                PhoneNumber = customer.PhoneNumber;
+                CustomerIdText = customer.CustomerId.ToString(CultureInfo.InvariantCulture);
+                IsCustomerSuggestionOpen = false;
+                CustomerSuggestions.Clear();
             });
 
             // Sync UsedPartLines → PartsUsed JSON whenever a line's Quantity changes
@@ -1749,6 +1774,8 @@ If you would like to reopen the request, please contact us.",
             PartsUsedInput          = string.Empty;
             IsPartsSuggestionOpen   = false;
             SelectedSuggestionIndex = -1;
+            CustomerSuggestions.Clear();
+            IsCustomerSuggestionOpen = false;
             StatusHistory.Clear();
 
             RefreshCustomerProfile();
@@ -2095,6 +2122,32 @@ If you would like to reopen the request, please contact us.",
             catch (Exception ex)
             {
                 AppLogger.Error($"Failed to refresh client history: {ex.Message}");
+            }
+        }
+
+        private async Task RefreshCustomerSuggestionsAsync()
+        {
+            if (string.IsNullOrWhiteSpace(CustomerName) || CustomerName.Length < 2)
+            {
+                CustomerSuggestions.Clear();
+                IsCustomerSuggestionOpen = false;
+                return;
+            }
+
+            try
+            {
+                var results = await _customerRepo.SearchAsync(CustomerName);
+                CustomerSuggestions.Clear();
+                foreach (var customer in results)
+                {
+                    CustomerSuggestions.Add(customer);
+                }
+
+                IsCustomerSuggestionOpen = CustomerSuggestions.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error($"Failed to load customer suggestions: {ex.Message}");
             }
         }
 

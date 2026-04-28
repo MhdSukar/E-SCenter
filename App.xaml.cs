@@ -52,6 +52,7 @@ namespace ESCenter
                 services.AddSingleton<PartsRepository>();
                 services.AddSingleton<InventoryRepository>();
                 services.AddSingleton<BoneyardRepository>();
+                services.AddSingleton<CustomerRepository>();
                 services.AddSingleton<GlobalSearchService>();
                 services.AddSingleton<BackupService>();
                 services.AddSingleton<AlBarakaDataService>();

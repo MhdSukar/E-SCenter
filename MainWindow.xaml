@@ -42,11 +42,14 @@
         <!-- F5 = Boneyard -->
         <KeyBinding Key="F5" Command="{Binding ShowBoneyardCommand}" />
 
-        <!-- F6 = Al-Baraka -->
-        <KeyBinding Key="F6" Command="{Binding ShowAlBarakaCommand}" />
+        <!-- F6 = Customers -->
+        <KeyBinding Key="F6" Command="{Binding ShowCustomersCommand}" />
 
-        <!-- F7 = Warranty Window -->
-        <KeyBinding Key="F7" Command="{Binding ShowWarrantySystemCommand}" />
+        <!-- F7 = Al-Baraka -->
+        <KeyBinding Key="F7" Command="{Binding ShowAlBarakaCommand}" />
+
+        <!-- Ctrl+W = Warranty Window -->
+        <KeyBinding Key="W" Modifiers="Ctrl" Command="{Binding ShowWarrantySystemCommand}" />
 
         <!-- Ctrl+N = New Ticket -->
         <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewTicketCommand}" />
@@ -230,6 +233,22 @@
                                     <TextBlock Text="F5"
                                                FontSize="9"
                                                FontFamily="Consolas"
+                                               Foreground="{StaticResource TextTertiaryBrush}"/>
+                                </Border>
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton Style="{StaticResource TitleBarTabButtonStyle}"
+                                     GroupName="MainTabs"
+                                     Command="{Binding ShowCustomersCommand}"
+                                     Width="145"
+                                     IsChecked="{Binding IsCustomersSelected, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image Source="{StaticResource AddressBook}"
+                                       Width="25" Height="25" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Customers" VerticalAlignment="Center"/>
+                                <Border Background="#18FFFFFF" CornerRadius="3" Padding="3,1"
+                                        Margin="6,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="F6" FontSize="9" FontFamily="Consolas"
                                                Foreground="{StaticResource TextTertiaryBrush}"/>
                                 </Border>
                             </StackPanel>

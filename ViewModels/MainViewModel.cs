@@ -118,6 +118,7 @@ namespace ESCenter.ViewModels
         public ICommand ShowAlBarakaCommand { get; }
         public ICommand ShowInventoryCommand { get; }
         public ICommand ShowBoneyardCommand { get; }
+        public ICommand ShowCustomersCommand { get; }
         public ICommand ShowWarrantySystemCommand { get; }
         public ICommand ShowUserProfileCommand { get; }
         public ICommand ShowSettingsCommand { get; }
@@ -151,6 +152,7 @@ namespace ESCenter.ViewModels
                 OnPropertyChanged(nameof(IsPartsControlSelected));
                 OnPropertyChanged(nameof(IsInventorySelected));
                 OnPropertyChanged(nameof(IsBoneyardSelected));
+                OnPropertyChanged(nameof(IsCustomersSelected));
             }
         }
 
@@ -159,6 +161,7 @@ namespace ESCenter.ViewModels
         public bool IsPartsControlSelected => ActiveSection == NavSection.PartsControl;
         public bool IsInventorySelected => ActiveSection == NavSection.Inventory;
         public bool IsBoneyardSelected => ActiveSection == NavSection.Boneyard;
+        public bool IsCustomersSelected => ActiveSection == NavSection.Customers;
 
         private string _statusText = "System Ready";
         public string StatusText
@@ -262,6 +265,7 @@ namespace ESCenter.ViewModels
         private PartsControlViewModel? _partsControlViewModel;
         private InventoryViewModel? _inventoryViewModel;
         private BoneyardViewModel? _boneyardViewModel;
+        private CustomersViewModel? _customersViewModel;
         private ReportsViewModel? _reportsViewModel;
         private AlBarakaViewModel? _alBarakaViewModel;
         private UserProfileWindow? _userProfileWindow;
@@ -402,6 +406,12 @@ namespace ESCenter.ViewModels
             {
                 ActiveSection = NavSection.Boneyard;
                 Navigate(GetOrCreateBoneyardViewModel(), "Boneyard loaded");
+            });
+
+            ShowCustomersCommand = new RelayCommand(_ =>
+            {
+                ActiveSection = NavSection.Customers;
+                Navigate(GetOrCreateCustomersViewModel(), "Customers loaded");
             });
 
             ShowWarrantySystemCommand = new RelayCommand(_ =>
@@ -556,6 +566,9 @@ namespace ESCenter.ViewModels
 
         private BoneyardViewModel GetOrCreateBoneyardViewModel()
             => _boneyardViewModel ??= new BoneyardViewModel();
+
+        private CustomersViewModel GetOrCreateCustomersViewModel()
+            => _customersViewModel ??= new CustomersViewModel();
 
         private ReportsViewModel GetOrCreateReportsViewModel()
             => _reportsViewModel ??= new ReportsViewModel();
@@ -1308,6 +1321,7 @@ namespace ESCenter.ViewModels
             (_partsControlViewModel as IDisposable)?.Dispose();
             (_inventoryViewModel as IDisposable)?.Dispose();
             (_boneyardViewModel as IDisposable)?.Dispose();
+            (_customersViewModel as IDisposable)?.Dispose();
         }
 
         public enum NavSection
@@ -1317,7 +1331,8 @@ namespace ESCenter.ViewModels
             RepairTickets,
             PartsControl,
             Inventory,
-            Boneyard
+            Boneyard,
+            Customers
         }
     }
 }

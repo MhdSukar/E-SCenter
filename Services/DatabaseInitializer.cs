@@ -53,7 +53,8 @@ namespace ESCenter.Services
                 EnsurePartsTable(conn),
                 EnsureInventoryTable(conn),
                 EnsureBoneyardTable(conn),
-                EnsureAlBarakaTable(conn)
+                EnsureAlBarakaTable(conn),
+                EnsureCustomersTable(conn)
             };
 
             return string.Join(Environment.NewLine, reports);
@@ -201,6 +202,24 @@ namespace ESCenter.Services
             return EnsureTable(conn, tableName, expectedColumns);
         }
 
+
+        private string EnsureCustomersTable(SQLiteConnection conn)
+        {
+            const string tableName = "Customers";
+
+            var expectedColumns = new Dictionary<string, string>
+            {
+                ["CustomerId"] = "INTEGER PRIMARY KEY AUTOINCREMENT",
+                ["FullName"] = "TEXT NOT NULL",
+                ["PhoneNumber"] = "TEXT",
+                ["Email"] = "TEXT",
+                ["Address"] = "TEXT",
+                ["Notes"] = "TEXT",
+                ["CreatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP"
+            };
+
+            return EnsureTable(conn, tableName, expectedColumns);
+        }
         private string EnsureBoneyardTable(SQLiteConnection conn)
         {
             const string tableName = "Boneyard";
