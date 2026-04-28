@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:lvc="http://schemas.livecharts.com/2.0/wpf"
-             xmlns:vm="clr-namespace:ESCenter.ViewModels"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d"
              d:DesignHeight="700"
              d:DesignWidth="1200">
@@ -13,7 +12,7 @@
         <Style x:Key="CustomDatePanelStyle" TargetType="StackPanel">
             <Setter Property="Visibility" Value="Collapsed"/>
             <Style.Triggers>
-                <DataTrigger Binding="{Binding SelectedPeriod}" Value="{x:Static vm:ReportPeriod.Custom}">
+                <DataTrigger Binding="{Binding IsCustomPeriod}" Value="True">
                     <Setter Property="Visibility" Value="Visible"/>
                 </DataTrigger>
             </Style.Triggers>

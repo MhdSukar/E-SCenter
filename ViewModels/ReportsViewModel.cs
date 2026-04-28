@@ -51,13 +51,19 @@ namespace ESCenter.ViewModels
             get => _selectedPeriod;
             set
             {
-                if (SetProperty(ref _selectedPeriod, value) && !_isApplyingPeriod)
+                if (SetProperty(ref _selectedPeriod, value))
                 {
-                    LoadReportsAsync().FireAndForget(nameof(LoadReportsAsync));
+                    OnPropertyChanged(nameof(IsCustomPeriod));
+                    if (!_isApplyingPeriod)
+                    {
+                        LoadReportsAsync().FireAndForget(nameof(LoadReportsAsync));
+                    }
                 }
             }
         }
 
+
+        public bool IsCustomPeriod => SelectedPeriod == ReportPeriod.Custom;
         private string _selectedPeriodOption = "This Month";
         public string SelectedPeriodOption
         {
