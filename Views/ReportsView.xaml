@@ -43,6 +43,7 @@
                     <ComboBox Width="150"
                               ItemsSource="{Binding PeriodOptions}"
                               SelectedItem="{Binding SelectedPeriodOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Background="#151515"
                               Style="{StaticResource GradiantComboboxStyle11}"/>
 
                     <StackPanel Orientation="Horizontal" Margin="8,0,0,0" Style="{StaticResource CustomDatePanelStyle}">
