@@ -37,6 +37,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -74,8 +75,10 @@
                     </Border>
                 </DockPanel>
 
+                <views:TicketTemplatesPanel Grid.Row="1" />
+
                 <!-- Footer -->
-                <StackPanel Grid.Row="1"
+                <StackPanel Grid.Row="2"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             Margin="0,0,0,12">
@@ -144,7 +147,7 @@
                 </StackPanel>
 
                 <!-- Form -->
-                <ScrollViewer Grid.Row="2"
+                <ScrollViewer Grid.Row="3"
                               VerticalScrollBarVisibility="Hidden">
                     <Grid Margin="0,4">
                         <Grid.ColumnDefinitions>
