@@ -49,6 +49,7 @@ namespace ESCenter.Services
             var reports = new List<string>
             {
                 EnsureTicketsTable(conn),
+                EnsureTicketTemplatesTable(conn),
                 EnsureTicketStatusHistoryTable(conn),
                 EnsurePartsTable(conn),
                 EnsureInventoryTable(conn),
@@ -217,6 +218,29 @@ namespace ESCenter.Services
                 ["Price"] = "REAL DEFAULT 0",
                 ["PriceCurrency"] = "TEXT DEFAULT 'S.P'",
                 ["AddedAt"] = "TEXT"
+            };
+
+            return EnsureTable(conn, tableName, expectedColumns);
+        }
+
+        private string EnsureTicketTemplatesTable(SQLiteConnection conn)
+        {
+            const string tableName = "TicketTemplates";
+
+            var expectedColumns = new Dictionary<string, string>
+            {
+                ["TemplateId"] = "INTEGER PRIMARY KEY AUTOINCREMENT",
+                ["Name"] = "TEXT NOT NULL",
+                ["DeviceCategory"] = "TEXT",
+                ["DeviceBrand"] = "TEXT",
+                ["DeviceModel"] = "TEXT",
+                ["ProblemDescription"] = "TEXT",
+                ["Notes"] = "TEXT",
+                ["PriorityLevel"] = "TEXT DEFAULT 'Normal'",
+                ["EstimatedCost"] = "REAL",
+                ["EstimatedCostCurrency"] = "TEXT DEFAULT 'S.P'",
+                ["PartsUsed"] = "TEXT",
+                ["CreatedAt"] = "TEXT DEFAULT CURRENT_TIMESTAMP"
             };
 
             return EnsureTable(conn, tableName, expectedColumns);

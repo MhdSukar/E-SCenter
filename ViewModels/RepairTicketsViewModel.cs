@@ -16,12 +16,14 @@ using ESCenter.Core;
 using ESCenter.Data;
 using ESCenter.Models;
 using ESCenter.Services;
+using ESCenter.Windows;
 
 namespace ESCenter.ViewModels
 {
     public class RepairTicketsViewModel : ObservableObject, IDisposable
     {
         private readonly TicketsDataService _service;
+        private readonly TicketTemplateRepository? _templateRepo;
         private readonly TicketStatusHistoryRepository _statusHistoryRepository = new();
         private string _lastKnownStatus = "Received";
         private string _formStateSnapshot = string.Empty;
@@ -50,6 +52,7 @@ namespace ESCenter.ViewModels
         // COLLECTIONS
         // =========================================================
         public ObservableCollection<RepairTicket> Tickets { get; }
+        public ObservableCollection<TicketTemplate> Templates { get; } = new();
         public ObservableCollection<TicketStatusEntry> StatusHistory { get; } = new();
         public ObservableCollection<RepairTicket> ClientHistory { get; } = new();
 
@@ -73,6 +76,13 @@ namespace ESCenter.ViewModels
                     CommandManager.InvalidateRequerySuggested();
                 }
             }
+        }
+
+        private TicketTemplate? _selectedTemplate;
+        public TicketTemplate? SelectedTemplate
+        {
+            get => _selectedTemplate;
+            set => SetProperty(ref _selectedTemplate, value);
         }
 
         // =========================================================
@@ -488,6 +498,9 @@ namespace ESCenter.ViewModels
         public ICommand CopyPickupMessageCommand { get; }
         public ICommand CopyReceiptCommand { get; }
         public ICommand ExportTicketsCsvCommand { get; }
+        public ICommand SaveAsTemplateCommand { get; }
+        public ICommand LoadTemplateCommand { get; }
+        public ICommand DeleteTemplateCommand { get; }
 
         // Parts commands
         public ICommand AddPartCommand            { get; }
@@ -510,6 +523,7 @@ namespace ESCenter.ViewModels
         {
             var isDesignMode = DesignTimeHelper.IsInDesignMode;
             _service = AppServices.IsInitialized ? AppServices.Get<TicketsDataService>() : new TicketsDataService();
+            _templateRepo = AppServices.IsInitialized ? AppServices.Get<TicketTemplateRepository>() : null;
             if (!isDesignMode)
             {
                 _databasePathChangedHandler = async (_, __) => await LoadTicketsAsync();
@@ -535,6 +549,9 @@ namespace ESCenter.ViewModels
             CopyPickupMessageCommand = new RelayCommand(_ => CopyPickupMessage(), _ => CanCopyPickupMessage());
             CopyReceiptCommand = new RelayCommand(_ => CopyReceipt(), _ => SelectedTicket != null);
             ExportTicketsCsvCommand = new RelayCommand(_ => ExportTicketsCsv().FireAndForget(nameof(ExportTicketsCsv)));
+            SaveAsTemplateCommand = new RelayCommand(_ => SaveAsTemplateAsync().FireAndForget(nameof(SaveAsTemplateAsync)));
+            LoadTemplateCommand = new RelayCommand(_ => LoadTemplate());
+            DeleteTemplateCommand = new RelayCommand(_ => DeleteTemplateAsync().FireAndForget(nameof(DeleteTemplateAsync)));
 
             // Parts commands
             AddPartCommand = new RelayCommand(param =>
@@ -591,6 +608,7 @@ namespace ESCenter.ViewModels
             if (!isDesignMode)
             {
                 _ = LoadPartsCatalogAsync();
+                LoadTemplatesAsync().FireAndForget(nameof(LoadTemplatesAsync));
             }
 
         }
@@ -880,6 +898,104 @@ namespace ESCenter.ViewModels
                 TicketEvents.RaiseTicketsChanged();
             }
             catch (Exception ex) { AppLogger.Error($"Failed to delete ticket: {ex.Message}"); }
+        }
+
+        private async Task SaveAsTemplateAsync()
+        {
+            var dialog = new TemplateNameInputDialog
+            {
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+
+            if (dialog.ShowDialog() != true || !dialog.Confirmed)
+            {
+                return;
+            }
+
+            var name = dialog.TemplateName?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            var template = new TicketTemplate
+            {
+                Name = name,
+                DeviceCategory = DeviceCategory,
+                DeviceBrand = DeviceBrand,
+                DeviceModel = DeviceModel,
+                ProblemDescription = ProblemDescription,
+                Notes = Notes,
+                PriorityLevel = PriorityLevel,
+                EstimatedCost = EstimatedCost,
+                EstimatedCostCurrency = EstimatedCostCurrency,
+                PartsUsed = PartsUsed
+            };
+
+            if (_templateRepo == null)
+            {
+                return;
+            }
+
+            await _templateRepo.InsertAsync(template);
+            await LoadTemplatesAsync();
+            AppLogger.Success("Template saved: " + name);
+        }
+
+        private void LoadTemplate()
+        {
+            if (SelectedTemplate == null)
+            {
+                return;
+            }
+
+            DeviceCategory = SelectedTemplate.DeviceCategory;
+            DeviceBrand = SelectedTemplate.DeviceBrand;
+            DeviceModel = SelectedTemplate.DeviceModel;
+            ProblemDescription = SelectedTemplate.ProblemDescription;
+            Notes = SelectedTemplate.Notes;
+            PriorityLevel = SelectedTemplate.PriorityLevel;
+            EstimatedCost = SelectedTemplate.EstimatedCost;
+            EstimatedCostCurrency = SelectedTemplate.EstimatedCostCurrency;
+
+            if (string.IsNullOrWhiteSpace(PartsUsed))
+            {
+                PartsUsed = SelectedTemplate.PartsUsed;
+            }
+
+            AppLogger.Success("Template loaded: " + SelectedTemplate.Name);
+        }
+
+        private async Task DeleteTemplateAsync()
+        {
+            if (SelectedTemplate == null)
+            {
+                return;
+            }
+            if (_templateRepo == null)
+            {
+                return;
+            }
+
+            await _templateRepo.DeleteAsync(SelectedTemplate.TemplateId);
+            await LoadTemplatesAsync();
+            SelectedTemplate = null;
+            AppLogger.Success("Template deleted");
+        }
+
+        private async Task LoadTemplatesAsync()
+        {
+            if (_templateRepo == null)
+            {
+                return;
+            }
+
+            var list = await _templateRepo.GetAllAsync();
+            Templates.Clear();
+            foreach (var item in list)
+            {
+                Templates.Add(item);
+            }
         }
 
         // =========================================================

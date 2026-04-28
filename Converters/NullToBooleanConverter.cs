@@ -7,7 +7,10 @@ namespace ESCenter.Converters
     {
         public object Convert(object value, System.Type targetType, object parameter, CultureInfo culture)
         {
-            return value == null;
+            var isNull = value == null;
+            var invert = string.Equals(parameter?.ToString(), "Invert=true", System.StringComparison.OrdinalIgnoreCase)
+                         || string.Equals(parameter?.ToString(), "true", System.StringComparison.OrdinalIgnoreCase);
+            return invert ? !isNull : isNull;
         }
 
         public object ConvertBack(object value, System.Type targetType, object parameter, CultureInfo culture)
