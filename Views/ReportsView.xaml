@@ -43,7 +43,9 @@
                     <ComboBox Width="150"
                               ItemsSource="{Binding PeriodOptions}"
                               SelectedItem="{Binding SelectedPeriodOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              Style="{StaticResource GradiantComboboxStyle11}"/>
+                              Background="#151515"
+                              BorderBrush="{StaticResource BorderDarkBrush}"
+                              Foreground="{StaticResource TextPrimaryBrush}"/>
 
                     <StackPanel Orientation="Horizontal" Margin="8,0,0,0" Style="{StaticResource CustomDatePanelStyle}">
                         <DatePicker SelectedDate="{Binding PeriodStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="130"/>
