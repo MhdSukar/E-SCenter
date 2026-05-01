@@ -65,6 +65,7 @@ namespace ESCenter.ViewModels
         public ICommand RefreshCommand { get; }
         public ICommand OpenTicketCommand { get; }
         public ICommand ExportReorderListCommand { get; }
+        public ICommand RestockItemCommand { get; }
         public Action<RepairTicket>? TicketSelected;
 
         public DashboardViewModel()
@@ -83,6 +84,16 @@ namespace ESCenter.ViewModels
                 }
             });
             ExportReorderListCommand = new RelayCommand(_ => ExportReorderList().FireAndForget(nameof(ExportReorderList)));
+            RestockItemCommand = new RelayCommand(param =>
+            {
+                if (param is not LowStockCounterItem item)
+                {
+                    return;
+                }
+
+                RestockWizardHelper.Show(item.Name, item.Source, item.Quantity);
+                Refresh();
+            });
 
             if (isDesignMode)
             {
