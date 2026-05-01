@@ -235,6 +235,11 @@ namespace ESCenter.ViewModels
                     case nameof(PartModel.Description):
                     case nameof(PartModel.ChipPartNumber):
                         _repo.Update(part);
+                        if (e.PropertyName == nameof(PartModel.QuantityOnHand))
+                        {
+                            RestockWizardHelper.ShowIfNeeded(
+                                part.PartCode ?? part.SKU ?? "Unknown Part", "Parts", part.QuantityOnHand);
+                        }
                         break;
                 }
             }
