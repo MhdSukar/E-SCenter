@@ -487,6 +487,7 @@ namespace ESCenter.ViewModels
         public ICommand ReopenCommand          { get; }
         public ICommand CopyPickupMessageCommand { get; }
         public ICommand CopyReceiptCommand { get; }
+        public ICommand PrintReceiptCommand { get; }
         public ICommand ExportTicketsCsvCommand { get; }
 
         // Parts commands
@@ -534,6 +535,7 @@ namespace ESCenter.ViewModels
             ReopenCommand = new RelayCommand(_ => ReopenTicket(), _ => CanReopenTicket());
             CopyPickupMessageCommand = new RelayCommand(_ => CopyPickupMessage(), _ => CanCopyPickupMessage());
             CopyReceiptCommand = new RelayCommand(_ => CopyReceipt(), _ => SelectedTicket != null);
+            PrintReceiptCommand = new RelayCommand(_ => PrintReceipt(), _ => SelectedTicket != null);
             ExportTicketsCsvCommand = new RelayCommand(_ => ExportTicketsCsv().FireAndForget(nameof(ExportTicketsCsv)));
 
             // Parts commands
@@ -902,12 +904,25 @@ namespace ESCenter.ViewModels
 
         private void CopyReceipt()
         {
-            if (SelectedTicket == null) return;
+            if (SelectedTicket == null)
+            {
+                return;
+            }
 
-            var t = SelectedTicket;
-            var receipt = $"┌─────────────────────────────┐\n│  E-SCenter Repair Receipt   │\n├─────────────────────────────┤\n│ ESC-ID : {t.EscTicketId,-17}│\n│ Date   : {t.ReceiveDate:yyyy-MM-dd}         │\n│ Client : {t.CustomerName,-17}│\n│ Phone  : {t.PhoneNumber,-17}│\n│ Device : {($"{t.DeviceBrand} {t.DeviceModel}".Trim()),-17}│\n│ Serial : {t.SerialIMEI,-17}│\n│ Problem: {t.ProblemDescription,-17}│\n│ Status : {t.RepairStatus,-17}│\n│ Est.   : {(t.EstimatedCost?.ToString("N0") ?? "0")} {t.EstimatedCostCurrency}         │\n└─────────────────────────────┘";
-            System.Windows.Clipboard.SetText(receipt);
+            System.Windows.Clipboard.SetText(ReceiptDocumentBuilder.BuildPlainText(SelectedTicket));
             AppLogger.Success("Receipt copied to clipboard.");
+        }
+
+        private void PrintReceipt()
+        {
+            if (SelectedTicket == null)
+            {
+                return;
+            }
+
+            var preview = new Windows.PrintPreviewWindow(SelectedTicket);
+            preview.Owner = Application.Current.MainWindow;
+            preview.ShowDialog();
         }
 
         private void CopyPickupMessage()
