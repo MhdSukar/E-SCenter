@@ -1,0 +1,66 @@
+<Window x:Class="ESCenter.Windows.PrintPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Print Preview"
+        Width="480"
+        Height="620"
+        WindowStartupLocation="CenterOwner"
+        Background="Transparent"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip">
+
+    <Border CornerRadius="12" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Height="36" Background="{StaticResource DarkCardBrush}" CornerRadius="12,12,0,0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Print Preview" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="12,0,0,0"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button x:Name="btnMinimize" Style="{StaticResource TitleBarButtonBase}" Click="btnMinimize_Click">
+                            <Image Source="{StaticResource Minimize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
+                        <Button Style="{StaticResource TitleBarCloseButtonStyle}" Click="CloseButton_Click">
+                            <Image Source="{StaticResource Close}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Background="{StaticResource DarkCardBrush}" BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="0,0,0,1" Padding="12,8">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="🖨 Print" Width="110" Height="30" Style="{StaticResource PrimaryFilledButtonStyle}" Click="PrintButton_Click"/>
+                    <Button Content="Copy Text" Width="110" Height="30" Style="{StaticResource GradientBorderButtonStyleBLueCyan}" Click="CopyTextButton_Click" Margin="8,0,0,0"/>
+                    <Button Content="Close" Width="80" Height="30" Style="{StaticResource GhostButtonStyle}" Click="CloseButton_Click" Margin="8,0,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <Border Background="White" Margin="16" Padding="24" CornerRadius="4">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="12" Opacity="0.3"/>
+                    </Border.Effect>
+                    <FlowDocumentScrollViewer x:Name="DocViewer"
+                                              IsToolBarVisible="False"
+                                              VerticalScrollBarVisibility="Hidden"/>
+                </Border>
+            </ScrollViewer>
+
+            <Border Grid.Row="3" Background="{StaticResource DarkCardBrush}" BorderBrush="{StaticResource DarkBorderBrush}" BorderThickness="1,1,1,0" CornerRadius="0,0,12,12" Padding="10">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Close" Width="90" Height="30" Style="{StaticResource GhostButtonStyle}" Click="CloseButton_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

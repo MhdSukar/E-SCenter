@@ -76,8 +76,12 @@
     <BitmapImage x:Key="Unassigned" UriSource="/Assets/Icons/Unassigned.png"/>
     <BitmapImage x:Key="Warranty" UriSource="/Assets/Icons/Warranty.png"/>
     <BitmapImage x:Key="Warranty1" UriSource="/Assets/Icons/Warranty1.png"/>
-    
-    
+
+    <BitmapImage x:Key="Notify" UriSource="/Assets/Icons/notify.png"/>
+    <BitmapImage x:Key="Receipt" UriSource="/Assets/Icons/receipt.png"/>
+    <BitmapImage x:Key="Print" UriSource="/Assets/Icons/print.png"/>
+
+
     <!-- ================================= Not Sorted ================================= -->
     <BitmapImage x:Key="CharOngoing" UriSource="/Assets/Icons/ongoing.png"/>
     <BitmapImage x:Key="CharFinished" UriSource="/Assets/Icons/finished.png"/>
