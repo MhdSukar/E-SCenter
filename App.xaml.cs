@@ -55,6 +55,7 @@ namespace ESCenter
                 services.AddSingleton<GlobalSearchService>();
                 services.AddSingleton<BackupService>();
                 services.AddSingleton<AlBarakaDataService>();
+                services.AddSingleton<ReceiptPrintService>();
             });
 
             InitializeDatabase();
