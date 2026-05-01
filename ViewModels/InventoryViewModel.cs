@@ -169,6 +169,9 @@ namespace ESCenter.ViewModels
             if (win.ShowDialog() == true)
             {
                 _repository.Update(vm.Item);
+                RestockWizardHelper.ShowIfNeeded(
+                    vm.Item.Description ?? vm.Item.ItemType ?? "Unknown Item",
+                    "Inventory", vm.Item.QuantityOnHand);
                 Load();
             }
         }
