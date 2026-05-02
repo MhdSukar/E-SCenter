@@ -22,7 +22,7 @@
 
             <Border Margin="0,36,0,0" Padding="12" CornerRadius="0,0,10,10" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="1">
                 <TabControl x:Name="CategoryTabs" Style="{StaticResource SettingsWindowTabControlStyle}">
-                    <TabItem Header="Parts Categories" Tag="First">
+                    <TabItem Header="Parts Types" Tag="First">
                         <StackPanel Margin="8">
                             <ListBox x:Name="PartsListBox" Height="260" Background="#1A1A1A" BorderBrush="{StaticResource BorderDarkBrush}">
                                 <ListBox.ItemTemplate>

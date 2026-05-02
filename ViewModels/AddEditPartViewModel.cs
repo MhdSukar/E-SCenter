@@ -14,7 +14,7 @@ namespace ESCenter.ViewModels
     public class AddEditPartViewModel : ObservableObject
     {
         public PartModel Part { get; }
-        public ObservableCollection<string> PartTypes { get; } = new() { "Resistors", "Capacitors", "ICs", "Coils", "Ports", "Transistors", "Diodes" };
+        public ObservableCollection<string> PartTypes { get; } = new();
         public ObservableCollection<string> QualityOptions { get; } = new() { "Low", "Mid", "High", "Original" };
         public ObservableCollection<string> CategoryOptions { get; } = new();
         public ObservableCollection<string> Unit1Options { get; } = new();
@@ -42,9 +42,26 @@ namespace ESCenter.ViewModels
             ManageCategoriesCommand = new RelayCommand(_ => ManageCategories());
             ApplyUnitDefaults();
             Part.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(Part.PartType)) ApplyUnitDefaults(); };
+            LoadPartTypesAsync().FireAndForget(nameof(LoadPartTypesAsync));
             LoadCategoriesAsync().FireAndForget(nameof(LoadCategoriesAsync));
         }
 
+
+        private async Task LoadPartTypesAsync()
+        {
+            var repo = AppServices.Get<CategoryRepository>();
+            var partTypes = await repo.GetByTypeAsync("Parts");
+            PartTypes.Clear();
+            foreach (var type in partTypes)
+            {
+                PartTypes.Add(type);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Part.PartType) && !PartTypes.Contains(Part.PartType))
+            {
+                Part.PartType = PartTypes.FirstOrDefault() ?? string.Empty;
+            }
+        }
         private async Task LoadCategoriesAsync()
         {
             var repo = AppServices.Get<CategoryRepository>();
@@ -59,6 +76,7 @@ namespace ESCenter.ViewModels
         {
             var window = new CategoryManagerWindow { Owner = Application.Current.MainWindow };
             window.ShowDialog();
+            LoadPartTypesAsync().FireAndForget(nameof(LoadPartTypesAsync));
             LoadCategoriesAsync().FireAndForget(nameof(LoadCategoriesAsync));
         }
 

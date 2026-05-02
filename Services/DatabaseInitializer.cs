@@ -77,15 +77,15 @@ namespace ESCenter.Services
             using var uniqueIndexCmd = new SQLiteCommand("CREATE UNIQUE INDEX IF NOT EXISTS IX_PartCategories_CategoryName_ForType ON PartCategories (CategoryName, ForType);", conn);
             uniqueIndexCmd.ExecuteNonQuery();
 
-            using var insertPartsNormal = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Normal', 'Parts');", conn);
+            using var insertPartsNormal = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Resistors', 'Parts');", conn);
             insertPartsNormal.ExecuteNonQuery();
-            using var insertPartsSmd = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('SMD', 'Parts');", conn);
+            using var insertPartsSmd = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Capacitors', 'Parts');", conn);
             insertPartsSmd.ExecuteNonQuery();
-            using var insertPartsThroughHole = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Through-Hole', 'Parts');", conn);
+            using var insertPartsThroughHole = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('ICs', 'Parts');", conn);
             insertPartsThroughHole.ExecuteNonQuery();
-            using var insertPartsModule = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Module', 'Parts');", conn);
+            using var insertPartsModule = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Coils', 'Parts');", conn);
             insertPartsModule.ExecuteNonQuery();
-            using var insertPartsConnector = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Connector', 'Parts');", conn);
+            using var insertPartsConnector = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Diodes', 'Parts');", conn);
             insertPartsConnector.ExecuteNonQuery();
 
             using var insertInvScreen = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Screen', 'Inventory');", conn);
