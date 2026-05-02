@@ -53,12 +53,62 @@ namespace ESCenter.Services
                 EnsurePartsTable(conn),
                 EnsureInventoryTable(conn),
                 EnsureBoneyardTable(conn),
-                EnsureAlBarakaTable(conn)
+                EnsureAlBarakaTable(conn),
+                EnsurePartCategoriesTable(conn)
             };
 
             return string.Join(Environment.NewLine, reports);
         }
 
+
+        private string EnsurePartCategoriesTable(SQLiteConnection conn)
+        {
+            const string tableName = "PartCategories";
+
+            var expectedColumns = new Dictionary<string, string>
+            {
+                ["CategoryId"] = "INTEGER PRIMARY KEY AUTOINCREMENT",
+                ["CategoryName"] = "TEXT NOT NULL",
+                ["ForType"] = "TEXT NOT NULL CHECK(ForType IN ('Parts','Inventory'))"
+            };
+
+            var report = EnsureTable(conn, tableName, expectedColumns);
+
+            using var uniqueIndexCmd = new SQLiteCommand("CREATE UNIQUE INDEX IF NOT EXISTS IX_PartCategories_CategoryName_ForType ON PartCategories (CategoryName, ForType);", conn);
+            uniqueIndexCmd.ExecuteNonQuery();
+
+            using var insertPartsNormal = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Normal', 'Parts');", conn);
+            insertPartsNormal.ExecuteNonQuery();
+            using var insertPartsSmd = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('SMD', 'Parts');", conn);
+            insertPartsSmd.ExecuteNonQuery();
+            using var insertPartsThroughHole = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Through-Hole', 'Parts');", conn);
+            insertPartsThroughHole.ExecuteNonQuery();
+            using var insertPartsModule = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Module', 'Parts');", conn);
+            insertPartsModule.ExecuteNonQuery();
+            using var insertPartsConnector = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Connector', 'Parts');", conn);
+            insertPartsConnector.ExecuteNonQuery();
+
+            using var insertInvScreen = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Screen', 'Inventory');", conn);
+            insertInvScreen.ExecuteNonQuery();
+            using var insertInvBattery = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Battery', 'Inventory');", conn);
+            insertInvBattery.ExecuteNonQuery();
+            using var insertInvSpeaker = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Speaker', 'Inventory');", conn);
+            insertInvSpeaker.ExecuteNonQuery();
+            using var insertInvCamera = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Camera', 'Inventory');", conn);
+            insertInvCamera.ExecuteNonQuery();
+            using var insertInvTransformer = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Transformer', 'Inventory');", conn);
+            insertInvTransformer.ExecuteNonQuery();
+            using var insertInvFlex = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Flex', 'Inventory');", conn);
+            insertInvFlex.ExecuteNonQuery();
+            using var insertInvBoard = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Board', 'Inventory');", conn);
+            insertInvBoard.ExecuteNonQuery();
+            using var insertInvAdapter = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Adapter', 'Inventory');", conn);
+            insertInvAdapter.ExecuteNonQuery();
+            using var insertInvOther = new SQLiteCommand("INSERT OR IGNORE INTO PartCategories (CategoryName, ForType) VALUES ('Other', 'Inventory');", conn);
+            insertInvOther.ExecuteNonQuery();
+
+            return report;
+        }
         private string EnsureAlBarakaTable(SQLiteConnection conn)
         {
             const string tableName = "AlBaraka";

@@ -1,86 +1,62 @@
-﻿using System.Collections.ObjectModel;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using ESCenter.Core;
+using ESCenter.Data;
 using ESCenter.Models;
+using ESCenter.Windows;
 
 namespace ESCenter.ViewModels
 {
     public class AddEditInventoryViewModel : ObservableObject
     {
         public InventoryItemModel Item { get; }
-
         public bool IsEditMode { get; }
-
-        public ObservableCollection<string> ItemTypes { get; } = new()
-        {
-            "Screen", "Battery", "Speaker", "Camera", "Transformer", "Flex", "Board", "Adapter", "Other"
-        };
-
-        public ObservableCollection<string> Conditions { get; } = new()
-        {
-            "New", "Pulled", "Refurbished", "Tested", "Dead"
-        };
-
+        public ObservableCollection<string> ItemTypes { get; } = new();
+        public ObservableCollection<string> Conditions { get; } = new() { "New", "Pulled", "Refurbished", "Tested", "Dead" };
         public ObservableCollection<int> QualityGrades { get; } = new() { 1, 2, 3, 4, 5 };
         public ObservableCollection<string> Currencies { get; } = new() { "S.P", "USD" };
-
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
+        public ICommand ManageCategoriesCommand { get; }
 
         public AddEditInventoryViewModel()
         {
-            Item = new InventoryItemModel
-            {
-                QuantityOnHand = 1,
-                Price = 0,
-                PriceCurrency = "S.P",
-                QualityGrade = 3,
-                Condition = "New"
-            };
-
+            Item = new InventoryItemModel { QuantityOnHand = 1, Price = 0, PriceCurrency = "S.P", QualityGrade = 3, Condition = "New" };
             SaveCommand = new RelayCommand(w => Close(w, true));
             CancelCommand = new RelayCommand(w => Close(w, false));
+            ManageCategoriesCommand = new RelayCommand(_ => ManageCategories());
+            LoadItemTypesAsync().FireAndForget(nameof(LoadItemTypesAsync));
         }
 
         public AddEditInventoryViewModel(InventoryItemModel existing)
         {
             IsEditMode = true;
-            Item = new InventoryItemModel
-            {
-                InventoryId = existing.InventoryId,
-                ItemType = existing.ItemType,
-                Brand = existing.Brand,
-                Model = existing.Model,
-                Variant = existing.Variant,
-                Compatibility = existing.Compatibility,
-                Specs = existing.Specs,
-                Size = existing.Size,
-                QuantityOnHand = existing.QuantityOnHand,
-                Price = existing.Price,
-                PriceCurrency = NormalizeCurrency(existing.PriceCurrency),
-                Condition = existing.Condition,
-                QualityGrade = existing.QualityGrade,
-                Source = existing.Source,
-                LocationBox = existing.LocationBox,
-                Description = existing.Description,
-                Notes = existing.Notes,
-                Tags = existing.Tags
-            };
-
+            Item = new InventoryItemModel { InventoryId = existing.InventoryId, ItemType = existing.ItemType, Brand = existing.Brand, Model = existing.Model, Variant = existing.Variant, Compatibility = existing.Compatibility, Specs = existing.Specs, Size = existing.Size, QuantityOnHand = existing.QuantityOnHand, Price = existing.Price, PriceCurrency = NormalizeCurrency(existing.PriceCurrency), Condition = existing.Condition, QualityGrade = existing.QualityGrade, Source = existing.Source, LocationBox = existing.LocationBox, Description = existing.Description, Notes = existing.Notes, Tags = existing.Tags };
             SaveCommand = new RelayCommand(w => Close(w, true));
             CancelCommand = new RelayCommand(w => Close(w, false));
+            ManageCategoriesCommand = new RelayCommand(_ => ManageCategories());
+            LoadItemTypesAsync().FireAndForget(nameof(LoadItemTypesAsync));
         }
 
-        private void Close(object window, bool result)
+        private async Task LoadItemTypesAsync()
         {
-            if (window is System.Windows.Window win)
-            {
-                win.DialogResult = result;
-                win.Close();
-            }
+            var repo = AppServices.Get<CategoryRepository>();
+            var types = await repo.GetByTypeAsync("Inventory");
+            ItemTypes.Clear();
+            foreach (var t in types) ItemTypes.Add(t);
         }
 
-        private static string NormalizeCurrency(string currency)
-            => string.Equals(currency, "USD", System.StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
+        private void ManageCategories()
+        {
+            var window = new CategoryManagerWindow("Inventory") { Owner = Application.Current.MainWindow };
+            window.ShowDialog();
+            LoadItemTypesAsync().FireAndForget(nameof(LoadItemTypesAsync));
+        }
+
+        private void Close(object window, bool result) { if (window is Window win) { win.DialogResult = result; win.Close(); } }
+        private static string NormalizeCurrency(string currency) => string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
     }
 }

@@ -232,10 +232,19 @@
 
                         <!-- Category -->
                         <TextBlock Text="Category" Grid.Row="10" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <ComboBox ItemsSource="{Binding CategoryOptions}"
-                                  SelectedItem="{Binding Part.Category}"
-                                  Grid.Row="10" Grid.Column="1"
-                                  Style="{StaticResource GradiantComboboxStyle11}" Margin="0,4"/>
+                        <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal" Margin="0,4">
+                            <ComboBox Width="220"
+                                      ItemsSource="{Binding CategoryOptions}"
+                                      SelectedItem="{Binding Part.Category}"
+                                      Style="{StaticResource GradiantComboboxStyle11}"/>
+                            <Button Content="Manage"
+                                    Width="70"
+                                    Margin="6,0,0,0"
+                                    Height="28"
+                                    FontSize="11"
+                                    Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
+                                    Command="{Binding ManageCategoriesCommand}"/>
+                        </StackPanel>
                     </Grid>
 
                     <!-- ===================== BUTTON BAR ===================== -->
