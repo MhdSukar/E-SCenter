@@ -190,10 +190,13 @@
                                        VerticalAlignment="Center"
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
-                            <ComboBox Grid.Row="0" Grid.Column="1"
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                <ComboBox Width="74"
                                       Style="{StaticResource GradiantComboboxStyle11}"
                                       ItemsSource="{Binding ItemTypes}"
                                       SelectedItem="{Binding Item.ItemType}"/>
+                                <Button Content="Manage" Width="70" Margin="6,0,0,0" Height="28" FontSize="11" Style="{StaticResource GradientBorderButtonStyleBLueCyan}" Command="{Binding ManageCategoriesCommand}"/>
+                            </StackPanel>
 
                             <!-- ================= BRAND ================= -->
                             <TextBlock Grid.Row="0" Grid.Column="2"
