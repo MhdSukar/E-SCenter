@@ -214,7 +214,8 @@ namespace ESCenter.ViewModels
             get => _phoneNumber;
             set
             {
-                if (SetProperty(ref _phoneNumber, value))
+                var normalizedValue = NormalizeSyrianPhoneNumber(value);
+                if (SetProperty(ref _phoneNumber, normalizedValue))
                 {
                     RefreshCustomerProfile();
                     CheckForUnsavedChanges();
@@ -1912,7 +1913,30 @@ If you would like to reopen the request, please contact us.",
                 AppLogger.Error($"Failed to load status history: {ex.Message}");
             }
         }
+        private static string NormalizeSyrianPhoneNumber(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
 
+            var trimmed = value.Trim();
+            var digits = new string(trimmed.Where(char.IsDigit).ToArray());
+            if (digits.Length == 0)
+                return trimmed;
+
+            if (digits.StartsWith("009639", StringComparison.Ordinal) && digits.Length == 14)
+                return $"+{digits[2..]}";
+
+            if (digits.StartsWith("9639", StringComparison.Ordinal) && digits.Length == 12)
+                return $"+{digits}";
+
+            if (digits.StartsWith("09", StringComparison.Ordinal) && digits.Length == 10)
+                return $"+963{digits[1..]}";
+
+            if (digits.StartsWith("9", StringComparison.Ordinal) && digits.Length == 9)
+                return $"+963{digits}";
+
+            return trimmed;
+        }
         private RepairTicket BuildTicketFromForm()
         {
             var receiveDateTime = ReceiveDate.Date.Add(ReceiveTime);

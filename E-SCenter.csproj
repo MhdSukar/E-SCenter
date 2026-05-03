@@ -55,11 +55,14 @@
     <None Remove="Assets\Icons\major.png" />
     <None Remove="Assets\Icons\NOT USED [1].png" />
     <None Remove="Assets\Icons\Notes.png" />
+    <None Remove="Assets\Icons\notify.png" />
     <None Remove="Assets\Icons\ongoing.png" />
     <None Remove="Assets\Icons\open_logs.png" />
     <None Remove="Assets\Icons\overdue.png" />
     <None Remove="Assets\Icons\Philips E-SCenter Logo.png" />
     <None Remove="Assets\Icons\phone.png" />
+    <None Remove="Assets\Icons\print.png" />
+    <None Remove="Assets\Icons\receipt.png" />
     <None Remove="Assets\Icons\refresh_all.png" />
     <None Remove="Assets\Icons\reports_DB.png" />
     <None Remove="Assets\Icons\Shutdown.png" />
@@ -243,6 +246,9 @@
     <Resource Include="Assets\Icons\Notes.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\notify.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\ongoing.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -267,6 +273,9 @@
     <Resource Include="Assets\Icons\phone.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Icons\print.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Icons\Priority.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -277,6 +286,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\ReadyToPick.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icons\receipt.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\Refresh.png">
