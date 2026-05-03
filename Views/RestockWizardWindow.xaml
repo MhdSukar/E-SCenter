@@ -1,0 +1,172 @@
+<Window x:Class="ESCenter.Views.RestockWizardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="Restock Item"
+        Width="380"
+        Height="340"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style x:Key="TitleBarButtonBase" TargetType="Button">
+            <Setter Property="Width" Value="46"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#22FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#33FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TitleBarCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarButtonBase}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="0,8,0,0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#E81123"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#C50F1F"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="12" Background="{StaticResource AppBackgroundBrushNew}" BorderBrush="{StaticResource DarkBorderBrush}">
+        <Grid>
+            <Border Height="36" Background="{StaticResource DarkCardBrush}" CornerRadius="12,12,0,0" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown" VerticalAlignment="Top">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Source="/Assets/Icons/Philips E-SCenter Logo.png" Width="18" Height="18" Margin="10,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Text="Restock Item" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button x:Name="btnMinimize" Style="{StaticResource TitleBarButtonBase}" Click="btnMinimize_Click">
+                            <Image Source="{StaticResource Minimize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
+                        <Button x:Name="btnMaximize" Style="{StaticResource TitleBarButtonBase}" Click="btnMaximize_Click">
+                            <Image Source="{StaticResource Maximize}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
+                        <Button Style="{StaticResource TitleBarCloseButtonStyle}" Click="btnClose_Click">
+                            <Image Source="{StaticResource Close}" Width="14" Height="14" Stretch="Uniform"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Margin="0,36,0,0" Padding="16" CornerRadius="0,0,10,10" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="10"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Item:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ItemName}" Foreground="{StaticResource Gradient.Primary.Horizontal}" FontSize="14" FontWeight="SemiBold"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Source:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Source}" Foreground="{StaticResource TextSecondaryBrush}"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Current Stock:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentQty}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{StaticResource NeonGreenBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentQty}" Value="0">
+                                            <Setter Property="Foreground" Value="{StaticResource NeonRedBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Restock Qty:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <xctk:IntegerUpDown Grid.Row="6" Grid.Column="1" Value="{Binding RestockQuantity, Mode=TwoWay}" Minimum="1" Maximum="9999" Width="100" HorizontalAlignment="Left" Background="#1A1A1A" Foreground="{StaticResource TextPrimaryBrush}" BorderBrush="{StaticResource BorderDarkBrush}"/>
+
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Note:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBox Grid.Row="8" Grid.Column="1" Style="{StaticResource GradiantTextboxStyle1}" Text="{Binding RestockNote, UpdateSourceTrigger=PropertyChanged}" Height="55" TextWrapping="Wrap" AcceptsReturn="True"/>
+
+                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Total After:" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding TotalAfterRestock}" Foreground="{StaticResource NeonCyanBrush}" FontSize="18" FontWeight="Bold">
+                            <TextBlock.Effect>
+                                <DropShadowEffect Color="#FF3BE7FF" BlurRadius="8" ShadowDepth="0" Opacity="0.75"/>
+                            </TextBlock.Effect>
+                        </TextBlock>
+                    </Grid>
+                    </ScrollViewer>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+                        <Button Width="110" Style="{StaticResource GhostButtonStyle}" Command="{Binding CancelCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{StaticResource DeleteClose}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                <TextBlock Text="Cancel"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Width="140" Style="{StaticResource PrimaryFilledButtonStyle}" Command="{Binding ConfirmCommand}" Margin="8,0,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{StaticResource Save}" Width="16" Height="16" Margin="0,0,8,0"/>
+                                <TextBlock Text="Confirm Restock" Foreground="Black"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
