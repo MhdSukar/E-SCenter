@@ -8,7 +8,7 @@
 
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2.7*"/>
+            <ColumnDefinition Width="2.6*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -182,7 +182,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="Item" Binding="{Binding ItemName}" Width="*"/>
+                        <DataGridTextColumn Header="Item" Binding="{Binding ItemName}" Width="350"/>
 
                         <!-- Price -->
                         <DataGridTemplateColumn Header="Price" Width="90" SortMemberPath="Price">

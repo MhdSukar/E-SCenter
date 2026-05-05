@@ -439,9 +439,6 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <!-- Source -->
-                    <DataGridTextColumn Header="Source"      Binding="{Binding Source}"      Width="120"/>
-
                     <!-- Box / Location -->
                     <DataGridTemplateColumn Header="Box" Width="90" SortMemberPath="LocationBox">
                         <DataGridTemplateColumn.CellTemplate>
@@ -460,13 +457,6 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-
-                    <!-- Description -->
-                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="200"/>
-
-                    <!-- Notes -->
-                    <DataGridTextColumn Header="Notes"       Binding="{Binding Notes}"       Width="180"/>
-
                     <!-- Tags -->
                     <DataGridTextColumn Header="Tags"        Binding="{Binding Tags}"        Width="140"/>
 

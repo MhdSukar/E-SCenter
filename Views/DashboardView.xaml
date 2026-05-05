@@ -344,7 +344,7 @@
                                                         CommandParameter="{Binding}"
                                                         Style="{StaticResource IconButtonStyle}"
                                                         Width="24"
-                                                        Height="24"
+                                                        Height="20"
                                                         Margin="6,0,0,0"
                                                         ToolTip="Restock this item">
                                                     <TextBlock Text="+"
