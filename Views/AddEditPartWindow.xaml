@@ -177,10 +177,17 @@
 
                         <!-- Type -->
                         <TextBlock Text="Type" Grid.Row="1" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <ComboBox ItemsSource="{Binding PartTypes}"
-                                  SelectedItem="{Binding Part.PartType}"
-                                  Grid.Row="1" Grid.Column="1"
-                                  Style="{StaticResource GradiantComboboxStyle11}" Margin="0,4"/>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,4">
+                            <ComboBox Width="120"
+                                      ItemsSource="{Binding PartTypes}"
+                                      SelectedItem="{Binding Part.PartType}"
+                                      Style="{StaticResource GradiantComboboxStyle11}"/>
+                            <Button Content="+ Add Type"
+                                    Width="86"
+                                    Margin="8,0,0,0"
+                                    Style="{StaticResource GhostButtonStyle}"
+                                    Command="{Binding AddNewTypeCommand}"/>
+                        </StackPanel>
 
                         <!-- Quantity -->
                         <TextBlock Text="Quantity" Grid.Row="2" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
