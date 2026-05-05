@@ -1549,6 +1549,7 @@ If you would like to reopen the request, please contact us.",
                 else
                 {
                     var qty = -delta;
+
                     if (updateParts)
                     {
                         if (string.IsNullOrWhiteSpace(normalizedSku))
@@ -1564,6 +1565,35 @@ If you would like to reopen the request, please contact us.",
                     {
                         inventoryRepo.DecrementQuantityByName(normalizedName, qty);
                     }
+
+                    int remaining;
+                    if (updateParts)
+                    {
+                        var allParts = partsRepo.GetAll();
+                        var match = allParts.FirstOrDefault(p =>
+                            (!string.IsNullOrWhiteSpace(normalizedSku) &&
+                             string.Equals(p.SKU?.Trim(), normalizedSku, StringComparison.OrdinalIgnoreCase))
+                            || string.Equals(p.PartCode?.Trim(), normalizedName, StringComparison.OrdinalIgnoreCase)
+                            || string.Equals(p.Description?.Trim(), normalizedName, StringComparison.OrdinalIgnoreCase));
+
+                        remaining = match?.QuantityOnHand ?? 0;
+                    }
+                    else
+                    {
+                        var allInventory = inventoryRepo.GetAll();
+                        var match = allInventory.FirstOrDefault(i =>
+                            string.Equals(
+                                (!string.IsNullOrWhiteSpace(i.Description)
+                                    ? i.Description
+                                    : $"{i.ItemType} {i.Brand} {i.Model}").Trim(),
+                                normalizedName,
+                                StringComparison.OrdinalIgnoreCase));
+
+                        remaining = match?.QuantityOnHand ?? 0;
+                    }
+
+                    var source = updateParts ? "Parts" : "Inventory";
+                    RestockWizardHelper.ShowIfNeeded(normalizedName, source, remaining, normalizedSku);
                 }
             }
             catch (Exception ex)

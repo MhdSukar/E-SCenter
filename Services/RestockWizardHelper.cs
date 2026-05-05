@@ -6,7 +6,7 @@ namespace ESCenter.Services
 {
     public static class RestockWizardHelper
     {
-        public static bool? Show(string itemName, string source, int currentQty)
+        public static bool? Show(string itemName, string source, int currentQty, string sku = "")
         {
             if (System.Windows.Application.Current == null)
             {
@@ -15,7 +15,7 @@ namespace ESCenter.Services
 
             if (System.Windows.Application.Current.Dispatcher.CheckAccess())
             {
-                var vm = new RestockWizardViewModel(itemName, source, currentQty);
+                var vm = new RestockWizardViewModel(itemName, source, currentQty, sku);
                 var win = new RestockWizardWindow
                 {
                     DataContext = vm,
@@ -25,17 +25,17 @@ namespace ESCenter.Services
                 return win.ShowDialog();
             }
 
-            return System.Windows.Application.Current.Dispatcher.Invoke(() => Show(itemName, source, currentQty));
+            return System.Windows.Application.Current.Dispatcher.Invoke(() => Show(itemName, source, currentQty, sku));
         }
 
-        public static void ShowIfNeeded(string itemName, string source, int newQty)
+        public static void ShowIfNeeded(string itemName, string source, int newQty, string sku = "")
         {
             if (newQty > 0)
             {
                 return;
             }
 
-            Show(itemName, source, newQty);
+            Show(itemName, source, newQty, sku);
         }
     }
 }

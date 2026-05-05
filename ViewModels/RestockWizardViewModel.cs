@@ -8,6 +8,7 @@ namespace ESCenter.ViewModels
 {
     public class RestockWizardViewModel : ObservableObject
     {
+        private readonly string _sku;
         private string _itemName;
         public string ItemName
         {
@@ -55,11 +56,12 @@ namespace ESCenter.ViewModels
         public ICommand ConfirmCommand { get; }
         public ICommand CancelCommand { get; }
 
-        public RestockWizardViewModel(string itemName, string source, int currentQty)
+        public RestockWizardViewModel(string itemName, string source, int currentQty, string sku = "")
         {
             ItemName = itemName;
             Source = source;
             CurrentQty = currentQty;
+            _sku = sku?.Trim() ?? string.Empty;
 
             ConfirmCommand = new RelayCommand(_ => RestockAsync().FireAndForget(nameof(RestockAsync)), _ => RestockQuantity > 0);
             CancelCommand = new RelayCommand(_ => CloseWindow(false));
@@ -72,7 +74,14 @@ namespace ESCenter.ViewModels
                 if (Source == "Parts")
                 {
                     var repo = AppServices.Get<PartsRepository>();
-                    await System.Threading.Tasks.Task.Run(() => repo.RestoreQuantityByName(ItemName, RestockQuantity));
+                    if (!string.IsNullOrWhiteSpace(_sku))
+                    {
+                        await System.Threading.Tasks.Task.Run(() => repo.RestoreQuantityBySku(_sku, RestockQuantity));
+                    }
+                    else
+                    {
+                        await System.Threading.Tasks.Task.Run(() => repo.RestoreQuantityByName(ItemName, RestockQuantity));
+                    }
                 }
                 else
                 {

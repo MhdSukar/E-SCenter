@@ -65,6 +65,7 @@ namespace ESCenter.ViewModels
         public ICommand RefreshCommand { get; }
         public ICommand OpenTicketCommand { get; }
         public ICommand ExportReorderListCommand { get; }
+        public ICommand RestockItemCommand { get; }
         public Action<RepairTicket>? TicketSelected;
 
         public DashboardViewModel()
@@ -83,6 +84,14 @@ namespace ESCenter.ViewModels
                 }
             });
             ExportReorderListCommand = new RelayCommand(_ => ExportReorderList().FireAndForget(nameof(ExportReorderList)));
+            RestockItemCommand = new RelayCommand(param =>
+            {
+                if (param is not LowStockCounterItem item) return;
+
+                var sku = item.Source == "Parts" ? item.Sku : string.Empty;
+                RestockWizardHelper.Show(item.Name, item.Source, item.Quantity, sku);
+                Refresh();
+            });
 
             if (isDesignMode)
             {
@@ -251,10 +260,10 @@ namespace ESCenter.ViewModels
                         Source = "Parts",
                         Sku = p.SKU ?? string.Empty,
                         Name = string.IsNullOrWhiteSpace(p.PartCode)
-                            ? string.IsNullOrWhiteSpace(p.SKU) ? "Unnamed Part" : p.SKU
-                            : p.SKU,
+                            ? string.IsNullOrWhiteSpace(p.Description) ? "Unnamed Part" : p.Description
+                            : p.PartCode,
                         Quantity = p.QuantityOnHand
-                    }); //some  shit and need a rework to make SKU appear properly
+                    });
 
                 var inventoryItems = allInventory
                     .Where(i => i.QuantityOnHand <= thresholds.InventoryThreshold)
