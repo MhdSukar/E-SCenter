@@ -53,7 +53,8 @@ namespace ESCenter.Services
                 EnsurePartsTable(conn),
                 EnsureInventoryTable(conn),
                 EnsureBoneyardTable(conn),
-                EnsureAlBarakaTable(conn)
+                EnsureAlBarakaTable(conn),
+                EnsureTypeDefinitionsTable(conn)
             };
 
             return string.Join(Environment.NewLine, reports);
@@ -201,6 +202,24 @@ namespace ESCenter.Services
             return EnsureTable(conn, tableName, expectedColumns);
         }
 
+
+        private string EnsureTypeDefinitionsTable(SQLiteConnection conn)
+        {
+            const string tableName = "TypeDefinitions";
+            var expectedColumns = new Dictionary<string, string>
+            {
+                ["TypeDefId"] = "INTEGER PRIMARY KEY AUTOINCREMENT",
+                ["Scope"] = "TEXT NOT NULL",
+                ["TypeName"] = "TEXT NOT NULL",
+                ["Unit1"] = "TEXT",
+                ["Unit2"] = "TEXT"
+            };
+
+            var report = EnsureTable(conn, tableName, expectedColumns);
+            using var cmd = new SQLiteCommand("CREATE UNIQUE INDEX IF NOT EXISTS IX_TypeDefinitions_Scope_TypeName ON TypeDefinitions(Scope, TypeName);", conn);
+            cmd.ExecuteNonQuery();
+            return report;
+        }
         private string EnsureBoneyardTable(SQLiteConnection conn)
         {
             const string tableName = "Boneyard";

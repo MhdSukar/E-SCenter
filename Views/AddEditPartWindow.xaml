@@ -153,7 +153,7 @@
                     <!-- ===================== FORM ===================== -->
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
@@ -177,10 +177,17 @@
 
                         <!-- Type -->
                         <TextBlock Text="Type" Grid.Row="1" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
-                        <ComboBox ItemsSource="{Binding PartTypes}"
-                                  SelectedItem="{Binding Part.PartType}"
-                                  Grid.Row="1" Grid.Column="1"
-                                  Style="{StaticResource GradiantComboboxStyle11}" Margin="0,4"/>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,4">
+                            <ComboBox Width="120"
+                                      ItemsSource="{Binding PartTypes}"
+                                      SelectedItem="{Binding Part.PartType}"
+                                      Style="{StaticResource GradiantComboboxStyle11}"/>
+                            <Button Content="+ Add Type"
+                                    Width="86"
+                                    Margin="8,0,0,0"
+                                    Style="{StaticResource GhostButtonStyle}"
+                                    Command="{Binding AddNewTypeCommand}"/>
+                        </StackPanel>
 
                         <!-- Quantity -->
                         <TextBlock Text="Quantity" Grid.Row="2" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
@@ -190,7 +197,7 @@
                         <TextBlock Text="Price" Grid.Row="3" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
                         <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,4">
                             <TextBox Width="100" Text="{Binding Part.Price}" Style="{StaticResource GradiantTextboxStyle1}"/>
-                            <ComboBox Width="70"
+                            <ComboBox Width="90"
                                       Margin="6,0,0,0"
                                       ItemsSource="{Binding Currencies}"
                                       SelectedItem="{Binding Part.PriceCurrency}"

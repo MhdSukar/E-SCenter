@@ -190,10 +190,17 @@
                                        VerticalAlignment="Center"
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
-                            <ComboBox Grid.Row="0" Grid.Column="1"
-                                      Style="{StaticResource GradiantComboboxStyle11}"
-                                      ItemsSource="{Binding ItemTypes}"
-                                      SelectedItem="{Binding Item.ItemType}"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                <ComboBox Width="95"
+                                          Style="{StaticResource GradiantComboboxStyle11}"
+                                          ItemsSource="{Binding ItemTypes}"
+                                          SelectedItem="{Binding Item.ItemType}"/>
+                                <Button MinWidth="10" Width="45"
+                                        Margin="8,0,0,0"
+                                        Style="{StaticResource GhostButtonStyle}"
+                                        Content="+ Add"
+                                        Command="{Binding AddNewTypeCommand}"/>
+                            </StackPanel>
 
                             <!-- ================= BRAND ================= -->
                             <TextBlock Grid.Row="0" Grid.Column="2"
