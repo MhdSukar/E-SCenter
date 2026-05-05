@@ -181,6 +181,7 @@
                                   SelectedItem="{Binding Part.PartType}"
                                   Grid.Row="1" Grid.Column="1"
                                   Style="{StaticResource GradiantComboboxStyle11}" Margin="0,4"/>
+                        <Button Content="+ Add Type" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Width="86" Height="24" Margin="0,4,0,0" Style="{StaticResource GhostButtonStyle}" Command="{Binding AddNewTypeCommand}"/>
 
                         <!-- Quantity -->
                         <TextBlock Text="Quantity" Grid.Row="2" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
