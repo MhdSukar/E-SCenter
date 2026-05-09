@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using ESCenter.Core;
 using ESCenter.Data;
+using ESCenter.Services;
 
 namespace ESCenter.ViewModels
 {
@@ -90,6 +91,7 @@ namespace ESCenter.ViewModels
                 }
 
                 AppLogger.Success($"Restocked '{ItemName}' by {RestockQuantity} unit(s).");
+                TicketEvents.RaiseStockChanged();
                 CloseWindow(true);
             }
             catch (Exception ex)

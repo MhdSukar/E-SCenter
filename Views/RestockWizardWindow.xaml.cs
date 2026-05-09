@@ -22,6 +22,8 @@ namespace ESCenter.Views
 
         private void Window_Closing(object? sender, CancelEventArgs e)
         {
+            if (DialogResult.HasValue) return;
+
             if (_animatingClose)
             {
                 return;

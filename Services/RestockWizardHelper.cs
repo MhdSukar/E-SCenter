@@ -30,7 +30,9 @@ namespace ESCenter.Services
 
         public static void ShowIfNeeded(string itemName, string source, int newQty, string sku = "")
         {
-            if (newQty > 0)
+            var thresholds = UserPreferencesService.GetLowStockThresholds();
+            var threshold = source == "Parts" ? thresholds.PartsThreshold : thresholds.InventoryThreshold;
+            if (newQty > threshold)
             {
                 return;
             }

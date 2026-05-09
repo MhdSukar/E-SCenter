@@ -90,6 +90,7 @@ namespace ESCenter.ViewModels
 
                 var sku = item.Source == "Parts" ? item.Sku : string.Empty;
                 RestockWizardHelper.Show(item.Name, item.Source, item.Quantity, sku);
+                TicketEvents.RaiseStockChanged();
                 Refresh();
             });
 
