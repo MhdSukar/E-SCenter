@@ -237,6 +237,22 @@ namespace ESCenter.Data
         // -------------------------
         // Restock
         // -------------------------
+
+        public void RestoreQuantityById(int inventoryId, int amount)
+        {
+            if (inventoryId <= 0 || amount <= 0) return;
+            using var conn = GetConnection();
+            conn.Open();
+            using var cmd = new SQLiteCommand(
+                "UPDATE Inventory SET QuantityOnHand = QuantityOnHand + @amount WHERE InventoryId = @id;", conn);
+            cmd.Parameters.AddWithValue("@amount", amount);
+            cmd.Parameters.AddWithValue("@id", inventoryId);
+            cmd.ExecuteNonQuery();
+        }
+
+        public Task RestoreQuantityByIdAsync(int inventoryId, int amount)
+            => Task.Run(() => RestoreQuantityById(inventoryId, amount));
+
         public void RestoreQuantityByName(string name, int amount)
         {
             if (string.IsNullOrWhiteSpace(name) || amount <= 0) return;

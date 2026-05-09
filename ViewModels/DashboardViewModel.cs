@@ -89,7 +89,7 @@ namespace ESCenter.ViewModels
                 if (param is not LowStockCounterItem item) return;
 
                 var sku = item.Source == "Parts" ? item.Sku : string.Empty;
-                RestockWizardHelper.Show(item.Name, item.Source, item.Quantity, sku);
+                RestockWizardHelper.Show(item.Name, item.Source, item.Quantity, sku, item.ItemId);
                 TicketEvents.RaiseStockChanged();
                 Refresh();
             });
@@ -272,6 +272,7 @@ namespace ESCenter.ViewModels
                     {
                         Source = "Inventory",
                         Sku = string.Empty,
+                        ItemId = i.InventoryId,
                         Name = string.IsNullOrWhiteSpace(i.ItemType)
                             ? string.IsNullOrWhiteSpace(i.Model) ? "Unnamed Inventory Item" : i.Model
                             : i.ItemType,
