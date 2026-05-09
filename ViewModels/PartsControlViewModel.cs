@@ -16,6 +16,7 @@ namespace ESCenter.ViewModels
     {
         private readonly PartsRepository _repo;
         private EventHandler? _databasePathChangedHandler;
+        private EventHandler? _stockChangedHandler;
 
         public PartsControlViewModel()
         {
@@ -51,7 +52,9 @@ namespace ESCenter.ViewModels
                 LoadParts();
                 BuildPartTypes();
                 _databasePathChangedHandler = (_, __) => LoadParts();
+                _stockChangedHandler = (_, __) => LoadParts();
                 DatabasePathService.DatabasePathChanged += _databasePathChangedHandler;
+                TicketEvents.StockChanged += _stockChangedHandler;
                 AppLogger.Success("Parts Control Loaded");
             }
             catch (Exception ex)
@@ -553,6 +556,12 @@ namespace ESCenter.ViewModels
             {
                 DatabasePathService.DatabasePathChanged -= _databasePathChangedHandler;
                 _databasePathChangedHandler = null;
+            }
+
+            if (_stockChangedHandler != null)
+            {
+                TicketEvents.StockChanged -= _stockChangedHandler;
+                _stockChangedHandler = null;
             }
 
             foreach (var part in Parts)

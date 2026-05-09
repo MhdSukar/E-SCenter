@@ -28,6 +28,7 @@ namespace ESCenter.ViewModels
         private CancellationTokenSource? _clientHistoryDebounceCts;
         private int? _focusedTicketId;
         private EventHandler? _databasePathChangedHandler;
+        private EventHandler? _stockChangedHandler;
 
         private bool _hasUnsavedChanges;
         public bool HasUnsavedChanges
@@ -515,7 +516,9 @@ namespace ESCenter.ViewModels
             if (!isDesignMode)
             {
                 _databasePathChangedHandler = async (_, __) => await LoadTicketsAsync();
+                _stockChangedHandler = (_, __) => _ = LoadPartsCatalogAsync();
                 DatabasePathService.DatabasePathChanged += _databasePathChangedHandler;
+                TicketEvents.StockChanged += _stockChangedHandler;
             }
 
             Tickets = new ObservableCollection<RepairTicket>();
@@ -1569,31 +1572,18 @@ If you would like to reopen the request, please contact us.",
                     int remaining;
                     if (updateParts)
                     {
-                        var allParts = partsRepo.GetAll();
-                        var match = allParts.FirstOrDefault(p =>
-                            (!string.IsNullOrWhiteSpace(normalizedSku) &&
-                             string.Equals(p.SKU?.Trim(), normalizedSku, StringComparison.OrdinalIgnoreCase))
-                            || string.Equals(p.PartCode?.Trim(), normalizedName, StringComparison.OrdinalIgnoreCase)
-                            || string.Equals(p.Description?.Trim(), normalizedName, StringComparison.OrdinalIgnoreCase));
-
-                        remaining = match?.QuantityOnHand ?? 0;
+                        remaining = string.IsNullOrWhiteSpace(normalizedSku)
+                            ? partsRepo.GetQuantityByName(normalizedName)
+                            : partsRepo.GetQuantityBySku(normalizedSku);
                     }
                     else
                     {
-                        var allInventory = inventoryRepo.GetAll();
-                        var match = allInventory.FirstOrDefault(i =>
-                            string.Equals(
-                                (!string.IsNullOrWhiteSpace(i.Description)
-                                    ? i.Description
-                                    : $"{i.ItemType} {i.Brand} {i.Model}").Trim(),
-                                normalizedName,
-                                StringComparison.OrdinalIgnoreCase));
-
-                        remaining = match?.QuantityOnHand ?? 0;
+                        remaining = inventoryRepo.GetQuantityByName(normalizedName);
                     }
 
                     var source = updateParts ? "Parts" : "Inventory";
                     RestockWizardHelper.ShowIfNeeded(normalizedName, source, remaining, normalizedSku);
+                    _ = LoadPartsCatalogAsync();
                 }
             }
             catch (Exception ex)
@@ -2240,6 +2230,12 @@ If you would like to reopen the request, please contact us.",
             {
                 DatabasePathService.DatabasePathChanged -= _databasePathChangedHandler;
                 _databasePathChangedHandler = null;
+            }
+
+            if (_stockChangedHandler != null)
+            {
+                TicketEvents.StockChanged -= _stockChangedHandler;
+                _stockChangedHandler = null;
             }
 
             _clientHistoryDebounceCts?.Cancel();

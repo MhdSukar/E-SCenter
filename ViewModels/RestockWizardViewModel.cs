@@ -3,12 +3,14 @@ using System.Windows;
 using System.Windows.Input;
 using ESCenter.Core;
 using ESCenter.Data;
+using ESCenter.Services;
 
 namespace ESCenter.ViewModels
 {
     public class RestockWizardViewModel : ObservableObject
     {
         private readonly string _sku;
+        private readonly int _inventoryId;
         private string _itemName;
         public string ItemName
         {
@@ -56,12 +58,13 @@ namespace ESCenter.ViewModels
         public ICommand ConfirmCommand { get; }
         public ICommand CancelCommand { get; }
 
-        public RestockWizardViewModel(string itemName, string source, int currentQty, string sku = "")
+        public RestockWizardViewModel(string itemName, string source, int currentQty, string sku = "", int inventoryId = 0)
         {
             ItemName = itemName;
             Source = source;
             CurrentQty = currentQty;
             _sku = sku?.Trim() ?? string.Empty;
+            _inventoryId = inventoryId;
 
             ConfirmCommand = new RelayCommand(_ => RestockAsync().FireAndForget(nameof(RestockAsync)), _ => RestockQuantity > 0);
             CancelCommand = new RelayCommand(_ => CloseWindow(false));
@@ -86,10 +89,18 @@ namespace ESCenter.ViewModels
                 else
                 {
                     var repo = AppServices.Get<InventoryRepository>();
-                    await System.Threading.Tasks.Task.Run(() => repo.RestoreQuantityByName(ItemName, RestockQuantity));
+                    if (_inventoryId > 0)
+                    {
+                        await System.Threading.Tasks.Task.Run(() => repo.RestoreQuantityById(_inventoryId, RestockQuantity));
+                    }
+                    else
+                    {
+                        await System.Threading.Tasks.Task.Run(() => repo.RestoreQuantityByName(ItemName, RestockQuantity));
+                    }
                 }
 
                 AppLogger.Success($"Restocked '{ItemName}' by {RestockQuantity} unit(s).");
+                TicketEvents.RaiseStockChanged();
                 CloseWindow(true);
             }
             catch (Exception ex)

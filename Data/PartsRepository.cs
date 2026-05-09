@@ -38,6 +38,52 @@ namespace ESCenter.Data
         public Task<List<PartModel>> GetAllAsync()
             => Task.Run(GetAll);
 
+        public int GetQuantityBySku(string sku)
+        {
+            if (string.IsNullOrWhiteSpace(sku))
+            {
+                return 0;
+            }
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(
+                "SELECT QuantityOnHand FROM Parts WHERE SKU = @sku LIMIT 1;", conn);
+            cmd.Parameters.AddWithValue("@sku", sku.Trim());
+
+            var result = cmd.ExecuteScalar();
+            return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
+
+        public Task<int> GetQuantityBySkuAsync(string sku)
+            => Task.Run(() => GetQuantityBySku(sku));
+
+        public int GetQuantityByName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return 0;
+            }
+
+            using var conn = GetConnection();
+            conn.Open();
+
+            using var cmd = new SQLiteCommand(@"
+                SELECT QuantityOnHand
+                FROM Parts
+                WHERE LOWER(TRIM(PartCode)) = LOWER(@name)
+                   OR LOWER(TRIM(Description)) = LOWER(@name)
+                LIMIT 1;", conn);
+            cmd.Parameters.AddWithValue("@name", name.Trim());
+
+            var result = cmd.ExecuteScalar();
+            return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
+
+        public Task<int> GetQuantityByNameAsync(string name)
+            => Task.Run(() => GetQuantityByName(name));
+
         public List<string> GetSkus()
         {
             var result = new List<string>();

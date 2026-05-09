@@ -33,6 +33,7 @@ namespace ESCenter.ViewModels
         }
 
         private EventHandler? _databasePathChangedHandler;
+        private EventHandler? _stockChangedHandler;
 
         private string _searchText;
         public string SearchText
@@ -74,7 +75,9 @@ namespace ESCenter.ViewModels
             if (!isDesignMode)
             {
                 _databasePathChangedHandler = (_, __) => Load();
+                _stockChangedHandler = (_, __) => Load();
                 DatabasePathService.DatabasePathChanged += _databasePathChangedHandler;
+                TicketEvents.StockChanged += _stockChangedHandler;
             }
 
             _inventoryView = CollectionViewSource.GetDefaultView(Items);
@@ -255,6 +258,12 @@ namespace ESCenter.ViewModels
             {
                 DatabasePathService.DatabasePathChanged -= _databasePathChangedHandler;
                 _databasePathChangedHandler = null;
+            }
+
+            if (_stockChangedHandler != null)
+            {
+                TicketEvents.StockChanged -= _stockChangedHandler;
+                _stockChangedHandler = null;
             }
         }
 
