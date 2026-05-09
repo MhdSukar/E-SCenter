@@ -191,14 +191,14 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                                <ComboBox Width="95"
+                                <ComboBox Width="115"
                                           Style="{StaticResource GradiantComboboxStyle11}"
                                           ItemsSource="{Binding ItemTypes}"
                                           SelectedItem="{Binding Item.ItemType}"/>
-                                <Button MinWidth="10" Width="45"
+                                <Button MinWidth="10" Width="25"
                                         Margin="8,0,0,0"
                                         Style="{StaticResource GhostButtonStyle}"
-                                        Content="+ Add"
+                                        Content="+"
                                         Command="{Binding AddNewTypeCommand}"/>
                             </StackPanel>
 

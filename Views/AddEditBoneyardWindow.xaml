@@ -196,7 +196,7 @@
                         <!-- Price -->
                         <TextBlock Text="Price" Grid.Row="5" Grid.Column="0" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4"/>
                         <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="0,4">
-                            <TextBox Width="120" Text="{Binding Device.Price}" Style="{StaticResource GradiantTextboxStyle1}"/>
+                            <TextBox Width="110" Text="{Binding Device.Price}" Style="{StaticResource GradiantTextboxStyle1}"/>
                             <ComboBox Width="70"
                                       Margin="6,0,0,0"
                                       ItemsSource="{Binding Currencies}"

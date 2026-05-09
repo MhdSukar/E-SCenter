@@ -12,6 +12,13 @@
 
 
     <UserControl.Resources>
+        <!-- ── Double-click row edit behavior, based on themed row styling ── -->
+        <Style x:Key="BoneyardEditableRowStyle"
+               TargetType="{x:Type DataGridRow}"
+               BasedOn="{StaticResource CompactDataGridRowStyle}">
+            <EventSetter Event="MouseDoubleClick" Handler="BoneyardRow_MouseDoubleClick"/>
+        </Style>
+
         <Style x:Key="TypeChipBorder" TargetType="Border">
             <Setter Property="Background"      Value="#1A00E5D4"/>
             <Setter Property="BorderBrush"     Value="#2500E5D4"/>
@@ -156,7 +163,7 @@
                       AutoGenerateColumns="False"
                       SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
                       Style="{StaticResource DarkDataGridStyle}"
-                      RowStyle="{StaticResource CompactDataGridRowStyle}"
+                      RowStyle="{StaticResource BoneyardEditableRowStyle}"
                       CellStyle="{StaticResource CompactDataGridCellStyle}"
                       ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
                       IsReadOnly="True">
