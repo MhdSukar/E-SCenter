@@ -4,7 +4,7 @@
         Title="Inventory Item"
         Width="560"
         Height="700"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         Background="Transparent"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -284,10 +284,10 @@
                                        Foreground="{StaticResource TextSecondaryBrush}"/>
 
                             <StackPanel Grid.Row="4" Grid.Column="3" Orientation="Horizontal">
-                                <TextBox Width="90"
+                                <TextBox Width="75"
                                          Style="{StaticResource GradiantTextboxStyle1}"
                                          Text="{Binding Item.Price}"/>
-                                <ComboBox Width="54"
+                                <ComboBox Width="69"
                                           Margin="6,0,0,0"
                                           Style="{StaticResource GradiantComboboxStyle11}"
                                           ItemsSource="{Binding Currencies}"

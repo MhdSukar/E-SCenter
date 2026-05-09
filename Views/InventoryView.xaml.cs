@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
+using ESCenter.Models;
+using ESCenter.ViewModels;
 
 namespace ESCenter.Views
 {
@@ -21,6 +12,25 @@ namespace ESCenter.Views
         public InventoryView()
         {
             InitializeComponent();
+        }
+
+        private void InventoryRow_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is not DataGridRow row || DataContext is not InventoryViewModel viewModel)
+            {
+                return;
+            }
+
+            if (row.Item is InventoryItemModel item)
+            {
+                viewModel.SelectedItem = item;
+            }
+
+            if (viewModel.EditCommand.CanExecute(null))
+            {
+                viewModel.EditCommand.Execute(null);
+                e.Handled = true;
+            }
         }
     }
 }

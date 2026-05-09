@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Input;
+using ESCenter.Models;
 using ESCenter.ViewModels;
 
 namespace ESCenter.Views
@@ -11,5 +11,23 @@ namespace ESCenter.Views
             InitializeComponent();
         }
 
+        private void PartsRow_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is not DataGridRow row || DataContext is not PartsControlViewModel viewModel)
+            {
+                return;
+            }
+
+            if (row.Item is PartModel part)
+            {
+                viewModel.SelectedPart = part;
+            }
+
+            if (viewModel.EditPartCommand.CanExecute(null))
+            {
+                viewModel.EditPartCommand.Execute(null);
+                e.Handled = true;
+            }
+        }
     }
 }
