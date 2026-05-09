@@ -28,6 +28,13 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
 
+        <!-- ── Double-click row edit behavior, based on themed row styling ── -->
+        <Style x:Key="InventoryEditableRowStyle"
+               TargetType="{x:Type DataGridRow}"
+               BasedOn="{StaticResource CompactDataGridRowStyle}">
+            <EventSetter Event="MouseDoubleClick" Handler="InventoryRow_MouseDoubleClick"/>
+        </Style>
+
         <!-- ── Subtle accent chip for Type column ── -->
         <Style x:Key="TypeChipBorder" TargetType="Border">
             <Setter Property="Background"   Value="#1A237EF2"/>
@@ -249,7 +256,7 @@
                       AutoGenerateColumns="False"
                       SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                       Style="{StaticResource DarkDataGridStyle}"
-                      RowStyle="{StaticResource CompactDataGridRowStyle}"
+                      RowStyle="{StaticResource InventoryEditableRowStyle}"
                       CellStyle="{StaticResource CompactDataGridCellStyle}"
                       ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
                       IsReadOnly="True">

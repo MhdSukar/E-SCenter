@@ -10,6 +10,14 @@
              Height="Auto"
              Width="Auto">
 
+    <UserControl.Resources>
+        <!-- ── Double-click row edit behavior, based on themed row styling ── -->
+        <Style x:Key="PartsEditableRowStyle"
+               TargetType="{x:Type DataGridRow}"
+               BasedOn="{StaticResource TicketRowStyle}">
+            <EventSetter Event="MouseDoubleClick" Handler="PartsRow_MouseDoubleClick"/>
+        </Style>
+    </UserControl.Resources>
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -255,7 +263,7 @@
                       AutoGenerateColumns="False"
                       SelectedItem="{Binding SelectedPart, Mode=TwoWay}"
                       Style="{StaticResource DarkDataGridStyle}"
-                      RowStyle="{StaticResource TicketRowStyle}"
+                      RowStyle="{StaticResource PartsEditableRowStyle}"
                       CellStyle="{StaticResource CompactDataGridCellStyle}"
                       ColumnHeaderStyle="{StaticResource CompactDataGridHeaderStyle}"
                       IsReadOnly="True">
