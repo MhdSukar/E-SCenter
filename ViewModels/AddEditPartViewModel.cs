@@ -64,14 +64,51 @@ namespace ESCenter.ViewModels
             }
         }
 
+        // Hardcoded unit defaults for built-in part types
+        private static readonly Dictionary<string, (string Unit1, string Unit2)> _builtInTypeUnits =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Resistors"] = ("Ω", "W"),
+                ["Capacitors"] = ("μF", "V"),
+                ["Coils"] = ("μH", "A"),
+                ["Transistors"] = ("V", "A"),
+                ["Diodes"] = ("V", "A"),
+                ["ICs"] = ("", ""),
+                ["Ports"] = ("", ""),
+            };
+
         private void ApplyUnitDefaults()
         {
             Unit1Options.Clear(); Unit2Options.Clear();
-            var db = _typeRepo.GetTypeUnits("Part", Part.PartType ?? string.Empty);
-            if (!string.IsNullOrWhiteSpace(db.Unit1)) Unit1Options.Add(db.Unit1);
-            if (!string.IsNullOrWhiteSpace(db.Unit2)) Unit2Options.Add(db.Unit2);
+
+            string unit1, unit2;
+
+            if (_builtInTypeUnits.TryGetValue(Part.PartType ?? string.Empty, out var builtIn))
+            {
+                // Known hardcoded type — use predefined units
+                unit1 = builtIn.Unit1;
+                unit2 = builtIn.Unit2;
+            }
+            else
+            {
+                // Custom type added via wizard — check the database
+                var db = _typeRepo.GetTypeUnits("Part", Part.PartType ?? string.Empty);
+                unit1 = db.Unit1;
+                unit2 = db.Unit2;
+            }
+
+            if (!string.IsNullOrWhiteSpace(unit1)) Unit1Options.Add(unit1);
+            if (!string.IsNullOrWhiteSpace(unit2)) Unit2Options.Add(unit2);
+
+            // Always include the part's existing codes so editing an old part doesn't lose them
+            if (!string.IsNullOrWhiteSpace(Part.UnitCode1) && !Unit1Options.Contains(Part.UnitCode1))
+                Unit1Options.Add(Part.UnitCode1);
+            if (!string.IsNullOrWhiteSpace(Part.UnitCode2) && !Unit2Options.Contains(Part.UnitCode2))
+                Unit2Options.Add(Part.UnitCode2);
+
             if (Unit1Options.Count == 0) Unit1Options.Add("");
             if (Unit2Options.Count == 0) Unit2Options.Add("");
+
             if (string.IsNullOrWhiteSpace(Part.UnitCode1)) Part.UnitCode1 = Unit1Options[0];
             if (string.IsNullOrWhiteSpace(Part.UnitCode2)) Part.UnitCode2 = Unit2Options[0];
         }
@@ -80,5 +117,7 @@ namespace ESCenter.ViewModels
         private void Cancel() => CloseWindow(false);
         private void CloseWindow(bool result) { foreach (Window w in System.Windows.Application.Current.Windows) if (w.DataContext == this) { w.DialogResult = result; w.Close(); return; } }
         private static string NormalizeCurrency(string currency) => string.Equals(currency, "USD", StringComparison.OrdinalIgnoreCase) ? "USD" : "S.P";
+
+
     }
 }

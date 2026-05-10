@@ -70,5 +70,7 @@ namespace ESCenter.Views
             else
                 DragMove();
         }
+
+
     }
 }
