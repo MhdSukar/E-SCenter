@@ -975,8 +975,7 @@
                                              VerticalAlignment="Center">
 
                                     <Button Style="{StaticResource GradientBorderButtonStyleBLueCyan}" MinWidth="1" MinHeight="1"
-                                            Width="95" 
-                                            Height="25"
+                                            Width="125" 
                                             FontSize="14" 
                                             Margin="0,5,6,0"
                                             Command="{Binding ShowAlBarakaCommand}">
@@ -987,7 +986,7 @@
                                     </Button>
 
                                     <Button Style="{StaticResource GradientBorderButtonStyleYellow}" MinWidth="1" MinHeight="1"
-                                            Width="95" Height="25"
+                                            Width="125" 
                                             FontSize="16" 
                                             Margin="0,5,6,0"
                                             Command="{Binding ShowReportsCommand}">

@@ -306,9 +306,21 @@ namespace ESCenter.Services
             using var conn = new SQLiteConnection(ConnectionString);
             conn.Open();
 
-            using var cmd = new SQLiteCommand("DELETE FROM TicketsDB WHERE TicketId=@id;", conn);
-            cmd.Parameters.AddWithValue("@id", ticketId);
-            cmd.ExecuteNonQuery();
+            using var transaction = conn.BeginTransaction();
+
+            using (var historyCmd = new SQLiteCommand("DELETE FROM TicketStatusHistory WHERE TicketId=@id;", conn, transaction))
+            {
+                historyCmd.Parameters.AddWithValue("@id", ticketId);
+                historyCmd.ExecuteNonQuery();
+            }
+
+            using (var ticketCmd = new SQLiteCommand("DELETE FROM TicketsDB WHERE TicketId=@id;", conn, transaction))
+            {
+                ticketCmd.Parameters.AddWithValue("@id", ticketId);
+                ticketCmd.ExecuteNonQuery();
+            }
+
+            transaction.Commit();
         }
 
         public Task DeleteAsync(int ticketId)
