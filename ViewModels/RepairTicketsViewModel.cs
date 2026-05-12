@@ -1224,17 +1224,20 @@ If you would like to reopen the request, please contact us.",
                 var inventoryItems = inventory
                     .Select(i =>
                     {
-                        var name = !string.IsNullOrWhiteSpace(i.Description) ? i.Description.Trim() :
-                            string.Join(" ", new[] { i.ItemType, i.Brand, i.Model }
-                                .Where(s => !string.IsNullOrWhiteSpace(s))).Trim();
+                        // Prefer composed name from ItemType, Brand and Model when available.
+                        // Fall back to Description only when ItemType is missing.
+                        var name = !string.IsNullOrWhiteSpace(i.ItemType)
+                            ? string.Join(" ", new[] { i.ItemType, i.Brand, i.Model }
+                                .Where(s => !string.IsNullOrWhiteSpace(s))).Trim()
+                            : (i.Description?.Trim() ?? string.Empty);
                         return new PartSuggestionItem
                         {
-                            Name     = name,
-                            Sku      = string.Empty,
+                            Name = name,
+                            Sku = string.Empty,
                             StockQty = i.QuantityOnHand,
-                            Price    = i.Price,
+                            Price = i.Price,
                             PriceCurrency = i.PriceCurrency ?? "S.P",
-                            Source   = "Inventory"
+                            Source = "Inventory"
                         };
                     })
                     .Where(i => !string.IsNullOrWhiteSpace(i.Name));
