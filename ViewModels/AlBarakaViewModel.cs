@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 using ESCenter.Core;
@@ -50,6 +51,9 @@ namespace ESCenter.ViewModels
         }
 
         private decimal? _price;
+        private string _priceText = string.Empty;
+        private bool _syncingPriceText;
+
         public decimal? Price
         {
             get => _price;
@@ -57,10 +61,69 @@ namespace ESCenter.ViewModels
             {
                 if (SetProperty(ref _price, value))
                 {
+                    SyncPriceTextFromValue();
                     RefreshPriceEquivalent();
                     UpdateCommandStates();
                 }
             }
+        }
+
+        public string PriceText
+        {
+            get => _priceText;
+            set
+            {
+                if (!SetProperty(ref _priceText, value))
+                {
+                    return;
+                }
+
+                if (_syncingPriceText || IsIncompleteDecimalInput(value))
+                {
+                    return;
+                }
+
+                if (TryParseDecimal(value, out var parsed))
+                {
+                    Price = parsed;
+                }
+                else if (string.IsNullOrWhiteSpace(value))
+                {
+                    Price = null;
+                }
+            }
+        }
+
+
+        private void SyncPriceTextFromValue()
+        {
+            _syncingPriceText = true;
+            try
+            {
+                PriceText = _price?.ToString("0.##", CultureInfo.CurrentCulture) ?? string.Empty;
+            }
+            finally
+            {
+                _syncingPriceText = false;
+            }
+        }
+
+        private static bool IsIncompleteDecimalInput(string? text)
+        {
+            var trimmed = text?.Trim() ?? string.Empty;
+            return trimmed is "." or "," or "-" or "-." or "-," ||
+                   trimmed.EndsWith(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, StringComparison.Ordinal) ||
+                   trimmed.EndsWith(".", StringComparison.Ordinal) ||
+                   trimmed.EndsWith(",", StringComparison.Ordinal);
+        }
+
+        private static bool TryParseDecimal(string? text, out decimal value)
+        {
+            var trimmed = text?.Trim();
+            const NumberStyles decimalStyle = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint;
+            return decimal.TryParse(trimmed, decimalStyle, CultureInfo.CurrentCulture, out value) ||
+                   decimal.TryParse(trimmed, decimalStyle, CultureInfo.InvariantCulture, out value) ||
+                   decimal.TryParse(trimmed?.Replace(',', '.'), decimalStyle, CultureInfo.InvariantCulture, out value);
         }
 
         private string _priceCurrency = "S.P";
@@ -200,6 +263,7 @@ namespace ESCenter.ViewModels
             OnPropertyChanged(nameof(ItemName));
             OnPropertyChanged(nameof(Price));
             OnPropertyChanged(nameof(PriceCurrency));
+            SyncPriceTextFromValue();
             OnPropertyChanged(nameof(PriceEquivalent));
             OnPropertyChanged(nameof(Category));
             OnPropertyChanged(nameof(Account));
