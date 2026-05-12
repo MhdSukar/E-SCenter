@@ -1169,7 +1169,7 @@ If you would like to reopen the request, please contact us.",
         {
             var rates = UserPreferencesService.GetExchangeRates();
             rates.TryGetValue("USD", out var usdRate);
-            var result = PricingService.Calculate(UsedPartLines, UserPreferencesService.GetPricingCostOptions(), usdRate);
+            var result = PricingService.Calculate(UsedPartLines, UserPreferencesService.GetPricingSettings(), usdRate);
             FinalCost = result.FinalCostSp;
             FinalCostCurrency = "S.P";
             RefreshCostEquivalents();
