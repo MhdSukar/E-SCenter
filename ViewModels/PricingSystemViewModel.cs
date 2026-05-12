@@ -65,6 +65,8 @@ namespace ESCenter.ViewModels
         }
 
         private PricingSettings _settings = PricingService.CreateDefaultSettings();
+        private string _complexityMultiplierText = "1";
+        private bool _syncingComplexityMultiplierText;
 
         public bool IncludeDiagnosticFee { get => _settings.IncludeDiagnosticFee; set { if (_settings.IncludeDiagnosticFee != value) { _settings.IncludeDiagnosticFee = value; OnPropertyChanged(); } } }
         public decimal DiagnosticInspectionFeeSp { get => _settings.DiagnosticInspectionFeeSp; set { if (_settings.DiagnosticInspectionFeeSp != value) { _settings.DiagnosticInspectionFeeSp = value; OnPropertyChanged(); } } }
@@ -74,7 +76,41 @@ namespace ESCenter.ViewModels
         public decimal TechnicianHourlyRateSp { get => _settings.TechnicianHourlyRateSp; set { if (_settings.TechnicianHourlyRateSp != value) { _settings.TechnicianHourlyRateSp = value; OnPropertyChanged(); } } }
         public decimal DiagnosisHours { get => _settings.DiagnosisHours; set { if (_settings.DiagnosisHours != value) { _settings.DiagnosisHours = value; OnPropertyChanged(); } } }
         public decimal RepairHours { get => _settings.RepairHours; set { if (_settings.RepairHours != value) { _settings.RepairHours = value; OnPropertyChanged(); } } }
-        public decimal ComplexityMultiplier { get => _settings.ComplexityMultiplier; set { if (_settings.ComplexityMultiplier != value) { _settings.ComplexityMultiplier = value; OnPropertyChanged(); } } }
+        public decimal ComplexityMultiplier
+        {
+            get => _settings.ComplexityMultiplier;
+            set
+            {
+                if (_settings.ComplexityMultiplier != value)
+                {
+                    _settings.ComplexityMultiplier = value;
+                    OnPropertyChanged();
+                    SyncComplexityMultiplierTextFromValue();
+                }
+            }
+        }
+
+        public string ComplexityMultiplierText
+        {
+            get => _complexityMultiplierText;
+            set
+            {
+                if (!SetProperty(ref _complexityMultiplierText, value))
+                {
+                    return;
+                }
+
+                if (_syncingComplexityMultiplierText || IsIncompleteDecimalInput(value))
+                {
+                    return;
+                }
+
+                if (TryParseDecimal(value, out var parsed))
+                {
+                    ComplexityMultiplier = parsed;
+                }
+            }
+        }
 
         public bool IncludePartsAndComponents { get => _settings.IncludePartsAndComponents; set { if (_settings.IncludePartsAndComponents != value) { _settings.IncludePartsAndComponents = value; OnPropertyChanged(); } } }
         public decimal DefaultPartsMarkupPercent { get => _settings.DefaultPartsMarkupPercent; set { if (_settings.DefaultPartsMarkupPercent != value) { _settings.DefaultPartsMarkupPercent = value; OnPropertyChanged(); } } }
@@ -120,11 +156,44 @@ namespace ESCenter.ViewModels
         {
             _settings = PricingService.NormalizeSettings(settings);
             OnPropertyChanged(string.Empty);
+            SyncComplexityMultiplierTextFromValue();
             CostOptions.Clear();
             foreach (var option in _settings.AdditionalCosts)
             {
                 CostOptions.Add(PricingCostOptionViewModel.FromModel(option));
             }
+        }
+
+
+        private void SyncComplexityMultiplierTextFromValue()
+        {
+            _syncingComplexityMultiplierText = true;
+            try
+            {
+                ComplexityMultiplierText = _settings.ComplexityMultiplier.ToString("0.##", CultureInfo.CurrentCulture);
+            }
+            finally
+            {
+                _syncingComplexityMultiplierText = false;
+            }
+        }
+
+        private static bool IsIncompleteDecimalInput(string? text)
+        {
+            var trimmed = text?.Trim() ?? string.Empty;
+            return trimmed is "." or "," or "-" or "-." or "-," ||
+                   trimmed.EndsWith(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, System.StringComparison.Ordinal) ||
+                   trimmed.EndsWith(".", System.StringComparison.Ordinal) ||
+                   trimmed.EndsWith(",", System.StringComparison.Ordinal);
+        }
+
+        private static bool TryParseDecimal(string? text, out decimal value)
+        {
+            var trimmed = text?.Trim();
+            const NumberStyles decimalStyle = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint;
+            return decimal.TryParse(trimmed, decimalStyle, CultureInfo.CurrentCulture, out value) ||
+                   decimal.TryParse(trimmed, decimalStyle, CultureInfo.InvariantCulture, out value) ||
+                   decimal.TryParse(trimmed?.Replace(',', '.'), decimalStyle, CultureInfo.InvariantCulture, out value);
         }
 
         private void AddCost()
