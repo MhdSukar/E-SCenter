@@ -85,7 +85,7 @@
                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="Time — Repair (hrs)" VerticalAlignment="Center"/>
                                     <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding RepairHours, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource GradiantTextboxStyle1}" VerticalContentAlignment="Center"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Text="Complexity Multiplier (1.0 — 2.0)" VerticalAlignment="Center"/>
-                                    <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding ComplexityMultiplier, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource GradiantTextboxStyle1}" VerticalContentAlignment="Center"/>
+                                    <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding ComplexityMultiplierText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource GradiantTextboxStyle1}" VerticalContentAlignment="Center"/>
                                     <TextBlock Grid.Row="3" Grid.Column="3" Text="1.0 standard, 1.5 complex, 2.0 specialist" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                                 </Grid>
                             </GroupBox>
