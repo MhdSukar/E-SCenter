@@ -63,6 +63,16 @@ namespace ESCenter.ViewModels
             window.ShowDialog();
         }
 
+        private void ShowPricingSystem()
+        {
+            var window = new Windows.PricingSystemWindow
+            {
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+
+            window.ShowDialog();
+        }
+
         private bool _autoGrantAdminAccess;
         public bool AutoGrantAdminAccess
         {
@@ -121,6 +131,7 @@ namespace ESCenter.ViewModels
         public ICommand ShowWarrantySystemCommand { get; }
         public ICommand ShowUserProfileCommand { get; }
         public ICommand ShowSettingsCommand { get; }
+        public ICommand ShowPricingSystemCommand { get; }
         public ICommand OpenLogFolderCommand { get; }
         public ICommand NavigateToResultCommand { get; }
         public ICommand CloseGlobalSearchCommand { get; }
@@ -413,6 +424,7 @@ namespace ESCenter.ViewModels
 
             ShowUserProfileCommand = new RelayCommand(_ => ShowUserProfile());
             ShowSettingsCommand = new RelayCommand(_ => ShowSettings());
+            ShowPricingSystemCommand = new RelayCommand(_ => ShowPricingSystem());
             OpenLogFolderCommand = new RelayCommand(_ => OpenLogFolder());
             NavigateToResultCommand = new RelayCommand(param =>
             {

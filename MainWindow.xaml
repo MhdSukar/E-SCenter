@@ -1053,12 +1053,12 @@
                                                 Width="138"
                                                 Height="30"
                                                 Margin="3,3,3,3"
-                                                Command="{Binding ShowSettingsCommand}"
+                                                Command="{Binding ShowPricingSystemCommand}"
                                                 Style="{StaticResource GradientBorderButtonStyleBLueCyan}"
-                                                FontSize="13">
+                                                FontSize="12">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <Image Source="{StaticResource Settings}" Width="18" Height="18" Margin="0,0,6,0"/>
-                                                <TextBlock Text="Settings"/>
+                                                <Image Source="{StaticResource FinalCost}" Width="18" Height="18" Margin="0,0,6,0"/>
+                                                <TextBlock Text="Pricing Sys"/>
                                             </StackPanel>
                                         </Button>
 

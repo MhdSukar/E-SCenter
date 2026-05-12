@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using ESCenter.Models;
 
 namespace ESCenter.Services
 {
@@ -126,6 +127,19 @@ namespace ESCenter.Services
             Save(preferences);
         }
 
+        public static List<PricingCostOption> GetPricingCostOptions()
+        {
+            var preferences = Load();
+            return PricingService.NormalizeOptions(preferences.PricingCostOptions);
+        }
+
+        public static void SetPricingCostOptions(IEnumerable<PricingCostOption> options)
+        {
+            var preferences = Load();
+            preferences.PricingCostOptions = PricingService.NormalizeOptions(options);
+            Save(preferences);
+        }
+
         public static void SetPreferredDatabasePath(string databasePath, string defaultDatabasePath)
         {
             var trimmedPath = databasePath?.Trim() ?? string.Empty;
@@ -232,6 +246,7 @@ namespace ESCenter.Services
             , PickupMessageLanguage = "English"
             , DashboardFinalCostCurrency = "S.P"
             , AutoRefreshIntervalSeconds = 60
+            , PricingCostOptions = PricingService.CreateDefaultOptions()
         };
 
         private static UserPreferences Normalize(UserPreferences? preferences)
@@ -261,6 +276,7 @@ namespace ESCenter.Services
             normalized.PreferredDatabasePath ??= string.Empty;
             normalized.LastCustomDatabasePath ??= string.Empty;
             normalized.ExchangeRates ??= new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+            normalized.PricingCostOptions = PricingService.NormalizeOptions(normalized.PricingCostOptions);
 
             // Ensure new backup-related preferences exist
             // Defaults: automatic backups enabled, 6 hour interval, empty location (Documents), keep all backups
@@ -444,6 +460,7 @@ namespace ESCenter.Services
             public string DashboardFinalCostCurrency { get; set; } = "S.P";
             public Dictionary<string, decimal> ExchangeRates { get; set; } = new(StringComparer.OrdinalIgnoreCase);
             public int AutoRefreshIntervalSeconds { get; set; } = 60;
+            public List<PricingCostOption> PricingCostOptions { get; set; } = PricingService.CreateDefaultOptions();
         }
 
         private sealed class LegacyDatabaseSettings

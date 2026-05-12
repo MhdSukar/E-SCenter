@@ -13,6 +13,7 @@ namespace ESCenter.Models
         public string Name      { get; set; } = string.Empty;
         public string Sku       { get; set; } = string.Empty;   // empty for inventory / custom parts
         public double UnitPrice { get; set; }
+        public string PriceCurrency { get; set; } = "S.P";
         public bool   IsCustom  { get; set; }                   // true = typed by user, not in catalog
 
         private int _quantity = 1;

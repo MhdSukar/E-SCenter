@@ -11,6 +11,7 @@ namespace ESCenter.Models
         public string Sku   { get; set; } = string.Empty;
         public int    StockQty { get; set; }
         public double Price    { get; set; }
+        public string PriceCurrency { get; set; } = "S.P";
         public string Source   { get; set; } = string.Empty; // "Parts" | "Inventory"
 
         // UI helpers

@@ -491,6 +491,7 @@ namespace ESCenter.ViewModels
         public ICommand CopyReceiptCommand { get; }
         public ICommand PrintReceiptCommand { get; }
         public ICommand ExportTicketsCsvCommand { get; }
+        public ICommand CalculateFinalPriceCommand { get; }
 
         // Parts commands
         public ICommand AddPartCommand            { get; }
@@ -541,6 +542,7 @@ namespace ESCenter.ViewModels
             CopyReceiptCommand = new RelayCommand(_ => CopyReceipt(), _ => SelectedTicket != null);
             PrintReceiptCommand = new RelayCommand(_ => PrintReceipt(), _ => SelectedTicket != null);
             ExportTicketsCsvCommand = new RelayCommand(_ => ExportTicketsCsv().FireAndForget(nameof(ExportTicketsCsv)));
+            CalculateFinalPriceCommand = new RelayCommand(_ => CalculateFinalPrice());
 
             // Parts commands
             AddPartCommand = new RelayCommand(param =>
@@ -1163,6 +1165,22 @@ If you would like to reopen the request, please contact us.",
             catch (Exception ex) { AppLogger.Error($"Failed to reopen ticket: {ex.Message}"); }
         }
 
+        private void CalculateFinalPrice()
+        {
+            var rates = UserPreferencesService.GetExchangeRates();
+            rates.TryGetValue("USD", out var usdRate);
+            var result = PricingService.Calculate(UsedPartLines, UserPreferencesService.GetPricingCostOptions(), usdRate);
+            FinalCost = result.FinalCostSp;
+            FinalCostCurrency = "S.P";
+            RefreshCostEquivalents();
+            CheckForUnsavedChanges();
+
+            var details = result.Lines.Count > 0
+                ? string.Join(" | ", result.Lines)
+                : "No included pricing rows.";
+            AppLogger.Success($"Final price calculated: {result.FinalCostSp:N0} S.P ({details})");
+        }
+
         // =========================================================
         // PARTS — catalog loading
         // =========================================================
@@ -1199,6 +1217,7 @@ If you would like to reopen the request, please contact us.",
                         Sku      = p.SKU?.Trim() ?? string.Empty,
                         StockQty = p.QuantityOnHand,
                         Price    = p.Price,
+                        PriceCurrency = p.PriceCurrency ?? "S.P",
                         Source   = "Parts"
                     });
 
@@ -1214,6 +1233,7 @@ If you would like to reopen the request, please contact us.",
                             Sku      = string.Empty,
                             StockQty = i.QuantityOnHand,
                             Price    = i.Price,
+                            PriceCurrency = i.PriceCurrency ?? "S.P",
                             Source   = "Inventory"
                         };
                     })
@@ -1360,6 +1380,7 @@ If you would like to reopen the request, please contact us.",
                     Name                = suggestion.Name,
                     Sku                 = suggestion.Sku,
                     UnitPrice           = suggestion.Price,
+                    PriceCurrency       = suggestion.PriceCurrency,
                     IsCustom            = false,
                     IsOutOfStock        = suggestion.IsOutOfStock,
                     IsLowStock          = suggestion.IsLowStock,
@@ -1622,6 +1643,7 @@ If you would like to reopen the request, please contact us.",
             [JsonPropertyName("s")] public string Sku      { get; set; } = string.Empty;
             [JsonPropertyName("q")] public int    Qty      { get; set; } = 1;
             [JsonPropertyName("p")] public double Price    { get; set; }
+            [JsonPropertyName("pc")] public string PriceCurrency { get; set; } = "S.P";
             [JsonPropertyName("c")] public bool   Custom   { get; set; }
         }
 
@@ -1637,6 +1659,7 @@ If you would like to reopen the request, please contact us.",
                     Sku   = l.Sku,
                     Qty   = l.Quantity,
                     Price = l.UnitPrice,
+                    PriceCurrency = l.PriceCurrency,
                     Custom = l.IsCustom
                 }).ToList();
                 PartsUsed = dtos.Count > 0
@@ -1693,6 +1716,7 @@ If you would like to reopen the request, please contact us.",
                         Sku       = d.Sku,
                         Quantity  = Math.Max(1, d.Qty),
                         UnitPrice = d.Price,
+                        PriceCurrency = string.IsNullOrWhiteSpace(d.PriceCurrency) ? "S.P" : d.PriceCurrency,
                         IsCustom  = d.Custom
                         // DeductedQtyInSession stays 0 — loaded from DB, not a fresh deduction
                     }));
